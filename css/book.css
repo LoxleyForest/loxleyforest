@@ -1,0 +1,240 @@
+/* ============================================================
+   LOXLEY FOREST — BOOK NOW PAGE STYLES
+   ============================================================ */
+
+/* --- Half-height Hero --- */
+.hero--half {
+  height: 50vh;
+  min-height: 400px;
+}
+
+/* --- Book Layout --- */
+.book-layout {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 72px;
+  align-items: start;
+}
+
+/* --- Form Styles --- */
+.book-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-label {
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--stone);
+}
+
+.form-input {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 18px;
+  color: var(--bark);
+  background-color: var(--cream);
+  border: 1px solid var(--parchment);
+  border-radius: 2px;
+  padding: 14px 18px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(196, 162, 101, 0.12);
+}
+
+.form-input::placeholder {
+  color: var(--driftwood);
+}
+
+.form-select {
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%236b6357' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 44px;
+  cursor: pointer;
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* --- Sidebar --- */
+.book-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+/* Rate Overview */
+.book-rates {
+  background: var(--cream);
+  border-radius: 2px;
+  padding: 36px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.book-rates__from {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 26px;
+  color: var(--forest-deep);
+  margin-bottom: 4px;
+}
+
+.book-rates__from strong {
+  font-weight: 600;
+}
+
+.book-rates__note {
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--driftwood);
+  margin-bottom: 20px;
+}
+
+.book-rates__table {
+  display: flex;
+  flex-direction: column;
+}
+
+.book-rates__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--parchment);
+  gap: 12px;
+}
+
+.book-rates__row:last-child {
+  border-bottom: none;
+}
+
+.book-rates__row span:first-child {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 16px;
+  color: var(--bark);
+}
+
+.book-rates__row span:last-child {
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--forest);
+  white-space: nowrap;
+}
+
+/* Direct Booking Guarantee */
+.book-guarantee {
+  background: var(--cream);
+  border-radius: 2px;
+  padding: 36px;
+  border-left: 3px solid var(--gold);
+}
+
+/* Quick Links */
+.book-links {
+  background: var(--cream);
+  border-radius: 2px;
+  padding: 36px;
+}
+
+.book-links__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--parchment);
+  transition: color 0.3s ease;
+}
+
+.book-links__item:last-of-type {
+  border-bottom: none;
+}
+
+.book-links__item:hover {
+  color: var(--gold);
+}
+
+.book-links__item .body-text {
+  color: var(--bark);
+  font-size: 17px;
+}
+
+.book-links__item:hover .body-text {
+  color: var(--gold);
+}
+
+.book-links__arrow {
+  font-size: 18px;
+  color: var(--gold);
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+
+.book-links__item:hover .book-links__arrow {
+  transform: translateX(4px);
+}
+
+.book-links__contact {
+  padding-top: 20px;
+}
+
+/* ============================================================
+   RESPONSIVE — BOOK
+   ============================================================ */
+
+@media (max-width: 1199px) {
+  .book-layout {
+    gap: 48px;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero--half {
+    height: 45vh;
+    min-height: 340px;
+  }
+
+  .book-layout {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .book-rates,
+  .book-guarantee,
+  .book-links {
+    padding: 28px;
+  }
+}

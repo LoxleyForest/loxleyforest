@@ -1,0 +1,209 @@
+/* ============================================================
+   LOXLEY FOREST — CANOPY CLUB PAGE STYLES
+   ============================================================ */
+
+/* --- Membership Tiers --- */
+.membership-tiers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  max-width: 960px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+.tier {
+  background: var(--linen);
+  border-radius: 2px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  position: relative;
+  transition: all var(--transition-smooth);
+}
+
+.tier:hover {
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+}
+
+/* Premium tier */
+.tier--premium {
+  border: 2px solid var(--gold);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+}
+
+.tier--premium:hover {
+  transform: translateY(-6px);
+}
+
+.tier__badge {
+  background-color: var(--gold);
+  color: var(--white);
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 8px 20px;
+}
+
+.tier__header {
+  padding: 48px 40px 0;
+  text-align: center;
+}
+
+.tier__header .eyebrow {
+  margin-bottom: 12px;
+}
+
+.tier__name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(28px, 2.8vw, 36px);
+  font-weight: 500;
+  color: var(--forest-deep);
+  margin-bottom: 16px;
+}
+
+.tier__price {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 19px;
+  color: var(--stone);
+}
+
+.tier__amount {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 36px;
+  font-weight: 600;
+  color: var(--forest-deep);
+}
+
+.tier__preamble {
+  padding: 24px 40px 0;
+  text-align: center;
+}
+
+.tier__preamble .body-text {
+  color: var(--stone);
+  font-style: italic;
+}
+
+/* Benefits */
+.tier__body {
+  padding: 32px 40px;
+}
+
+.tier__benefit {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--parchment);
+}
+
+.tier__benefit:last-child {
+  border-bottom: none;
+}
+
+.tier__benefit-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--bark);
+  margin-bottom: 4px;
+}
+
+.tier__benefit-text {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--stone);
+}
+
+.tier__footer {
+  padding: 0 40px 40px;
+}
+
+.tier__post-price {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 15px;
+  font-style: italic;
+  color: var(--driftwood);
+  text-align: center;
+  margin-top: 16px;
+}
+
+/* --- Counter Section --- */
+.counter-section {
+  padding: 80px 0;
+}
+
+.counter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.counter__number {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(72px, 10vw, 120px);
+  font-weight: 500;
+  color: var(--forest-deep);
+  line-height: 1;
+}
+
+.counter__label {
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--stone);
+}
+
+/* ============================================================
+   RESPONSIVE — CANOPY CLUB
+   ============================================================ */
+
+@media (max-width: 1199px) {
+  .membership-tiers {
+    gap: 32px;
+  }
+
+  .tier__header {
+    padding: 40px 32px 0;
+  }
+
+  .tier__body {
+    padding: 28px 32px;
+  }
+
+  .tier__footer {
+    padding: 0 32px 32px;
+  }
+}
+
+@media (max-width: 767px) {
+  .membership-tiers {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+  }
+
+  .tier__header {
+    padding: 36px 28px 0;
+  }
+
+  .tier__body {
+    padding: 24px 28px;
+  }
+
+  .tier__footer {
+    padding: 0 28px 28px;
+  }
+
+  .tier__amount {
+    font-size: 30px;
+  }
+
+  .counter__number {
+    font-size: 72px;
+  }
+}

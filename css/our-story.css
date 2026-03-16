@@ -1,0 +1,107 @@
+/* ============================================================
+   LOXLEY FOREST — OUR STORY PAGE STYLES
+   ============================================================ */
+
+/* --- Story Paragraphs --- */
+.story-paragraph {
+  color: var(--bark);
+  margin-bottom: 32px;
+  text-align: left;
+}
+
+.story-paragraph--closing {
+  text-align: center;
+  font-style: italic;
+  font-size: clamp(22px, 2vw, 26px);
+  color: var(--forest);
+  margin-top: 48px;
+  margin-bottom: 0;
+}
+
+/* --- Story Images (full-bleed within narrow container) --- */
+.story-image {
+  margin: 56px -120px;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.story-image .placeholder-img {
+  aspect-ratio: 16 / 9;
+  width: 100%;
+}
+
+/* --- Full-bleed Aerial --- */
+.story-aerial {
+  width: 100%;
+  overflow: hidden;
+}
+
+.story-aerial .placeholder-img {
+  aspect-ratio: 21 / 9;
+  width: 100%;
+}
+
+/* --- Values --- */
+.values {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 48px;
+}
+
+.value {
+  text-align: center;
+  padding: 0 16px;
+}
+
+.value__title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(24px, 2.4vw, 30px);
+  font-weight: 500;
+  color: var(--forest-deep);
+}
+
+.value .divider {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.value .body-large {
+  color: var(--stone);
+}
+
+/* ============================================================
+   RESPONSIVE — OUR STORY
+   ============================================================ */
+
+@media (max-width: 1199px) {
+  .story-image {
+    margin-left: -60px;
+    margin-right: -60px;
+  }
+}
+
+@media (max-width: 767px) {
+  .story-image {
+    margin-left: -24px;
+    margin-right: -24px;
+  }
+
+  .story-image .placeholder-img {
+    aspect-ratio: 3 / 2;
+  }
+
+  .story-aerial .placeholder-img {
+    aspect-ratio: 16 / 9;
+  }
+
+  .values {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .value {
+    padding: 0;
+  }
+}

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Your Stay | Loxley Forest — Dahlonega, GA</title>
+  <meta name="description" content="Book your luxury treehouse at Loxley Forest. Direct booking guarantees the best rate. 55 feet in the canopy. 42 acres. North Georgia.">
+  <meta property="og:title" content="Book Your Stay | Loxley Forest — Dahlonega, GA">
+  <meta property="og:description" content="Book your luxury treehouse at Loxley Forest. Direct booking guarantees the best rate. 55 feet in the canopy. 42 acres. North Georgia.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://loxleyforest.com/book">
+  <link rel="canonical" href="https://loxleyforest.com/book">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/book.css">
+</head>
+<body>
+
+  <!-- ========== ANNOUNCEMENT BAR ========== -->
+  <div class="announcement-bar">
+    <div class="announcement-bar__track">
+      <div class="announcement-bar__message active">CANOPY CLUB FOUNDING MEMBERSHIPS NOW OPEN — LIMITED TO 50 COUPLES</div>
+      <div class="announcement-bar__message">TREEHOUSE 2 OPENS MAY 2026 — RESERVE YOUR DATES</div>
+      <div class="announcement-bar__message">200+ FIVE-STAR REVIEWS · 4.98 RATING · AIRBNB GUEST FAVORITE</div>
+    </div>
+    <button class="announcement-bar__close" aria-label="Dismiss announcement">&times;</button>
+  </div>
+
+  <!-- ========== NAVIGATION ========== -->
+  <nav class="nav nav--transparent">
+    <a href="/" class="nav__wordmark">Loxley Forest</a>
+    <div class="nav__links">
+      <a href="/treehouses" class="nav__link">The Treehouses</a>
+      <a href="/elopements" class="nav__link">Elopements</a>
+      <a href="/experiences" class="nav__link">Experiences</a>
+      <a href="/canopy-club" class="nav__link">Canopy Club</a>
+      <a href="/our-story" class="nav__link">Our Story</a>
+      <a href="/gallery" class="nav__link">Gallery</a>
+      <a href="/local-guide" class="nav__link">Local Guide</a>
+    </div>
+    <a href="/book" class="btn btn--primary nav__cta">Book Your Stay</a>
+    <button class="nav__hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="nav__overlay">
+    <a href="/treehouses" class="nav__link">The Treehouses</a>
+    <a href="/elopements" class="nav__link">Elopements</a>
+    <a href="/experiences" class="nav__link">Experiences</a>
+    <a href="/canopy-club" class="nav__link">Canopy Club</a>
+    <a href="/our-story" class="nav__link">Our Story</a>
+    <a href="/gallery" class="nav__link">Gallery</a>
+    <a href="/local-guide" class="nav__link">Local Guide</a>
+    <a href="/book" class="btn btn--primary" style="margin-top: 16px;">Book Your Stay</a>
+  </div>
+
+  <main>
+
+    <!-- ========== HERO (50vh) ========== -->
+    <section class="hero hero--half">
+      <div class="hero__media">
+        <div class="placeholder-img" data-label="treehouse at dawn · inviting · warm light"></div>
+      </div>
+      <div class="hero__overlay"></div>
+      <div class="hero__content">
+        <h1 class="headline-hero hero__headline reveal" style="font-size: clamp(32px, 4.5vw, 56px);">Your Room Is Fifty-Five Feet in the Air.<br>Your Rate Is the Best One Available.</h1>
+        <p class="hero__sub reveal">Direct bookings always get the best rate. No platform fees. No middleman. Just you, the forest, and the family who built it.</p>
+      </div>
+    </section>
+
+    <!-- ========== BOOKING SECTION ========== -->
+    <section class="section section--linen">
+      <div class="container">
+        <div class="book-layout">
+
+          <!-- LEFT: Inquiry Form -->
+          <div class="book-form-wrap reveal">
+            <h2 class="headline-section" style="margin-bottom: 12px;">Check Availability</h2>
+            <p class="body-text" style="color: var(--stone); margin-bottom: 36px;">We respond personally within 24 hours. Usually faster.</p>
+
+            <form class="book-form" action="mailto:hello@loxleyforest.com" method="POST" enctype="text/plain">
+
+              <div class="form-group">
+                <label class="form-label" for="name">Your Name</label>
+                <input class="form-input" type="text" id="name" name="name" required autocomplete="name">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="email">Email</label>
+                <input class="form-input" type="email" id="email" name="email" required autocomplete="email">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="phone">Phone</label>
+                <input class="form-input" type="tel" id="phone" name="phone" autocomplete="tel">
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="checkin">Preferred Check-In</label>
+                  <input class="form-input" type="date" id="checkin" name="checkin">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="checkout">Preferred Check-Out</label>
+                  <input class="form-input" type="date" id="checkout" name="checkout">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="treehouse">Which Treehouse?</label>
+                <select class="form-input form-select" id="treehouse" name="treehouse">
+                  <option value="">Select...</option>
+                  <option value="treehouse-1">Treehouse 1</option>
+                  <option value="treehouse-2">Treehouse 2 (May 2026)</option>
+                  <option value="no-preference">No Preference</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="occasion">What brings you to Loxley?</label>
+                <select class="form-input form-select" id="occasion" name="occasion">
+                  <option value="">Select...</option>
+                  <option value="getaway">Getaway</option>
+                  <option value="anniversary">Anniversary</option>
+                  <option value="birthday">Birthday</option>
+                  <option value="elopement">Elopement</option>
+                  <option value="proposal">Proposal</option>
+                  <option value="honeymoon">Honeymoon</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="referral">How did you hear about us?</label>
+                <select class="form-input form-select" id="referral" name="referral">
+                  <option value="">Select...</option>
+                  <option value="instagram">Instagram</option>
+                  <option value="facebook">Facebook</option>
+                  <option value="pinterest">Pinterest</option>
+                  <option value="google">Google</option>
+                  <option value="airbnb">Airbnb</option>
+                  <option value="friend">Friend / Word of Mouth</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="message">Anything else?</label>
+                <textarea class="form-input form-textarea" id="message" name="message" rows="4"></textarea>
+              </div>
+
+              <button type="submit" class="btn btn--primary" style="width: 100%;">Check Availability</button>
+            </form>
+          </div>
+
+          <!-- RIGHT: Rate Overview + Info -->
+          <div class="book-sidebar">
+
+            <!-- Rate Overview -->
+            <div class="book-rates reveal">
+              <p class="eyebrow" style="margin-bottom: 12px;">Rate Overview</p>
+              <p class="book-rates__from">From <strong>$600</strong>/night</p>
+              <p class="book-rates__note">Rates vary by season.</p>
+              <div class="book-rates__table">
+                <div class="book-rates__row">
+                  <span>Frost &amp; Thaw Seasons (Jan–Mar)</span>
+                  <span>from $600/night</span>
+                </div>
+                <div class="book-rates__row">
+                  <span>Wildflower &amp; Deep Summer (Apr–May, mid-Jul–Aug)</span>
+                  <span>from $650/night</span>
+                </div>
+                <div class="book-rates__row">
+                  <span>Canopy Green (Jun–early Jul)</span>
+                  <span>from $700/night</span>
+                </div>
+                <div class="book-rates__row">
+                  <span>Color Turn — Peak (Sep–Oct)</span>
+                  <span>from $800/night</span>
+                </div>
+                <div class="book-rates__row">
+                  <span>Bare Canopy (Nov–Dec)</span>
+                  <span>from $650/night</span>
+                </div>
+                <div class="book-rates__row">
+                  <span>Holidays</span>
+                  <span>from $900/night</span>
+                </div>
+              </div>
+              <p class="caption" style="margin-top: 16px;">2-night minimum year-round.</p>
+            </div>
+
+            <!-- Direct Booking Guarantee -->
+            <div class="book-guarantee reveal">
+              <h3 class="headline-section" style="font-size: 24px; margin-bottom: 16px;">Direct Booking Guarantee</h3>
+              <p class="body-text" style="color: var(--stone);">When you book at loxleyforest.com, you're guaranteed the lowest available rate. If you find a lower price for the same dates on any platform, we'll match it and add a complimentary experience to your stay.</p>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="book-links reveal">
+              <h3 class="headline-section" style="font-size: 24px; margin-bottom: 20px;">Quick Links</h3>
+              <a href="/elopements" class="book-links__item">
+                <span class="body-text">Planning an elopement? Packages start at $4,500.</span>
+                <span class="book-links__arrow">&rarr;</span>
+              </a>
+              <a href="/canopy-club" class="book-links__item">
+                <span class="body-text">Want priority booking?</span>
+                <span class="book-links__arrow">&rarr;</span>
+              </a>
+              <div class="book-links__contact">
+                <p class="body-text" style="color: var(--stone);">Questions? <a href="mailto:hello@loxleyforest.com" style="color: var(--gold);">hello@loxleyforest.com</a> — Mick or Livy will answer. Not a chatbot.</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="footer__grid">
+      <div class="footer__col">
+        <div class="footer__wordmark">Loxley Forest</div>
+        <p class="footer__text">Suspended between earth and sky<br>in the North Georgia mountains.</p>
+      </div>
+      <div class="footer__col">
+        <p class="footer__heading">Explore</p>
+        <a href="/treehouses" class="footer__link">The Treehouses</a>
+        <a href="/elopements" class="footer__link">Elopements</a>
+        <a href="/experiences" class="footer__link">Experiences</a>
+        <a href="/canopy-club" class="footer__link">Canopy Club</a>
+        <a href="/our-story" class="footer__link">Our Story</a>
+        <a href="/gallery" class="footer__link">Gallery</a>
+        <a href="/local-guide" class="footer__link">Local Guide</a>
+        <a href="/faq" class="footer__link">FAQ</a>
+      </div>
+      <div class="footer__col">
+        <p class="footer__heading">Connect</p>
+        <a href="https://instagram.com/loxleyforest" class="footer__link" target="_blank" rel="noopener">Instagram</a>
+        <a href="mailto:hello@loxleyforest.com" class="footer__link">hello@loxleyforest.com</a>
+      </div>
+      <div class="footer__col">
+        <p class="footer__heading">Visit</p>
+        <p class="footer__text">Dahlonega, Georgia<br>90 minutes from Atlanta<br>42 acres of hardwood cove forest<br>at 1,700 feet</p>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <p class="footer__copyright">&copy; 2026 Loxley Forest. All rights reserved.</p>
+      <div class="footer__legal">
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+        <a href="/cancellation">Cancellation Policy</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/global.js"></script>
+</body>
+</html>

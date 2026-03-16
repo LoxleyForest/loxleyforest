@@ -1,0 +1,96 @@
+/* ============================================================
+   LOXLEY FOREST — FAQ PAGE STYLES
+   ============================================================ */
+
+/* --- FAQ Header --- */
+.faq-header {
+  padding-top: 160px;
+  padding-bottom: 48px;
+  background-color: var(--linen);
+}
+
+/* --- Accordion (shared with elopements, extended here) --- */
+.accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.accordion__item {
+  border-bottom: 1px solid var(--parchment);
+}
+
+.accordion__item:first-child {
+  border-top: 1px solid var(--parchment);
+}
+
+.accordion__trigger {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 28px 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--bark);
+  transition: color 0.3s ease;
+}
+
+.accordion__trigger:hover {
+  color: var(--forest);
+}
+
+.accordion__icon {
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--gold);
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+  margin-left: 24px;
+}
+
+.accordion__item.open .accordion__icon {
+  transform: rotate(45deg);
+}
+
+.accordion__panel {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s var(--ease-natural), padding 0.4s var(--ease-natural);
+  padding: 0 0;
+}
+
+.accordion__item.open .accordion__panel {
+  max-height: 400px;
+  padding: 0 0 32px;
+}
+
+.accordion__panel .body-text {
+  color: var(--stone);
+  padding-right: 48px;
+}
+
+/* ============================================================
+   RESPONSIVE — FAQ
+   ============================================================ */
+
+@media (max-width: 767px) {
+  .faq-header {
+    padding-top: 130px;
+  }
+
+  .accordion__trigger {
+    font-size: 19px;
+    padding: 22px 0;
+  }
+
+  .accordion__panel .body-text {
+    padding-right: 0;
+  }
+}

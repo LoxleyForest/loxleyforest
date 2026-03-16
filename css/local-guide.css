@@ -1,0 +1,165 @@
+/* ============================================================
+   LOXLEY FOREST — LOCAL GUIDE PAGE STYLES
+   ============================================================ */
+
+/* --- Guide Sections (alternating image/text) --- */
+.guide-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: start;
+}
+
+.guide-section--reversed {
+  direction: rtl;
+}
+
+.guide-section--reversed > * {
+  direction: ltr;
+}
+
+.guide-section__image {
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+}
+
+.guide-section__image .placeholder-img {
+  aspect-ratio: 4 / 3;
+  width: 100%;
+}
+
+.guide-section__content .headline-section {
+  margin-bottom: 16px;
+}
+
+.guide-section__content .body-large {
+  color: var(--stone);
+  margin-bottom: 32px;
+}
+
+/* --- Individual Spots --- */
+.guide-spots {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.guide-spot {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--parchment);
+}
+
+.guide-spot:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.guide-spot:first-child {
+  padding-top: 0;
+}
+
+.guide-spot__name {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--bark);
+  margin-bottom: 6px;
+}
+
+.guide-spot__desc {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--stone);
+}
+
+.guide-spot__pick {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 16px;
+  font-style: italic;
+  color: var(--gold-dark);
+  margin-top: 6px;
+}
+
+/* --- Seasonal Highlights Grid --- */
+.seasons-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+}
+
+.season {
+  display: flex;
+  flex-direction: column;
+}
+
+.season__image {
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+  margin-bottom: 24px;
+}
+
+.season__image .placeholder-img {
+  aspect-ratio: 3 / 4;
+  width: 100%;
+  transition: transform 0.6s var(--ease-natural);
+}
+
+.season:hover .season__image .placeholder-img {
+  transform: scale(1.03);
+}
+
+.season__title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(22px, 2vw, 26px);
+  font-weight: 500;
+  color: var(--forest-deep);
+  margin-bottom: 12px;
+}
+
+.season__content .body-text {
+  color: var(--stone);
+}
+
+/* ============================================================
+   RESPONSIVE — LOCAL GUIDE
+   ============================================================ */
+
+@media (max-width: 1199px) {
+  .guide-section {
+    gap: 48px;
+  }
+
+  .seasons-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 36px;
+  }
+}
+
+@media (max-width: 767px) {
+  .guide-section {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .guide-section--reversed {
+    direction: ltr;
+  }
+
+  .guide-section__image .placeholder-img {
+    aspect-ratio: 3 / 2;
+  }
+
+  .seasons-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .season__image .placeholder-img {
+    aspect-ratio: 4 / 3;
+  }
+}

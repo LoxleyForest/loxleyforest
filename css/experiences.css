@@ -1,0 +1,164 @@
+/* ============================================================
+   LOXLEY FOREST — EXPERIENCES PAGE STYLES
+   ============================================================ */
+
+/* --- Experience Chapters (alternating image/text) --- */
+.chapter {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+  margin-bottom: 100px;
+}
+
+.chapter:last-child {
+  margin-bottom: 0;
+}
+
+.chapter--reversed {
+  direction: rtl;
+}
+
+.chapter--reversed > * {
+  direction: ltr;
+}
+
+.chapter__image {
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+}
+
+.chapter__image .placeholder-img {
+  aspect-ratio: 4 / 3;
+  width: 100%;
+  transition: transform 0.6s var(--ease-natural);
+}
+
+.chapter:hover .chapter__image .placeholder-img {
+  transform: scale(1.03);
+}
+
+.chapter__content .headline-section {
+  margin-bottom: 20px;
+}
+
+.chapter__content .body-large {
+  color: var(--stone);
+  margin-bottom: 16px;
+}
+
+.chapter__availability {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 16px;
+  font-style: italic;
+  color: var(--gold-dark);
+}
+
+/* --- Add-Ons Sections --- */
+.addons-section {
+  margin-bottom: 64px;
+}
+
+.addons-section:last-child {
+  margin-bottom: 0;
+}
+
+.addons-section__title {
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--parchment);
+}
+
+.addons-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.addon {
+  background: var(--linen);
+  border-radius: 2px;
+  padding: 32px;
+  transition: all var(--transition-smooth);
+}
+
+.addon:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  transform: translateY(-2px);
+}
+
+.addon--signature {
+  background: var(--white);
+  border-left: 3px solid var(--gold);
+}
+
+.addon__name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--forest-deep);
+  margin-bottom: 12px;
+}
+
+.addon__desc {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--stone);
+  margin-bottom: 12px;
+}
+
+.addon__cta {
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+/* ============================================================
+   RESPONSIVE — EXPERIENCES
+   ============================================================ */
+
+@media (max-width: 1199px) {
+  .chapter {
+    gap: 48px;
+    margin-bottom: 80px;
+  }
+
+  .addons-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .chapter {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    margin-bottom: 64px;
+  }
+
+  .chapter--reversed {
+    direction: ltr;
+  }
+
+  .chapter__image .placeholder-img {
+    aspect-ratio: 3 / 2;
+  }
+
+  .addons-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .addon {
+    padding: 24px;
+  }
+}

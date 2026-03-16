@@ -1,0 +1,215 @@
+/* ============================================================
+   LOXLEY FOREST — TREEHOUSES PAGE STYLES
+   ============================================================ */
+
+/* --- Alternating Image/Text Blocks --- */
+.alternating-block {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+  margin-bottom: 100px;
+}
+
+.alternating-block:last-child {
+  margin-bottom: 0;
+}
+
+.alternating-block--reversed {
+  direction: rtl;
+}
+
+.alternating-block--reversed > * {
+  direction: ltr;
+}
+
+.alternating-block__image {
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+}
+
+.alternating-block__image .placeholder-img {
+  aspect-ratio: 4 / 3;
+  width: 100%;
+}
+
+.alternating-block__content .headline-section {
+  margin-bottom: 24px;
+}
+
+.alternating-block__content .body-large {
+  color: var(--stone);
+}
+
+/* --- Unit Sections --- */
+.unit {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 64px;
+  align-items: start;
+}
+
+.unit__gallery-main {
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.unit__gallery-main .placeholder-img {
+  aspect-ratio: 16 / 10;
+  width: 100%;
+}
+
+.unit__gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.unit__gallery-grid .placeholder-img {
+  aspect-ratio: 1;
+  border-radius: 2px;
+}
+
+/* Amenities */
+.unit__amenities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 40px;
+}
+
+.unit__amenity {
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--stone);
+  background-color: var(--parchment);
+  padding: 8px 16px;
+  border-radius: 2px;
+}
+
+/* Rates */
+.unit__rates {
+  margin-bottom: 40px;
+  padding: 36px;
+  background: var(--linen);
+  border-radius: 2px;
+}
+
+.unit__rates-from {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 28px;
+  color: var(--forest-deep);
+  margin-bottom: 8px;
+}
+
+.unit__rates-from strong {
+  font-weight: 600;
+}
+
+.unit__rates-note {
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--driftwood);
+  margin-bottom: 20px;
+}
+
+.unit__rates-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.unit__rate-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--parchment);
+}
+
+.unit__rate-row:last-child {
+  border-bottom: none;
+}
+
+.unit__rate-row span:first-child {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 17px;
+  color: var(--bark);
+}
+
+.unit__rate-row span:last-child {
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--forest);
+  white-space: nowrap;
+}
+
+.unit__rates-minimum {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 16px;
+  font-style: italic;
+  color: var(--stone);
+  margin-top: 16px;
+}
+
+/* Unit 2: Coming Soon variant */
+.unit--coming-soon .unit__gallery-main .placeholder-img {
+  aspect-ratio: 16 / 9;
+}
+
+/* ============================================================
+   RESPONSIVE — TREEHOUSES
+   ============================================================ */
+
+@media (max-width: 1199px) {
+  .alternating-block {
+    gap: 48px;
+    margin-bottom: 80px;
+  }
+
+  .unit {
+    gap: 48px;
+  }
+}
+
+@media (max-width: 767px) {
+  .alternating-block {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    margin-bottom: 64px;
+  }
+
+  .alternating-block--reversed {
+    direction: ltr;
+  }
+
+  .alternating-block__image .placeholder-img {
+    aspect-ratio: 3 / 2;
+  }
+
+  .unit {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .unit__gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .unit__rates {
+    padding: 24px;
+  }
+
+  .unit__rates-from {
+    font-size: 24px;
+  }
+}
