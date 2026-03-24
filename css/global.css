@@ -652,26 +652,6 @@ button {
   object-fit: cover;
 }
 
-.hero__media video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center center;
-}
-
-@media (max-aspect-ratio: 16/9) {
-  /* When viewport is taller than the video, scale by width to avoid extreme crop */
-  .hero__media video {
-    object-fit: contain;
-    background: var(--forest-deep);
-  }
-}
-
-@media (min-aspect-ratio: 16/9) {
-  .hero__media video {
-    object-fit: cover;
-  }
-}
 
 .hero__overlay {
   position: absolute;
