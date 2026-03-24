@@ -633,7 +633,7 @@ button {
   height: 100vh;
   min-height: 600px;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
   text-align: center;
   overflow: hidden;
@@ -669,7 +669,7 @@ button {
   position: relative;
   z-index: 2;
   max-width: 900px;
-  padding: 0 40px;
+  padding: 0 40px 8vh;
 }
 
 .hero__eyebrow {
