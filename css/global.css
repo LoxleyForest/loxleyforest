@@ -669,7 +669,7 @@ button {
   position: relative;
   z-index: 2;
   max-width: 900px;
-  padding: 0 40px 8vh;
+  padding: 0 40px 14vh;
 }
 
 .hero__eyebrow {
