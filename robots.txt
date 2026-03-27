@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Disallow: /images/placeholders/
+Disallow: /images/untitled folder/
+
+Sitemap: https://loxleyforest.com/sitemap.xml
