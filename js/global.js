@@ -236,12 +236,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const heroEl = document.querySelector('.hero');
   if (heroEl) {
     heroEl.classList.add('hero--loading');
-    window.addEventListener('load', () => {
+    const revealHero = () => {
       requestAnimationFrame(() => {
         heroEl.classList.remove('hero--loading');
         heroEl.classList.add('hero--loaded');
       });
-    });
+    };
+    if (document.readyState === 'complete') {
+      revealHero();
+    } else {
+      window.addEventListener('load', revealHero);
+      // Fallback in case load already fired
+      setTimeout(revealHero, 2000);
+    }
   }
 
   /* --- Page Transitions --- */
@@ -253,12 +260,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const href = link.getAttribute('href');
     // Only apply to internal navigation links (not anchors, mailto, tel, external)
     if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('http') || link.getAttribute('target') === '_blank') return;
+    // Skip skip-link
+    if (link.classList.contains('skip-link')) return;
 
     link.addEventListener('click', (e) => {
       e.preventDefault();
       transitionOverlay.classList.remove('page-transition--hidden');
+      // Resolve href: /treehouses -> treehouses.html for local dev, or keep as-is for production
+      let dest = href;
+      if (dest.startsWith('/') && !dest.includes('.')) {
+        dest = dest.slice(1) + '.html';
+      }
+      if (dest === '.html') dest = 'index.html';
       setTimeout(() => {
-        window.location.href = href;
+        window.location.href = dest;
       }, 400);
     });
   });
