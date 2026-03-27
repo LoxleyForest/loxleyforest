@@ -220,4 +220,78 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  /* --- Scroll Progress Bar --- */
+  const progressBar = document.createElement('div');
+  progressBar.className = 'scroll-progress';
+  document.body.prepend(progressBar);
+
+  window.addEventListener('scroll', () => {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    progressBar.style.width = progress + '%';
+  }, { passive: true });
+
+  /* --- Hero Load Animation --- */
+  const heroEl = document.querySelector('.hero');
+  if (heroEl) {
+    heroEl.classList.add('hero--loading');
+    window.addEventListener('load', () => {
+      requestAnimationFrame(() => {
+        heroEl.classList.remove('hero--loading');
+        heroEl.classList.add('hero--loaded');
+      });
+    });
+  }
+
+  /* --- Page Transitions --- */
+  const transitionOverlay = document.createElement('div');
+  transitionOverlay.className = 'page-transition page-transition--hidden';
+  document.body.appendChild(transitionOverlay);
+
+  document.querySelectorAll('a[href]').forEach(link => {
+    const href = link.getAttribute('href');
+    // Only apply to internal navigation links (not anchors, mailto, tel, external)
+    if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('http') || link.getAttribute('target') === '_blank') return;
+
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      transitionOverlay.classList.remove('page-transition--hidden');
+      setTimeout(() => {
+        window.location.href = href;
+      }, 400);
+    });
+  });
+
+  /* --- Lightbox Enhancements --- */
+  const lbImageWrap = document.querySelector('.lightbox__image-wrap');
+
+  // Add counter element
+  const lbCounter = document.createElement('div');
+  lbCounter.className = 'lightbox__counter';
+  const lightboxEl = document.getElementById('lightbox');
+  if (lightboxEl) {
+    lightboxEl.appendChild(lbCounter);
+  }
+
+  // Enhance the updateLightbox to use crossfade and counter
+  if (lightboxEl && typeof updateLightbox === 'function') {
+    const originalUpdate = updateLightbox;
+    // We can't easily override since it's in a closure, but we can add counter update
+    // Use MutationObserver to detect when lightbox image changes
+    const lbImg = document.getElementById('lightbox-image');
+    if (lbImg) {
+      const observer = new MutationObserver(() => {
+        if (lightboxEl.classList.contains('open')) {
+          const total = getVisibleItems ? getVisibleItems().length : 0;
+          const current = (typeof currentLbIndex !== 'undefined') ? currentLbIndex + 1 : 0;
+          if (total > 0) {
+            lbCounter.textContent = current + ' of ' + total;
+          }
+        }
+      });
+      observer.observe(lbImg, { attributes: true, attributeFilter: ['src'] });
+    }
+  }
+
 });
