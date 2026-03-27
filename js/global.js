@@ -24,11 +24,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (closeBtn && announcementBar) {
     closeBtn.addEventListener('click', () => {
-      announcementBar.style.height = '0';
-      announcementBar.style.overflow = 'hidden';
-      announcementBar.style.transition = 'height 0.3s ease';
+      announcementBar.style.opacity = '0';
+      announcementBar.style.transition = 'opacity 0.3s ease, height 0.4s ease 0.2s';
+      setTimeout(() => {
+        announcementBar.style.height = '0';
+        announcementBar.style.overflow = 'hidden';
+        document.querySelector('.nav').classList.add('nav--no-bar');
+      }, 100);
       clearInterval(msgInterval);
-      document.querySelector('.nav').classList.add('nav--no-bar');
     });
   }
 
@@ -114,6 +117,19 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('scroll', handleParallax, { passive: true });
   }
 
+  /* --- Hero Image Subtle Parallax --- */
+  const heroMedia = document.querySelector('.hero__media img');
+  if (heroMedia) {
+    window.addEventListener('scroll', () => {
+      const scrolled = window.scrollY;
+      const heroHeight = document.querySelector('.hero')?.offsetHeight || 800;
+      if (scrolled < heroHeight) {
+        const translateY = scrolled * 0.15;
+        heroMedia.style.transform = `scale(1.05) translateY(${translateY}px)`;
+      }
+    }, { passive: true });
+  }
+
   /* --- Testimonial Carousel --- */
   const track = document.querySelector('.testimonials__track');
   const dots = document.querySelectorAll('.testimonials__dot');
@@ -163,6 +179,34 @@ document.addEventListener('DOMContentLoaded', () => {
   if (track && track.children.length) {
     resetAutoAdvance();
     window.addEventListener('resize', () => updateCarousel(currentSlide));
+  }
+
+  /* --- Carousel Touch Support --- */
+  if (track) {
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    track.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    track.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      const diff = touchStartX - touchEndX;
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) {
+          // Swipe left — next
+          const visible = getVisibleCount();
+          const slides = track.children.length;
+          const maxIndex = Math.max(0, slides - visible);
+          updateCarousel(Math.min(currentSlide + 1, maxIndex));
+        } else {
+          // Swipe right — prev
+          updateCarousel(Math.max(currentSlide - 1, 0));
+        }
+        resetAutoAdvance();
+      }
+    }, { passive: true });
   }
 
   /* --- Smooth scroll for anchor links --- */
