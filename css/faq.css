@@ -82,15 +82,38 @@
 
 @media (max-width: 767px) {
   .faq-header {
-    padding-top: 130px;
+    padding-top: 120px;
+    padding-bottom: 36px;
   }
 
   .accordion__trigger {
-    font-size: 19px;
-    padding: 22px 0;
+    font-size: 18px;
+    padding: 20px 0;
+    min-height: 48px;
+  }
+
+  .accordion__icon {
+    font-size: 18px;
+    margin-left: 16px;
   }
 
   .accordion__panel .body-text {
     padding-right: 0;
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  .accordion__item.open .accordion__panel {
+    padding: 0 0 24px;
+  }
+}
+
+@media (max-width: 380px) {
+  .faq-header {
+    padding-top: 110px;
+  }
+
+  .accordion__trigger {
+    font-size: 17px;
   }
 }

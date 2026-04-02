@@ -82,6 +82,15 @@
   margin-top: 6px;
 }
 
+/* --- Cheat Sheet --- */
+.cheat-sheet {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 40px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
 /* --- Seasonal Highlights Grid --- */
 .seasons-grid {
   display: grid;
@@ -141,7 +150,7 @@
 @media (max-width: 767px) {
   .guide-section {
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: 28px;
   }
 
   .guide-section--reversed {
@@ -152,14 +161,56 @@
     aspect-ratio: 3 / 2;
   }
 
+  .cheat-sheet {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    max-width: 100%;
+  }
+
+  .cheat-sheet .body-text[style*="text-align: right"] {
+    text-align: left !important;
+    font-size: 14px;
+    margin-top: 8px;
+    padding-bottom: 0;
+  }
+
+  .guide-section__content .body-large {
+    font-size: 17px;
+  }
+
+  .guide-spot__name {
+    font-size: 18px;
+  }
+
+  .guide-spot__desc {
+    font-size: 16px;
+  }
+
+  .guide-spot {
+    padding: 16px 0;
+  }
+
   .seasons-grid {
     grid-template-columns: 1fr;
-    gap: 40px;
-    max-width: 400px;
-    margin: 0 auto;
+    gap: 36px;
+    max-width: 100%;
   }
 
   .season__image .placeholder-img {
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 3 / 2;
+  }
+
+  .season__title {
+    font-size: clamp(20px, 5vw, 24px);
+  }
+}
+
+@media (max-width: 380px) {
+  .guide-spot__name {
+    font-size: 17px;
+  }
+
+  .guide-spot__desc {
+    font-size: 15px;
   }
 }

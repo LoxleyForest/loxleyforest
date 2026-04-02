@@ -184,26 +184,65 @@
 @media (max-width: 767px) {
   .membership-tiers {
     grid-template-columns: 1fr;
-    max-width: 480px;
+    max-width: 100%;
+    gap: 24px;
   }
 
   .tier__header {
-    padding: 36px 28px 0;
+    padding: 32px 24px 0;
+  }
+
+  .tier__preamble {
+    padding: 20px 24px 0;
   }
 
   .tier__body {
-    padding: 24px 28px;
+    padding: 24px;
   }
 
   .tier__footer {
-    padding: 0 28px 28px;
+    padding: 0 24px 28px;
+  }
+
+  .tier__name {
+    font-size: clamp(24px, 5.5vw, 30px);
   }
 
   .tier__amount {
     font-size: 30px;
   }
 
+  .tier__benefit-title {
+    font-size: 18px;
+  }
+
+  .tier__benefit-text {
+    font-size: 15px;
+  }
+
   .counter__number {
-    font-size: 72px;
+    font-size: 60px;
+  }
+
+  .counter-section {
+    padding: 60px 0;
+  }
+}
+
+@media (max-width: 380px) {
+  .tier__header {
+    padding: 28px 20px 0;
+  }
+
+  .tier__body {
+    padding: 20px;
+  }
+
+  .tier__footer {
+    padding: 0 20px 24px;
+  }
+
+  .tier__amount {
+    font-size: 26px;
   }
 }

@@ -245,20 +245,18 @@
 @media (max-width: 767px) {
   .ceremony-spaces {
     grid-template-columns: 1fr;
-    gap: 48px;
-    max-width: 500px;
-    margin: 0 auto;
+    gap: 40px;
+    max-width: 100%;
   }
 
   .ceremony-space__image .placeholder-img {
-    aspect-ratio: 3 / 4;
+    aspect-ratio: 3 / 2;
   }
 
   .packages {
     grid-template-columns: 1fr;
     gap: 24px;
-    max-width: 480px;
-    margin: 0 auto;
+    max-width: 100%;
   }
 
   .package--featured {
@@ -275,17 +273,54 @@
     top: auto;
     left: auto;
     transform: none;
-    display: inline-block;
+    display: block;
     margin: 24px auto 0;
     text-align: center;
     width: fit-content;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
+  }
+
+  .package__header {
+    padding: 36px 24px 0;
+  }
+
+  .package__body {
+    padding: 20px 24px;
+  }
+
+  .package__footer {
+    padding: 0 24px 28px;
+  }
+
+  .package__name {
+    font-size: clamp(24px, 5.5vw, 30px);
   }
 
   .accordion__trigger {
-    font-size: 19px;
+    font-size: 18px;
     padding: 20px 0;
+    min-height: 48px;
+  }
+
+  .accordion__icon {
+    margin-left: 16px;
+  }
+
+  .legal-disclaimer p {
+    font-size: 14px;
+    padding: 0 20px;
+  }
+}
+
+@media (max-width: 380px) {
+  .package__header {
+    padding: 28px 20px 0;
+  }
+
+  .package__body {
+    padding: 16px 20px;
+  }
+
+  .package__footer {
+    padding: 0 20px 24px;
   }
 }

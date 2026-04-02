@@ -218,23 +218,53 @@
 
 @media (max-width: 767px) {
   .hero--half {
-    height: 45vh;
-    min-height: 340px;
+    height: 40vh;
+    min-height: 300px;
   }
 
   .book-layout {
     grid-template-columns: 1fr;
-    gap: 48px;
+    gap: 40px;
   }
 
   .form-row {
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 20px;
+  }
+
+  .form-input {
+    font-size: 16px;
+    padding: 16px 18px;
+    min-height: 48px;
+  }
+
+  .form-label {
+    font-size: 10px;
   }
 
   .book-rates,
   .book-guarantee,
   .book-links {
-    padding: 28px;
+    padding: 24px 20px;
+  }
+
+  .book-rates__from {
+    font-size: 22px;
+  }
+
+  .book-rates__row span:first-child {
+    font-size: 15px;
+  }
+
+  .book-links__item {
+    min-height: 48px;
+  }
+}
+
+@media (max-width: 380px) {
+  .book-rates,
+  .book-guarantee,
+  .book-links {
+    padding: 20px 16px;
   }
 }

@@ -142,8 +142,8 @@
 @media (max-width: 767px) {
   .chapter {
     grid-template-columns: 1fr;
-    gap: 32px;
-    margin-bottom: 64px;
+    gap: 28px;
+    margin-bottom: 56px;
   }
 
   .chapter--reversed {
@@ -154,11 +154,40 @@
     aspect-ratio: 3 / 2;
   }
 
+  .chapter__content .body-large {
+    font-size: 17px;
+    line-height: 1.7;
+  }
+
+  .chapter__availability {
+    font-size: 15px;
+  }
+
   .addons-grid {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
 
   .addon {
-    padding: 24px;
+    padding: 24px 20px;
+  }
+
+  .addon__name {
+    font-size: 18px;
+  }
+
+  .addon__desc {
+    font-size: 16px;
+  }
+
+  .addons-section__title {
+    font-size: 11px;
+    letter-spacing: 2.5px;
+  }
+}
+
+@media (max-width: 380px) {
+  .addon {
+    padding: 20px 16px;
   }
 }
