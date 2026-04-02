@@ -1232,6 +1232,10 @@ a:focus-visible {
     display: none;
   }
 
+  .nav__cta {
+    display: none;
+  }
+
   .nav__hamburger {
     display: flex;
   }
