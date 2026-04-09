@@ -129,26 +129,3 @@
     font-size: 16px;
   }
 }
-
-/* --- Mobile Overhaul --- */
-@media (max-width: 767px) {
-  .story-image {
-    margin-left: -24px;
-    margin-right: -24px;
-    border-radius: 0;
-  }
-  .story-image .placeholder-img,
-  .story-image img {
-    aspect-ratio: 16 / 9;
-    height: auto;
-  }
-  .story-paragraph {
-    font-size: 17px;
-    line-height: 1.72;
-    max-width: 100%;
-  }
-  .values {
-    grid-template-columns: 1fr;
-    gap: 40px;
-  }
-}

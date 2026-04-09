@@ -214,39 +214,3 @@
     font-size: 15px;
   }
 }
-
-/* --- Mobile Overhaul --- */
-@media (max-width: 767px) {
-  .guide-section {
-    grid-template-columns: 1fr;
-    gap: 28px;
-  }
-  .guide-section__image {
-    order: -1;
-    border-radius: 6px;
-  }
-  .guide-section--reversed .guide-section__image {
-    order: -1;
-  }
-  .guide-section__image .placeholder-img,
-  .guide-section__image img {
-    aspect-ratio: 3 / 2;
-    height: auto;
-  }
-  .seasons-grid {
-    grid-template-columns: 1fr;
-    gap: 40px;
-  }
-  .season__image {
-    border-radius: 6px;
-  }
-  .season__image .placeholder-img,
-  .season__image img {
-    aspect-ratio: 3 / 2;
-    height: auto;
-  }
-  .cheat-sheet {
-    grid-template-columns: 1fr;
-    gap: 14px;
-  }
-}

@@ -117,17 +117,3 @@
     font-size: 17px;
   }
 }
-
-/* --- Mobile Overhaul --- */
-@media (max-width: 767px) {
-  .accordion__trigger {
-    padding: 22px 0;
-    min-height: 56px;
-    gap: 16px;
-    line-height: 1.35;
-  }
-  .accordion__panel .body-text {
-    max-width: 100%;
-    line-height: 1.7;
-  }
-}
