@@ -67,6 +67,12 @@
 
   <main id="main">
 
+    <!-- ========== BOOK DIRECT BANNER ========== -->
+    <div class="book-direct-banner">
+      <p class="book-direct-banner__title">Book Direct. Save $100&ndash;200.</p>
+      <p class="book-direct-banner__text">When you book at LoxleyForest.com, there are no platform fees, no service charges, and no middleman. The same treehouse, the same experience &mdash; just a better rate.</p>
+    </div>
+
     <!-- ========== HERO (50vh) ========== -->
     <section class="hero hero--half">
       <div class="hero__media">
@@ -79,15 +85,45 @@
       </div>
     </section>
 
-    <!-- ========== BOOKING SECTION ========== -->
-    <section class="section section--linen">
+    <!-- ========== CALENDAR SECTION ========== -->
+    <section class="section section--linen widget-section">
+      <div class="container">
+        <div class="widget-section__head reveal">
+          <p class="eyebrow">Availability</p>
+          <h2 class="headline-section">Check Our Calendar</h2>
+          <p class="widget-section__sub">Green dates are available. Pick your nights.</p>
+        </div>
+        <div class="hostfully-calendar-wrap reveal">
+          <div id="widget181795"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== BOOKING WIDGET SECTION ========== -->
+    <section class="section section--linen widget-section" style="padding-top:0;">
+      <div class="container">
+        <div class="widget-section__head reveal">
+          <p class="eyebrow">Book Your Stay</p>
+          <h2 class="headline-section">See Live Dates &amp; Book Instantly</h2>
+          <p class="widget-section__sub">Select your dates, see pricing, and book securely &mdash; all right here.</p>
+        </div>
+        <div class="hostfully-booking-wrap reveal">
+          <div id="leadWidget"></div>
+        </div>
+
+        <div class="or-divider reveal"><span>or</span></div>
+      </div>
+    </section>
+
+    <!-- ========== INQUIRY FORM SECTION ========== -->
+    <section class="section section--linen" style="padding-top:0;">
       <div class="container">
         <div class="book-layout">
 
           <!-- LEFT: Inquiry Form -->
           <div class="book-form-wrap reveal">
-            <h2 class="headline-section" style="margin-bottom: 12px;">Check Availability</h2>
-            <p class="body-text" style="color: var(--stone); margin-bottom: 36px;">We respond personally within 24 hours. Usually faster.</p>
+            <h2 class="headline-section" style="margin-bottom: 12px;">Prefer a Personal Response?</h2>
+            <p class="body-text" style="color: var(--stone); margin-bottom: 36px;">Tell us what you're looking for and we'll respond within 2 hours.</p>
 
             <form class="book-form" action="mailto:stay@loxleyforest.com" method="POST" enctype="text/plain">
 
@@ -228,6 +264,29 @@
       </div>
     </section>
 
+    <!-- ========== FUTURE PACING TIMELINE ========== -->
+    <section class="section timeline-section">
+      <div class="container">
+        <div class="widget-section__head reveal">
+          <p class="eyebrow">Your Stay</p>
+          <h2 class="headline-section">A Day in the Canopy</h2>
+        </div>
+        <div class="timeline reveal">
+          <div class="timeline__row"><div class="timeline__time">3:00 PM</div><div class="timeline__dot"></div><div class="timeline__text">Turn off the paved road onto a gravel path through the forest. The world gets quieter with every turn.</div></div>
+          <div class="timeline__row"><div class="timeline__time">3:30 PM</div><div class="timeline__dot"></div><div class="timeline__text">Park at the trailhead. Walk four hundred feet through mountain laurel and fern. Hear the creek before you see it.</div></div>
+          <div class="timeline__row"><div class="timeline__time">3:45 PM</div><div class="timeline__dot"></div><div class="timeline__text">Cross the rope bridge for the first time. Your heart beats faster. Then the treehouse door opens.</div></div>
+          <div class="timeline__row"><div class="timeline__time">4:00 PM</div><div class="timeline__dot"></div><div class="timeline__text">Unpack. Step onto the deck. Realize you're sixty feet in the air and there isn't a single sound except wind through leaves.</div></div>
+          <div class="timeline__row"><div class="timeline__time">5:30 PM</div><div class="timeline__dot"></div><div class="timeline__text">Fire up the Gozney pizza oven on the sky deck. Open the bottle you brought. Burn the first pizza. Laugh about it. Nail the second one.</div></div>
+          <div class="timeline__row"><div class="timeline__time">7:00 PM</div><div class="timeline__dot"></div><div class="timeline__text">Watch the sun drop behind the ridgeline from your private deck. The forest turns gold, then amber, then blue.</div></div>
+          <div class="timeline__row"><div class="timeline__time">8:30 PM</div><div class="timeline__dot"></div><div class="timeline__text">Build a fire. Roast marshmallows. Look up. The Milky Way is right there.</div></div>
+          <div class="timeline__row"><div class="timeline__time">10:00 PM</div><div class="timeline__dot"></div><div class="timeline__text">Fall asleep to absolute silence, sixty feet above the forest floor.</div></div>
+          <div class="timeline__row"><div class="timeline__time">7:00 AM</div><div class="timeline__dot"></div><div class="timeline__text">Wake up to birdsong. Check the TreeMail box at the entrance to your bridge. Something is waiting inside.</div></div>
+        </div>
+        <p class="timeline__coda reveal">That's just one version. Every stay writes its own story.</p>
+        <p class="book-thanks reveal">Every direct booking supports a family-owned property and keeps Loxley independent. Thank you for booking with us.</p>
+      </div>
+    </section>
+
   </main>
 
   <!-- ========== FOOTER ========== -->
@@ -269,5 +328,21 @@
   </footer>
 
   <script src="js/global.js"></script>
+
+  <!-- ========== HOSTFULLY WIDGETS ========== -->
+  <script src="https://platform.hostfully.com/assets/js/orbirental_calendar_widget_v2.js"></script>
+  <script src="https://platform.hostfully.com/assets/js/pikaday.js"></script>
+  <script src="https://platform.hostfully.com/assets/js/leadCaptureWidget_2.0.js"></script>
+  <script>
+    // Calendar widget
+    new orbiwidget('widget181795', {
+      id: 181795,
+      showTentative: 0,
+      monthsToDisplay: 2,
+      name: "Forest Prescription ~ Private Treehouse Sanctuary"
+    });
+    // Booking widget
+    var widget = new Widget('leadWidget', '9fe2c6da-b6b4-4a9c-a756-350d014c7140', {"maximun_availability":"2029-04-08T02:37:20.637Z","type":"agency","fields":[],"showAvailability":true,"lang":"US","minStay":true,"price":true,"hidePriceWithoutDates":false,"cc":false,"emailClient":true,"saveCookie":true,"showDynamicMinStay":true,"backgroundColor":"#FFFFFF","buttonSubmit":{"backgroundColor":"#c4a265"},"showPriceDetailsLink":false,"showGetQuoteLink":false,"labelColor":"#2d4a2d","showTotalWithoutSD":true,"redirectURL":false,"showDiscount":true,"includeReferrerToRequest":true,"customDomainName":null,"source":null,"aid":"ORB-49587220416635719","clickID":null,"valuesByDefaults":{"checkIn":{"value":""},"checkOut":{"value":""},"guests":{"value":""},"discountCode":{"value":""}},"pathRoot":"https://platform.hostfully.com/"});
+  </script>
 </body>
 </html>

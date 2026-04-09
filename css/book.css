@@ -206,6 +206,172 @@
   padding-top: 20px;
 }
 
+/* --- Book Direct Banner --- */
+.book-direct-banner {
+  background: var(--forest-deep, #2d4a2d);
+  color: var(--cream, #f6f1e6);
+  padding: 28px 24px;
+  text-align: center;
+  border-bottom: 2px solid var(--gold);
+}
+.book-direct-banner__title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(22px, 2.4vw, 30px);
+  letter-spacing: 0.02em;
+  margin-bottom: 10px;
+  color: var(--gold);
+}
+.book-direct-banner__text {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(16px, 1.4vw, 19px);
+  max-width: 760px;
+  margin: 0 auto;
+  line-height: 1.55;
+}
+
+/* --- Widget sections --- */
+.widget-section {
+  text-align: center;
+}
+.widget-section + .widget-section {
+  padding-top: 0;
+}
+.widget-section__head {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.widget-section__sub {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 19px;
+  color: var(--stone);
+  margin-top: 10px;
+}
+
+/* Calendar container */
+.hostfully-calendar-wrap {
+  max-width: 700px;
+  margin: 0 auto;
+  background: var(--cream);
+  padding: 32px;
+  border-radius: 2px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+.hostfully-calendar-wrap .orbi-calendar-day-available,
+.hostfully-calendar-wrap .available { color: var(--forest-deep) !important; }
+.hostfully-calendar-wrap .orbi-calendar-day-selected,
+.hostfully-calendar-wrap .selected,
+.hostfully-calendar-wrap .is-selected { background: var(--gold) !important; color: #fff !important; }
+.hostfully-calendar-wrap .orbi-calendar-month-name,
+.hostfully-calendar-wrap .month-name { color: var(--forest-deep) !important; font-family: 'Playfair Display', Georgia, serif !important; }
+
+/* Booking widget container */
+.hostfully-booking-wrap {
+  max-width: 600px;
+  margin: 0 auto;
+  background: var(--cream);
+  padding: 36px;
+  border-radius: 2px;
+  box-shadow: 0 6px 28px rgba(0,0,0,0.07);
+  border-top: 3px solid var(--gold);
+}
+
+/* OR divider */
+.or-divider {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  max-width: 600px;
+  margin: 56px auto 40px;
+}
+.or-divider::before,
+.or-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--parchment, #d8cfbd);
+}
+.or-divider span {
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--stone);
+}
+
+/* --- Future Pacing Timeline --- */
+.timeline-section { background: var(--linen, #f6f1e6); }
+.timeline {
+  max-width: 760px;
+  margin: 40px auto 0;
+  position: relative;
+  padding-left: 0;
+}
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 130px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: var(--gold);
+}
+.timeline__row {
+  display: grid;
+  grid-template-columns: 110px 40px 1fr;
+  gap: 0;
+  align-items: start;
+  padding: 18px 0;
+}
+.timeline__time {
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: var(--gold);
+  text-align: right;
+  padding-top: 4px;
+}
+.timeline__dot {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding-top: 8px;
+}
+.timeline__dot::before {
+  content: "";
+  width: 11px;
+  height: 11px;
+  background: var(--gold);
+  border-radius: 50%;
+  border: 2px solid var(--cream);
+  z-index: 1;
+}
+.timeline__text {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 19px;
+  line-height: 1.55;
+  color: var(--bark);
+}
+.timeline__coda {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-size: 20px;
+  text-align: center;
+  color: var(--stone);
+  margin-top: 40px;
+}
+.book-thanks {
+  text-align: center;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 18px;
+  color: var(--stone);
+  max-width: 720px;
+  margin: 48px auto 0;
+  padding: 24px;
+  border-top: 1px solid var(--parchment);
+}
+
 /* ============================================================
    RESPONSIVE — BOOK
    ============================================================ */
@@ -259,6 +425,15 @@
   .book-links__item {
     min-height: 48px;
   }
+}
+
+@media (max-width: 767px) {
+  .hostfully-calendar-wrap { padding: 16px; }
+  .hostfully-booking-wrap { padding: 24px 18px; }
+  .timeline::before { left: 70px; }
+  .timeline__row { grid-template-columns: 60px 28px 1fr; }
+  .timeline__time { font-size: 11px; }
+  .timeline__text { font-size: 17px; }
 }
 
 @media (max-width: 380px) {
