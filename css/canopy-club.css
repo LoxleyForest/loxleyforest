@@ -246,3 +246,23 @@
     font-size: 26px;
   }
 }
+
+/* --- Mobile Overhaul --- */
+@media (max-width: 767px) {
+  .membership-tiers {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .tier {
+    border-radius: 6px;
+  }
+  .tier__body {
+    padding: 28px 24px;
+  }
+  .tier__benefit {
+    padding: 18px 0;
+  }
+  .counter-section {
+    padding: 56px 0;
+  }
+}

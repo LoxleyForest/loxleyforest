@@ -191,3 +191,27 @@
     padding: 20px 16px;
   }
 }
+
+/* --- Mobile Overhaul --- */
+@media (max-width: 767px) {
+  .chapter {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    margin-bottom: 56px;
+  }
+  .chapter__image {
+    order: -1;
+    border-radius: 6px;
+  }
+  .chapter--reversed .chapter__image {
+    order: -1;
+  }
+  .chapter__image .placeholder-img,
+  .chapter__image img {
+    aspect-ratio: 3 / 2;
+    height: auto;
+  }
+  .addon {
+    border-radius: 6px;
+  }
+}

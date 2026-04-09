@@ -502,3 +502,45 @@
     padding: 20px 16px;
   }
 }
+
+/* --- Mobile Overhaul --- */
+@media (max-width: 767px) {
+  .book-layout {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+  .book-sidebar {
+    gap: 28px;
+  }
+  .book-rates,
+  .book-guarantee,
+  .book-links {
+    padding: 28px 20px;
+    border-radius: 6px;
+  }
+  .hostfully-booking-wrap {
+    padding: 28px 16px;
+    border-radius: 6px;
+    max-width: 100%;
+  }
+  .book-form-single .book-form-wrap {
+    padding: 28px 20px;
+    border-radius: 6px;
+  }
+  .elopement-form-wrap {
+    padding: 28px 20px;
+    border-radius: 6px;
+  }
+  .conversation-card {
+    padding: 28px 20px;
+    border-radius: 6px;
+  }
+  .form-input {
+    min-height: 52px;
+    font-size: 16px;
+  }
+  .or-divider {
+    margin: 40px auto;
+    max-width: 100%;
+  }
+}

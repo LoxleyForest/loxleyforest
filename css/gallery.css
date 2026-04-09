@@ -302,3 +302,24 @@
     padding: 7px 10px;
   }
 }
+
+/* --- Mobile Overhaul --- */
+@media (max-width: 767px) {
+  .gallery-grid {
+    columns: 2;
+    column-gap: 8px;
+  }
+  .gallery-item {
+    margin-bottom: 8px;
+    border-radius: 4px;
+  }
+  .gallery-filter {
+    min-height: 40px;
+  }
+}
+@media (max-width: 480px) {
+  .gallery-grid {
+    columns: 2;
+    column-gap: 8px;
+  }
+}

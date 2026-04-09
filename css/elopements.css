@@ -324,3 +324,31 @@
     padding: 0 20px 24px;
   }
 }
+
+/* --- Mobile Overhaul --- */
+@media (max-width: 767px) {
+  .ceremony-spaces {
+    grid-template-columns: 1fr;
+    gap: 44px;
+  }
+  .ceremony-space__image {
+    margin-bottom: 20px;
+    border-radius: 6px;
+  }
+  .ceremony-space__image .placeholder-img,
+  .ceremony-space__image img {
+    aspect-ratio: 3 / 2;
+    height: auto;
+  }
+  .packages {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .package {
+    border-radius: 6px;
+  }
+  .package--featured {
+    order: -1;
+    transform: none;
+  }
+}

@@ -1425,3 +1425,233 @@ a:focus-visible {
     font-size: 10px;
   }
 }
+
+/* ============================================================
+   MOBILE OVERHAUL — March 2026
+   Consolidated rules for consistency, breathing room, and
+   guaranteed zero horizontal overflow at 390px viewport width.
+   These are applied last so they override earlier mobile rules.
+   ============================================================ */
+@media (max-width: 767px) {
+  /* Safety — absolute no horizontal overflow */
+  html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+  img, picture, video, svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Consistent section rhythm */
+  .section {
+    padding-top: 64px !important;
+    padding-bottom: 64px !important;
+  }
+
+  /* Consistent container gutters */
+  .container,
+  .container--narrow {
+    padding-left: 24px;
+    padding-right: 24px;
+    max-width: 100%;
+  }
+
+  /* Body baseline */
+  body {
+    font-size: 16px;
+    line-height: 1.65;
+  }
+
+  /* Typography */
+  .headline-hero,
+  .hero__headline {
+    font-size: clamp(28px, 7.5vw, 40px);
+    line-height: 1.15;
+    letter-spacing: -0.005em;
+  }
+  .headline-page {
+    font-size: clamp(26px, 6.5vw, 34px);
+    line-height: 1.18;
+  }
+  .headline-section {
+    font-size: clamp(22px, 5.8vw, 30px);
+    line-height: 1.22;
+  }
+  .body-large {
+    font-size: 17px;
+    line-height: 1.7;
+  }
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 2px;
+  }
+  p { max-width: 100%; }
+  h1 + p, h2 + p, h3 + p { margin-top: 14px; }
+
+  /* Heroes — consistent height, readable content */
+  .hero {
+    min-height: 70vh;
+    min-height: 70svh;
+    height: auto;
+  }
+  .hero--half {
+    min-height: 44vh;
+    height: auto;
+  }
+  .hero__content {
+    padding: 0 24px 9vh;
+    max-width: 100%;
+  }
+  .hero__sub {
+    font-size: 16px;
+    max-width: 92%;
+    margin: 18px auto 32px;
+    line-height: 1.55;
+  }
+
+  /* Buttons — centered, full width with comfortable max */
+  .btn {
+    display: block;
+    width: 100%;
+    max-width: 340px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 13px;
+    padding: 17px 28px;
+    min-height: 52px;
+  }
+  .btn-group,
+  .hero__buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+  }
+
+  /* Touch targets */
+  .nav__hamburger {
+    min-width: 48px;
+    min-height: 48px;
+  }
+  .nav__overlay .nav__link {
+    font-size: 18px;
+    padding: 12px 0;
+  }
+
+  /* Cards — consistent interior padding */
+  .pillar,
+  .ceremony-space,
+  .package,
+  .tier,
+  .season,
+  .guide-spot,
+  .book-rates,
+  .book-guarantee,
+  .book-links,
+  .addon,
+  .testimonial__card {
+    max-width: 100%;
+  }
+
+  /* Rounded content images (subtle) */
+  .pillar__image,
+  .alternating-block__image img,
+  .alternating-block__image .placeholder-img,
+  .ceremony-space__image img,
+  .ceremony-space__image .placeholder-img,
+  .chapter__image img,
+  .chapter__image .placeholder-img,
+  .guide-section__image img,
+  .guide-section__image .placeholder-img,
+  .season__image img,
+  .season__image .placeholder-img,
+  .story-image img,
+  .story-image .placeholder-img,
+  .unit__gallery-main img,
+  .unit__gallery-main .placeholder-img {
+    border-radius: 6px;
+  }
+
+  /* Proof bar — wrap nicely on mobile */
+  .proof-bar {
+    padding: 20px 0;
+  }
+  .proof-bar__inner {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+    justify-content: center;
+    padding: 0 20px;
+  }
+  .proof-bar__item {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+  }
+  .proof-bar__sep {
+    display: none;
+  }
+
+  /* CTA blocks — breathing room */
+  .cta-block {
+    min-height: 52vh;
+  }
+  .cta-block__content {
+    padding: 56px 24px;
+  }
+
+  /* Footer */
+  .footer {
+    padding: 64px 0 28px;
+  }
+  .footer__grid {
+    padding: 0 24px;
+    gap: 32px;
+  }
+  .footer__bottom {
+    padding: 28px 24px 0;
+    margin-top: 48px;
+  }
+}
+
+@media (max-width: 480px) {
+  .section {
+    padding-top: 52px !important;
+    padding-bottom: 52px !important;
+  }
+  .container,
+  .container--narrow {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .headline-hero,
+  .hero__headline {
+    font-size: clamp(26px, 8vw, 36px);
+  }
+  .headline-page {
+    font-size: clamp(24px, 7vw, 32px);
+  }
+  .headline-section {
+    font-size: clamp(21px, 6vw, 28px);
+  }
+  .hero__content {
+    padding: 0 20px 8vh;
+  }
+  .hero__sub {
+    font-size: 15px;
+    margin: 16px auto 28px;
+  }
+  .btn {
+    font-size: 12px;
+    padding: 16px 24px;
+  }
+  .footer__grid,
+  .footer__bottom {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .proof-bar__item {
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+}
