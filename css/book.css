@@ -207,38 +207,21 @@
 }
 
 /* --- Book Direct Banner --- */
-.book-direct-banner {
-  background: var(--forest-deep, #2d4a2d);
-  color: var(--cream, #f6f1e6);
-  padding: 28px 24px;
-  text-align: center;
-  border-bottom: 2px solid var(--gold);
-}
-.book-direct-banner__title {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(22px, 2.4vw, 30px);
-  letter-spacing: 0.02em;
-  margin-bottom: 10px;
+/* --- Hero book-direct line --- */
+.hero__book-direct {
+  margin-top: 18px;
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
   color: var(--gold);
-}
-.book-direct-banner__text {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: clamp(16px, 1.4vw, 19px);
-  max-width: 760px;
-  margin: 0 auto;
-  line-height: 1.55;
 }
 
 /* --- Widget sections --- */
-.widget-section {
-  text-align: center;
-}
-.widget-section + .widget-section {
-  padding-top: 0;
-}
 .widget-section__head {
   text-align: center;
-  margin-bottom: 32px;
+  margin-bottom: 40px;
 }
 .widget-section__sub {
   font-family: 'Cormorant Garamond', Georgia, serif;
@@ -247,41 +230,56 @@
   margin-top: 10px;
 }
 
-/* Calendar container */
-.hostfully-calendar-wrap {
-  max-width: 700px;
-  margin: 0 auto;
-  background: var(--cream);
-  padding: 32px;
-  border-radius: 2px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+/* Booking widget section */
+.book-widget-section {
+  padding-top: 96px;
+  padding-bottom: 64px;
 }
-.hostfully-calendar-wrap .orbi-calendar-day-available,
-.hostfully-calendar-wrap .available { color: var(--forest-deep) !important; }
-.hostfully-calendar-wrap .orbi-calendar-day-selected,
-.hostfully-calendar-wrap .selected,
-.hostfully-calendar-wrap .is-selected { background: var(--gold) !important; color: #fff !important; }
-.hostfully-calendar-wrap .orbi-calendar-month-name,
-.hostfully-calendar-wrap .month-name { color: var(--forest-deep) !important; font-family: 'Playfair Display', Georgia, serif !important; }
 
 /* Booking widget container */
 .hostfully-booking-wrap {
-  max-width: 600px;
+  max-width: 560px;
   margin: 0 auto;
   background: var(--cream);
-  padding: 36px;
+  padding: 40px 36px;
   border-radius: 2px;
   box-shadow: 0 6px 28px rgba(0,0,0,0.07);
+  border: 1px solid var(--parchment, #e8e0cd);
   border-top: 3px solid var(--gold);
 }
+
+/* Form section */
+.book-form-section {
+  padding-top: 0;
+  padding-bottom: 80px;
+}
+.book-form-single {
+  max-width: 560px;
+  margin: 0 auto;
+}
+.book-form-single .book-form-wrap {
+  background: var(--cream);
+  padding: 44px 40px;
+  border-radius: 2px;
+  border: 1px solid var(--parchment, #e8e0cd);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+}
+.book-contact-line {
+  text-align: center;
+  margin-top: 28px;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 17px;
+  color: var(--stone);
+}
+.book-contact-line a { color: var(--gold); }
 
 /* OR divider */
 .or-divider {
   display: flex;
   align-items: center;
   gap: 18px;
-  max-width: 600px;
-  margin: 56px auto 40px;
+  max-width: 560px;
+  margin: 64px auto;
 }
 .or-divider::before,
 .or-divider::after {
@@ -344,9 +342,12 @@
 }
 
 /* --- Future Pacing Timeline --- */
-.timeline-section { background: var(--linen, #f6f1e6); }
+.timeline-section {
+  background: var(--linen, #f6f1e6);
+  padding-top: 96px;
+}
 .timeline {
-  max-width: 760px;
+  max-width: 640px;
   margin: 40px auto 0;
   position: relative;
   padding-left: 0;
@@ -354,7 +355,7 @@
 .timeline::before {
   content: "";
   position: absolute;
-  left: 130px;
+  left: 110px;
   top: 8px;
   bottom: 8px;
   width: 2px;
@@ -362,10 +363,11 @@
 }
 .timeline__row {
   display: grid;
-  grid-template-columns: 110px 40px 1fr;
+  grid-template-columns: 90px 40px 1fr;
   gap: 0;
   align-items: start;
-  padding: 18px 0;
+  padding: 22px 0;
+  line-height: 1.65;
 }
 .timeline__time {
   font-family: 'Montserrat', Arial, sans-serif;
@@ -472,12 +474,24 @@
 }
 
 @media (max-width: 767px) {
-  .hostfully-calendar-wrap { padding: 16px; }
-  .hostfully-booking-wrap { padding: 24px 18px; }
+  .book-widget-section { padding-top: 64px; padding-bottom: 48px; }
+  .book-form-section { padding-bottom: 56px; }
+  .timeline-section { padding-top: 64px; }
+  .hostfully-booking-wrap {
+    max-width: none;
+    width: 100%;
+    padding: 28px 20px;
+    margin: 0;
+  }
+  .book-form-single { max-width: none; }
+  .book-form-single .book-form-wrap { padding: 28px 20px; }
+  .or-divider { margin: 48px auto; }
+  .timeline { max-width: none; padding: 0 8px; }
   .timeline::before { left: 70px; }
-  .timeline__row { grid-template-columns: 60px 28px 1fr; }
+  .timeline__row { grid-template-columns: 60px 28px 1fr; padding: 18px 0; }
   .timeline__time { font-size: 11px; }
   .timeline__text { font-size: 17px; }
+  .hero__book-direct { font-size: 11px; letter-spacing: 1.5px; }
 }
 
 @media (max-width: 380px) {
