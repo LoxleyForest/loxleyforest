@@ -9,7 +9,7 @@
   <meta property="og:description" content="Book your luxury treehouse at Loxley Forest. Direct booking guarantees the best rate. 60 feet in the canopy. 42 acres. North Georgia.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://loxleyforest.com/book">
-  <meta property="og:image" content="https://loxleyforest.com/images/EQ3A0906.jpg">
+  <meta property="og:image" content="https://loxleyforest.com/images/EQ3A0906.webp">
   <meta property="og:image:width" content="1620">
   <meta property="og:image:height" content="1080">
   <meta name="twitter:card" content="summary_large_image">
@@ -31,7 +31,7 @@
     <div class="announcement-bar__track">
       <div class="announcement-bar__message active">CANOPY CLUB FOUNDING MEMBERSHIPS NOW OPEN — LIMITED TO 50 COUPLES</div>
       <div class="announcement-bar__message">TREEHOUSE 2 OPENS JUNE 2026 — RESERVE YOUR DATES</div>
-      <div class="announcement-bar__message">200+ FIVE-STAR REVIEWS · 4.98 RATING · AIRBNB GUEST FAVORITE</div>
+      <div class="announcement-bar__message">200+ FIVE-STAR REVIEWS · 4.98 RATING · ONE OF THE ONLY FULLY SUSPENDED TREEHOUSES ON EARTH</div>
     </div>
     <button class="announcement-bar__close" aria-label="Dismiss announcement">&times;</button>
   </div>
@@ -76,7 +76,7 @@
     <!-- ========== HERO (50vh) ========== -->
     <section class="hero hero--half">
       <div class="hero__media">
-        <picture><source srcset="images/EQ3A0906.webp" type="image/webp"><img src="images/EQ3A0906.jpg" alt="Treehouse glowing at dusk" style="width:100%;height:100%;object-fit:cover;"></picture>
+        <picture><source srcset="images/EQ3A0906.webp" type="image/webp"><img src="images/EQ3A0906.webp" alt="Treehouse glowing at dusk" style="width:100%;height:100%;object-fit:cover;"></picture>
       </div>
       <div class="hero__overlay"></div>
       <div class="hero__content">
@@ -116,7 +116,7 @@
     </section>
 
     <!-- ========== INQUIRY FORM SECTION ========== -->
-    <section class="section section--linen" style="padding-top:0;">
+    <section id="inquiry" class="section section--linen" style="padding-top:0;">
       <div class="container">
         <div class="book-layout">
 
@@ -125,7 +125,9 @@
             <h2 class="headline-section" style="margin-bottom: 12px;">Prefer a Personal Response?</h2>
             <p class="body-text" style="color: var(--stone); margin-bottom: 36px;">Tell us what you're looking for and we'll respond within 2 hours.</p>
 
-            <form class="book-form" action="mailto:stay@loxleyforest.com" method="POST" enctype="text/plain">
+            <form class="book-form" name="booking-inquiry" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/book?submitted=1#inquiry">
+              <input type="hidden" name="form-name" value="booking-inquiry">
+              <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
 
               <div class="form-group">
                 <label class="form-label" for="name">Your Name</label>
@@ -198,6 +200,7 @@
 
               <button type="submit" class="btn btn--primary" style="width: 100%;">Check Availability</button>
             </form>
+            <div id="booking-success" class="elopement-success" hidden><p>We received your inquiry and will respond within 2 hours.</p><p style="margin-top:12px; font-style:italic;">— Mick &amp; Livy</p></div>
           </div>
 
           <!-- RIGHT: Rate Overview + Info -->
@@ -339,6 +342,16 @@
   </footer>
 
   <script src="js/global.js"></script>
+  <script>
+    (function(){
+      if (location.search.indexOf('submitted=1') !== -1) {
+        var form = document.querySelector('form[name="booking-inquiry"]');
+        var success = document.getElementById('booking-success');
+        if (form) form.style.display = 'none';
+        if (success) success.hidden = false;
+      }
+    })();
+  </script>
 
   <!-- ========== HOSTFULLY WIDGETS ========== -->
   <script src="https://platform.hostfully.com/assets/js/orbirental_calendar_widget_v2.js"></script>
