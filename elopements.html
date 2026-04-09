@@ -21,6 +21,7 @@
 
   <link rel="stylesheet" href="css/global.css">
   <link rel="stylesheet" href="css/elopements.css">
+  <link rel="stylesheet" href="css/book.css">
 
   <!-- Schema: EventVenue -->
   <script type="application/ld+json">
@@ -305,20 +306,104 @@
       </div>
     </section>
 
-    <!-- ========== BOTTOM CTA ========== -->
-    <section class="cta-block" id="inquiry">
-      <div class="cta-block__bg">
-        <picture><source srcset="images/EQ3A0907.webp" type="image/webp"><img src="images/EQ3A0907.jpg" alt="Dusk glow treehouse" style="width:100%;height:100%;object-fit:cover;" loading="lazy"></picture>
-      </div>
-      <div class="cta-block__overlay"></div>
-      <div class="cta-block__content">
-        <h2 class="headline-section reveal" style="color: var(--white); margin-bottom: 16px;">Your Marriage Deserves a<br>Beginning This Dramatic</h2>
-        <p class="subheadline reveal" style="color: rgba(255,255,255,0.85); margin-bottom: 40px;">Tell us your date, your vision, and how many people you're bringing. We'll design the rest.</p>
-        <div class="reveal">
-          <a href="mailto:stay@loxleyforest.com?subject=Elopement%20Inquiry" class="btn btn--primary">Start Planning Your Elopement</a>
+    <!-- ========== INQUIRY FORM ========== -->
+    <section class="section section--linen" id="inquiry">
+      <div class="container">
+        <div class="widget-section__head reveal" style="text-align:center;">
+          <p class="eyebrow">Inquire</p>
+          <h2 class="headline-section">Your Marriage Deserves a Beginning This Dramatic</h2>
+          <p class="widget-section__sub">Tell us your date, your vision, and how many people you're bringing. We'll design the rest.</p>
+        </div>
+
+        <div class="elopement-form-wrap reveal">
+          <form class="book-form" name="elopement-inquiry" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/elopements?submitted=1#inquiry">
+            <input type="hidden" name="form-name" value="elopement-inquiry">
+            <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
+
+            <div class="form-group">
+              <label class="form-label" for="el-names">Your Names</label>
+              <input class="form-input" type="text" id="el-names" name="names" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="el-email">Email</label>
+              <input class="form-input" type="email" id="el-email" name="email" required autocomplete="email">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="el-phone">Phone</label>
+              <input class="form-input" type="tel" id="el-phone" name="phone" autocomplete="tel">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="el-date">Preferred Date or Month</label>
+              <input class="form-input" type="text" id="el-date" name="preferred_date" placeholder="e.g. October 2026 or 10/12/2026">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="el-guests">Guest Count</label>
+              <select class="form-input form-select" id="el-guests" name="guest_count">
+                <option value="">Select...</option>
+                <option value="just-us">Just Us</option>
+                <option value="2-6">2&ndash;6 Guests</option>
+                <option value="7-12">7&ndash;12 Guests</option>
+                <option value="13-20">13&ndash;20 Guests</option>
+              </select>
+              <p class="caption" style="margin-top:10px; font-style:italic; color: var(--stone);">Every guest is part of your private celebration &mdash; your closest people, sharing your night in the canopy. Because Loxley Forest is our home and yours during your stay, all ceremony guests are welcomed as part of your booking party.</p>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="el-package">Which Package Interests You?</label>
+              <select class="form-input form-select" id="el-package" name="package">
+                <option value="">Select...</option>
+                <option value="the-vow">The Vow &mdash; Starting at $4,500</option>
+                <option value="the-crossing">The Crossing &mdash; Starting at $7,500</option>
+                <option value="the-elevation">The Elevation &mdash; Starting at $10,500</option>
+                <option value="not-sure">Not Sure Yet &mdash; Help Me Decide</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="el-referral">How Did You Hear About Us?</label>
+              <select class="form-input form-select" id="el-referral" name="referral">
+                <option value="">Select...</option>
+                <option value="instagram">Instagram</option>
+                <option value="pinterest">Pinterest</option>
+                <option value="google">Google</option>
+                <option value="photographer">Photographer Referral</option>
+                <option value="the-knot">The Knot</option>
+                <option value="friend">Friend / Word of Mouth</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="el-vision">Tell Us Your Vision</label>
+              <textarea class="form-input form-textarea" id="el-vision" name="vision" rows="5" placeholder="Your ceremony style, must-haves, the feeling you want — we'll design around it."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn--primary" style="width:100%;">Start Planning</button>
+          </form>
+
+          <p class="elopement-form-contact">Prefer to talk? Call us at <a href="tel:+17065024823">706-502-4823</a> or email <a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a></p>
+
+          <div id="elopement-success" class="elopement-success" hidden>
+            <p>We received your inquiry and will respond within 2 hours. We can't wait to help you plan something unforgettable.</p>
+            <p style="margin-top:12px; font-style:italic;">&mdash; Mick &amp; Livy</p>
+          </div>
         </div>
       </div>
     </section>
+    <script>
+      (function(){
+        if (location.search.indexOf('submitted=1') !== -1) {
+          var form = document.querySelector('form[name="elopement-inquiry"]');
+          var success = document.getElementById('elopement-success');
+          if (form) form.style.display = 'none';
+          if (success) success.hidden = false;
+        }
+      })();
+    </script>
 
     <!-- ========== LEGAL DISCLAIMER ========== -->
     <div class="legal-disclaimer">
@@ -351,6 +436,7 @@
         <p class="footer__heading">Connect</p>
         <a href="https://instagram.com/loxleyforest" class="footer__link" target="_blank" rel="noopener">Instagram</a>
         <a href="mailto:stay@loxleyforest.com" class="footer__link">stay@loxleyforest.com</a>
+        <a href="tel:+17065024823" class="footer__link">706-502-4823</a>
       </div>
       <div class="footer__col">
         <p class="footer__heading">Visit</p>

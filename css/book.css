@@ -299,6 +299,50 @@
   color: var(--stone);
 }
 
+/* --- Elopement inquiry form --- */
+.elopement-form-wrap {
+  max-width: 680px;
+  margin: 0 auto;
+  background: var(--cream);
+  padding: 48px;
+  border-radius: 2px;
+  box-shadow: 0 6px 28px rgba(0,0,0,0.06);
+  border-top: 3px solid var(--gold);
+}
+.elopement-form-contact {
+  text-align: center;
+  margin-top: 28px;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 17px;
+  color: var(--stone);
+}
+.elopement-form-contact a { color: var(--gold); }
+.elopement-success {
+  text-align: center;
+  background: var(--cream);
+  padding: 48px 36px;
+  border-left: 3px solid var(--gold);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 20px;
+  color: var(--bark);
+  line-height: 1.6;
+}
+@media (max-width: 767px) {
+  .elopement-form-wrap { padding: 28px 20px; }
+}
+
+/* --- Conversation card --- */
+.conversation-card {
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+  background: var(--cream);
+  padding: 36px;
+  border-radius: 2px;
+  border-left: 3px solid var(--gold);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+}
+
 /* --- Future Pacing Timeline --- */
 .timeline-section { background: var(--linen, #f6f1e6); }
 .timeline {
