@@ -21,6 +21,7 @@
 
   <link rel="stylesheet" href="css/global.css">
   <link rel="stylesheet" href="css/faq.css">
+  <link rel="stylesheet" href="css/book.css">
 
   <!-- Schema: FAQPage -->
   <script type="application/ld+json">
@@ -135,8 +136,8 @@
   <!-- ========== ANNOUNCEMENT BAR ========== -->
   <div class="announcement-bar">
     <div class="announcement-bar__track">
-      <div class="announcement-bar__message active">CANOPY CLUB FOUNDING MEMBERSHIPS NOW OPEN — LIMITED TO 50 COUPLES</div>
-      <div class="announcement-bar__message">TREEHOUSE 2 OPENS JUNE 2026 — RESERVE YOUR DATES</div>
+      <div class="announcement-bar__message active">CANOPY CLUB FOUNDING MEMBERSHIPS OPEN SUMMER 2026 — LIMITED TO 50 COUPLES</div>
+      <div class="announcement-bar__message">TREEHOUSE 2 OPENING SUMMER 2026 — RESERVE YOUR DATES</div>
       <div class="announcement-bar__message">200+ FIVE-STAR REVIEWS · 4.98 RATING · ONE OF THE ONLY FULLY SUSPENDED TREEHOUSES ON EARTH</div>
     </div>
     <button class="announcement-bar__close" aria-label="Dismiss announcement">&times;</button>
@@ -320,13 +321,43 @@
     </section>
 
     <!-- ========== BOTTOM CTA ========== -->
-    <section class="section section--cream">
+    <section class="section section--cream" id="contact">
       <div class="container--narrow text-center">
         <h2 class="headline-section reveal" style="margin-bottom: 16px;">Still Have Questions?</h2>
         <p class="body-large reveal" style="color: var(--stone); margin-bottom: 36px;">Mick or Livy will answer. Not a chatbot.</p>
-        <div class="btn-group reveal" style="justify-content: center;">
-          <a href="mailto:stay@loxleyforest.com" class="btn btn--secondary">Email Us</a>
+        <div class="btn-group reveal" style="justify-content: center; margin-bottom: 48px;">
           <a href="/book" class="btn btn--primary">Book Your Stay</a>
+        </div>
+
+        <div class="elopement-form-wrap reveal" style="max-width: 520px; margin: 0 auto; text-align: left;">
+          <h3 class="headline-section" style="font-size: 22px; margin-bottom: 8px; text-align: center;">Send Us a Message</h3>
+          <p class="body-text" style="color: var(--stone); margin-bottom: 28px; text-align: center;">We'll get back to you within a few hours.</p>
+          <form class="book-form" name="faq-contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/faq?submitted=1#contact">
+            <input type="hidden" name="form-name" value="faq-contact">
+            <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
+
+            <div class="form-group">
+              <label class="form-label" for="faq-name">Name</label>
+              <input class="form-input" type="text" id="faq-name" name="name" required autocomplete="name">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="faq-email">Email</label>
+              <input class="form-input" type="email" id="faq-email" name="email" required autocomplete="email">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="faq-message">Your Question</label>
+              <textarea class="form-input form-textarea" id="faq-message" name="message" rows="4" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn--primary" style="width:100%;">Send Message</button>
+          </form>
+
+          <div id="faq-success" class="elopement-success" hidden>
+            <p>The forest knows you're coming. We'll be in touch soon.</p>
+            <p style="margin-top:12px; font-style:italic;">&mdash; Mick &amp; Livy</p>
+          </div>
         </div>
       </div>
     </section>
@@ -373,6 +404,16 @@
   </footer>
 
   <script src="js/global.js"></script>
+  <script>
+    (function(){
+      if (location.search.indexOf('submitted=1') !== -1) {
+        var form = document.querySelector('form[name="faq-contact"]');
+        var success = document.getElementById('faq-success');
+        if (form) form.style.display = 'none';
+        if (success) success.hidden = false;
+      }
+    })();
+  </script>
   <script>
     /* Accordion */
     document.querySelectorAll('.accordion__trigger').forEach(trigger => {

@@ -21,6 +21,7 @@
 
   <link rel="stylesheet" href="css/global.css">
   <link rel="stylesheet" href="css/canopy-club.css">
+  <link rel="stylesheet" href="css/book.css">
   <link rel="preload" as="image" type="image/webp" href="images/EQ3A0907.webp">
 </head>
 <body>
@@ -29,8 +30,8 @@
   <!-- ========== ANNOUNCEMENT BAR ========== -->
   <div class="announcement-bar">
     <div class="announcement-bar__track">
-      <div class="announcement-bar__message active">CANOPY CLUB FOUNDING MEMBERSHIPS NOW OPEN — LIMITED TO 50 COUPLES</div>
-      <div class="announcement-bar__message">TREEHOUSE 2 OPENS JUNE 2026 — RESERVE YOUR DATES</div>
+      <div class="announcement-bar__message active">CANOPY CLUB FOUNDING MEMBERSHIPS OPEN SUMMER 2026 — LIMITED TO 50 COUPLES</div>
+      <div class="announcement-bar__message">TREEHOUSE 2 OPENING SUMMER 2026 — RESERVE YOUR DATES</div>
       <div class="announcement-bar__message">200+ FIVE-STAR REVIEWS · 4.98 RATING · ONE OF THE ONLY FULLY SUSPENDED TREEHOUSES ON EARTH</div>
     </div>
     <button class="announcement-bar__close" aria-label="Dismiss announcement">&times;</button>
@@ -74,11 +75,11 @@
       </div>
       <div class="hero__overlay"></div>
       <div class="hero__content">
-        <p class="eyebrow hero__eyebrow reveal">Founding Memberships Now Open</p>
+        <p class="eyebrow hero__eyebrow reveal">Founding Memberships Open Summer 2026</p>
         <h1 class="headline-hero hero__headline reveal">This Forest Has Room for<br>Fifty Couples Who Want<br>to Call It Home</h1>
         <p class="hero__sub reveal">The Canopy Club isn't a loyalty program. It's a key. To priority booking. To nights the public never sees. To a piece of this mountain that belongs to you and the person you love.</p>
         <div class="btn-group hero__buttons reveal">
-          <a href="#membership" class="btn btn--primary">Become a Founding Member</a>
+          <a href="#membership" class="btn btn--primary">Get on the Founding List</a>
         </div>
       </div>
     </section>
@@ -143,7 +144,7 @@
               </div>
             </div>
             <div class="tier__footer">
-              <a href="mailto:stay@loxleyforest.com?subject=Founding%20Membership%20Inquiry" class="btn btn--secondary" style="width: 100%;">Become a Founding Member</a>
+              <a href="#interest-form" class="btn btn--secondary" style="width: 100%;">Get on the Founding List</a>
               <p class="tier__post-price">Standard membership (post-founding): $1,200/year</p>
             </div>
           </div>
@@ -178,7 +179,7 @@
               </div>
             </div>
             <div class="tier__footer">
-              <a href="mailto:stay@loxleyforest.com?subject=Founders%20Reserve%20Inquiry" class="btn btn--primary" style="width: 100%;">Claim Your Spot</a>
+              <a href="#interest-form" class="btn btn--primary" style="width: 100%;">Get on the Founding List</a>
               <p class="tier__post-price">When the 10 are claimed, this tier closes permanently.</p>
             </div>
           </div>
@@ -199,6 +200,46 @@
       </div>
     </section>
 
+    <!-- ========== INTEREST FORM ========== -->
+    <section class="section section--cream" id="interest-form">
+      <div class="container">
+        <div class="widget-section__head reveal" style="text-align:center;">
+          <p class="eyebrow">Join the List</p>
+          <h2 class="headline-section">Founding memberships open Summer 2026.</h2>
+          <p class="widget-section__sub" style="margin-top: 12px;">Drop your name now and be first to know when spots open.</p>
+        </div>
+
+        <div class="elopement-form-wrap reveal" style="max-width: 520px;">
+          <form class="book-form" name="canopy-club-interest" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/canopy-club?submitted=1#interest-form">
+            <input type="hidden" name="form-name" value="canopy-club-interest">
+            <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
+
+            <div class="form-group">
+              <label class="form-label" for="cc-name">Name</label>
+              <input class="form-input" type="text" id="cc-name" name="name" required autocomplete="name">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="cc-email">Email</label>
+              <input class="form-input" type="email" id="cc-email" name="email" required autocomplete="email">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="cc-phone">Phone <span style="font-weight:400; letter-spacing:0; text-transform:none;">(optional)</span></label>
+              <input class="form-input" type="tel" id="cc-phone" name="phone" autocomplete="tel">
+            </div>
+
+            <button type="submit" class="btn btn--primary" style="width:100%;">Join the List</button>
+          </form>
+
+          <div id="canopy-success" class="elopement-success" hidden>
+            <p>The forest knows you're coming. We'll be in touch soon.</p>
+            <p style="margin-top:12px; font-style:italic;">&mdash; Mick &amp; Livy</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ========== BOTTOM CTA ========== -->
     <section class="cta-block">
       <div class="cta-block__bg">
@@ -209,7 +250,7 @@
         <h2 class="headline-section reveal" style="color: var(--white); margin-bottom: 16px;">Fifty Founding Memberships.<br>Fifty Couples. One Forest.</h2>
         <p class="subheadline reveal" style="color: rgba(255,255,255,0.85); margin-bottom: 40px;">When the fifty are claimed, this page becomes a waitlist.</p>
         <div class="reveal">
-          <a href="mailto:stay@loxleyforest.com?subject=Canopy%20Club%20Inquiry" class="btn btn--primary">Become a Founding Member</a>
+          <a href="#interest-form" class="btn btn--primary">Get on the Founding List</a>
         </div>
         <p class="reveal" style="margin-top: 24px; font-family: 'Cormorant Garamond', serif; font-size: 17px; color: rgba(255,255,255,0.6);">Questions? <a href="mailto:stay@loxleyforest.com" style="color: var(--gold);">stay@loxleyforest.com</a></p>
       </div>
@@ -257,5 +298,15 @@
   </footer>
 
   <script src="js/global.js"></script>
+  <script>
+    (function(){
+      if (location.search.indexOf('submitted=1') !== -1) {
+        var form = document.querySelector('form[name="canopy-club-interest"]');
+        var success = document.getElementById('canopy-success');
+        if (form) form.style.display = 'none';
+        if (success) success.hidden = false;
+      }
+    })();
+  </script>
 </body>
 </html>
