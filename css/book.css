@@ -493,6 +493,10 @@
   .timeline__time { font-size: 11px; }
   .timeline__text { font-size: 17px; }
   .hero__book-direct { font-size: 11px; letter-spacing: 1.5px; }
+  .hostfully-calendar-wrap { padding: 20px 16px; overflow: hidden; max-width: 100%; }
+  #leadWidget { max-width: 100%; overflow: hidden; }
+  #widget181795 { max-width: 100%; overflow: hidden; }
+  .conversation-card { padding: 24px 20px; }
 }
 
 @media (max-width: 380px) {

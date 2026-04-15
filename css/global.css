@@ -1188,7 +1188,7 @@ a:focus-visible {
 /* Mobile */
 @media (max-width: 767px) {
   :root {
-    --section-pad: 80px;
+    --section-pad: 64px;
   }
 
   body {
@@ -1259,7 +1259,20 @@ a:focus-visible {
 
   /* Hero */
   .hero {
-    min-height: 100svh;
+    min-height: 80svh;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  *, *::before, *::after {
+    max-width: 100vw;
+  }
+
+  .section, .container, .container--narrow {
+    overflow: hidden;
   }
 
   .hero__content {
