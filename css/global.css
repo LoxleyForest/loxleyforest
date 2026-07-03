@@ -918,6 +918,24 @@ a.announcement-bar__message:hover {
 }
 
 /* ============================================================
+   REVIEW ROTATOR (one card at a time — data in js/reviews.js)
+   ============================================================ */
+.review-rotator {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.review-rotator .testimonial__card {
+  cursor: pointer;
+  min-height: 280px;
+  transition: opacity 0.28s ease, transform 0.4s var(--ease-natural), box-shadow 0.4s var(--ease-natural);
+}
+
+.review-rotator__card--fading {
+  opacity: 0;
+}
+
+/* ============================================================
    SOCIAL PROOF BAR
    ============================================================ */
 .proof-bar {
