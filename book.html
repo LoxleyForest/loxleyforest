@@ -110,7 +110,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <p class="widget-section__sub">Select your dates, see live pricing, and book securely.</p>
         </div>
         <div class="hostfully-booking-wrap reveal">
-          <div id="leadWidget"></div>
+<!-- ========== HOSTFULLY BOOKING WIDGET ========== -->
+<script type="text/javascript" src="https://platform.hostfully.com/assets/js/pikaday.js"></script>
+<script type="text/javascript" src="https://platform.hostfully.com/assets/js/leadCaptureWidget_2.0.js"></script>
+<div id="leadWidget"></div>
+<script>
+var widget = new Widget('leadWidget', '9fe2c6da-b6b4-4a9c-a756-350d014c7140', {"maximun_availability":"2029-07-02T04:40:56.419Z","type":"agency","fields":[],"showAvailability":true,"lang":"US","minStay":true,"price":true,"hidePriceWithoutDates":true,"cc":"stay@loxleyforest.com","emailClient":true,"saveCookie":true,"showDynamicMinStay":true,"backgroundColor":"#FFFFFF","buttonSubmit":{"backgroundColor":"#c4a265"},"showPriceDetailsLink":true,"showGetQuoteLink":false,"labelColor":"#2d4a2d","showTotalWithoutSD":true,"redirectURL":"https://loxleyforest.com/booking-confirmed.html","showDiscount":true,"includeReferrerToRequest":true,"customDomainName":null,"source":null,"aid":"ORB-49587220416635719","clickID":null,"valuesByDefaults":{"checkIn":{"value":""},"checkOut":{"value":""},"guests":{"value":""},"discountCode":{"value":""}},"pathRoot":"https://platform.hostfully.com/"});
+</script>
         </div>
 
         <div class="or-divider reveal"><span>or</span></div>
@@ -287,11 +293,5 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     })();
   </script>
 
-  <!-- ========== HOSTFULLY BOOKING WIDGET ========== -->
-  <script src="https://platform.hostfully.com/assets/js/pikaday.js"></script>
-  <script src="https://platform.hostfully.com/assets/js/leadCaptureWidget_2.0.js"></script>
-  <script>
-    var widget = new Widget('leadWidget','9fe2c6da-b6b4-4a9c-a756-350d014c7140', {"maximun_availability":"2029-04-08T02:37:20.637Z","type":"agency","fields":[],"showAvailability":true,"lang":"US","minStay":true,"price":true,"hidePriceWithoutDates":false,"cc":false,"emailClient":true,"saveCookie":true,"showDynamicMinStay":true,"backgroundColor":"#FFFFFF","buttonSubmit":{"backgroundColor":"#c4a265"},"showPriceDetailsLink":false,"showGetQuoteLink":false,"labelColor":"#2d4a2d","showTotalWithoutSD":true,"redirectURL":false,"showDiscount":true,"includeReferrerToRequest":true,"customDomainName":null,"source":null,"aid":"ORB-49587220416635719","clickID":null,"valuesByDefaults":{"checkIn":{"value":""},"checkOut":{"value":""},"guests":{"value":""},"discountCode":{"value":""}},"pathRoot":"https://platform.hostfully.com/"});
-  </script>
 </body>
 </html>
