@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (messages.length > 1) {
-    msgInterval = setInterval(rotateMessages, 5000);
+    msgInterval = setInterval(rotateMessages, 6000);
   }
 
   if (closeBtn && announcementBar) {
@@ -267,13 +267,20 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       transitionOverlay.classList.remove('page-transition--hidden');
       // Resolve href: /treehouses -> treehouses.html for local dev, or keep as-is for production
+      // (split off any #anchor first so it survives the rewrite)
       let dest = href;
+      let hash = '';
+      const hashIndex = dest.indexOf('#');
+      if (hashIndex !== -1) {
+        hash = dest.slice(hashIndex);
+        dest = dest.slice(0, hashIndex);
+      }
       if (dest.startsWith('/') && !dest.includes('.')) {
         dest = dest.slice(1) + '.html';
       }
-      if (dest === '.html') dest = 'index.html';
+      if (dest === '.html' || dest === '') dest = 'index.html';
       setTimeout(() => {
-        window.location.href = dest;
+        window.location.href = dest + hash;
       }, 400);
     });
   });

@@ -394,10 +394,27 @@ button {
   opacity: 0;
   transition: opacity 0.5s ease;
   padding: 0 50px;
+  /* Whole line is a quiet tap target — no button styling */
+  text-decoration: none;
+  pointer-events: none;
 }
 
 .announcement-bar__message.active {
   opacity: 1;
+  pointer-events: auto;
+}
+
+a.announcement-bar__message:hover {
+  color: var(--gold-light);
+}
+
+@media (max-width: 600px) {
+  .announcement-bar__message {
+    font-size: 10px;
+    letter-spacing: 0.8px;
+    line-height: 1.35;
+    padding: 0 38px;
+  }
 }
 
 .announcement-bar__close {
