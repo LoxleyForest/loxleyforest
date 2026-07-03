@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (messages.length > 1) {
-    msgInterval = setInterval(rotateMessages, 5000);
+    msgInterval = setInterval(rotateMessages, 6000);
   }
 
   if (closeBtn && announcementBar) {
@@ -251,6 +251,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  /* --- Sticky Mobile Booking Bar --- */
+  /* Phone-only quiet CTA on every guest page except book + booking-confirmed.
+     Styled in global.css (.mobile-book-bar); appears after the first viewport. */
+  (function () {
+    const page = (location.pathname.split('/').pop() || 'index').replace('.html', '');
+    if (page === 'book' || page === 'booking-confirmed') return;
+
+    const bookBar = document.createElement('a');
+    bookBar.className = 'mobile-book-bar';
+    bookBar.href = '/book';
+    bookBar.textContent = 'CHECK AVAILABILITY';
+    document.body.appendChild(bookBar);
+    document.body.classList.add('has-book-bar');
+
+    function toggleBookBar() {
+      bookBar.classList.toggle('mobile-book-bar--visible', window.scrollY > window.innerHeight);
+    }
+    window.addEventListener('scroll', toggleBookBar, { passive: true });
+    toggleBookBar();
+  })();
+
   /* --- Page Transitions --- */
   const transitionOverlay = document.createElement('div');
   transitionOverlay.className = 'page-transition page-transition--hidden';
@@ -267,13 +288,20 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       transitionOverlay.classList.remove('page-transition--hidden');
       // Resolve href: /treehouses -> treehouses.html for local dev, or keep as-is for production
+      // (split off any #anchor first so it survives the rewrite)
       let dest = href;
+      let hash = '';
+      const hashIndex = dest.indexOf('#');
+      if (hashIndex !== -1) {
+        hash = dest.slice(hashIndex);
+        dest = dest.slice(0, hashIndex);
+      }
       if (dest.startsWith('/') && !dest.includes('.')) {
         dest = dest.slice(1) + '.html';
       }
-      if (dest === '.html') dest = 'index.html';
+      if (dest === '.html' || dest === '') dest = 'index.html';
       setTimeout(() => {
-        window.location.href = dest;
+        window.location.href = dest + hash;
       }, 400);
     });
   });

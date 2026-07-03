@@ -40,7 +40,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- ========== ANNOUNCEMENT BAR ========== -->
   <div class="announcement-bar">
     <div class="announcement-bar__track">
-      <div class="announcement-bar__message active">200+ FIVE-STAR REVIEWS · 4.98 RATING · ONE OF THE ONLY FULLY SUSPENDED TREEHOUSES ON EARTH</div>
+      <a href="/canopy-club" class="announcement-bar__message active">THE CANOPY CLUB — FOUNDING LIST OPEN · LIMITED TO 50 COUPLES</a>
+      <a href="/treehouses#treehouse-2" class="announcement-bar__message">TREEHOUSE 2 — COMING SOON · FIRST NIGHTS GO TO THE LIST</a>
+      <a href="/treehouses" class="announcement-bar__message">A HANDFUL OF FULLY SUSPENDED TREEHOUSES EXIST ON EARTH — THIS FOREST GROWS THEM</a>
     </div>
     <button class="announcement-bar__close" aria-label="Dismiss announcement">&times;</button>
   </div>
@@ -85,6 +87,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="hero__content">
         <h1 class="headline-hero hero__headline reveal">Book Your Stay</h1>
         <p class="hero__sub reveal">Book direct. No platform fees, no middleman. Just you, the forest, and the family who built it.</p>      </div>
+    </section>
+
+    <!-- ========== GUEST STORIES ========== -->
+    <section class="section section--parchment" style="padding-top: 56px; padding-bottom: 56px;">
+      <div class="container review-rotator" data-review-rotator>
+        <div class="testimonial__card review-rotator__card">
+          <div class="testimonial__stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p class="testimonial__quote">"The only sounds you hear are the birds chirping and the gentle rushing of water below. It feels very private and secluded. The perfect adventure to feel like you are camping in the woods, but with a bed and bathroom."</p>
+          <p class="testimonial__author">Kellie · Marietta, GA</p>
+        </div>
+      </div>
     </section>
 
     <!-- ========== BOOKING WIDGET SECTION ========== -->
@@ -148,7 +161,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <select class="form-input form-select" id="treehouse" name="treehouse">
                   <option value="">Select...</option>
                   <option value="treehouse-1">Treehouse 1</option>
-                  <option value="treehouse-2">Treehouse 2 (Summer 2026)</option>
+                  <option value="treehouse-2">Treehouse 2 (Coming Soon)</option>
                   <option value="no-preference">No Preference</option>
                 </select>
               </div>
@@ -157,7 +170,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <label class="form-label" for="occasion">What brings you to Loxley?</label>
                 <select class="form-input form-select" id="occasion" name="occasion">
                   <option value="">Select...</option>
-                  <option value="getaway">Getaway</option>
+                  <option value="getaway">Time Away</option>
                   <option value="anniversary">Anniversary</option>
                   <option value="birthday">Birthday</option>
                   <option value="elopement">Elopement</option>
@@ -262,6 +275,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </footer>
 
   <script src="js/global.js"></script>
+  <script src="js/reviews.js" defer></script>
   <script>
     (function(){
       if (location.search.indexOf('submitted=1') !== -1) {

@@ -394,10 +394,27 @@ button {
   opacity: 0;
   transition: opacity 0.5s ease;
   padding: 0 50px;
+  /* Whole line is a quiet tap target — no button styling */
+  text-decoration: none;
+  pointer-events: none;
 }
 
 .announcement-bar__message.active {
   opacity: 1;
+  pointer-events: auto;
+}
+
+a.announcement-bar__message:hover {
+  color: var(--gold-light);
+}
+
+@media (max-width: 600px) {
+  .announcement-bar__message {
+    font-size: 10px;
+    letter-spacing: 0.8px;
+    line-height: 1.35;
+    padding: 0 38px;
+  }
 }
 
 .announcement-bar__close {
@@ -898,6 +915,65 @@ button {
 .testimonials__dot.active {
   background-color: var(--gold);
   transform: scale(1.3);
+}
+
+/* ============================================================
+   STICKY MOBILE BOOKING BAR (phone only; injected by global.js
+   on every guest page except book + booking-confirmed)
+   ============================================================ */
+.mobile-book-bar {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mobile-book-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 999;
+    height: calc(52px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background-color: var(--forest);
+    color: var(--linen);
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-decoration: none;
+    transform: translateY(100%);
+    transition: transform 0.4s var(--ease-natural);
+  }
+
+  .mobile-book-bar--visible {
+    transform: translateY(0);
+  }
+
+  /* Reserve room at the page end so the bar never covers tappable content */
+  body.has-book-bar {
+    padding-bottom: calc(52px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* ============================================================
+   REVIEW ROTATOR (one card at a time — data in js/reviews.js)
+   ============================================================ */
+.review-rotator {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.review-rotator .testimonial__card {
+  cursor: pointer;
+  min-height: 280px;
+  transition: opacity 0.28s ease, transform 0.4s var(--ease-natural), box-shadow 0.4s var(--ease-natural);
+}
+
+.review-rotator__card--fading {
+  opacity: 0;
 }
 
 /* ============================================================
