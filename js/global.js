@@ -251,6 +251,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  /* --- Sticky Mobile Booking Bar --- */
+  /* Phone-only quiet CTA on every guest page except book + booking-confirmed.
+     Styled in global.css (.mobile-book-bar); appears after the first viewport. */
+  (function () {
+    const page = (location.pathname.split('/').pop() || 'index').replace('.html', '');
+    if (page === 'book' || page === 'booking-confirmed') return;
+
+    const bookBar = document.createElement('a');
+    bookBar.className = 'mobile-book-bar';
+    bookBar.href = '/book';
+    bookBar.textContent = 'CHECK AVAILABILITY';
+    document.body.appendChild(bookBar);
+    document.body.classList.add('has-book-bar');
+
+    function toggleBookBar() {
+      bookBar.classList.toggle('mobile-book-bar--visible', window.scrollY > window.innerHeight);
+    }
+    window.addEventListener('scroll', toggleBookBar, { passive: true });
+    toggleBookBar();
+  })();
+
   /* --- Page Transitions --- */
   const transitionOverlay = document.createElement('div');
   transitionOverlay.className = 'page-transition page-transition--hidden';

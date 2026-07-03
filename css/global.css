@@ -918,6 +918,47 @@ a.announcement-bar__message:hover {
 }
 
 /* ============================================================
+   STICKY MOBILE BOOKING BAR (phone only; injected by global.js
+   on every guest page except book + booking-confirmed)
+   ============================================================ */
+.mobile-book-bar {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mobile-book-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 999;
+    height: calc(52px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background-color: var(--forest);
+    color: var(--linen);
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-decoration: none;
+    transform: translateY(100%);
+    transition: transform 0.4s var(--ease-natural);
+  }
+
+  .mobile-book-bar--visible {
+    transform: translateY(0);
+  }
+
+  /* Reserve room at the page end so the bar never covers tappable content */
+  body.has-book-bar {
+    padding-bottom: calc(52px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* ============================================================
    REVIEW ROTATOR (one card at a time — data in js/reviews.js)
    ============================================================ */
 .review-rotator {
