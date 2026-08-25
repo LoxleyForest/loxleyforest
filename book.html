@@ -115,7 +115,23 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <script type="text/javascript" src="https://platform.hostfully.com/assets/js/leadCaptureWidget_2.0.js"></script>
 <div id="leadWidget"></div>
 <script>
-var widget = new Widget('leadWidget', '9fe2c6da-b6b4-4a9c-a756-350d014c7140', {"maximun_availability":"2029-07-02T04:40:56.419Z","type":"agency","fields":[],"showAvailability":true,"lang":"US","minStay":true,"price":true,"hidePriceWithoutDates":true,"cc":"stay@loxleyforest.com","emailClient":true,"saveCookie":true,"showDynamicMinStay":true,"backgroundColor":"#FFFFFF","buttonSubmit":{"backgroundColor":"#c4a265"},"showPriceDetailsLink":true,"showGetQuoteLink":false,"labelColor":"#2d4a2d","showTotalWithoutSD":true,"redirectURL":"https://loxleyforest.com/booking-confirmed.html","showDiscount":true,"includeReferrerToRequest":true,"customDomainName":null,"source":null,"aid":"ORB-49587220416635719","clickID":null,"valuesByDefaults":{"checkIn":{"value":""},"checkOut":{"value":""},"guests":{"value":""},"discountCode":{"value":""}},"pathRoot":"https://platform.hostfully.com/"});
+/* Ad click ID for the Hostfully widget.
+   Read here inline because global.js loads at the end of <body>, long after
+   this widget is constructed. URL first (this visit), then the stored value
+   (an earlier landing page on this site). See js/global.js for the store. */
+window.__loxClickId = (function () {
+  try {
+    var p = new URLSearchParams(window.location.search);
+    var direct = p.get('gclid') || p.get('gbraid') || p.get('wbraid');
+    if (direct) return direct;
+    var saved = JSON.parse(window.localStorage.getItem('loxley_attribution') || 'null');
+    if (saved) return saved.gclid || saved.gbraid || saved.wbraid || null;
+  } catch (e) {}
+  return null;
+})();
+</script>
+<script>
+var widget = new Widget('leadWidget', '9fe2c6da-b6b4-4a9c-a756-350d014c7140', {"maximun_availability":"2029-07-02T04:40:56.419Z","type":"agency","fields":[],"showAvailability":true,"lang":"US","minStay":true,"price":true,"hidePriceWithoutDates":true,"cc":"stay@loxleyforest.com","emailClient":true,"saveCookie":true,"showDynamicMinStay":true,"backgroundColor":"#FFFFFF","buttonSubmit":{"backgroundColor":"#c4a265"},"showPriceDetailsLink":true,"showGetQuoteLink":false,"labelColor":"#2d4a2d","showTotalWithoutSD":true,"redirectURL":"https://loxleyforest.com/booking-confirmed.html","showDiscount":true,"includeReferrerToRequest":true,"customDomainName":null,"source":null,"aid":"ORB-49587220416635719","clickID":window.__loxClickId,"valuesByDefaults":{"checkIn":{"value":""},"checkOut":{"value":""},"guests":{"value":""},"discountCode":{"value":""}},"pathRoot":"https://platform.hostfully.com/"});
 </script>
         </div>
 
@@ -134,6 +150,18 @@ var widget = new Widget('leadWidget', '9fe2c6da-b6b4-4a9c-a756-350d014c7140', {"
 
             <form class="book-form" name="booking-inquiry" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" action="/success.html">
               <input type="hidden" name="form-name" value="booking-inquiry">
+
+              <!-- Ad attribution. Filled by the script below the form; empty
+                   for visitors who arrived without an ad click, which is fine
+                   and expected. Carries the click through to the inquiry so a
+                   booking can be reported back to Google with real revenue. -->
+              <input type="hidden" name="gclid" id="attr-gclid">
+              <input type="hidden" name="fbclid" id="attr-fbclid">
+              <input type="hidden" name="utm_source" id="attr-utm_source">
+              <input type="hidden" name="utm_medium" id="attr-utm_medium">
+              <input type="hidden" name="utm_campaign" id="attr-utm_campaign">
+              <input type="hidden" name="landing_page" id="attr-landing">
+              <input type="hidden" name="referrer" id="attr-referrer">
               <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
 
               <div class="form-group">
@@ -207,6 +235,32 @@ var widget = new Widget('leadWidget', '9fe2c6da-b6b4-4a9c-a756-350d014c7140', {"
 
               <button type="submit" class="btn btn--primary" style="width: 100%;">Check Availability</button>
             </form>
+
+            <script>
+            /* Fill the attribution fields from the URL or the stored click. */
+            (function () {
+              function put(id, value) {
+                var el = document.getElementById(id);
+                if (el && value) el.value = value;
+              }
+              var saved = {};
+              try {
+                saved = JSON.parse(window.localStorage.getItem('loxley_attribution') || '{}') || {};
+              } catch (e) {}
+              var p;
+              try { p = new URLSearchParams(window.location.search); } catch (e) { p = null; }
+              function pick(name) {
+                return (p && p.get(name)) || saved[name] || '';
+              }
+              put('attr-gclid', pick('gclid') || pick('gbraid') || pick('wbraid'));
+              put('attr-fbclid', pick('fbclid'));
+              put('attr-utm_source', pick('utm_source'));
+              put('attr-utm_medium', pick('utm_medium'));
+              put('attr-utm_campaign', pick('utm_campaign'));
+              put('attr-landing', saved.landing || window.location.pathname);
+              put('attr-referrer', saved.referrer || document.referrer || '');
+            })();
+            </script>
             <div id="booking-success" class="elopement-success" hidden><p>The forest knows you're coming. We'll be in touch soon.</p><p style="margin-top:12px; font-style:italic;">&mdash; Mick &amp; Livy</p></div>
           </div>
 

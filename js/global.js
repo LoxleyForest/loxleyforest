@@ -1,4 +1,72 @@
 /* ============================================================
+   LOXLEY FOREST — AD ATTRIBUTION CAPTURE
+   ------------------------------------------------------------
+   Keeps the ad click ID with the visitor so a booking can later
+   be reported back to Google as an offline conversion carrying
+   real dollars. Without this, a booking cannot be traced to the
+   click that paid for it.
+
+   Runs on every page (global.js is included site-wide), so a
+   visitor who lands on "/" and wanders to "/book" still arrives
+   carrying whatever brought them.
+
+   90 days to match the conversion window set on both Google Ads
+   conversion actions. Stored first-party, in this site's own
+   localStorage. Nothing is sent anywhere by this file.
+   ============================================================ */
+(function () {
+  var KEY = 'loxley_attribution';
+  var MAX_AGE_MS = 90 * 24 * 60 * 60 * 1000;
+  var FIELDS = ['gclid', 'gbraid', 'wbraid', 'fbclid', 'msclkid',
+                'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+
+  function read() {
+    try {
+      var raw = window.localStorage.getItem(KEY);
+      if (!raw) return null;
+      var saved = JSON.parse(raw);
+      if (!saved || !saved.t) return null;
+      if (Date.now() - saved.t > MAX_AGE_MS) {
+        window.localStorage.removeItem(KEY);
+        return null;
+      }
+      return saved;
+    } catch (e) { return null; }
+  }
+
+  function capture() {
+    var params;
+    try { params = new URLSearchParams(window.location.search); } catch (e) { return read(); }
+
+    var fresh = {};
+    var found = false;
+    FIELDS.forEach(function (f) {
+      var v = params.get(f);
+      if (v) { fresh[f] = v; found = true; }
+    });
+    if (!found) return read();
+
+    // A new click overwrites an older one: last touch is what Google
+    // will attribute the conversion to, so it is what we must store.
+    fresh.t = Date.now();
+    fresh.landing = window.location.pathname;
+    if (document.referrer) fresh.referrer = document.referrer;
+    try { window.localStorage.setItem(KEY, JSON.stringify(fresh)); } catch (e) {}
+    return fresh;
+  }
+
+  var current = capture() || {};
+
+  window.loxleyAttribution = {
+    all: function () { return current; },
+    get: function (field) { return current[field] || ''; },
+    clickId: function () {
+      return current.gclid || current.gbraid || current.wbraid || '';
+    }
+  };
+})();
+
+/* ============================================================
    LOXLEY FOREST — GLOBAL JAVASCRIPT
    ============================================================ */
 
