@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="only light">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>Always Tea-Time · Loxley Forest</title>
+<meta property="og:title" content="Always Tea-Time">
+<meta property="og:site_name" content="Loxley Forest">
+<meta property="og:type" content="website">
+<link rel="icon" href="/favicon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..700&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F7F2E7;
+    --paper-2:#FCF9F2;
+    --board:#E3DBC8;
+    --ink:#1C1815;
+    --ink-soft:#5A5048;
+    --ink-faint:#8A7F73;
+    --wine:#6B2B3C;
+    --gold:#A8873F;
+    --sage:#6E7A5E;
+    --tea:#8C5A2B;
+    --hair:rgba(28,24,21,.13);
+    --display:"Bodoni Moda","Didot","Bodoni MT",Georgia,serif;
+    --body:"Cormorant Garamond",Garamond,Georgia,serif;
+    --util:"Inter",system-ui,-apple-system,sans-serif;
+  }
+
+  *{box-sizing:border-box}
+  html{color-scheme:only light;-webkit-text-size-adjust:100%}
+  body{
+    background:var(--board);
+    color:var(--ink);
+    font-family:var(--body);
+    font-size:17px;line-height:1.52;
+    -webkit-font-smoothing:antialiased;
+    padding:0 14px 72px;
+  }
+
+
+  /* ---- the sheet ---- */
+  .sheet{
+    max-width:780px;margin:0 auto;position:relative;
+    background:var(--paper);
+    box-shadow:0 26px 70px -34px rgba(40,28,18,.55);
+  }
+  /* paper grain: two fine gradients, no images */
+  .sheet::after{
+    content:"";position:absolute;inset:0;pointer-events:none;z-index:3;
+    background-image:
+      repeating-linear-gradient(94deg,rgba(120,100,70,.035) 0 1px,transparent 1px 3px),
+      repeating-linear-gradient(6deg,rgba(120,100,70,.028) 0 1px,transparent 1px 4px);
+  }
+
+  /* ---- harlequin: drawn, not tiled. gradients gave blocks, not diamonds. ---- */
+  .harlequin{display:block;width:100%;height:30px;position:relative;z-index:2}
+  .harlequin.foot{height:22px}
+
+  .inner{padding:clamp(30px,6vw,58px);position:relative;z-index:2}
+
+  /* ---- tea rings. anchored to the block they sit on, never to a page
+         offset, so they land in the same place on screen and on paper. ---- */
+  .ring{
+    position:absolute;z-index:1;pointer-events:none;
+    width:190px;height:190px;border-radius:50%;
+    background:
+      radial-gradient(circle,transparent 60%,rgba(140,90,43,.16) 61%,rgba(140,90,43,.2) 66%,rgba(140,90,43,.05) 69%,transparent 71%);
+  }
+  .letter{position:relative}
+  .letter .ring{top:-46px;right:-58px;transform:rotate(-8deg)}
+  .tier.middle{position:relative}
+  .tier.middle .ring{width:124px;height:124px;bottom:-30px;left:-44px;transform:rotate(14deg);opacity:.82}
+  .closing{position:relative}
+  .closing .ring{width:104px;height:104px;top:-18px;right:-40px;transform:rotate(22deg);opacity:.7}
+
+  /* ---- masthead ---- */
+  .mark{
+    font-family:var(--util);font-size:9px;font-weight:600;
+    letter-spacing:.36em;text-transform:uppercase;color:var(--ink-faint);
+    text-align:center;margin:0 0 30px;
+  }
+  .title{text-align:center;margin-bottom:12px}
+  .title h1{
+    font-family:var(--display);font-weight:500;
+    font-size:clamp(40px,9vw,68px);line-height:.96;letter-spacing:-.015em;
+    margin:0;text-wrap:balance;
+  }
+  .title h1 em{font-style:italic;color:var(--wine)}
+  .kicker{
+    font-family:var(--util);font-size:9.5px;font-weight:500;
+    letter-spacing:.26em;text-transform:uppercase;color:var(--ink-faint);
+    margin:16px 0 0;
+  }
+
+  /* ---- three clocks, none agreeing ---- */
+  .clocks{
+    display:flex;justify-content:center;align-items:flex-end;gap:26px;
+    margin:26px 0 34px;
+  }
+  .clocks svg{display:block;overflow:visible}
+  .clocks .c1{transform:rotate(-7deg)}
+  .clocks .c3{transform:rotate(5deg) translateY(2px)}
+  .clocks figcaption{
+    font-family:var(--util);font-size:8px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--ink-faint);text-align:center;margin-top:7px;
+  }
+  .clocks figure{margin:0}
+
+  /* ---- letter ---- */
+  .letter{font-size:clamp(17px,2.2vw,19.5px);line-height:1.6}
+  .letter p{margin:0 0 14px}
+  .letter .lead{
+    font-size:clamp(20px,2.8vw,25px);font-style:italic;color:var(--wine);
+    line-height:1.36;margin-bottom:22px;text-wrap:balance;
+  }
+  .letter .drop::first-letter{
+    font-family:var(--display);font-style:italic;font-weight:500;
+    font-size:3.5em;line-height:.78;float:left;
+    margin:.06em .1em 0 0;color:var(--wine);
+  }
+
+  .divider{display:flex;align-items:center;justify-content:center;gap:13px;margin:38px 0 30px}
+  .divider .l{height:1px;flex:1;background:var(--hair)}
+  .divider .dot{width:5px;height:5px;transform:rotate(45deg);background:var(--gold)}
+
+  /* ---- tiers as cards in a fanned hand ---- */
+  .tiers{display:flex;flex-direction:column;gap:24px}
+  .tier{
+    border:1px solid var(--hair);background:var(--paper-2);
+    padding:clamp(24px,4.6vw,36px);position:relative;
+  }
+  .tier.a{transform:rotate(-.32deg)}
+  .tier.c{transform:rotate(.28deg)}
+
+  .index{
+    position:absolute;top:13px;left:14px;
+    font-family:var(--display);font-size:15px;line-height:1;
+    color:var(--ink-faint);text-align:center;
+  }
+  .index .pip{display:block;font-size:13px;margin-top:2px}
+  .index.red{color:var(--wine)}
+
+  .tier h2{
+    font-family:var(--display);font-weight:500;font-style:italic;
+    font-size:clamp(29px,5.6vw,40px);line-height:1.02;margin:0 0 4px;
+    text-wrap:balance;
+  }
+  .tier .price{
+    font-family:var(--display);font-weight:600;font-size:clamp(21px,3.4vw,26px);
+    color:var(--wine);margin:0 0 16px;font-variant-numeric:tabular-nums;
+  }
+  .tier .feel{
+    font-style:italic;color:var(--sage);font-size:clamp(16px,2.1vw,18.5px);
+    line-height:1.45;padding-left:15px;border-left:2px solid var(--gold);
+    margin:0 0 20px;
+  }
+  .tier p{margin:0 0 13px}
+  .tier p:last-child{margin-bottom:0}
+  .tier .carry{
+    font-family:var(--util);font-size:10px;font-weight:500;
+    letter-spacing:.15em;text-transform:uppercase;color:var(--ink-faint);
+    margin:0 0 14px;
+  }
+  .tier strong{font-weight:600}
+
+  .tier .ornament{
+    position:absolute;top:clamp(22px,4.6vw,34px);right:clamp(20px,4.4vw,32px);
+    opacity:.5;
+  }
+  .tier .ornament svg{display:block}
+
+  .tier.middle{border-color:var(--gold);border-width:1.5px;background:#FDFBF5}
+  .tier.middle::before{
+    content:"Our lean";position:absolute;top:-9px;right:clamp(20px,4.5vw,32px);
+    background:var(--gold);color:#FFF8E8;
+    font-family:var(--util);font-size:8.5px;font-weight:600;
+    letter-spacing:.2em;text-transform:uppercase;padding:4px 12px;
+  }
+
+  /* ---- the one refusal ---- */
+  .aside{
+    border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);
+    padding:24px 0;margin:34px 0 30px;
+    display:flex;gap:18px;align-items:flex-start;
+  }
+  .aside svg{flex:none;margin-top:3px;opacity:.62}
+  .aside h3{
+    font-family:var(--util);font-size:9.5px;font-weight:600;
+    letter-spacing:.24em;text-transform:uppercase;color:var(--ink-faint);
+    margin:0 0 10px;
+  }
+  .aside p{font-size:16.5px;line-height:1.52;margin:0}
+
+  /* ---- closing ---- */
+  .closing{font-size:clamp(17px,2.2vw,19.5px);line-height:1.6}
+  .closing p{margin:0 0 14px}
+  .hush{
+    font-style:italic;color:var(--wine);
+    border-left:2px solid var(--wine);padding-left:15px;
+  }
+  .sign{
+    font-family:var(--display);font-style:italic;font-size:22px;
+    margin:26px 0 0;line-height:1.3;
+  }
+  .sign .who{display:block}
+  .sign .plate{
+    display:block;font-family:var(--util);font-style:normal;
+    font-size:9px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--ink-faint);margin-top:9px;
+  }
+
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+  /* ---- the print path. this is the one that has to survive. ---- */
+  @page{size:letter;margin:0}
+  @media print{
+    *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+    /* Cream to the paper edge on every page, so no sheet ever stops short
+       and leaves a white shelf under it. */
+    html,body{background:var(--paper)}
+    body{padding:0;font-size:12.4pt;line-height:1.46}
+    .sheet{max-width:none;box-shadow:none;background:var(--paper)}
+    .sheet::after{position:fixed;z-index:0}   /* grain across every page */
+    .ring{display:block}                       /* the rings stay */
+    .inner{padding:30pt 34pt 34pt}
+    .title h1{font-size:40pt}
+    .tier{break-inside:avoid;page-break-inside:avoid;transform:none}
+    .tier h2{font-size:22pt}
+    .tier .price{font-size:15pt}
+    .aside,.closing{break-inside:avoid;page-break-inside:avoid}
+    .clocks{margin:26pt 0 30pt}
+    .letter,.closing{font-size:12.4pt}
+    .letter .lead{font-size:16.5pt;margin-bottom:24pt}
+    .letter p{margin-bottom:16pt}
+    /* Page one is the letter and nothing else. break-inside:avoid was going
+       to orphan tier one either way, so the white space is composed rather
+       than left over. The page turn is the divider. */
+    .letter{break-after:page;page-break-after:always}
+    .divider{display:none}
+    .title{margin-top:10pt}
+    .mark{margin-bottom:40pt}
+    .tiers{gap:20pt}
+    /* The closing was spilling onto a page as an offcut. Given the whole
+       sheet is cream now, give it the page on purpose. */
+    .aside{break-before:page;page-break-before:always;margin-top:8pt}
+    .closing{margin-top:34pt}
+    .sign{margin-top:40pt}
+  }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+
+  <svg class="harlequin" height="30" aria-hidden="true">
+    <defs>
+      <pattern id="harl" width="30" height="30" patternUnits="userSpaceOnUse">
+        <rect width="30" height="30" fill="#F7F2E7"/>
+        <path d="M15 0 30 15 15 30 0 15Z" fill="#6B2B3C"/>
+        <path d="M0 0 15 15 0 30Z" fill="#A8873F"/>
+        <path d="M30 0 30 30 15 15Z" fill="#A8873F"/>
+      </pattern>
+    </defs>
+    <rect width="100%" height="30" fill="url(#harl)"/>
+  </svg>
+
+  <div class="inner">
+
+    <p class="mark">Loxley Forest · Dahlonega, Georgia</p>
+
+    <div class="title">
+      <h1>Always <em>Tea-Time</em></h1>
+      <p class="kicker">Three ways to stop the clocks · Saturday the 3rd, four o'clock</p>
+    </div>
+
+    <div class="clocks">
+      <figure>
+        <svg class="c1" width="46" height="46" viewBox="0 0 46 46" aria-hidden="true">
+          <circle cx="23" cy="23" r="19.5" fill="none" stroke="#6B2B3C" stroke-width="1.3"/>
+          <circle cx="23" cy="23" r="16" fill="none" stroke="#A8873F" stroke-width=".6"/>
+          <line x1="23" y1="23" x2="23" y2="11" stroke="#1C1815" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="23" y1="23" x2="31" y2="27" stroke="#1C1815" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="23" cy="23" r="1.5" fill="#6B2B3C"/>
+          <circle cx="23" cy="3.5" r="1.7" fill="none" stroke="#6B2B3C" stroke-width="1.1"/>
+        </svg>
+        <figcaption>Twelve past</figcaption>
+      </figure>
+      <figure>
+        <svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true">
+          <circle cx="28" cy="28" r="24" fill="none" stroke="#6B2B3C" stroke-width="1.4"/>
+          <circle cx="28" cy="28" r="20" fill="none" stroke="#A8873F" stroke-width=".6"/>
+          <line x1="28" y1="28" x2="28" y2="14" stroke="#1C1815" stroke-width="1.7" stroke-linecap="round"/>
+          <line x1="28" y1="28" x2="39" y2="28" stroke="#1C1815" stroke-width="1.7" stroke-linecap="round"/>
+          <circle cx="28" cy="28" r="1.8" fill="#6B2B3C"/>
+          <circle cx="28" cy="2.6" r="2" fill="none" stroke="#6B2B3C" stroke-width="1.2"/>
+        </svg>
+        <figcaption>Four exactly</figcaption>
+      </figure>
+      <figure>
+        <svg class="c3" width="42" height="42" viewBox="0 0 42 42" aria-hidden="true">
+          <circle cx="21" cy="21" r="17.5" fill="none" stroke="#6B2B3C" stroke-width="1.2"/>
+          <circle cx="21" cy="21" r="14.4" fill="none" stroke="#A8873F" stroke-width=".55"/>
+          <line x1="21" y1="21" x2="14" y2="14" stroke="#1C1815" stroke-width="1.4" stroke-linecap="round"/>
+          <line x1="21" y1="21" x2="21" y2="32" stroke="#1C1815" stroke-width="1.4" stroke-linecap="round"/>
+          <circle cx="21" cy="21" r="1.4" fill="#6B2B3C"/>
+          <circle cx="21" cy="2.8" r="1.6" fill="none" stroke="#6B2B3C" stroke-width="1"/>
+        </svg>
+        <figcaption>Half six</figcaption>
+      </figure>
+    </div>
+
+    <div class="letter">
+      <span class="ring"></span>
+      <p class="lead">
+        Four women who met at eighteen, all turning fifty in the same season, together in a treehouse
+        in the woods.
+      </p>
+      <p class="drop">
+        Monica, we could not have invented a better reason to set a table. You asked for an afternoon
+        where the clocks have stopped and nobody is late, and it turns out that is a thing we very much
+        want to do.
+      </p>
+      <p>
+        Here is how we would do it, three ways. Everything happens on the lower deck, sixty feet up,
+        with the holler falling away below you and the creek running somewhere under all that green.
+      </p>
+      <p>
+        Four o'clock, because that is the hour a hungry duchess settled on in 1840 and nobody has
+        improved on it since. Nobody will bring it out to you and nobody will hover. It will simply be
+        waiting when you come down the trail, and the afternoon belongs entirely to the four of you.
+      </p>
+    </div>
+
+    <div class="divider"><span class="l"></span><span class="dot"></span><span class="l"></span></div>
+
+    <div class="tiers">
+
+      <div class="tier a">
+        <p class="index">A<span class="pip">&#9824;</span></p>
+        <span class="ornament">
+          <svg width="40" height="34" viewBox="0 0 40 34" aria-hidden="true">
+            <path d="M6 10h21v9a10.5 10.5 0 0 1-21 0z" fill="none" stroke="#6B2B3C" stroke-width="1.3" stroke-linejoin="round"/>
+            <path d="M27 12h4a4.5 4.5 0 0 1 0 9h-1.5" fill="none" stroke="#6B2B3C" stroke-width="1.3" stroke-linecap="round"/>
+            <path d="M3 31h27" stroke="#A8873F" stroke-width="1.3" stroke-linecap="round"/>
+            <path d="M13 6c0-2 2.5-2 2.5-4M19 6c0-2 2.5-2 2.5-4" fill="none" stroke="#A8873F" stroke-width="1" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <h2>The Table</h2>
+        <p class="price">$275</p>
+        <p class="feel">It is always tea-time, and nobody is late.</p>
+        <p>
+          A round table on the deck with the cloth to the boards, no head and no foot, because a table
+          like this has neither. Every cup different. No saucer belonging to the cup sitting on it.
+          Two teapots that have clearly never met.
+        </p>
+        <p>
+          Tiered stands loaded with sugar cookies iced as pocket watches, keys, playing cards and
+          teacups, baked in our kitchen that morning.
+        </p>
+        <p>
+          And here and there among the china, two or three wind-up clocks. All stopped. None of them
+          agreeing with each other.
+        </p>
+        <p>
+          The tea is blended for the four of you, and the label carries your four names and the date.
+          There is a bag of it for each of you to take home and finish somewhere else, on some ordinary
+          Tuesday in November when you need reminding.
+        </p>
+      </div>
+
+      <div class="tier middle">
+        <span class="ring"></span>
+        <p class="index red">2<span class="pip">&#9829;</span></p>
+        <span class="ornament">
+          <svg width="38" height="40" viewBox="0 0 38 40" aria-hidden="true">
+            <path d="M10 39c0-11 3-18 9-23" fill="none" stroke="#6E7A5E" stroke-width="1.3" stroke-linecap="round"/>
+            <path d="M19 16c3-4 8-5 11-3-1 4-5 7-9 6z" fill="none" stroke="#6B2B3C" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M15 25c-4-1-7-4-7-8 4-1 8 2 9 6z" fill="none" stroke="#6E7A5E" stroke-width="1.2" stroke-linejoin="round"/>
+            <circle cx="22" cy="9" r="4" fill="none" stroke="#A8873F" stroke-width="1.2"/>
+            <path d="M4 39h22" stroke="#A8873F" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <h2>The Garden Gone Over</h2>
+        <p class="price">$495</p>
+        <p class="feel">The party has been going a long while, and the forest has started taking the table back.</p>
+        <p class="carry">Everything above, and then</p>
+        <p>
+          October flowers, cut local, dark and overgrown rather than sweet, spilling off the edge of the
+          table as though they came up through the boards overnight. A few stems standing in teacups
+          because nobody could find a vase and nobody looked very hard.
+        </p>
+        <p>
+          A savory tier, so it is a proper meal and not only sugar. And one cake, small, that is wrong
+          in a way we will not be explaining.
+        </p>
+        <p>
+          Ribbon run through the branches overhead, and a paper lantern or two lit by the bulbs already
+          strung up there.
+        </p>
+      </div>
+
+      <div class="tier c">
+        <p class="index red">3<span class="pip">&#9830;</span></p>
+        <span class="ornament">
+          <svg width="40" height="42" viewBox="0 0 40 42" aria-hidden="true">
+            <circle cx="17" cy="24" r="14" fill="none" stroke="#6B2B3C" stroke-width="1.3"/>
+            <circle cx="17" cy="24" r="11" fill="none" stroke="#A8873F" stroke-width=".6"/>
+            <line x1="17" y1="24" x2="17" y2="16" stroke="#1C1815" stroke-width="1.4" stroke-linecap="round"/>
+            <line x1="17" y1="24" x2="23" y2="26" stroke="#1C1815" stroke-width="1.4" stroke-linecap="round"/>
+            <path d="M17 10V6M14 4.5h6" fill="none" stroke="#6B2B3C" stroke-width="1.3" stroke-linecap="round"/>
+            <circle cx="33" cy="9" r="3.4" fill="none" stroke="#A8873F" stroke-width="1.2"/>
+            <path d="M33 12.4V21m0-5h3" fill="none" stroke="#A8873F" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <h2>The Long Afternoon</h2>
+        <p class="price">$850</p>
+        <p class="feel">Time stops for the whole weekend, not for an hour.</p>
+        <p class="carry">Everything above, and then</p>
+        <p>
+          <strong>The morning after.</strong> Breakfast crosses the rope bridge to your door as it
+          always does. Except that morning it is cake, because at a table where the clocks have stopped
+          there is no wrong hour to eat cake.
+        </p>
+        <p>
+          <strong>Un-birthdays.</strong> Three hundred and sixty-four days a year, not one of you is
+          turning fifty, and that seems worth marking. Something small waits at each place. Four of them.
+          Unwrapped, unexplained, no card. You will know it is coming. They will not.
+        </p>
+        <p>
+          <strong>The photograph.</strong> Somewhere in the afternoon, with nobody arranged and nobody
+          posing, we will take a few frames of the four of you at that table. Thirty-odd years of
+          friendship, and we would bet there is not one good photograph of all four of you together
+          anywhere in the world. There will be after this. It arrives the week after you go home, and
+          not one of you has to hold a phone out at arm's length.
+        </p>
+        <p>
+          The full service rather than whatever fits in two crates. More pots than four people could
+          possibly need. And candles lit on the table in broad daylight, which is a small wrongness that
+          does a great deal of work.
+        </p>
+      </div>
+
+    </div>
+
+    <div class="aside">
+      <svg width="30" height="36" viewBox="0 0 30 36" aria-hidden="true">
+        <ellipse cx="15" cy="13" rx="10" ry="11.5" fill="none" stroke="#8A7F73" stroke-width="1.2"/>
+        <path d="M15 24.5c-1.5 2.5.5 3.5 0 5.5" fill="none" stroke="#8A7F73" stroke-width="1.1" stroke-linecap="round"/>
+        <line x1="3" y1="33" x2="27" y2="3" stroke="#6B2B3C" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <h3>One thing we will not do</h3>
+        <p>
+          No balloons. We are on an open deck above a holler in a conservation forest, and a loose
+          balloon out here is litter with a head start. The ribbon and the lanterns are the better idea
+          anyway, and we mean that rather than saying it.
+        </p>
+      </div>
+    </div>
+
+    <div class="closing">
+      <span class="ring"></span>
+      <p>
+        Tell us which one and we will take it from there. If you want the middle with one thing from
+        the third, or the first with the flowers added, say so. It is your table.
+      </p>
+      <p class="hush">
+        One ask: keep this to yourself. Half of what makes an afternoon like this land is that three
+        of the four did not see it coming.
+      </p>
+      <p class="sign">
+        <span class="who">Mick and Livy</span>
+        <span class="plate">Loxley Forest · 706 502 4823</span>
+      </p>
+    </div>
+
+  </div>
+
+  <svg class="harlequin foot" height="22" aria-hidden="true">
+    <defs>
+      <pattern id="harlfoot" width="22" height="22" patternUnits="userSpaceOnUse"
+               patternTransform="translate(7 0)">
+        <rect width="22" height="22" fill="#F7F2E7"/>
+        <path d="M11 0 22 11 11 22 0 11Z" fill="#A8873F"/>
+        <path d="M0 0 11 11 0 22Z" fill="#6B2B3C"/>
+        <path d="M22 0 22 22 11 11Z" fill="#6B2B3C"/>
+      </pattern>
+    </defs>
+    <rect width="100%" height="22" fill="url(#harlfoot)"/>
+  </svg>
+
+</div>
+
+</body>
+</html>
