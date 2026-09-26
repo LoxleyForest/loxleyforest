@@ -24,3 +24,7 @@ This is the production website for **loxleyforest.com** — a luxury treehouse r
 ## Deploy
 
 Netlify is connected to this GitHub repo via continuous deployment. **`git push origin main` triggers the build/deploy automatically** (live within ~15–30s). `netlify.toml` defines the build step (`python3 scripts/ensure_gtm.py`, publish root); the Netlify CLI is not installed locally, so deploys are git-driven only.
+
+## Session open
+
+Read `NEXT-SESSION.md` at the top of every session. It is the standing handoff: what the last session verified, what is in flight, and what must not be touched. Update it before the session ends.
