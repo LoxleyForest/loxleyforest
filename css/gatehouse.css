@@ -1,0 +1,154 @@
+/* ============================================================
+   THE GATEHOUSE · booking component
+   Uses the tokens in global.css; nothing here defines a new color.
+   Mobile first: one month, the summary under it; two months and a
+   sticky summary beside them from 960px.
+   ============================================================ */
+
+#gatehouse { min-height: 420px; }
+#gatehouse.gh-loading { opacity: 0.4; }
+
+.gh-wrap {
+  display: grid;
+  gap: 32px;
+  max-width: var(--content-max);
+  margin: 0 auto;
+}
+@media (min-width: 960px) {
+  .gh-wrap { grid-template-columns: minmax(0, 1.6fr) minmax(320px, 1fr); align-items: start; }
+  .gh-wrap.is-checkout { grid-template-columns: minmax(0, 720px); justify-content: center; }
+  .gh-summary { position: sticky; top: 110px; }
+}
+
+/* ---- calendar -------------------------------------------------------- */
+
+.gh-calendar { background: var(--cream); border: 1px solid var(--parchment); padding: 20px 16px; }
+.gh-nav { display: flex; justify-content: space-between; margin-bottom: 4px; }
+.gh-arrow {
+  width: 44px; height: 44px; border: 1px solid var(--parchment); background: var(--white);
+  font-size: 22px; color: var(--forest); cursor: pointer;
+}
+.gh-arrow:disabled { opacity: 0.3; cursor: default; }
+.gh-months { display: grid; gap: 28px; }
+.gh-months .gh-month:nth-child(2) { display: none; }
+@media (min-width: 720px) {
+  .gh-months { grid-template-columns: 1fr 1fr; }
+  .gh-months .gh-month:nth-child(2) { display: block; }
+}
+.gh-month__name {
+  font-family: 'Playfair Display', Georgia, serif; font-size: 20px; font-weight: 500;
+  color: var(--forest-deep); text-align: center; margin: 0 0 12px;
+}
+.gh-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+.gh-dow {
+  font-family: 'Montserrat', Arial, sans-serif; font-size: 11px; letter-spacing: 1px;
+  color: var(--driftwood); text-align: center; padding-bottom: 6px;
+}
+.gh-day {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 48px; border: 1px solid transparent; background: var(--white);
+  font-family: 'Montserrat', Arial, sans-serif; color: var(--bark); cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.gh-day:hover:not(:disabled) { border-color: var(--gold); }
+.gh-day:focus-visible { outline: 2px solid var(--forest); outline-offset: 1px; }
+.gh-num { font-size: 14px; font-weight: 500; }
+.gh-rate { font-size: 10px; color: var(--stone); margin-top: 2px; }
+.gh-day--taken { background: transparent; color: var(--driftwood); }
+.gh-day--taken .gh-num { text-decoration: line-through; }
+.gh-day:disabled { cursor: default; }
+.gh-day--endable { color: var(--bark); background: var(--linen); }
+.gh-day--range { background: var(--parchment); }
+.gh-day--edge { background: var(--forest); color: var(--white); }
+.gh-day--edge .gh-rate { color: var(--gold-light); }
+.gh-note {
+  min-height: 1.4em; margin: 14px 0 0; font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 18px; color: var(--forest);
+}
+
+/* ---- summary --------------------------------------------------------- */
+
+.gh-summary, .gh-checkout {
+  background: var(--white); border: 1px solid var(--parchment); padding: 28px 24px;
+}
+.gh-eyebrow {
+  font-family: 'Montserrat', Arial, sans-serif; font-size: 11px; font-weight: 600;
+  letter-spacing: 2px; text-transform: uppercase; color: var(--gold-dark); margin: 0 0 8px;
+}
+.gh-lead { font-size: 19px; color: var(--stone); line-height: 1.5; }
+.gh-dates {
+  font-family: 'Playfair Display', Georgia, serif; font-size: 22px; color: var(--forest-deep);
+  margin: 0 0 16px;
+}
+.gh-lines {
+  display: grid; grid-template-columns: 1fr auto; gap: 6px 16px; margin: 0 0 20px;
+  font-family: 'Montserrat', Arial, sans-serif; font-size: 14px; color: var(--stone);
+}
+.gh-lines dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+.gh-lines .gh-total {
+  border-top: 1px solid var(--parchment); padding-top: 10px; margin-top: 4px;
+  font-weight: 600; font-size: 17px; color: var(--forest-deep);
+}
+.gh-options { border: 0; padding: 0; margin: 0 0 20px; display: grid; gap: 10px; }
+.gh-options legend {
+  font-family: 'Montserrat', Arial, sans-serif; font-size: 12px; font-weight: 600;
+  letter-spacing: 1px; color: var(--forest); margin-bottom: 8px;
+}
+.gh-option {
+  display: flex; gap: 12px; align-items: flex-start; padding: 14px;
+  border: 1px solid var(--parchment); cursor: pointer; background: var(--cream);
+}
+.gh-option.is-on { border-color: var(--gold); background: var(--white); }
+.gh-option input { margin-top: 4px; accent-color: var(--forest); }
+.gh-option strong {
+  display: block; font-family: 'Montserrat', Arial, sans-serif; font-size: 14px;
+  font-weight: 600; color: var(--forest-deep);
+}
+.gh-option span span { display: block; font-size: 16px; color: var(--stone); margin-top: 2px; }
+.gh-cta { width: 100%; margin-top: 4px; }
+.gh-link {
+  display: block; width: 100%; margin: 14px 0 0; background: none; border: 0;
+  font-family: 'Cormorant Garamond', Georgia, serif; font-size: 18px; color: var(--forest);
+  text-decoration: underline; text-underline-offset: 3px; cursor: pointer; text-align: center;
+}
+.gh-inline { display: inline; width: auto; margin: 0; font-size: inherit; }
+.gh-promise {
+  list-style: none; margin: 24px 0 0; padding: 18px 0 0; border-top: 1px solid var(--parchment);
+  display: grid; gap: 8px; font-size: 17px; color: var(--stone); line-height: 1.45;
+}
+.gh-promise li { padding-left: 18px; position: relative; }
+.gh-promise li::before { content: ''; position: absolute; left: 0; top: 0.6em; width: 6px; height: 6px; background: var(--gold); }
+.gh-fine { font-size: 15px; color: var(--driftwood); margin: 8px 0 0; }
+
+/* ---- checkout -------------------------------------------------------- */
+
+.gh-form { display: grid; gap: 14px; }
+.gh-row { display: grid; gap: 14px; }
+@media (min-width: 560px) { .gh-row { grid-template-columns: 1fr 1fr; } }
+.gh-field label {
+  display: block; font-family: 'Montserrat', Arial, sans-serif; font-size: 12px;
+  font-weight: 600; letter-spacing: 1px; color: var(--forest); margin-bottom: 6px;
+}
+.gh-field input {
+  width: 100%; padding: 14px; border: 1px solid var(--driftwood); background: var(--cream);
+  font-size: 16px; /* 16px stops iOS zooming into the field */
+  font-family: 'Montserrat', Arial, sans-serif; color: var(--bark);
+}
+.gh-field input:focus { outline: 2px solid var(--gold); border-color: var(--gold); }
+.gh-agree { display: flex; gap: 10px; align-items: flex-start; font-size: 17px; color: var(--stone); }
+.gh-agree input { margin-top: 5px; width: 18px; height: 18px; accent-color: var(--forest); }
+.gh-error { min-height: 1.2em; margin: 0; color: #8c3a2a; font-size: 16px; }
+.gh-pay:empty { display: none; }
+.gh-pay { margin-top: 20px; font-size: 17px; color: var(--stone); }
+
+.gh-dialog { max-width: 680px; width: calc(100% - 32px); border: 0; padding: 0; }
+.gh-dialog::backdrop { background: var(--overlay-dark); }
+.gh-dialog__body {
+  max-height: 70vh; overflow: auto; padding: 28px; white-space: pre-wrap;
+  font-size: 17px; line-height: 1.55; color: var(--bark);
+}
+.gh-dialog .btn { margin: 0 28px 28px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .gh-day { transition: none; }
+}
