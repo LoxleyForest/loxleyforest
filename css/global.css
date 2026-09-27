@@ -31,6 +31,10 @@
   --gold: #c4a265;
   --gold-light: #d4b87a;
   --gold-dark: #a8894f;
+  /* Text-safe versions, WCAG 2.1 AA (4.5:1) for small text: gold on linen
+     measures 2.18 and stone on forest-deep 2.44, both failing. */
+  --gold-text: #7d6130;      /* 5.24 on linen, 5.79 on white */
+  --text-on-deep: #b5ad9f;   /* 6.51 on forest-deep */
 
   /* Utility */
   --white: #ffffff;
@@ -167,6 +171,9 @@ button {
   text-transform: uppercase;
   color: var(--gold);
 }
+/* On light sections the eyebrow is small text and needs the darker gold. */
+.section--linen .eyebrow, .section--parchment .eyebrow,
+.section--cream .eyebrow, .section--white .eyebrow { color: var(--gold-text); }
 
 .caption {
   font-family: 'Cormorant Garamond', Georgia, serif;
@@ -662,7 +669,7 @@ a.announcement-bar__message:hover {
 .footer__copyright {
   font-family: 'Montserrat', Arial, sans-serif;
   font-size: 12px;
-  color: var(--stone);
+  color: var(--text-on-deep);
   letter-spacing: 0.5px;
 }
 
@@ -674,7 +681,7 @@ a.announcement-bar__message:hover {
 .footer__legal a {
   font-family: 'Montserrat', Arial, sans-serif;
   font-size: 12px;
-  color: var(--stone);
+  color: var(--text-on-deep);
   transition: color 0.3s ease;
 }
 

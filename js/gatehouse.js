@@ -279,7 +279,7 @@
   function monthGrid(first) {
     var y = first.getFullYear(), m = first.getMonth();
     var label = first.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-    var grid = el('div', { 'class': 'gh-grid', role: 'grid', 'aria-label': label });
+    var grid = el('div', { 'class': 'gh-grid', role: 'group', 'aria-label': label });
     ['S', 'M', 'T', 'W', 'T', 'F', 'S'].forEach(function (w) {
       grid.appendChild(el('span', { 'class': 'gh-dow', 'aria-hidden': 'true', text: w }));
     });
@@ -300,12 +300,15 @@
       var cls = 'gh-day' + (night ? '' : ' gh-day--taken') + (inRange ? ' gh-day--range' : '') +
         (isEdge ? ' gh-day--edge' : '') + (endable ? ' gh-day--endable' : '');
       var labelTxt = pretty(day, true) + (night ? ', ' + money(night.rate_cents) + ' a night' : ', not available');
+      // The visible text ("23", "$598") stays in the accessible name; the
+      // full date rides alongside, for screen readers only (WCAG 2.5.3).
       var btn = el('button', {
-        type: 'button', 'class': cls, 'aria-label': labelTxt,
+        type: 'button', 'class': cls,
         'aria-pressed': isEdge ? 'true' : 'false', disabled: usable ? null : 'disabled',
         onclick: (function (x) { return function () { pick(x); }; })(day)
       }, [el('span', { 'class': 'gh-num', text: String(d) }),
-          el('span', { 'class': 'gh-rate', text: night && day >= today ? money(night.rate_cents) : '' })]);
+          el('span', { 'class': 'gh-rate', text: night && day >= today ? money(night.rate_cents) : '' }),
+          el('span', { 'class': 'gh-sr', text: ' ' + labelTxt })]);
       grid.appendChild(btn);
     }
     return el('div', { 'class': 'gh-month' }, [el('h3', { 'class': 'gh-month__name', text: label }), grid]);
