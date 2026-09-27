@@ -577,6 +577,9 @@
     }
     track('gh_view', { gh_mode_loaded: state.mode });
     render();
+    // The number Mick set: calendar loaded and tappable in under 2.5 s on a
+    // mid-range phone over cellular. This mark is the moment it is.
+    try { performance.mark('gh-calendar-ready'); } catch (e) {}
   }).catch(function () {
     root.classList.remove('gh-loading');
     root.hidden = true;
