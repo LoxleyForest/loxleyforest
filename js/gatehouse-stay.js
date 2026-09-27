@@ -71,7 +71,9 @@
     api('/v1/booked?session_id=' + encodeURIComponent(sid)).then(function (stay) {
       if (stay.kind === 'hold_auth') {
         show([stayCard(stay, 'Your dates are held'), el('p', { 'class': 'gh-lead',
-          text: 'These nights are yours for the next 24 hours. Nothing has been charged. Come back to book them any time before the hold lets go.' })]);
+          text: 'These nights are yours for the next 24 hours. Nothing has been charged. Come back to book them any time before the hold lets go.' }),
+          el('a', { 'class': 'btn btn--primary', text: 'Book these dates',
+            href: '/book?checkIn=' + stay.check_in + '&checkOut=' + stay.check_out + '&hold=' + encodeURIComponent(stay.manage_token) })]);
         return;
       }
       var confirmed = stay.status === 'reserved' || stay.status === 'paid';

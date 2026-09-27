@@ -33,6 +33,9 @@
   var SNAPSHOT = root.getAttribute('data-snapshot') || '';
   var FALLBACK = root.getAttribute('data-fallback') || '';
   var MONTHS_AHEAD = 12;
+  // A held guest returns with ?hold=<token>: their own held nights show as
+  // open to them, and booking converts the hold instead of fighting it.
+  var HOLD = new URLSearchParams(location.search).get('hold') || '';
 
   var state = {
     mode: 'live',            // 'live' or 'preview' (snapshot, no payments)
@@ -167,7 +170,8 @@
     var to = iso(toD);
     var live = API ? api('/v1/health').then(function () {
       return Promise.all([
-        api('/v1/availability?unit=' + encodeURIComponent(UNIT) + '&from=' + from + '&to=' + to),
+        api('/v1/availability?unit=' + encodeURIComponent(UNIT) + '&from=' + from + '&to=' + to +
+          (HOLD ? '&hold=' + encodeURIComponent(HOLD) : '')),
         api('/v1/agreement').catch(function () { return null; })
       ]);
     }).then(function (res) {
@@ -448,7 +452,7 @@
       return;
     }
     var body = { unit: UNIT, check_in: state.checkIn, check_out: state.checkOut, mode: state.payMode,
-      agreement_version: state.agreement && state.agreement.version };
+      agreement_version: state.agreement && state.agreement.version, hold: HOLD || undefined };
     Object.keys(v).forEach(function (k) { body[k] = v[k]; });
     form.querySelector('[type=submit]').disabled = true;
     api(holding ? '/v1/hold' : '/v1/checkout', body).then(function (res) {
