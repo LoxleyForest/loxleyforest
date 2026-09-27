@@ -141,9 +141,8 @@
       extras.reduce(function (a, e) { return a + e.cents; }, 0);
     var lines = [{ label: rates.length + ' night' + (rates.length > 1 ? 's' : ''), cents: rent }];
     if (mult) lines.push({ label: 'Service', cents: mult });
-    lines.push({ label: 'Lodging tax', cents: rentTax });
     if (clean) lines.push({ label: 'Cleaning', cents: clean });
-    if (cleanTax) lines.push({ label: 'Tax on cleaning', cents: cleanTax });
+    if (rentTax || cleanTax) lines.push({ label: s.sales_tax_label || 'Sales tax', cents: rentTax + cleanTax });
     lines = lines.concat(extras);
     var today = iso(new Date());
     var balanceOn = addDays(ci, -s.balance_days);
