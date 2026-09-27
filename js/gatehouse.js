@@ -379,6 +379,16 @@
         ? el('p', { 'class': 'gh-fine', text: 'We hold these nights for ' + q.promise.hold_hours +
             ' hours. Your card is authorized for ' + money(Math.min(q.promise.deposit_cents, q.quote.total_cents)) +
             ' but not charged; if you do not book, the hold simply lets go.' })
+        : el('div', { 'class': 'gh-terms' }, [
+            // Shown in full, not only linked: Stripe's dispute guidance says a
+            // checkbox with only a link may be rejected as evidence, and "a full
+            // copy of your policies prior to their purchase" is what holds.
+            el('p', { 'class': 'gh-eyebrow', text: 'The Loxley Promise' }),
+            promiseBlock(q.promise),
+            el('div', { 'class': 'gh-agreement', tabindex: '0', 'aria-label': 'Rental agreement',
+              text: state.agreement ? state.agreement.text : 'The rental agreement appears here once it is published. [Preview]' })
+          ]),
+      state.payMode === 'hold' ? null
         : el('label', { 'class': 'gh-agree' }, [
             el('input', { type: 'checkbox', id: 'gh-agree', required: 'required' }),
             el('span', {}, ['I have read and agree to the ', agreeLink, ' and the Loxley Promise.'])
