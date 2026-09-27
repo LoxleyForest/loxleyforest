@@ -98,11 +98,60 @@
       : { weekday: 'short', month: 'short', day: 'numeric' });
   }
 
+  // ---- measurement: the tag manager AND our own server ----
+  // The dataLayer feeds Google; the beacon feeds the Gatehouse's own funnel
+  // table, which no ad blocker can hide, so conversion by step can be set
+  // side by side with Hostfully's. The visit id is random and anonymous.
+  var VISIT = (function () {
+    try {
+      var v = sessionStorage.getItem('gh_visit');
+      if (!v) { v = Math.random().toString(36).slice(2) + Date.now().toString(36); sessionStorage.setItem('gh_visit', v); }
+      return v;
+    } catch (e) { return Math.random().toString(36).slice(2); }
+  })();
+  var STEP_FOR = { gh_view: 'view', gh_dates_chosen: 'dates_chosen', gh_payment_mode: 'payment_mode',
+    begin_checkout: 'begin_checkout', add_payment_info: 'add_payment_info',
+    gh_hold_started: 'hold_started', gh_fallback_shown: 'fallback_shown' };
+
+  // Where this guest came from: an Innkeeper letter (src, card), an ad
+  // (gclid and friends), a campaign (utm_*). Kept for the visit, sent with
+  // the booking, so the scoreboard counts instead of guessing.
+  var ATTR = (function () {
+    var keys = ['src', 'card', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'gclid', 'gbraid', 'wbraid', 'fbclid'];
+    var a = {};
+    try { a = JSON.parse(localStorage.getItem('gh_attr') || '{}'); } catch (e) {}
+    var q = new URLSearchParams(location.search), fresh = false;
+    keys.forEach(function (k) { if (q.get(k)) { a[k] = q.get(k).slice(0, 120); fresh = true; } });
+    try {
+      var saved = JSON.parse(localStorage.getItem('loxley_attribution') || 'null');
+      if (saved) ['gclid', 'gbraid', 'wbraid'].forEach(function (k) { if (saved[k] && !a[k]) a[k] = saved[k]; });
+    } catch (e) {}
+    if (fresh) { a.landing = location.pathname; a.referrer = (document.referrer || '').slice(0, 120); }
+    try { localStorage.setItem('gh_attr', JSON.stringify(a)); } catch (e) {}
+    return a;
+  })();
+
+  function beacon(step, extra) {
+    if (!API || state.mode !== 'live') return;
+    var body = { visit: VISIT, step: step, unit: UNIT, src: ATTR.src || '' };
+    Object.keys(extra || {}).forEach(function (k) { body[k] = extra[k]; });
+    var data = JSON.stringify(body);
+    try {
+      // text/plain keeps the beacon a "simple" request: no preflight.
+      if (navigator.sendBeacon && navigator.sendBeacon(API + '/v1/funnel', new Blob([data], { type: 'text/plain' }))) return;
+    } catch (e) {}
+    fetch(API + '/v1/funnel', { method: 'POST', body: data, keepalive: true }).catch(function () {});
+  }
+
   function track(event, data) {
     window.dataLayer = window.dataLayer || [];
     var payload = { event: event, gh_unit: UNIT };
     Object.keys(data || {}).forEach(function (k) { payload[k] = data[k]; });
     window.dataLayer.push(payload);
+    if (STEP_FOR[event]) {
+      beacon(STEP_FOR[event], { mode: (data || {}).gh_mode || '', nights: (data || {}).gh_nights || '',
+        value_cents: data && data.value ? Math.round(data.value * 100) : '' });
+    }
   }
 
   function api(path, body) {
@@ -451,7 +500,8 @@
       return;
     }
     var body = { unit: UNIT, check_in: state.checkIn, check_out: state.checkOut, mode: state.payMode,
-      agreement_version: state.agreement && state.agreement.version, hold: HOLD || undefined };
+      agreement_version: state.agreement && state.agreement.version, hold: HOLD || undefined,
+      attribution: ATTR };
     Object.keys(v).forEach(function (k) { body[k] = v[k]; });
     form.querySelector('[type=submit]').disabled = true;
     api(holding ? '/v1/hold' : '/v1/checkout', body).then(function (res) {
