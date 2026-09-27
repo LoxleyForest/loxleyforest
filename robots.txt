@@ -2,6 +2,8 @@ User-agent: *
 Allow: /
 
 Disallow: /private/
+Disallow: /stay
+Disallow: /data/
 Disallow: /images/placeholders/
 Disallow: /images/untitled folder/
 
