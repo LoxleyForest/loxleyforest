@@ -13,6 +13,7 @@
   var root = document.getElementById('gatehouse-stay');
   if (!root) return;
   var API = (root.getAttribute('data-api') || '').replace(/\/$/, '');
+  var STRIPE_KEY = root.getAttribute('data-stripe-key') || '';
   var PAGE = root.getAttribute('data-page');
   var qs = new URLSearchParams(location.search);
 
@@ -125,7 +126,40 @@
       err,
       el('button', { type: 'submit', 'class': 'btn btn--primary gh-cta', text: 'Move my stay' })
     ]) : el('p', { 'class': 'gh-fine', text: stay.reschedules_used ? 'This stay has used its free move.' : '' });
-    show([stayCard(stay, 'Your stay'), el('div', { 'class': 'gh-checkout' }, [form])]);
+    // The failed-payment letter's door (Critic, 2026-09-27: the letter
+    // promised it and no page opened it). A balance the Promise is still
+    // waiting on can be paid right here, on our own page.
+    var owed = stay.payments.filter(function (p) { return p.status === 'failed'; })[0];
+    var pay = owed ? el('div', { 'class': 'gh-checkout' }, [
+      el('p', { 'class': 'gh-eyebrow', text: 'Balance due' }),
+      el('p', { 'class': 'gh-lead', text: 'The card on file did not go through. Pay ' + money(owed.amount_cents) + ' here to keep your dates.' }),
+      el('button', { type: 'button', 'class': 'btn btn--primary gh-cta', text: 'Pay the balance now', onclick: function (ev) {
+        ev.target.disabled = true;
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({ event: 'gh_pay_link_opened' });
+        api('/v1/pay', { token: token }).then(function (res) {
+          return loadStripe().then(function (Stripe) {
+            return Stripe(STRIPE_KEY).initEmbeddedCheckout({ fetchClientSecret: function () { return Promise.resolve(res.client_secret); } });
+          });
+        }).then(function (checkout) { checkout.mount('#gh-pay'); })
+          .catch(function (e) { ev.target.disabled = false; payErr.textContent = e.message; });
+      } }),
+      el('p', { 'class': 'gh-error', role: 'alert', id: 'gh-pay-error' }),
+      el('div', { id: 'gh-pay', 'class': 'gh-pay' })
+    ]) : null;
+    var payErr = pay ? pay.querySelector('#gh-pay-error') : null;
+    show([stayCard(stay, 'Your stay'), pay, el('div', { 'class': 'gh-checkout' }, [form])]);
+  }
+
+  function loadStripe() {
+    if (window.Stripe) return Promise.resolve(window.Stripe);
+    return new Promise(function (ok, fail) {
+      var s = document.createElement('script');
+      s.src = 'https://js.stripe.com/v3/';
+      s.onload = function () { ok(window.Stripe); };
+      s.onerror = function () { fail(new Error('Payments could not load. Please try again.')); };
+      document.head.appendChild(s);
+    });
   }
 
   if (PAGE === 'booked') booked();

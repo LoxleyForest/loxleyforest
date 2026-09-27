@@ -584,7 +584,12 @@
     render();
     // The number Mick set: calendar loaded and tappable in under 2.5 s on a
     // mid-range phone over cellular. This mark is the moment it is.
-    try { performance.mark('gh-calendar-ready'); } catch (e) {}
+    try {
+      performance.mark('gh-calendar-ready');
+      // Sent to our own funnel table too, so the 2.5 s standard is measured
+      // on real phones on the live path, not only in a lab run (Critic).
+      beacon('calendar_ready', { ms: Math.round(performance.now()) });
+    } catch (e) {}
   }).catch(function () {
     root.classList.remove('gh-loading');
     root.hidden = true;
