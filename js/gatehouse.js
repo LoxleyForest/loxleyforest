@@ -129,12 +129,19 @@
     var mult = pct(rent, s.rate_multiplier);
     var rentTax = pct(rent + mult, s.tax_rate);
     var clean = s.cleaning_cents, cleanTax = pct(clean, s.cleaning_tax_rate);
-    var total = rent + mult + rentTax + clean + cleanTax;
+    var extras = (s.extra_taxes || []).map(function (t) {
+      var c = t.per_night_cents ? t.per_night_cents * rates.length
+        : pct({ rent: rent + mult, cleaning: clean, both: rent + mult + clean }[t.on || 'rent'], t.rate);
+      return { label: t.label, cents: c };
+    });
+    var total = rent + mult + rentTax + clean + cleanTax +
+      extras.reduce(function (a, e) { return a + e.cents; }, 0);
     var lines = [{ label: rates.length + ' night' + (rates.length > 1 ? 's' : ''), cents: rent }];
     if (mult) lines.push({ label: 'Service', cents: mult });
     lines.push({ label: 'Lodging tax', cents: rentTax });
     if (clean) lines.push({ label: 'Cleaning', cents: clean });
     if (cleanTax) lines.push({ label: 'Tax on cleaning', cents: cleanTax });
+    lines = lines.concat(extras);
     var today = iso(new Date());
     var balanceOn = addDays(ci, -s.balance_days);
     var inFull = balanceOn <= today;
