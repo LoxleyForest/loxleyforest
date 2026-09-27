@@ -216,13 +216,15 @@
     var from = iso(new Date());
     var toD = new Date(); toD.setMonth(toD.getMonth() + MONTHS_AHEAD);
     var to = iso(toD);
-    var live = API ? api('/v1/health').then(function () {
-      return Promise.all([
-        api('/v1/availability?unit=' + encodeURIComponent(UNIT) + '&from=' + from + '&to=' + to +
-          (HOLD ? '&hold=' + encodeURIComponent(HOLD) : '')),
-        api('/v1/agreement').catch(function () { return null; })
-      ]);
-    }).then(function (res) {
+    // One round trip, not two: the calendar and the agreement are asked for
+    // together, and a failed calendar IS the health check (the fallback form
+    // shows). Measured 2026-09-27: 2.39 s to tappable on a throttled
+    // mid-range phone before this; every cellular round trip is ~150 ms+.
+    var live = API ? Promise.all([
+      api('/v1/availability?unit=' + encodeURIComponent(UNIT) + '&from=' + from + '&to=' + to +
+        (HOLD ? '&hold=' + encodeURIComponent(HOLD) : '')),
+      api('/v1/agreement').catch(function () { return null; })
+    ]).then(function (res) {
       state.mode = 'live';
       res[0].nights.forEach(function (n) { state.nights[n.night] = n; });
       state.agreement = res[1];
