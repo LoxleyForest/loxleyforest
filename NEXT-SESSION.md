@@ -106,3 +106,12 @@ These belong to `~/loxley-rescue` (the Innkeeper) and are parked, not dropped:
 - **Olivia's written authorisation** to execute agreements for Loxley Forest
   LLC, and renaming the eSignatures account to her so the account and the
   signature agree.
+
+## Private guest pages (added 2026-10-08)
+
+`private/<slug>-<random>/index.html` is the pattern for one-off, unlisted guest pages
+(the stay guide for Oct 9 to 12 lives at `private/field-guide-oct-2026-79af52/`).
+`robots.txt` disallows `/private/`, each page carries `noindex`, and GTM is not
+injected there (the deploy script globs the root only). Guest names never go in the
+file: the page reads them from the link after the `#` (`#for=...`) so they never
+touch the repo or a server log. Share the link with that fragment attached.
