@@ -115,3 +115,11 @@ These belong to `~/loxley-rescue` (the Innkeeper) and are parked, not dropped:
 injected there (the deploy script globs the root only). Guest names never go in the
 file: the page reads them from the link after the `#` (`#for=...`) so they never
 touch the repo or a server log. Share the link with that fragment attached.
+
+The template and the recipe live in `scripts/stay-guide/` (README.md there).
+`python3 scripts/stay-guide/new.py <arrival> "<dates>"` starts the next one.
+
+`your-adventure.html` is the arrival questionnaire, a DRAFT as of 2026-10-09:
+noindex, linked from nowhere, posting to a Netlify form named `your-adventure`.
+Its copy and the promise in its last line need Mick's yes before any guest
+sees it, and the link only rides in the booking confirmation by his ruling.
