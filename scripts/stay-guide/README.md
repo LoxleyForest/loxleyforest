@@ -48,8 +48,9 @@ and whether it is tables or trails.
 The list of things we can have waiting (Dawn Table, firewood, tea, the s'mores
 board, a cake) lives in `your-adventure.html` under the `EDIT: the add-ons`
 comment, and in each guide's Book These Today block when a guest ticked one.
-Prices come only from `docs/pricing.md` in the Loxley repo; a price not there is
-not shown. Keep the list current when something is added or retired.
+No prices on the questionnaire, by Mick's ruling on 2026-10-11: it is a wish
+list, and the price comes in the reply, in his words. Keep the list current when
+something is added or retired.
 
 ## Photos
 
