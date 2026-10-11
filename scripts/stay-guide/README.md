@@ -43,6 +43,14 @@ list lines, the badges, the closing line. The guests' answers to the arrival
 questionnaire (`/your-adventure`) say how hard to hike, whether water is in,
 and whether it is tables or trails.
 
+## The add-ons
+
+The list of things we can have waiting (Dawn Table, firewood, tea, the s'mores
+board, a cake) lives in `your-adventure.html` under the `EDIT: the add-ons`
+comment, and in each guide's Book These Today block when a guest ticked one.
+Prices come only from `docs/pricing.md` in the Loxley repo; a price not there is
+not shown. Keep the list current when something is added or retired.
+
 ## Photos
 
 All from `/images/`, listed with their subjects in the DAYS comment inside the
