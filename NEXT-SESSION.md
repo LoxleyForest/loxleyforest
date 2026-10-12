@@ -1,3 +1,42 @@
+# Next-level build · 2026-10-12 (branch `next-level`, main untouched)
+
+**Read DIRECTION.md next.** It names the look. This block is what was found and
+ruled on 2026-10-12; the older brief below still holds where it is not
+contradicted.
+
+- **The footage is found.** Google Drive, folder "Loxley Forest" shared by
+  Romantic Atlanta on 2026-07-23: 47 pictures and 50 clips from the evening of
+  2026-07-08. **Every clip is vertical.** Durations 1 to 25 seconds, 4.5
+  minutes in all, most at 60 fps (so half speed is free). Pulled to the
+  workshop's scratch space only; never into this repo beyond web-ready cuts.
+- **Permission:** Mick's ruling 2026-10-12: full written permission, paid plus
+  a two-night stay, including ads. No guest-release question applies to this
+  set.
+- **Lighting:** Mick rules enhancement of light and colour is allowed; nothing
+  invented. See DIRECTION.md, Video.
+- **The logo:** a current one exists in three colours in Mick's own files, not
+  in Drive or this repo. Its tree is a live oak drawn by his wife's
+  grandmother; it stays for throwbacks and tees. A new mark was explored on a
+  design canvas 2026-10-12 (the sail peak, three strokes). `[MICK RATIFIES]`
+  which mark, and the old file still needs to land somewhere a session can
+  reach.
+- **Hero loop:** three candidates cut at 1080p under 4 MB each, phone and
+  desktop, posted for Mick to pick. The chosen one gets a Runway grade, then
+  lands in `images/` (or `video/`) with a poster `.webp`.
+- **Calendar:** Romantic Atlanta shoots Christmas in the Forest on 2026-11-03
+  or 04 (peak leaf colour). Mick is away 2026-11-12 or 13 to 11-23, then
+  Thanksgiving. The reel is held until he is back; the Christmas site and ads
+  launch right after Thanksgiving. The new frame must be finished before the
+  November shoot lands.
+- **Tools:** a standalone ffmpeg lives in `~/bin` on the workshop (no admin
+  rights needed). Netlify branch previews for `next-level` still need Mick to
+  switch them on.
+- **Next:** weight pass (9 HEIC out, 30 images recompressed), fonts to
+  `<link>`, Playfair out, Lenis in, the fixed Book button, the hero with the
+  chosen clip. Then the treehouse pages. Google Ads is the following night.
+
+---
+
 # Saturday brief · 2026-09-26
 
 **Read this first. It is the handoff from the session that ended this morning.**
