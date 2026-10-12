@@ -70,9 +70,16 @@ The tokens in `css/global.css` stay. The rule changes: **three per screen.**
   rules, under 1.5 MB each, one per unit above the price.
 - Nothing longer lives in the repo. A brand film, if one is cut, sits on a
   video host behind a click `[MICK RATIFIES the host]`.
-- Grade: Runway for colour, stabilising and slow motion only. No generated
-  scenery, no extended frames. Rule 4 of the brief: never alter what the
-  property looks like.
+- Grade: Runway for colour, light, stabilising and slow motion. **Ruled by
+  Mick 2026-10-12:** enhancing the light is allowed (the pinnacle dusk, the
+  fog), because the camera never catches it as it is. Nothing is added that
+  is not there: no animals, no scenery, no fantasy. Enhance, never invent.
+- **Every clip from the July 2026 shoot is vertical (9:16).** Romantic Atlanta
+  shot for reels. Phones get the vertical clip as shot. Desktop gets a 16:9
+  window cut from the 4K vertical frame with a slow drift, which loses nothing
+  real. Runway's video expand can paint in sides, but that is generated
+  forest, so it is used only if Mick approves a specific clip after seeing
+  it. The November shoot is asked to cover every setup horizontal as well.
 
 ## Motion
 
