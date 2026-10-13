@@ -496,7 +496,7 @@
 
   function releaseLine() {
     var text = state.agreement && state.agreement.text;
-    var m = text && text.match(/\*\*([^*]*release[^*]*)\*\*/i);
+    var m = text && text.match(/^\*\*([^*\n]*release[^*\n]*)\*\*\s*$/im);
     return m ? el('p', { 'class': 'gh-release' }, [el('strong', { text: m[1] })]) : null;
   }
 
