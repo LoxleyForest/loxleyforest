@@ -220,3 +220,15 @@
 /* the old progress bar and page fade stay off the redesign */
 .v2 .scroll-progress { display: none; }
 .v2 { animation: none; }
+
+/* the hero's pause control: moving video longer than five seconds can be stopped */
+.lf-hero__pause {
+  position: absolute; z-index: 3; right: calc(var(--pad-x) - 8px); bottom: calc(40px + env(safe-area-inset-bottom, 0px));
+  width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(247, 243, 237, 0.45); background: rgba(20, 36, 24, 0.35);
+  display: grid; place-items: center; color: var(--on-dark); cursor: pointer;
+}
+.lf-hero__pause span { width: 10px; height: 12px; border-left: 3px solid currentColor; border-right: 3px solid currentColor; }
+.lf-hero__pause.is-paused span { width: 0; height: 0; border: 0; border-left: 11px solid currentColor; border-top: 7px solid transparent; border-bottom: 7px solid transparent; margin-left: 3px; }
+.lf-hero__pause:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+@media (min-width: 900px) { .lf-hero__pause { bottom: 88px; } }
+@media (prefers-reduced-motion: reduce) { .lf-hero__pause { display: none; } }

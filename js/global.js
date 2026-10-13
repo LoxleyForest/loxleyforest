@@ -467,12 +467,25 @@ document.addEventListener('DOMContentLoaded', () => {
   const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
   if (c && (c.saveData || /(^|-)2g$/.test(c.effectiveType || ''))) return;
   const phone = window.matchMedia('(max-width: 767px)').matches;
+  const btn = document.querySelector('.lf-hero__pause');
+  const tryPlay = () => { const p = v.play(); if (p && p.catch) p.catch(() => {}); };
   const start = () => {
+    // iPhones want these set as properties, not only as attributes, before the source arrives
+    v.muted = true; v.defaultMuted = true; v.playsInline = true;
+    v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('autoplay', '');
     const webm = !phone && v.dataset.deskWebm && v.canPlayType('video/webm; codecs="vp9"');
     v.src = phone ? v.dataset.phone : (webm ? v.dataset.deskWebm : v.dataset.desk);
-    v.addEventListener('playing', () => v.classList.add('is-playing'), { once: true });
-    const p = v.play(); if (p && p.catch) p.catch(() => {});
+    v.load();
+    v.addEventListener('playing', () => { v.classList.add('is-playing'); if (btn) btn.hidden = false; }, { once: true });
+    tryPlay();
+    // An iPhone in Low Power Mode refuses autoplay; the first touch starts the loop instead.
+    const kick = () => { if (v.paused && !v.dataset.userPaused) tryPlay(); };
+    ['touchstart', 'pointerdown', 'keydown'].forEach((ev) => window.addEventListener(ev, kick, { once: true, passive: true }));
   };
+  if (btn) btn.addEventListener('click', () => {
+    if (v.paused) { delete v.dataset.userPaused; tryPlay(); btn.setAttribute('aria-label', 'Pause the video'); btn.classList.remove('is-paused'); }
+    else { v.dataset.userPaused = '1'; v.pause(); btn.setAttribute('aria-label', 'Play the video'); btn.classList.add('is-paused'); }
+  });
   if (phone) { if (document.readyState === 'complete') start(); else window.addEventListener('load', start, { once: true }); }
   else start();
 })();
