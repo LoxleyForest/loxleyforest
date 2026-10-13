@@ -2,7 +2,8 @@
 const E2 = require('./emblem2.js');
 const X = require('./engrave.js');
 const WM = require('./wordmark.js');
-const { W, H } = E2;
+const { W, HT: H } = E2;
+const IC = require('./icons2.js');
 
 const C = { deep: '#1a2e1a', forest: '#2d4a2d', linen: '#f7f3ed', gold: '#c4a265', light: '#f7e4bd', white: '#ffffff' };
 
@@ -66,16 +67,13 @@ function iconInner(pal, id) {
 <circle cx="${hub[0]}" cy="${hub[1]}" r="11" fill="${pal.gold}"/>
 </g>`;
 }
-function icon(o = {}) {
-  const id = o.id || 'ic', tile = o.tile ?? true;
-  const pal = o.pal || { frame: C.gold, ground: C.deep, gold: C.gold, light: C.light };
-  const S = 512, eh = tile ? 448 : 512, ew = (eh * W) / H;
-  return { inner: (tile ? `<rect width="${S}" height="${S}" rx="${o.rx ?? 96}" fill="${C.deep}"/>` : '') + `<g transform="translate(${((S - ew) / 2).toFixed(2)} ${((S - eh) / 2).toFixed(2)}) scale(${(ew / W).toFixed(5)})">${iconInner(pal, id)}</g>`, w: S, h: S };
-}
+// Two icons: the favicon, drawn lean for 16 to 64 pixels; the app icon, the engraving itself for the phone.
+function icon(o = {}) { return { inner: IC.B(), w: 512, h: 512 }; }
+function appIcon(o = {}) { return { inner: IC.Eng(), w: 512, h: 512 }; }
 
 const svg = (o, extra = '') => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${o.w} ${o.h}" width="${o.w}" height="${o.h}"${extra}>${o.inner}</svg>`;
 
-module.exports = { C, stacked, horizontal, wordOnly, icon, iconInner, svg, tagline };
+module.exports = { C, stacked, horizontal, wordOnly, icon, appIcon, iconInner, svg, tagline };
 
 if (require.main === module) {
   const fs = require('fs');

@@ -27,11 +27,22 @@ contradicted.
   byte for byte). Review page, private to Mick:
   https://claude.ai/artifact/Vr8WuXmeUFcVPhC1fpvcZu
 - **Facts from Mick, 2026-10-12, for this treehouse:** five oaks hold it up;
-  every cable is attached at the truss's bottom hubs, none at the top. Which
-  side each oak stands on is `[MICK RATIFIES]`; the drawing has two left, two
-  right, one behind. `[MICK RATIFIES]` the mark itself and the line under the
-  name ("Dahlonega · Georgia"). Nothing on the site uses the new mark yet;
-  the favicon and header switch only on his yes.
+  every cable is attached at the truss's bottom hubs, none at the top.
+- **Ruled 2026-10-12/13:** Mick approved the engraved mark ("knocked it out of
+  the park"). "Dahlonega · Georgia" stays under the name. The oak placement as
+  drawn (two left, two right, one behind) is close enough. He asked for the
+  small icon to be less chunky and for anything that makes it better.
+- **Done 2026-10-13 on this branch:** an acorn crowns the arch; two icons (a
+  lean favicon for the browser tab, the engraving as the phone home-screen
+  icon); the kit in `images/brand/logo/kit/` (profile picture, link preview,
+  email signature, icon PNGs); six animations in `motion/`, with and without
+  a loxleyforest.com end card. The root `favicon.svg` is now the new favicon,
+  `apple-touch-icon.png` sits at the root, and every page links both. The
+  header still shows the name as text; the header lockup is part of the
+  redesign build.
+- `[MICK RATIFIES]` whether the new favicon and phone icon go to the live site
+  ahead of the redesign. Mick changes the Instagram and Facebook profile
+  pictures himself; the file is `kit/loxley-profile-1080.jpg`.
 - **Hero loop:** three candidates cut at 1080p under 4 MB each, phone and
   desktop, posted for Mick to pick. The chosen one gets a Runway grade, then
   lands in `images/` (or `video/`) with a poster `.webp`.
