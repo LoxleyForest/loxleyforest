@@ -30,6 +30,10 @@
   var API = (root.getAttribute('data-api') || '').replace(/\/$/, '');
   var UNIT = root.getAttribute('data-unit') || '';
   var STRIPE_KEY = root.getAttribute('data-stripe-key') || '';
+  // Until our own checkout takes payments, the calendar shows the real nights and the
+  // all-in price, then hands the guest to the page that can book them (data-handoff).
+  // It never asks for details it cannot use.
+  var HANDOFF = root.getAttribute('data-handoff') || '';
   var SNAPSHOT = root.getAttribute('data-snapshot') || '';
   var FALLBACK = root.getAttribute('data-fallback') || '';
   var MONTHS_AHEAD = 12;
@@ -363,6 +367,22 @@
       ]);
     }
     var lines = el('dl', { 'class': 'gh-lines' });
+    if (handingOff()) {
+      q.quote.lines.forEach(function (l) {
+        lines.appendChild(el('dt', { text: l.label }));
+        lines.appendChild(el('dd', { text: money(l.cents, true) }));
+      });
+      lines.appendChild(el('dt', { 'class': 'gh-total', text: 'Total' }));
+      lines.appendChild(el('dd', { 'class': 'gh-total', text: money(q.quote.total_cents, true) }));
+      var href = HANDOFF + (HANDOFF.indexOf('?') < 0 ? '?' : '&') + 'checkin=' + state.checkIn + '&checkout=' + state.checkOut;
+      return el('div', { 'class': 'gh-summary', 'aria-live': 'polite' }, [
+        el('p', { 'class': 'gh-eyebrow', text: 'Your stay' }),
+        el('p', { 'class': 'gh-dates', text: pretty(state.checkIn) + ' to ' + pretty(state.checkOut) }),
+        lines,
+        el('a', { 'class': 'btn btn--primary gh-cta', href: href, text: 'Book these nights',
+          onclick: function () { track('gh_handoff', { gh_nights: q.quote.nights, value: q.quote.total_cents / 100, currency: 'USD' }); } })
+      ]);
+    }
     q.quote.lines.forEach(function (l) {
       lines.appendChild(el('dt', { text: l.label }));
       lines.appendChild(el('dd', { text: money(l.cents, true) }));
@@ -551,7 +571,11 @@
 
   // ----------------------------------------------------------------- render
 
+  function handingOff() { return !!HANDOFF && (state.mode === 'preview' || !STRIPE_KEY); }
+
   function render() {
+    // terms that only our own checkout keeps are shown only when our own checkout is taking payments
+    document.querySelectorAll('[data-gh-live-only]').forEach(function (n) { n.hidden = handingOff(); });
     var months = el('div', { 'class': 'gh-months' }, [monthGrid(state.month),
       monthGrid(new Date(state.month.getFullYear(), state.month.getMonth() + 1, 1))]);
     var nav = el('div', { 'class': 'gh-nav' }, [
