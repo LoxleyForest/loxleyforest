@@ -327,6 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
   (function () {
     const page = (location.pathname.split('/').pop() || 'index').replace('.html', '');
     if (page === 'book' || page === 'booking-confirmed') return;
+    if (document.querySelector('.book-fab')) return; // the one fixed Book button already carries it
 
     const bookBar = document.createElement('a');
     bookBar.className = 'mobile-book-bar';
