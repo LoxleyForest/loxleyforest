@@ -94,7 +94,7 @@ BOOK = f'''    <section class="lf-sec lf-parch lf-book" id="book" aria-labelledb
         <p class="lf-eyebrow">Your dates</p>
         <h2 class="lf-h2" id="book-h">Pick your nights. <em>See the whole price at once.</em></h2>
         <p class="lf-lead" style="margin-left:auto;margin-right:auto">Every open night shows its rate. Choose your dates and the total appears, taxes and cleaning included. Book direct and deal with the family who built it.</p>
-        <ul class="lf-promise">
+        <ul class="lf-promise" data-gh-live-only hidden>
           <li>A 25% retainer holds your nights</li>
           <li>The rest is due 30 days before you arrive</li>
           <li>One free reschedule within a year, up to 7 days out</li>
@@ -105,6 +105,7 @@ BOOK = f'''    <section class="lf-sec lf-parch lf-book" id="book" aria-labelledb
            data-unit="loxley-forest-canopy-treehouse-dahlonega"
            data-stripe-key=""
            data-snapshot="data/gatehouse-snapshot.json"
+           data-handoff="/book"
            data-fallback="#gh-fallback"></div>
       <div id="gh-fallback" class="lf-book__alt" hidden>
         <p>Booking is resting for a moment. <a href="/book">Send us your dates</a> and we'll write back.</p>
@@ -142,7 +143,7 @@ def treehouse_two():
             <p hidden><label>Leave this empty <input name="bot-field"></label></p>
             <label for="t2-email">Your email</label>
             <input id="t2-email" type="email" name="email" required autocomplete="email" placeholder="you@example.com">
-            <button class="lf-btn" type="submit">Join the list</button>
+            <button class="lf-btn lf-btn--ghost" type="submit">Join the list</button>
             <p class="lf-signup__done" role="status" hidden>You're on the list. We'll write when the first nights open.</p>
           </form>
         </div>
@@ -172,7 +173,7 @@ def final_call(book):
         <div class="lf-rise" style="margin-bottom:44px">{ARROW}</div>
         <h2 class="lf-h2 lf-rise" id="fc-h">Some places you visit. <em>This one changes you.</em></h2>
         <p class="lf-lead lf-rise">Book direct with the family who built it.</p>
-        <div class="lf-actions lf-rise" style="justify-content:center"><a href="{book}" class="lf-btn">{ACORN}Check your dates</a></div>
+        <div class="lf-actions lf-rise" style="justify-content:center"><a href="{book}" class="lf-btn">{ACORN}Book your dates</a></div>
       </div>
     </section>
 '''
@@ -200,7 +201,7 @@ def page_index():
         <h1 class="lf-h1">Sleep where the forest <em>holds you</em></h1>
         <p class="lf-lead">A hand-built treehouse sixty feet up in the canopy, reached by a hundred-foot rope bridge. Just over an hour from Atlanta.</p>
         <div class="lf-actions">
-          <a href="#book" class="lf-btn">{ACORN}Check your dates</a>
+          <a href="#book" class="lf-btn">{ACORN}Book your dates</a>
           <a href="/treehouses" class="lf-link">See the treehouse</a>
         </div>
         <p class="lf-proof"><span class="lf-proof__stars" aria-hidden="true">★★★★★</span><span>4.98 from 200+ guest reviews</span></p>
@@ -220,8 +221,6 @@ def page_index():
       </div>
     </section>
 
-    <!-- ========== YOUR DATES: the Gatehouse ========== -->
-{BOOK}
     <!-- ========== SIXTY FEET UP ========== -->
     <section class="lf-sec lf-dark" aria-label="The treehouse in numbers">
       <div class="lf-wrap">
@@ -230,7 +229,6 @@ def page_index():
           <li class="lf-rise"><b>100 ft</b><span>Of rope bridge to your door</span></li>
           <li class="lf-rise"><b>42</b><span>Acres of cove forest</span></li>
           <li class="lf-rise"><b>1,470 ft</b><span>Above sea level</span></li>
-          <li class="lf-rise"><b>Just over an hour</b><span>From Atlanta</span></li>
         </ul>
       </div>
     </section>
@@ -253,7 +251,7 @@ def page_index():
     <!-- ========== WHAT'S INCLUDED ========== -->
     <section class="lf-sec lf-light" aria-labelledby="inc-h">
       <div class="lf-wrap lf-split">
-        <figure class="lf-photo lf-photo--tall lf-rise">{pic('img_0838_3', 'Inside the treehouse: the bed, the canvas walls and the chandelier', '(min-width: 900px) 50vw, 100vw')}</figure>
+        <figure class="lf-photo lf-photo--tall lf-rise">{pic('img_0831', 'The bed beneath the treehouse windows', '(min-width: 900px) 50vw, 100vw')}</figure>
         <div>
           <p class="lf-eyebrow lf-rise">The treehouse</p>
           <h2 class="lf-h2 lf-rise" id="inc-h">Everything you need. <em>Nothing you don't.</em></h2>
@@ -262,6 +260,8 @@ def page_index():
       </div>
     </section>
 
+    <!-- ========== YOUR DATES: the Gatehouse, after the bed and before the reviews ========== -->
+{BOOK}
 {REVIEWS}
     <!-- ========== BUILT BY HAND ========== -->
     <section class="lf-sec lf-dark" aria-labelledby="bh-h">
@@ -314,9 +314,8 @@ def page_index():
 
 
 def page_treehouses():
-    head, gtm = head_from('treehouses.html', '<link rel="preload" as="image" type="image/webp" href="images/v2/eq3a0907-1600.webp" fetchpriority="high">')
+    head, gtm = head_from('treehouses.html', '<link rel="preload" as="image" type="image/webp" href="images/v2/eq3a0907-1600.webp" media="(min-width: 768px)" fetchpriority="high">\n  <link rel="preload" as="image" type="image/webp" href="images/v2/treehouse-dusk-phone-900.webp" media="(max-width: 767px)" fetchpriority="high">')
     gallery = [('img_0823', 'The treehouse from its deck, the canvas peaks against the forest'),
-               ('img_0838_3', 'Inside: the bed, the canvas walls and the chandelier'),
                ('img_0831', 'The bed beneath the panoramic windows'),
                ('aerial-bridge', 'From above: the rope bridge at golden hour'),
                ('eq3a0160', 'The bridge to the treehouse in fall colour')]
@@ -324,13 +323,13 @@ def page_treehouses():
     body = f'''
     <!-- ========== HERO ========== -->
     <section class="lf-hero lf-hero--page" aria-label="The treehouse">
-      <div class="hero__media">{pic('eq3a0907', 'The treehouse canvas glowing at dusk, string lights running out along the bridge', '100vw', eager=True)}</div>
+      <div class="hero__media"><picture><source media="(max-width: 767px)" srcset="images/v2/treehouse-dusk-phone-900.webp" type="image/webp"><img src="images/v2/eq3a0907-1600.webp" width="1600" height="1067" alt="The treehouse at dusk, its canvas glowing, the rope bridge strung with lights" fetchpriority="high"></picture></div>
       <div class="lf-hero__shade"></div>
       <div class="lf-hero__inner">
         <p class="lf-eyebrow">60 feet up · a 100-foot rope bridge</p>
         <h1 class="lf-h1">Not a cabin with a view. <em>A home in the sky.</em></h1>
         <p class="lf-lead">Hand-built, sixty feet up in a canopy that has been growing for over a hundred years.</p>
-        <div class="lf-actions"><a href="#book" class="lf-btn">{ACORN}Check your dates</a></div>
+        <div class="lf-actions"><a href="#book" class="lf-btn">{ACORN}Book your dates</a></div>
       </div>
     </section>
 
@@ -347,8 +346,6 @@ def page_treehouses():
       </div>
     </section>
 
-    <!-- ========== YOUR DATES ========== -->
-{BOOK}
     <!-- ========== THE LOXLEY DIFFERENCE ========== -->
     <section class="lf-sec lf-dark" aria-labelledby="df-h">
       <div class="lf-wrap">
@@ -384,7 +381,7 @@ def page_treehouses():
     <!-- ========== WHAT'S INCLUDED ========== -->
     <section class="lf-sec lf-light" aria-labelledby="inc-h">
       <div class="lf-wrap lf-split">
-        <figure class="lf-photo lf-photo--tall lf-rise">{pic('img_0838_3', 'Inside the treehouse: the bed, the canvas walls and the chandelier', '(min-width: 900px) 50vw, 100vw')}</figure>
+        <figure class="lf-photo lf-photo--tall lf-rise">{pic('img_0828', 'The bed beneath the treehouse windows in warm light', '(min-width: 900px) 50vw, 100vw')}</figure>
         <div>
           <p class="lf-eyebrow lf-rise">Your stay</p>
           <h2 class="lf-h2 lf-rise" id="inc-h">Everything you need. <em>Nothing you don't.</em></h2>
@@ -393,6 +390,8 @@ def page_treehouses():
       </div>
     </section>
 
+    <!-- ========== YOUR DATES ========== -->
+{BOOK}
 {REVIEWS}
 {treehouse_two()}
 {final_call('#book')}'''
