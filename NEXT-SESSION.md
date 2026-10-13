@@ -120,6 +120,23 @@ contradicted.
   complimentary pizza dough (today a text or email of instructions), drawn in
   the same engraved style; it is guest-facing, so its words go to Mick and it
   rides the gates.
+- **The animated guidebook (Mick, 2026-10-13), replacing a Touch Stay
+  subscription:** a storybook guide in the logo's engraved style, one chapter
+  per stop: the drive in (the bee yard as the landmark), parking and the
+  trailhead, the trail down to the rope bridge, the TreeMail box, the fire pit
+  and how to light it, the treehouse and how to use everything, the pizza
+  guide. Method: Mick sends 3 to 6 photographs per stop and a voice
+  description; each photograph becomes an engraving drawn by
+  `scripts/logo` (a photo-to-engraving renderer is the piece to build), with
+  a few words per step, animated like the logo reel, as a web page and short
+  reels. Facts only from Mick; his approval on the words; the link to it rides
+  the pre-arrival letter, a transactional template approved by hash.
+- **Ruled 2026-10-13 (evening):** no attorney before the Gatehouse launches;
+  Mick approves the wording and names the entity on the agreement. Google
+  reviews are 5 or 6, shown as "5.0 on Google". The Airbnb link comes tonight.
+- **Hero on iPhone:** Mick saw a still. Likely Low Power Mode or Reduce
+  Motion; the loop now also starts on the first touch, and a pause button
+  sits in the hero corner. Confirm on his phone.
 - **Next:** Then a staff table on the redesign plan, then the treehouse
   pages. Google Ads after that.
 
