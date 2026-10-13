@@ -137,6 +137,12 @@ contradicted.
 - **Hero on iPhone:** Mick saw a still. Likely Low Power Mode or Reduce
   Motion; the loop now also starts on the first touch, and a pause button
   sits in the hero corner. Confirm on his phone.
+- **Unlisted preview on the live domain (Mick's request, 2026-10-13, to share
+  with Livy):** `private/new-site-371cf1/` on main: the new homepage, the
+  treehouse page, `logo/` with the reel. Noindex, disallowed in robots.txt,
+  linked from nowhere, Tag Manager stripped. A copy, not the branch: rebuild it
+  when pages change, and **delete it when the redesign goes live.**
+- **Ruled 2026-10-13:** Loxley Forest LLC goes on the booking agreement.
 - **Next:** Then a staff table on the redesign plan, then the treehouse
   pages. Google Ads after that.
 
