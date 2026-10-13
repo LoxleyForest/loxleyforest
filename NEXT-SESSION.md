@@ -104,6 +104,22 @@ contradicted.
   is the largest paint on both widths; desktop plays the WebM, phones the MP4.
   Runway is optional from here: a finer grade or slow-motion smoothing, on
   Mick's own login. More clips are welcome into the Drive folder.
+- **Logo refined, 2026-10-13 (Mick and Livy):** the window is now a canvas fly
+  window following the canvas lines, pointed at the top, lit, with a zipper
+  line down the centre; the canvas lines carry a sketch artist's hand (pressure
+  that swells and eases, occasional pen lifts, light angled cross-hatching
+  where the glow is). Masters, kit, icons and all six animations rebuilt.
+- **The new homepage, first draft, 2026-10-13:** mobile first, on `css/v2.css`
+  and `js/v2.js` over global.css; the Gatehouse calendar on the page in
+  preview mode; Canopy Club and the banner gone. Private phone preview:
+  https://claude.ai/artifact/56bECy7GM5bDgq5iE3uEqg. Launch target ruled by
+  Mick: live by 2026-10-17/18, Monday 2026-10-19 at the latest.
+- **Ideas from Mick, 2026-10-13, for after launch:** the Romantic Atlanta Drive
+  set has strong interior shots and short pizza-cutting clips; use them in the
+  treehouse and experience sections. An animated, few-words guide for the
+  complimentary pizza dough (today a text or email of instructions), drawn in
+  the same engraved style; it is guest-facing, so its words go to Mick and it
+  rides the gates.
 - **Next:** Then a staff table on the redesign plan, then the treehouse
   pages. Google Ads after that.
 

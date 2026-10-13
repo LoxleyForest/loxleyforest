@@ -228,23 +228,64 @@ function build(level = 'full') {
     const sp = S[key], lay = 'spire-' + key, { Lf, Rf } = spireSides(sp);
     add(lay, { k: 'fill', d: spireOutline(sp, n), c: 'ground' });
     const M = key === 'big' ? 30 : 18;
+    const meshPt = (u, v) => { const a = Lf(v), b = Rf(v); const x = lerp(a[0], b[0], u), y = lerp(a[1], b[1], u); return [x, Math.min(y, hemY(sp, x, n) - 0.8)]; };
+    const RS = rng(key === 'big' ? 77 : 55);
     for (let i = 1; i < M; i++) {
       const u = i / M;
       const v0 = 0.05 + (i % 2 ? 0.1 : 0.02) + 0.18 * Math.abs(u - 0.5) * (i % 3 === 0 ? 0 : 1);
-      const fn = (v) => { const a = Lf(v), b = Rf(v); const x = lerp(a[0], b[0], u), y = lerp(a[1], b[1], u); return [x, Math.min(y, hemY(sp, x, n) - 0.8)]; };
+      const fn = (v) => meshPt(u, v);
       const tone = (0.3 + 0.7 * Math.sin(Math.PI * u) ** 0.7) * bright;
       const seam = Math.abs(u * n - Math.round(u * n)) < 0.5 / M * n && Math.round(u * n) > 0 && Math.round(u * n) < n;
-      add(lay, { k: 'rib', d: ribbon(fn, (seam ? 2.0 : 1.55) * tone, (t) => Math.max(0.12, 0.15 + 0.85 * t ** 0.8) * (t > 0.97 ? 0.6 : 1), { t0: v0, t1: 1, wob: 0.18, seed: i * 11 + n, step: 2.5 }), c: seam ? 'gold' : 'light' });
+      // a sketch artist's line: it swells and thins as the hand presses and eases
+      const press = noise1(i * 7 + n * 31);
+      const prof = (t) => Math.max(0.12, 0.15 + 0.85 * t ** 0.8) * (t > 0.97 ? 0.6 : 1) * (0.62 + 0.62 * (0.5 + 0.5 * press(t * 5.5)));
+      const w = (seam ? 2.0 : 1.55) * tone, c = seam ? 'gold' : 'light';
+      const lift = !seam && (i * 7 + n) % 4 === 0; // now and then the pen lifts
+      if (lift) {
+        const vb = lerp(0.42, 0.7, RS()), gap = 0.03 + RS() * 0.04;
+        add(lay, { k: 'rib', d: ribbon(fn, w, (t) => prof(lerp(v0, vb, t)), { t0: v0, t1: vb, wob: 0.18, seed: i * 11 + n, step: 2.5 }), c });
+        add(lay, { k: 'rib', d: ribbon(fn, w, (t) => prof(lerp(vb + gap, 1, t)), { t0: vb + gap, t1: 1, wob: 0.18, seed: i * 13 + n, step: 2.5 }), c });
+      } else {
+        add(lay, { k: 'rib', d: ribbon(fn, w, prof, { t0: v0, t1: 1, wob: 0.18, seed: i * 11 + n, step: 2.5 }), c });
+      }
+    }
+    // light cross-hatching across the canvas, following its curve: densest where the glow is,
+    // thinning toward the edges and the peak, in short strokes with the pen lifting between them
+    const rows = key === 'big' ? 11 : 7;
+    for (let r = 0; r < rows; r++) {
+      const v = lerp(0.5, 0.95, r / (rows - 1)) + (RS() - 0.5) * 0.02;
+      const bow = (key === 'big' ? 3.6 : 2.4) * v;
+      let u = 0.06 + RS() * 0.05;
+      while (u < 0.94) {
+        const len = 0.045 + RS() * 0.06, u1 = Math.min(0.94, u + len);
+        const um = (u + u1) / 2;
+        const glow = Math.sin(Math.PI * um) ** 1.3 * Math.min(1, Math.max(0, (v - 0.4) / 0.45));
+        if (glow > 0.42 + RS() * 0.3) {
+          const tilt = -0.045 + (RS() - 0.5) * 0.015; // rising to the right, like a hatch
+          const fn = (t) => { const uu = lerp(u, u1, t), p = meshPt(uu, v + tilt * (t - 0.5)); return [p[0], Math.min(p[1] + bow * Math.sin(Math.PI * uu), hemY(sp, p[0], n) - 1.4)]; };
+          add(lay, { k: 'pen', d: pen(fn, { step: 2, wob: 0.12, seed: (r * 131 + u * 997) | 0 }), w: r1((0.22 + 0.36 * glow) * bright), c: 'light' });
+        }
+        u = u1 + 0.025 + RS() * 0.06;
+      }
     }
     // silhouette
     add(lay, { k: 'rib', d: ribbon(Lf, 1.7 * bright, (t) => 0.35 + 0.65 * t, { wob: 0.2, seed: 21 + n }), c: 'light' });
     add(lay, { k: 'rib', d: ribbon(Rf, 1.2 * bright, (t) => 0.35 + 0.65 * t, { wob: 0.2, seed: 23 + n }), c: 'light' });
     add(lay, { k: 'rib', d: ribbon((t) => { const x = lerp(sp.cx - sp.hw, sp.cx + sp.hw, t); return [x, hemY(sp, x, n)]; }, 1.5 * bright, () => 1, { wob: 0.1, seed: 31 + n, step: 1.5 }), c: 'light' });
     if (key === 'big') {
-      const wd = windowShape();
-      add(lay, { k: 'fill', d: `M${wd.x - 2.6} ${wd.yb + 2.6} V${wd.yt + wd.w / 2} A${wd.w / 2 + 2.6} ${wd.w / 2 + 2.6} 0 0 1 ${wd.x + wd.w + 2.6} ${wd.yt + wd.w / 2} V${wd.yb + 2.6} Z`, c: 'ground' });
-      add(lay, { k: 'fill', d: wd.d, c: 'light', cls: 'win' });
-      add(lay, { k: 'pen', d: `M${wd.x + wd.w / 2} ${wd.yt + 1} V${wd.yb}M${wd.x} ${wd.yt + wd.w / 2 + 5} H${wd.x + wd.w}`, w: 1.1, c: 'ground', cls: 'win' });
+      // the fly window: a canvas panel that follows the lines of the canvas, pointed at the top,
+      // lit from inside, with the zipper running down its centre
+      const flap = (uL, uR, vT, vB) => {
+        const pts = [meshPt(0.5, vT)];
+        for (let k = 1; k <= 10; k++) { const v = lerp(vT, vB, k / 10), e = Math.min(1, (k / 10) / 0.3); pts.push(meshPt(lerp(0.5, uL, Math.sin(e * Math.PI / 2)), v)); }
+        for (let k = 1; k < 8; k++) { const t = k / 8, p = meshPt(lerp(uL, uR, t), vB); pts.push([p[0], p[1] + 1.2 * Math.sin(Math.PI * t)]); }
+        for (let k = 10; k >= 1; k--) { const v = lerp(vT, vB, k / 10), e = Math.min(1, (k / 10) / 0.3); pts.push(meshPt(lerp(0.5, uR, Math.sin(e * Math.PI / 2)), v)); }
+        return 'M' + pts.map((p) => `${r1(p[0])} ${r1(p[1])}`).join('L') + 'Z';
+      };
+      add(lay, { k: 'fill', d: flap(0.385, 0.615, 0.475, 0.825), c: 'ground' });
+      add(lay, { k: 'fill', d: flap(0.415, 0.585, 0.505, 0.81), c: 'light', cls: 'win' });
+      const z0 = meshPt(0.5, 0.515), z1 = meshPt(0.5, 0.815);
+      add(lay, { k: 'pen', d: `M${r1(z0[0])} ${r1(z0[1])}L${r1(z1[0])} ${r1(z1[1] + 1)}`, w: 1.05, c: 'ground', cls: 'win' });
     }
     // finial: a slender gold cap with a bead
     const { cx, ty } = sp, s = key === 'big' ? 1 : 0.8, hh = 20 * s, w = 4.2 * s;
