@@ -1,3 +1,94 @@
+# START HERE · handoff of 2026-10-13 night (branch `next-level`)
+
+Mick cleared a long session here. This block is the whole state; the dated
+blocks below it are the history. Rulings of the day are also in loxley-rescue
+`docs/lantern-log.md` (every 2026-10-13 entry).
+
+## The goal and the date
+The redesigned loxleyforest.com goes **live Saturday 2026-10-17/18, Monday
+2026-10-19 at the latest** (Mick). Mobile first; Mick reviews on his phone by
+voice. Quality bar: what an Awwwards jury would reward, and a funnel that
+guides people to book, honestly.
+
+## Where things are
+- **Built in the new design:** `index.html` and `treehouses.html`, written by
+  `scripts/site/build_v2.py` (edit the builder, run it, commit the HTML; never
+  hand-edit those two files). Styles `css/v2.css` over `css/global.css`;
+  behaviour `js/v2.js` over `js/global.js`; booking `js/gatehouse.js`.
+- **The unlisted preview Mick shares with Livy:**
+  https://loxleyforest.com/private/new-site-371cf1/ (main branch, noindex, no
+  Tag Manager). Refresh after changes:
+  `git worktree add ../lf-main-share main && python3 scripts/site/share_preview.py ../lf-main-share`,
+  then commit and push main from that worktree and remove it. Delete the
+  folder at launch.
+- **The logo:** done and loved. Code `scripts/logo/` (README), masters and kit
+  `images/brand/logo/`, six reels `images/brand/logo/motion/`, review page
+  https://claude.ai/artifact/Vr8WuXmeUFcVPhC1fpvcZu. New favicon and phone icon
+  ship at launch, not before. The acorn is a recurring motif.
+- **The hero:** "the crossing", three clips blended, `images/hero/`.
+- **The booking calendar:** the Gatehouse component, on both pages, after
+  "what's included" and before the reviews. Until our checkout takes
+  payments it runs in hand-off mode (`data-handoff="/book"`): real nights and
+  the all-in total, then "Book these nights" carries the dates to /book
+  (Hostfully). The Promise list shows only when our checkout keeps it
+  (`data-gh-live-only`). At cutover: set `data-api` and `data-stripe-key`.
+  Previews run from `data/gatehouse-snapshot.json` (25% retainer, 30 days).
+
+## Decided today (all logged)
+Gold only for the Book button, stars and acorns. Airbnb never up front:
+"4.98 from 200+ guest reviews", the source named once by the reviews. Canopy
+Club and the announcement banner gone. Treehouse 2 "coming soon" with a list
+(Netlify form `treehouse-2-list`). One label, "Book your dates". Sleeps 4
+comfortably, up to 6 guests, children and well-behaved pets welcome, no
+smoking. The Promise: a 25% retainer deposit of the full total, balance at 30
+days, 7 days after a failed charge (Mick told on Telegram, built and merged
+in loxley-rescue), one 12-hour hold extension. No attorney: the stay
+agreement draft is loxley-rescue `canon/agreements/stay-agreement.md`, revised
+to the Scout's Georgia case law; the checkout repeats its bold release beside
+the box. Loxley Forest LLC on the agreement.
+
+## Next, in order
+1. **"The crossing, walked"**, approved by Mick to build and see: after the
+   opening statement, scroll carries the guest across the hundred-foot bridge
+   drawn in the logo's engraving, a counter 0 to 100 ft, the far end opening
+   onto the calendar. Reduced motion shows the finished engraving. First build
+   a photo-to-engraving renderer in `scripts/logo/` (it also powers the
+   animated guidebook); his reference photos are `images/source/crossing/`.
+   It amends DIRECTION.md's motion rules (Mick approved 2026-10-13).
+2. **The treehouse page made its own** (the Critic): interior, bathroom, deck,
+   the walk in, the heights, from the Romantic Atlanta Drive set (Mick picks
+   tonight); interior video wanted.
+3. **The remaining pages** through the builder: Book (stay) in the new design,
+   Experiences, Elopements, Our Story, Gallery, Questions (FAQ), Local Guide,
+   the legal pages, 404, the confirmation pages. Remove Canopy Club (page,
+   nav, and a redirect in netlify.toml). Update sitemap.xml.
+4. **Launch:** merge next-level to main, delete the private preview folder,
+   switch the favicon set live, check GTM on every page
+   (`python3 scripts/ensure_gtm.py --check`), and test on Mick's phone.
+
+## Mick's laptop session tonight (his hands; nothing here is the Forge's)
+- loxley-rescue `deploy/INSTALL-GATEHOUSE.md` steps 1 to 6, about 35 minutes:
+  Stripe test keys, the `book` DNS record, Caddy and the services, the
+  Stripe webhook, the Litestream backup.
+- Approve: the stay agreement draft; the six transactional letters by hash
+  (`payment_failed.md` changed to 7 days); GATEHOUSE-SPEC.md section 12 (four
+  law-2 gates on the transactional rail, and the clash alert).
+- Read-only in Chrome: Hostfully's current rental agreement and waiver, to
+  fold their best lines into the draft.
+- The Airbnb listing link. Drive: interior and deck photographs and video,
+  and the couple's video (engagement or romance pages?).
+- His own: the Instagram and Facebook profile pictures (`kit/loxley-profile-1080.jpg`).
+
+## Ideas waiting (logged, not started)
+The animated guidebook in the logo's style (drive in and the bee yard,
+parking and trailhead, trail to the bridge, TreeMail, the fire pit, the
+treehouse, the pizza guide) from Mick's photographs and voice notes, in place
+of Touch Stay. Seasonal versions of the reel and profile picture. A
+save-the-booking offer (what every stay includes: pizza dough, wine; his
+words).
+
+---
+
 # Next-level build · 2026-10-12 (branch `next-level`, main untouched)
 
 **Read DIRECTION.md next.** It names the look. This block is what was found and
