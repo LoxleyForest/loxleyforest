@@ -54,7 +54,7 @@
 }
 
 .value__title {
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: 'Playfair Display', Georgia, serif;
   font-size: clamp(24px, 2.4vw, 30px);
   font-weight: 500;
   color: var(--forest-deep);

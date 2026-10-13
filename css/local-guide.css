@@ -121,7 +121,7 @@
 }
 
 .season__title {
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: 'Playfair Display', Georgia, serif;
   font-size: clamp(22px, 2vw, 26px);
   font-weight: 500;
   color: var(--forest-deep);
