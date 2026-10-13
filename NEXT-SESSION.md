@@ -17,9 +17,21 @@ contradicted.
 - **The logo:** a current one exists in three colours in Mick's own files, not
   in Drive or this repo. Its tree is a live oak drawn by his wife's
   grandmother; it stays for throwbacks and tees. A new mark was explored on a
-  design canvas 2026-10-12 (the sail peak, three strokes). `[MICK RATIFIES]`
-  which mark, and the old file still needs to land somewhere a session can
-  reach.
+  design canvas 2026-10-12 (the sail peak, three strokes); Mick read it as a
+  tent and as cartoonish.
+- **The new mark, drawn late 2026-10-12 (supersedes the sail peak):** an
+  engraving in an arch. The twin-spire treehouse from Mick's dusk photograph,
+  hung between five oaks, the arrow through the name kept. Masters in
+  `images/brand/logo/`, three animated cuts in `images/brand/logo/motion/`,
+  and the code that draws all of it in `scripts/logo/` (README there; rebuilds
+  byte for byte). Review page, private to Mick:
+  https://claude.ai/artifact/Vr8WuXmeUFcVPhC1fpvcZu
+- **Facts from Mick, 2026-10-12, for this treehouse:** five oaks hold it up;
+  every cable is attached at the truss's bottom hubs, none at the top. Which
+  side each oak stands on is `[MICK RATIFIES]`; the drawing has two left, two
+  right, one behind. `[MICK RATIFIES]` the mark itself and the line under the
+  name ("Dahlonega · Georgia"). Nothing on the site uses the new mark yet;
+  the favicon and header switch only on his yes.
 - **Hero loop:** three candidates cut at 1080p under 4 MB each, phone and
   desktop, posted for Mick to pick. The chosen one gets a Runway grade, then
   lands in `images/` (or `video/`) with a poster `.webp`.
