@@ -465,7 +465,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (c && (c.saveData || /(^|-)2g$/.test(c.effectiveType || ''))) return;
   const phone = window.matchMedia('(max-width: 767px)').matches;
   const start = () => {
-    v.src = phone ? v.dataset.phone : v.dataset.desk;
+    const webm = !phone && v.dataset.deskWebm && v.canPlayType('video/webm; codecs="vp9"');
+    v.src = phone ? v.dataset.phone : (webm ? v.dataset.deskWebm : v.dataset.desk);
     v.addEventListener('playing', () => v.classList.add('is-playing'), { once: true });
     const p = v.play(); if (p && p.catch) p.catch(() => {});
   };

@@ -93,8 +93,18 @@ contradicted.
   through the website (June to 26 September); 122 of 366 nights booked in the
   last year; Ads logged 0 conversions 29 July to 27 August; no site visits on
   record anywhere, so no conversion rate exists yet.
-- **Next:** Mick picks hero A, B or C; the clip and its poster land in
-  `images/hero/`. Then a staff table on the redesign plan, then the treehouse
+- **The hero, 2026-10-13:** Mick picked C and asked for the three blended.
+  Built as "the crossing": A (on the bridge, 3.5 s), B (the bridge to the
+  house, 4.5 s), C (arriving, 5.5 s), one-second dissolves, and C dissolving
+  back into A's opening so the 11.5 s loop has no seam. One grade on all
+  three, colour only (the purple cast off A's walkway, the canvas toward the
+  amber of his photograph); nothing added. Files in `images/hero/`: desktop
+  MP4 3.9 MB and WebM 2.5 MB at 1080p, phone MP4 2.2 MB at 720x1280, posters
+  85 and 63 KB (each the loop's own first frame). Tested locally: the poster
+  is the largest paint on both widths; desktop plays the WebM, phones the MP4.
+  Runway is optional from here: a finer grade or slow-motion smoothing, on
+  Mick's own login. More clips are welcome into the Drive folder.
+- **Next:** Then a staff table on the redesign plan, then the treehouse
   pages. Google Ads after that.
 
 ---
