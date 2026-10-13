@@ -251,21 +251,21 @@ function build(level = 'full') {
     }
     // light cross-hatching across the canvas, following its curve: densest where the glow is,
     // thinning toward the edges and the peak, in short strokes with the pen lifting between them
-    const rows = key === 'big' ? 15 : 9;
+    const rows = key === 'big' ? 11 : 7;
     for (let r = 0; r < rows; r++) {
-      const v = lerp(0.44, 0.95, r / (rows - 1)) + (RS() - 0.5) * 0.012;
+      const v = lerp(0.5, 0.95, r / (rows - 1)) + (RS() - 0.5) * 0.02;
       const bow = (key === 'big' ? 3.6 : 2.4) * v;
       let u = 0.06 + RS() * 0.05;
       while (u < 0.94) {
-        const len = 0.06 + RS() * 0.09, u1 = Math.min(0.94, u + len);
+        const len = 0.045 + RS() * 0.06, u1 = Math.min(0.94, u + len);
         const um = (u + u1) / 2;
         const glow = Math.sin(Math.PI * um) ** 1.3 * Math.min(1, Math.max(0, (v - 0.4) / 0.45));
-        if (glow > 0.28 + RS() * 0.22) {
-          const tilt = (RS() - 0.5) * 0.02;
+        if (glow > 0.42 + RS() * 0.3) {
+          const tilt = -0.045 + (RS() - 0.5) * 0.015; // rising to the right, like a hatch
           const fn = (t) => { const uu = lerp(u, u1, t), p = meshPt(uu, v + tilt * (t - 0.5)); return [p[0], Math.min(p[1] + bow * Math.sin(Math.PI * uu), hemY(sp, p[0], n) - 1.4)]; };
-          add(lay, { k: 'pen', d: pen(fn, { step: 2, wob: 0.12, seed: (r * 131 + u * 997) | 0 }), w: r1((0.28 + 0.5 * glow) * bright), c: 'light' });
+          add(lay, { k: 'pen', d: pen(fn, { step: 2, wob: 0.12, seed: (r * 131 + u * 997) | 0 }), w: r1((0.22 + 0.36 * glow) * bright), c: 'light' });
         }
-        u = u1 + 0.012 + RS() * 0.04;
+        u = u1 + 0.025 + RS() * 0.06;
       }
     }
     // silhouette
@@ -285,7 +285,7 @@ function build(level = 'full') {
       add(lay, { k: 'fill', d: flap(0.385, 0.615, 0.475, 0.825), c: 'ground' });
       add(lay, { k: 'fill', d: flap(0.415, 0.585, 0.505, 0.81), c: 'light', cls: 'win' });
       const z0 = meshPt(0.5, 0.515), z1 = meshPt(0.5, 0.815);
-      add(lay, { k: 'pen', d: `M${r1(z0[0])} ${r1(z0[1])}L${r1(z1[0])} ${r1(z1[1] + 1)}`, w: 0.75, c: 'ground', cls: 'win' });
+      add(lay, { k: 'pen', d: `M${r1(z0[0])} ${r1(z0[1])}L${r1(z1[0])} ${r1(z1[1] + 1)}`, w: 1.05, c: 'ground', cls: 'win' });
     }
     // finial: a slender gold cap with a bead
     const { cx, ty } = sp, s = key === 'big' ? 1 : 0.8, hh = 20 * s, w = 4.2 * s;
