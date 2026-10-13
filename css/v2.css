@@ -1,0 +1,274 @@
+/* ============================================================
+   LOXLEY FOREST · the redesign layer (2026-10)
+   Sits on global.css (its tokens, reset and fonts). Mobile first.
+   Look: a field guide at dusk. Forest-deep and linen, one gold,
+   Cormorant for voice, Montserrat for wayfinding, engraved marks
+   (the acorn, the arrow) as the only ornament.
+   ============================================================ */
+
+:root {
+  --ink: #142418;              /* the room: one step below forest-deep */
+  --on-dark: #f7f3ed;          /* linen */
+  --on-dark-muted: #c9c1b1;    /* 9.7:1 on --ink */
+  --pad-x: clamp(20px, 5vw, 56px);
+  --pad-y: clamp(80px, 12vw, 148px);
+  --measure: 34rem;
+  --hdr-h: 68px;
+  --acorn: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 20'%3E%3Cpath fill='%23c4a265' d='M8 2.2C4.6 2.2 1.9 4.6 1.9 8H14.1C14.1 4.6 11.4 2.2 8 2.2ZM2.8 8.9H13.2C13.2 13.4 10.8 17.2 8 19.2C5.2 17.2 2.8 13.4 2.8 8.9ZM7.6 2.4C7.7 1.2 8.4.4 9.6.1L9.9.7C9 1 8.5 1.6 8.5 2.4Z'/%3E%3C/svg%3E");
+}
+
+.v2 { background: var(--ink); }
+.v2 main { display: block; }
+
+/* ---- type ---------------------------------------------------------- */
+.lf-eyebrow {
+  font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 0.6875rem;
+  letter-spacing: 0.32em; text-transform: uppercase; color: var(--on-dark-muted); margin: 0 0 18px;
+}
+.lf-light .lf-eyebrow, .lf-parch .lf-eyebrow { color: var(--stone); }
+.lf-h1, .lf-h2, .lf-h3 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 400; margin: 0; text-wrap: balance; }
+.lf-h1 { font-size: clamp(2.9rem, 11vw, 6.4rem); line-height: 0.98; letter-spacing: -0.01em; font-weight: 300; }
+.lf-h2 { font-size: clamp(2.2rem, 7vw, 4rem); line-height: 1.04; font-weight: 300; }
+.lf-h2 em, .lf-h1 em { font-style: italic; color: inherit; font-weight: 300; }
+.lf-h3 { font-size: 1.75rem; line-height: 1.15; }
+.lf-lead { font-size: clamp(1.25rem, 3.6vw, 1.5rem); line-height: 1.55; max-width: var(--measure); margin: 22px 0 0; }
+.lf-body { font-size: 1.2rem; line-height: 1.7; max-width: var(--measure); }
+.lf-body p + p { margin-top: 1em; }
+.lf-dark { background: var(--ink); color: var(--on-dark); }
+.lf-dark .lf-lead, .lf-dark .lf-body { color: var(--on-dark-muted); }
+.lf-light { background: var(--linen); color: var(--bark); }
+.lf-light .lf-lead, .lf-light .lf-body { color: var(--stone); }
+.lf-parch { background: var(--parchment); color: var(--bark); }
+
+/* ---- layout -------------------------------------------------------- */
+.lf-sec { padding: var(--pad-y) var(--pad-x); position: relative; }
+.lf-wrap { max-width: 1200px; margin: 0 auto; }
+.lf-split { display: grid; gap: 40px; align-items: center; }
+@media (min-width: 900px) { .lf-split { grid-template-columns: 1fr 1fr; gap: 72px; } .lf-split--flip > :first-child { order: 2; } }
+.lf-center { text-align: center; }
+.lf-center .lf-lead, .lf-center .lf-body { margin-left: auto; margin-right: auto; }
+
+/* ---- buttons and links --------------------------------------------- */
+.lf-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 52px; padding: 0 28px; border: 1px solid var(--gold);
+  background: var(--gold); color: var(--forest-deep);
+  font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 0.75rem;
+  letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none;
+  transition: background 0.25s var(--ease-natural), transform 0.25s var(--ease-natural);
+}
+.lf-btn:hover { background: var(--gold-light); transform: translateY(-1px); }
+.lf-btn:focus-visible, .lf-link:focus-visible { outline: 2px solid var(--on-dark); outline-offset: 3px; }
+.lf-light .lf-btn:focus-visible { outline-color: var(--forest-deep); }
+.lf-btn svg { width: 13px; height: 16px; }
+.lf-link {
+  display: inline-flex; align-items: center; gap: 10px; min-height: 44px;
+  font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 0.75rem;
+  letter-spacing: 0.18em; text-transform: uppercase; color: inherit; text-decoration: none;
+  border-bottom: 1px solid currentColor; padding-bottom: 2px; min-height: 0;
+}
+.lf-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 18px 28px; margin-top: 34px; }
+
+/* ---- acorn bullets and the arrow divider ----------------------------- */
+.lf-acorns { list-style: none; margin: 28px 0 0; padding: 0; display: grid; gap: 14px; }
+.lf-acorns li { position: relative; padding-left: 30px; font-size: 1.2rem; line-height: 1.5; }
+.lf-acorns li::before {
+  content: ''; position: absolute; left: 2px; top: 0.32em; width: 13px; height: 16px;
+  background: var(--acorn) center / contain no-repeat;
+}
+.lf-acorns b { font-weight: 600; color: var(--forest-deep); }
+.lf-dark .lf-acorns b { color: var(--on-dark); }
+.lf-arrow { display: block; width: min(320px, 70%); height: 22px; margin: 0 auto; color: var(--stone); opacity: 0.8; }
+.lf-dark .lf-arrow { color: var(--on-dark-muted); opacity: 0.6; }
+.lf-arrow--left { margin: 0; }
+
+/* ---- header -------------------------------------------------------- */
+.lf-hdr {
+  position: fixed; inset: 0 0 auto 0; z-index: 950; height: calc(var(--hdr-h) + env(safe-area-inset-top, 0px));
+  padding: env(safe-area-inset-top, 0px) var(--pad-x) 0; display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  transition: background 0.35s var(--ease-natural), box-shadow 0.35s var(--ease-natural);
+}
+.lf-hdr.is-solid { background: rgba(20, 36, 24, 0.94); box-shadow: 0 1px 0 rgba(196, 162, 101, 0.18); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.lf-hdr__mark { display: block; flex: none; }
+.lf-hdr__mark img { width: clamp(176px, 46vw, 236px); height: auto; }
+.lf-hdr__nav { display: none; }
+.lf-hdr__nav a { color: var(--on-dark); text-decoration: none; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 10px 0; }
+.lf-hdr__nav a:hover { color: var(--gold-light); }
+.lf-hdr__book { display: none; }
+.lf-menu-btn {
+  width: 48px; height: 48px; margin-right: -12px; background: none; border: 0; display: grid; place-items: center; color: var(--on-dark);
+}
+.lf-menu-btn span { display: block; width: 26px; height: 1.5px; background: currentColor; box-shadow: 0 7px 0 currentColor; transform: translateY(-3.5px); transition: transform .3s, box-shadow .3s; }
+.lf-menu-open .lf-menu-btn span { box-shadow: none; transform: rotate(45deg); }
+.lf-menu-open .lf-menu-btn span::after { content: ''; display: block; width: 26px; height: 1.5px; background: currentColor; transform: rotate(-90deg); }
+@media (min-width: 1080px) {
+  .lf-hdr__nav { display: flex; gap: 30px; margin-left: auto; }
+  .lf-hdr__book { display: inline-flex; min-height: 44px; padding: 0 20px; }
+  .lf-menu-btn { display: none; }
+}
+
+/* ---- menu (phones) --------------------------------------------------- */
+.lf-menu {
+  position: fixed; inset: 0; z-index: 940; background: var(--ink); color: var(--on-dark);
+  padding: calc(var(--hdr-h) + 24px + env(safe-area-inset-top, 0px)) var(--pad-x) calc(32px + env(safe-area-inset-bottom, 0px));
+  display: flex; flex-direction: column; gap: 28px; overflow-y: auto;
+  opacity: 0; visibility: hidden; transition: opacity 0.3s var(--ease-natural), visibility 0s 0.3s;
+}
+.lf-menu-open .lf-menu { opacity: 1; visibility: visible; transition: opacity 0.3s var(--ease-natural); }
+.lf-menu nav { display: grid; }
+.lf-menu nav a {
+  font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 300; font-size: 2.3rem; line-height: 1.2;
+  color: var(--on-dark); text-decoration: none; padding: 6px 0 6px 30px; position: relative;
+}
+.lf-menu nav a::before { content: ''; position: absolute; left: 0; top: 50%; width: 13px; height: 16px; margin-top: -8px; background: var(--acorn) center / contain no-repeat; opacity: 0.55; }
+.lf-menu .lf-btn { align-self: flex-start; }
+.lf-menu__foot { margin-top: auto; color: var(--on-dark-muted); font-size: 1.05rem; }
+@media (min-width: 1080px) { .lf-menu { display: none; } }
+
+/* ---- hero ------------------------------------------------------------ */
+.lf-hero { position: relative; min-height: 100svh; display: flex; align-items: flex-end; color: var(--on-dark); overflow: hidden; background: var(--ink); }
+.lf-hero .hero__media { position: absolute; inset: 0; z-index: 0; }
+.lf-hero .hero__media img { width: 100%; height: 100%; object-fit: cover; animation: none; }
+.lf-hero__shade { position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(20,36,24,.55) 0%, rgba(20,36,24,0) 22%, rgba(20,36,24,0) 42%, rgba(20,36,24,.86) 78%, var(--ink) 100%); }
+.lf-hero__inner { position: relative; z-index: 2; width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 var(--pad-x) calc(44px + env(safe-area-inset-bottom, 0px)); }
+.lf-hero .lf-lead { color: var(--on-dark); opacity: 0.9; max-width: 30rem; }
+.lf-proof { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin-top: 26px; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; letter-spacing: 0.08em; color: var(--on-dark-muted); }
+.lf-proof__stars { color: var(--gold); letter-spacing: 0.12em; font-size: 0.85rem; }
+.lf-proof a { color: inherit; }
+@media (min-width: 900px) { .lf-hero__inner { padding-bottom: 88px; } }
+
+/* ---- the crossing (opening statement) ------------------------------- */
+.lf-statement { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 300; font-size: clamp(1.75rem, 5.6vw, 2.9rem); line-height: 1.28; color: var(--forest-deep); max-width: 22em; margin: 0 auto; text-wrap: pretty; }
+.lf-statement + .lf-body { margin: 34px auto 0; }
+
+/* ---- booking --------------------------------------------------------- */
+.lf-book { scroll-margin-top: var(--hdr-h); }
+.lf-book__head { max-width: 760px; margin: 0 auto 40px; text-align: center; }
+.lf-promise { list-style: none; margin: 28px auto 0; padding: 0; display: grid; gap: 12px; width: fit-content; max-width: 100%; text-align: left; font-family: 'Montserrat', sans-serif; font-size: 0.8125rem; line-height: 1.5; letter-spacing: 0.04em; color: var(--forest-deep); }
+@media (min-width: 900px) { .lf-promise { grid-auto-flow: column; gap: 32px; } }
+.lf-promise li { position: relative; padding-left: 22px; }
+.lf-promise li::before { content: ''; position: absolute; left: 0; top: 0.1em; width: 11px; height: 14px; background: var(--acorn) center / contain no-repeat; }
+.lf-book .gh-calendar, .lf-book .gh-summary, .lf-book .gh-checkout { box-shadow: 0 18px 48px rgba(26, 46, 26, 0.08); }
+.lf-book__alt { text-align: center; margin-top: 30px; font-size: 1.1rem; color: var(--stone); }
+.lf-book__alt a { color: var(--forest-deep); border-bottom: 1px solid currentColor; }
+
+/* ---- facts ------------------------------------------------------------ */
+.lf-facts { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 34px 20px; }
+.lf-facts li { border-top: 1px solid rgba(247, 243, 237, 0.18); padding-top: 16px; }
+.lf-facts b { display: block; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 300; font-size: clamp(2.4rem, 9vw, 3.6rem); line-height: 1; color: var(--on-dark); font-variant-numeric: lining-nums; }
+.lf-facts span { display: block; margin-top: 8px; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--on-dark-muted); }
+.lf-facts li:last-child { grid-column: 1 / -1; }
+@media (min-width: 900px) { .lf-facts { grid-template-columns: repeat(5, 1fr); } .lf-facts li:last-child { grid-column: auto; } }
+
+/* ---- chapters ---------------------------------------------------------- */
+.lf-chapters { display: grid; grid-auto-flow: column; grid-auto-columns: 78%; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; margin: 44px calc(var(--pad-x) * -1) 0; padding: 0 var(--pad-x) 8px; scrollbar-width: none; }
+.lf-chapters::-webkit-scrollbar { display: none; }
+.lf-chapter { scroll-snap-align: start; margin: 0; }
+.lf-chapter img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+.lf-chapter figcaption { padding-top: 16px; }
+.lf-chapter .lf-h3 { color: var(--on-dark); }
+.lf-chapter p { margin: 6px 0 0; color: var(--on-dark-muted); font-size: 1.1rem; line-height: 1.5; }
+.lf-chapter__n { font-family: 'Montserrat', sans-serif; font-size: 0.6875rem; letter-spacing: 0.28em; color: var(--on-dark-muted); text-transform: uppercase; display: block; margin-bottom: 6px; }
+@media (min-width: 900px) { .lf-chapters { grid-auto-flow: row; grid-template-columns: repeat(4, 1fr); overflow: visible; margin: 56px 0 0; padding: 0; } }
+
+/* ---- photo blocks ------------------------------------------------------ */
+.lf-photo { margin: 0; }
+.lf-photo img { width: 100%; height: auto; }
+.lf-photo--tall img { aspect-ratio: 4 / 5; object-fit: cover; }
+.lf-bg { position: absolute; inset: 0; z-index: 0; }
+.lf-bg img { width: 100%; height: 100%; object-fit: cover; }
+.lf-bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(20,36,24,.82), rgba(20,36,24,.6) 40%, rgba(20,36,24,.9)); }
+.lf-over { position: relative; z-index: 1; }
+
+/* ---- reviews ----------------------------------------------------------- */
+.lf-reviews .review-rotator__card { max-width: 46rem; margin: 0 auto; text-align: center; cursor: pointer; transition: opacity 0.28s ease; }
+.lf-reviews .review-rotator__card--fading { opacity: 0; }
+.lf-reviews .testimonial__stars { color: var(--gold); letter-spacing: 0.2em; font-size: 1rem; }
+.lf-reviews .testimonial__quote { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 300; font-style: italic; font-size: clamp(1.6rem, 5vw, 2.3rem); line-height: 1.35; color: var(--forest-deep); margin: 20px 0 0; }
+.lf-reviews .testimonial__author { margin-top: 22px; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--stone); }
+.lf-reviews__note { margin-top: 30px; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; letter-spacing: 0.08em; color: var(--stone); }
+
+/* ---- list signup -------------------------------------------------------- */
+.lf-signup { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; max-width: 30rem; }
+.lf-signup label { flex: 1 1 100%; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--on-dark-muted); }
+.lf-signup input[type="email"] { flex: 1 1 14rem; min-height: 52px; padding: 0 16px; border: 1px solid rgba(247,243,237,.35); background: rgba(247,243,237,.06); color: var(--on-dark); font: 400 1.1rem 'Cormorant Garamond', Georgia, serif; }
+.lf-signup input[type="email"]::placeholder { color: var(--on-dark-muted); }
+.lf-signup input[type="email"]:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.lf-signup .lf-btn { flex: 0 0 auto; }
+
+/* ---- drive times -------------------------------------------------------- */
+.lf-drive { list-style: none; margin: 34px 0 0; padding: 0; display: grid; grid-template-columns: 1fr auto; gap: 12px 24px; max-width: 26rem; font-family: 'Montserrat', sans-serif; font-size: 0.875rem; letter-spacing: 0.04em; }
+.lf-drive li { display: contents; }
+.lf-drive span { color: var(--on-dark-muted); }
+.lf-drive b { font-weight: 500; color: var(--on-dark); text-align: right; font-variant-numeric: tabular-nums; }
+
+/* ---- footer ------------------------------------------------------------- */
+.lf-foot { background: #0f1b11; color: var(--on-dark-muted); padding: 64px var(--pad-x) calc(96px + env(safe-area-inset-bottom, 0px)); }
+.lf-foot__grid { max-width: 1200px; margin: 0 auto; display: grid; gap: 40px; }
+.lf-foot img { width: 220px; height: auto; }
+.lf-foot nav { display: grid; gap: 4px; }
+.lf-foot a { color: var(--on-dark); text-decoration: none; font-size: 1.15rem; padding: 6px 0; display: inline-block; }
+.lf-foot a:hover { color: var(--gold-light); }
+.lf-foot__small { font-family: 'Montserrat', sans-serif; font-size: 0.75rem; letter-spacing: 0.06em; display: flex; flex-wrap: wrap; gap: 8px 22px; border-top: 1px solid rgba(196,162,101,.18); padding-top: 22px; }
+.lf-foot__small a { font-size: 0.75rem; padding: 0; color: var(--on-dark-muted); }
+@media (min-width: 900px) { .lf-foot__grid { grid-template-columns: 1.4fr 1fr 1fr; } .lf-foot__small { grid-column: 1 / -1; } }
+
+/* ---- motion: rise into view, once. Visible without JavaScript. ---------- */
+.js .lf-rise { opacity: 0; transform: translateY(24px); transition: opacity 0.7s var(--ease-natural), transform 0.7s var(--ease-natural); }
+.js .lf-rise.is-in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .js .lf-rise { opacity: 1; transform: none; transition: none; } }
+
+/* the old progress bar and page fade stay off the redesign */
+.v2 .scroll-progress { display: none; }
+.v2 { animation: none; }
+
+/* the hero's pause control: moving video longer than five seconds can be stopped */
+.lf-hero__pause {
+  position: absolute; z-index: 3; right: calc(var(--pad-x) - 8px); bottom: calc(40px + env(safe-area-inset-bottom, 0px));
+  width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(247, 243, 237, 0.45); background: rgba(20, 36, 24, 0.35);
+  display: grid; place-items: center; color: var(--on-dark); cursor: pointer;
+}
+.lf-hero__pause span { width: 10px; height: 12px; border-left: 3px solid currentColor; border-right: 3px solid currentColor; }
+.lf-hero__pause.is-paused span { width: 0; height: 0; border: 0; border-left: 11px solid currentColor; border-top: 7px solid transparent; border-bottom: 7px solid transparent; margin-left: 3px; }
+.lf-hero__pause:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+@media (min-width: 900px) { .lf-hero__pause { bottom: 88px; } }
+@media (prefers-reduced-motion: reduce) { .lf-hero__pause { display: none; } }
+
+/* ---- inner pages ------------------------------------------------------ */
+.lf-hero--page { min-height: 86svh; }
+.lf-chips { list-style: none; margin: 26px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.lf-chips li { font-family: 'Montserrat', sans-serif; font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--forest-deep); border: 1px solid rgba(196, 162, 101, 0.55); padding: 9px 14px; }
+.lf-gallery .lf-chapter img { aspect-ratio: 4 / 3; }
+@media (min-width: 900px) { .lf-gallery { grid-template-columns: repeat(5, 1fr); } .lf-gallery .lf-chapter img { aspect-ratio: 3 / 4; } }
+.lf-signup__done { flex: 1 1 100%; margin: 4px 0 0; color: var(--on-dark); font-size: 1.15rem; }
+
+/* ---- the hero, phones: the picture above, the words below on the forest ----
+   Nothing is printed over the glowing canvas, so every word reads. */
+@media (max-width: 767px) {
+  .lf-hero, .lf-hero--page { display: block; min-height: 0; }
+  .lf-hero .hero__media { position: relative; inset: auto; height: 62svh; min-height: 380px; }
+  .lf-hero .hero__media::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 120px; z-index: 1; background: linear-gradient(180deg, rgba(20,36,24,.7), rgba(20,36,24,0)); }
+  .lf-hero .hero__media::after { content: ''; position: absolute; inset: auto 0 0 0; height: 34%; z-index: 1; background: linear-gradient(180deg, rgba(20,36,24,0), var(--ink)); }
+  .lf-hero .hero__media video, .lf-hero .hero__media picture, .lf-hero .hero__media > img { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .lf-hero .hero__media picture img { width: 100%; height: 100%; object-fit: cover; }
+  .lf-hero__shade { display: none; }
+  .lf-hero__inner { margin-top: -28px; padding-top: 0; padding-bottom: calc(48px + env(safe-area-inset-bottom, 0px)); }
+  .lf-hero .lf-h1 { font-size: clamp(2.6rem, 11.5vw, 3.4rem); }
+  .lf-hero__pause { top: calc(max(62svh, 380px) - 60px); bottom: auto; }
+}
+/* desktop: the words sit on a darkened left third, clear of the treehouse */
+@media (min-width: 768px) {
+  .lf-hero__shade { background: linear-gradient(90deg, rgba(20,36,24,.88) 0%, rgba(20,36,24,.62) 34%, rgba(20,36,24,0) 64%), linear-gradient(180deg, rgba(20,36,24,.5) 0%, rgba(20,36,24,0) 20%, rgba(20,36,24,0) 70%, rgba(20,36,24,.75) 100%); }
+  .lf-hero__inner > * { max-width: 34rem; }
+}
+@media (max-width: 767px) { .lf-hero__pause { top: calc(max(62svh, 380px) - 96px); } }
+
+/* the treehouse page, desktop: an editorial split, the words on the forest, the photograph whole */
+@media (min-width: 900px) {
+  .lf-hero--page { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); align-items: center; min-height: 92svh; }
+  .lf-hero--page .hero__media { position: relative; inset: auto; grid-column: 2; grid-row: 1; height: 100%; min-height: 92svh; }
+  .lf-hero--page .hero__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .lf-hero--page .lf-hero__shade { display: none; }
+  .lf-hero--page .lf-hero__inner { grid-column: 1; grid-row: 1; padding: calc(var(--hdr-h) + 48px) clamp(32px, 4vw, 72px) 64px var(--pad-x); }
+  .lf-hero--page .lf-h1 { font-size: clamp(2.8rem, 4.6vw, 4.6rem); }
+}
