@@ -40,3 +40,23 @@
     rise.forEach(function (el) { el.classList.add('is-in'); });
   }
 })();
+
+/* List sign-ups post in place (Netlify forms), so nobody leaves the page. */
+(function () {
+  document.querySelectorAll('form[data-lf-ajax]').forEach(function (form) {
+    form.addEventListener('submit', function (e) {
+      if (!window.fetch || !window.URLSearchParams) return;
+      e.preventDefault();
+      var btn = form.querySelector('button[type="submit"]');
+      if (btn) btn.disabled = true;
+      fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(new FormData(form)).toString() })
+        .then(function (r) {
+          if (!r.ok) throw new Error('status ' + r.status);
+          var done = form.querySelector('.lf-signup__done');
+          form.querySelectorAll('input[type="email"], button[type="submit"], label').forEach(function (el) { el.hidden = true; });
+          if (done) done.hidden = false;
+        })
+        .catch(function () { if (btn) btn.disabled = false; form.removeAttribute('data-lf-ajax'); form.submit(); });
+    });
+  });
+})();
