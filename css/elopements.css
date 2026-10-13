@@ -101,7 +101,7 @@
 }
 
 .package__name {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(28px, 2.5vw, 36px);
   font-weight: 500;
   color: var(--forest-deep);
@@ -115,7 +115,7 @@
 }
 
 .package__price strong {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 28px;
   font-weight: 600;
   color: var(--forest-deep);
