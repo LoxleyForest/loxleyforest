@@ -5,8 +5,8 @@ const X = require('./engrave.js');
 
 const st = LK.stacked('dark', { ew: 270, split: true, id: 'pg' });
 const cfg = { E: { W: X.W, H: X.H, big: X.S.big, small: X.S.small, deckY: X.S.deckY, deckX0: X.S.deckX0, deckX1: X.S.deckX1 }, wm: st.parts.wm };
-const icon = LK.icon({ id: 'pi' });
-const iconSvg = (z, id) => `<svg viewBox="0 0 512 512" width="${z}" height="${z}" role="img" aria-label="Icon at ${z} pixels">${icon.inner.replace(/pi-in/g, 'pi' + id + '-in')}</svg>`;
+const icon = LK.icon();
+const iconSvg = (z) => `<svg viewBox="0 0 512 512" width="${z}" height="${z}" role="img" aria-label="Favicon at ${z} pixels">${icon.inner}</svg>`;
 
 const html = `<title>Loxley Forest Mark</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -48,6 +48,13 @@ figcaption { font-size: 12.5px; color: var(--muted); line-height: 1.55 }
 .wide { grid-column: 1 / -1 }
 .sizes { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 22px; padding: 28px; background: var(--linen); color: var(--forest) }
 .sizes span { display: block; text-align: center; font-size: 11px; margin-top: 8px; color: #4b5a49; font-variant-numeric: tabular-nums }
+.tab { display: flex; align-items: center; gap: 8px; background: #dfe1e5; border-radius: 8px 8px 0 0; padding: 8px 14px; font: 400 12px var(--body); color: #202124; min-width: 0 }
+.sizes .tabtext { display: inline; margin: 0; color: #202124; font-size: 12px; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+.sizes .tabicon { display: inline-flex; margin: 0 }
+.home { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 26px; padding: 28px; background: #0b130c }
+.home img { display: block; border-radius: 22%; box-shadow: 0 8px 24px rgba(0,0,0,.5) }
+.home span { display: block; text-align: center; font-size: 11px; margin-top: 8px; color: var(--muted); font-variant-numeric: tabular-nums }
+.round { border-radius: 50%; aspect-ratio: 1; object-fit: cover; max-width: 360px; justify-self: center }
 .phone { width: min(100%, 300px); margin: 0 auto; padding: 12px; border-radius: 42px; background: #0b130c; box-shadow: 0 0 0 1px var(--rule), 0 30px 60px rgba(0,0,0,.45) }
 .phone video { border-radius: 30px; aspect-ratio: 9 / 16; object-fit: cover; background: var(--forest) }
 .files { width: 100%; border-collapse: collapse; font-size: 13.5px }
@@ -67,7 +74,7 @@ figcaption { font-size: 12.5px; color: var(--muted); line-height: 1.55 }
 </style>
 
 <div class="wrap">
-  <div class="top"><span><b>Loxley Forest</b> · the mark, engraved</span><span>Draft for Mick · 12 October 2026</span></div>
+  <div class="top"><span><b>Loxley Forest</b> · the mark, engraved</span><span>Approved 12 October · refined 13 October 2026</span></div>
 
   <div class="stage">
     <svg id="stage" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${st.w} ${st.h}" role="img" aria-label="Loxley Forest: an engraved arch showing the twin-spire treehouse hung by cables between five oaks, with the name and an arrow beneath">${st.inner}</svg>
@@ -86,6 +93,7 @@ figcaption { font-size: 12.5px; color: var(--muted); line-height: 1.55 }
       <li><b>Every cable starts at the truss.</b> The frame under the deck ends in two bottom hubs, and each cable runs from a hub up to a collar on an oak. Nothing ties to the spire tops.</li>
       <li><b>The canvas glows.</b> The spires are the brightest lines in the drawing, the window is lit, and the bridge and rail carry their string lights.</li>
       <li><b>Open air below.</b> The deck sits high, with ferns on the forest floor far beneath.</li>
+      <li><b>An acorn crowns the arch.</b> For the five oaks, and to echo the gold finials on the spires.</li>
       <li><b>The arrow stays.</b> It runs through the name as it does in the current logo, now with drawn feathers.</li>
     </ul>
   </section>
@@ -111,11 +119,25 @@ figcaption { font-size: 12.5px; color: var(--muted); line-height: 1.55 }
   </section>
 
   <section>
-    <div class="label">Small sizes</div>
-    <h2>Below 64 pixels, a bolder drawing of the same house</h2>
-    <p class="lede">The engraving needs room. For the browser tab and a phone's home screen the icon keeps the arch, the two spires, the deck, two oaks and the cables from the hub.</p>
+    <div class="label">Two icons</div>
+    <h2>A lean one for the browser tab, <em>the engraving for the phone</em></h2>
+    <p class="lede">The favicon is the little picture in a browser tab. It is drawn lean so it stays crisp from 16 pixels up: the arch, the two spires, the deck and the cables from the hub. The app icon is what a guest sees when they save the site to their phone's home screen, so it carries the whole engraving.</p>
     <div class="sizes">
-      ${[16, 32, 48, 96, 180].map((z, i) => `<div>${iconSvg(z, i)}<span>${z}</span></div>`).join('')}
+      ${[16, 24, 32, 48, 64].map((z) => `<div>${iconSvg(z)}<span>${z}</span></div>`).join('')}
+      <div class="tab"><span class="tabicon">${iconSvg(16)}</span><span class="tabtext">Loxley Forest · Treehouses</span></div>
+    </div>
+    <div class="home">
+      ${[60, 120, 180].map((z) => `<div><img src="loxley-icon-512.png" width="${z}" height="${z}" alt="App icon at ${z} pixels"><span>${z}</span></div>`).join('')}
+    </div>
+  </section>
+
+  <section>
+    <div class="label">The kit</div>
+    <h2>Ready for Instagram, a shared link, and your email</h2>
+    <div class="plates">
+      <figure><img class="round" src="loxley-profile-1080.jpg" alt="Profile picture: the emblem on forest green, cropped to a circle"><figcaption>Profile picture for Instagram and Facebook. Drawn to sit inside their circle.</figcaption></figure>
+      <figure><img src="loxley-share-1200x630.jpg" alt="Link preview: the stacked lockup beside the treehouse photograph"><figcaption>The picture that shows when someone shares a link to the site.</figcaption></figure>
+      <figure class="wide"><img src="loxley-email-signature.png" alt="Email signature: the horizontal lockup on white" style="max-width:520px"><figcaption>Email signature, on white.</figcaption></figure>
     </div>
   </section>
 
@@ -125,7 +147,7 @@ figcaption { font-size: 12.5px; color: var(--muted); line-height: 1.55 }
     <div class="plates">
       <figure class="wide"><img src="header-mock.webp" alt="Website header over the treehouse photo with the horizontal lockup and a Book your dates button"><figcaption>The site header over your photograph.</figcaption></figure>
       <figure><img src="card-mock.webp" alt="A cream welcome card with the one-colour emblem and the name"><figcaption>A welcome card in one ink.</figcaption></figure>
-      <figure><div class="phone"><video src="loxley-logo-reel-1080x1920.mp4" poster="reel-poster.webp" autoplay muted loop playsinline aria-label="The logo animation as a vertical reel"></video></div><figcaption style="text-align:center">The animation as a ten-second reel, 1080 by 1920.</figcaption></figure>
+      <figure><div class="phone"><video src="loxley-logo-reel-1080x1920-end-card.mp4" poster="reel-poster.webp" autoplay muted loop playsinline aria-label="The logo animation as a vertical reel"></video></div><figcaption style="text-align:center">The animation as a reel, with the web address on the end card.</figcaption></figure>
     </div>
   </section>
 
@@ -136,33 +158,30 @@ figcaption { font-size: 12.5px; color: var(--muted); line-height: 1.55 }
     <div class="scroll"><table class="files">
       <thead><tr><th>File</th><th>Use</th></tr></thead>
       <tbody>
-        <tr><td>loxley-emblem-colour.svg</td><td>The master. Gold and cream lines on forest.</td></tr>
-        <tr><td>loxley-emblem-one-colour-forest.svg</td><td>One ink on light grounds.</td></tr>
-        <tr><td>loxley-emblem-gold-lines.svg</td><td>One ink on dark grounds, foil and thread.</td></tr>
-        <tr><td>loxley-stacked-on-dark.svg</td><td>Emblem over the name, for dark grounds.</td></tr>
-        <tr><td>loxley-stacked-on-light.svg</td><td>The same, for cream and white.</td></tr>
-        <tr><td>loxley-horizontal-on-dark.svg</td><td>Side by side, for the site header.</td></tr>
-        <tr><td>loxley-horizontal-on-light.svg</td><td>Side by side, for letters and invoices.</td></tr>
-        <tr><td>loxley-wordmark-on-dark.svg</td><td>The name and the arrow alone.</td></tr>
-        <tr><td>loxley-wordmark-on-light.svg</td><td>The same, on light grounds.</td></tr>
-        <tr><td>loxley-icon.svg</td><td>App and home-screen icon.</td></tr>
-        <tr><td>loxley-favicon.svg</td><td>Browser tab.</td></tr>
-        <tr><td>motion/ three MP4s</td><td>The animation: reel 1080 by 1920, square 1080, wide 1920 by 1080.</td></tr>
+        <tr><td>loxley-emblem-colour.svg</td><td>The master. Gold and cream lines on forest, crowned with the acorn.</td></tr>
+        <tr><td>loxley-emblem-one-colour-forest.svg</td><td>One ink on light grounds: stamps, letterpress, a branding iron.</td></tr>
+        <tr><td>loxley-emblem-gold-lines.svg</td><td>One ink on dark grounds: foil and thread.</td></tr>
+        <tr><td>loxley-stacked-on-dark.svg, -on-light.svg</td><td>Emblem over the name.</td></tr>
+        <tr><td>loxley-horizontal-on-dark.svg, -on-light.svg</td><td>Side by side, for headers, letters and invoices.</td></tr>
+        <tr><td>loxley-wordmark-on-dark.svg, -on-light.svg</td><td>The name and the arrow alone.</td></tr>
+        <tr><td>loxley-favicon.svg</td><td>The browser tab.</td></tr>
+        <tr><td>loxley-app-icon.svg</td><td>The phone home screen.</td></tr>
+        <tr><td>kit/</td><td>Profile picture, link preview, email signature, and the icon files a browser asks for.</td></tr>
+        <tr><td>motion/</td><td>Six animations: reel, square and wide, each with and without the web-address end card.</td></tr>
       </tbody>
     </table></div>
   </section>
 
   <section>
     <div class="label">Your call</div>
-    <h2>Three things only you can answer</h2>
+    <h2>Two things only you can do</h2>
     <ol class="ask">
-      <li>Is this the mark? If something is off, name it and it changes.</li>
-      <li>Where the five oaks stand. I drew two left, two right and one behind. If the real ones stand differently, say how.</li>
-      <li>The line under the name reads Dahlonega · Georgia. Keep it, change it, or drop it.</li>
+      <li>Say whether the new favicon and phone icon go on the live site now, or wait for the redesign launch. They are already on the redesign branch.</li>
+      <li>Change the Instagram and Facebook profile pictures. The picture is in the kit folder; I can't post for you.</li>
     </ol>
   </section>
 
-  <div class="foot">Drawn in code from the July 2026 photograph and Mick's notes of 12 October 2026. Cormorant Garamond and Montserrat, the site's own faces.</div>
+  <div class="foot">Drawn in code from the July 2026 photograph and Mick's notes of 12 October 2026. Approved by Mick that night, with the line under the name and the oaks as drawn. Cormorant Garamond and Montserrat, the site's own faces.</div>
 </div>
 <script>window.LF_CFG=${JSON.stringify(cfg)};</script>
 <script>${fs.readFileSync(__dirname + '/anim.js', 'utf8')}</script>

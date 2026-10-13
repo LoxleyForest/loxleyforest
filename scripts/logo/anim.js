@@ -12,7 +12,7 @@
   const mix = (a, b, u) => a + (b - a) * u;
   const hexMix = (h1, h2, u) => { const p = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16)); const a = p(h1), b = p(h2); return '#' + a.map((v, i) => Math.round(mix(v, b[i], u)).toString(16).padStart(2, '0')).join(''); };
   const { E, wm } = cfg;
-  const emb = q('.emblem'), wmg = q('.wordmark');
+  const emb = q('.emblem'), wmg = q('.wordmark'), inner = q('.emb-inner', emb) || emb, acornG = q('.acorn', emb);
 
   // --- wipes: a clip rect per layer, in emblem space ---
   const defs = document.createElementNS(NS, 'defs'); emb.appendChild(defs);
@@ -45,7 +45,7 @@
   const glints = [E.small, E.big].map((s, i) => {
     const g = document.createElementNS(NS, 'g'); const bx = s.cx, by = s.ty - 20 * (i ? 1 : 0.8) - 2.2;
     g.innerHTML = `<path d="M${bx} ${by - 13}L${bx + 1} ${by - 1}L${bx + 13} ${by}L${bx + 1} ${by + 1}L${bx} ${by + 13}L${bx - 1} ${by + 1}L${bx - 13} ${by}L${bx - 1} ${by - 1}Z" fill="#fff6dc"/>`;
-    emb.appendChild(g); return { g, bx, by };
+    inner.appendChild(g); return { g, bx, by };
   });
 
   // --- lights ---
@@ -63,13 +63,19 @@
   wmg.appendChild(fdefs);
   const blurG = fdefs.querySelector('#lf-blur-g');
   fly.forEach((f) => f.setAttribute('filter', 'url(#lf-blur)'));
-  const FLY0 = 5.55, FLY1 = 6.35, START = -(wm.tip + 260);
+  const FLY0 = 5.55, FLY1 = 6.35;
+  // start the arrow fully off the left edge of the screen, wherever the lockup sits
+  const startX = () => { const m = wmg.getScreenCTM(); const off = m ? (-60 - m.e) / m.a - wm.tip : 0; return Math.min(-(wm.tip + 260), off); };
+  let START = startX();
+  window.addEventListener('resize', () => { START = startX(); });
 
   const T_END = 8.2;
   function seek(t) {
     // frame
     draw(frame.slice(0, 1), eio(prog(t, 0.05, 1.25)));
     draw(frame.slice(1), eio(prog(t, 0.35, 1.45)));
+    // the acorn settles on the crown of the arch
+    if (acornG) { const ua = prog(t, 1.05, 1.5), sa = ua <= 0 ? 0 : eBack(ua); acornG.setAttribute('transform', `translate(150 1) scale(${sa.toFixed(3)}) translate(-150 -1)`); }
     // sky inks in from the top
     const us = eo3(prog(t, 0.5, 1.7)); setRect(wipes.sky, 0, 0, W, H * 0.62 * us);
     // five oaks grow from the forest floor
@@ -111,7 +117,7 @@
     let rot = 0;
     if (t > FLY1) { const tau = t - FLY1; rot = 1.7 * Math.exp(-5.2 * tau) * Math.sin(30 * tau); }
     const tr = `translate(${dx.toFixed(2)} 0) rotate(${rot.toFixed(3)} ${wm.tip} ${wm.ay})`;
-    fly.forEach((f) => f.setAttribute('transform', tr));
+    fly.forEach((f) => { f.setAttribute('transform', tr); f.style.opacity = t < FLY0 ? 0 : 1; });
     blurG.setAttribute('stdDeviation', `${(vel * 9).toFixed(2)} 0`);
     const head = wm.tip + dx;
     glyphs.forEach((g, i) => {
@@ -120,6 +126,8 @@
       g.style.opacity = v; g.setAttribute('transform', `translate(0 ${((1 - v) * 9).toFixed(2)})`);
       if (mglyphs[i]) mglyphs[i].style.opacity = v;
     });
+    // the web address, on the end-card cuts
+    const urlG = q('.url'); if (urlG) urlG.setAttribute('opacity', eo3(prog(t, 7.2, 8.0)).toFixed(3));
     // tagline gathers in
     const n = tg.length;
     tg.forEach((p, i) => { const a = 6.45 + i * 0.025, u = eo3(prog(t, a, a + 0.6)); p.style.opacity = u; p.setAttribute('transform', `translate(${((i - n / 2) * 2.2 * (1 - u)).toFixed(2)} 0)`); });

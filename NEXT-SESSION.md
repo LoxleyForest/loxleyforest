@@ -17,9 +17,32 @@ contradicted.
 - **The logo:** a current one exists in three colours in Mick's own files, not
   in Drive or this repo. Its tree is a live oak drawn by his wife's
   grandmother; it stays for throwbacks and tees. A new mark was explored on a
-  design canvas 2026-10-12 (the sail peak, three strokes). `[MICK RATIFIES]`
-  which mark, and the old file still needs to land somewhere a session can
-  reach.
+  design canvas 2026-10-12 (the sail peak, three strokes); Mick read it as a
+  tent and as cartoonish.
+- **The new mark, drawn late 2026-10-12 (supersedes the sail peak):** an
+  engraving in an arch. The twin-spire treehouse from Mick's dusk photograph,
+  hung between five oaks, the arrow through the name kept. Masters in
+  `images/brand/logo/`, three animated cuts in `images/brand/logo/motion/`,
+  and the code that draws all of it in `scripts/logo/` (README there; rebuilds
+  byte for byte). Review page, private to Mick:
+  https://claude.ai/artifact/Vr8WuXmeUFcVPhC1fpvcZu
+- **Facts from Mick, 2026-10-12, for this treehouse:** five oaks hold it up;
+  every cable is attached at the truss's bottom hubs, none at the top.
+- **Ruled 2026-10-12/13:** Mick approved the engraved mark ("knocked it out of
+  the park"). "Dahlonega · Georgia" stays under the name. The oak placement as
+  drawn (two left, two right, one behind) is close enough. He asked for the
+  small icon to be less chunky and for anything that makes it better.
+- **Done 2026-10-13 on this branch:** an acorn crowns the arch; two icons (a
+  lean favicon for the browser tab, the engraving as the phone home-screen
+  icon); the kit in `images/brand/logo/kit/` (profile picture, link preview,
+  email signature, icon PNGs); six animations in `motion/`, with and without
+  a loxleyforest.com end card. The root `favicon.svg` is now the new favicon,
+  `apple-touch-icon.png` sits at the root, and every page links both. The
+  header still shows the name as text; the header lockup is part of the
+  redesign build.
+- `[MICK RATIFIES]` whether the new favicon and phone icon go to the live site
+  ahead of the redesign. Mick changes the Instagram and Facebook profile
+  pictures himself; the file is `kit/loxley-profile-1080.jpg`.
 - **Hero loop:** three candidates cut at 1080p under 4 MB each, phone and
   desktop, posted for Mick to pick. The chosen one gets a Runway grade, then
   lands in `images/` (or `video/`) with a poster `.webp`.
