@@ -129,7 +129,10 @@ because the ads pay for a slow page before the guest does.
 
 ## What this page does not decide
 
-- The logo: none exists in the repo or in Drive `[MICK RATIFIES]`.
+- The logo is decided: the engraved mark, approved by Mick 2026-10-12, in
+  `images/brand/logo/` and drawn by `scripts/logo/`. The acorn that crowns it
+  is a recurring motif across the site (Mick, 2026-10-13): bullets, dividers,
+  the Book button.
 - Which clips: Mick picks from a contact sheet of all 50.
 - Permission for the July 2026 footage: Romantic Atlanta's, on record
   `[MICK RATIFIES]`.

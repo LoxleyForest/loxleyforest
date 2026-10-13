@@ -283,7 +283,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const target = document.querySelector(anchor.getAttribute('href'));
       if (target) {
         e.preventDefault();
-        target.scrollIntoView({ behavior: 'smooth' });
+        if (window.lfLenis) window.lfLenis.scrollTo(target);
+        else target.scrollIntoView({ behavior: 'smooth' });
       }
     });
   });
@@ -406,3 +407,68 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 });
+
+/* ============================================================
+   SMOOTH SCROLL (Lenis, vendored in js/vendor)
+   Off for anyone who asks the system for reduced motion.
+   ============================================================ */
+(function () {
+  if (!window.Lenis) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const lenis = new window.Lenis({ lerp: 0.1, smoothWheel: true });
+  function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+  requestAnimationFrame(raf);
+  window.lfLenis = lenis;
+})();
+
+/* ============================================================
+   THE BOOK BUTTON (phones): hides while the menu is open,
+   since the menu carries its own Book button.
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', () => {
+  const fab = document.querySelector('.book-fab');
+  const overlay = document.querySelector('.nav__overlay');
+  if (!fab) return;
+  // One gold Book button per screen: step aside while another one is in view, or the menu is open.
+  let menuOpen = false;
+  const inView = new Set();
+  const update = () => fab.classList.toggle('is-hidden', menuOpen || inView.size > 0);
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) inView.add(e.target); else inView.delete(e.target); });
+      update();
+    });
+    document.querySelectorAll('main a.btn--primary[href="/book"]').forEach((el) => io.observe(el));
+  }
+  if (overlay && 'MutationObserver' in window) {
+    new MutationObserver(() => {
+      menuOpen = overlay.classList.contains('open');
+      update();
+      if (window.lfLenis) { if (menuOpen) window.lfLenis.stop(); else window.lfLenis.start(); }
+    }).observe(overlay, { attributes: true, attributeFilter: ['class'] });
+  }
+});
+
+/* ============================================================
+   HERO LOOP
+   The poster photo stays the first thing painted (it is what the
+   ads' landing-page score measures). The clip loads after that:
+   on desktop right away, on phones after the page has finished
+   loading, and never on Save-Data or a slow connection.
+   Dormant until the <video> carries data-ready.
+   ============================================================ */
+(function () {
+  const v = document.querySelector('.hero__video');
+  if (!v || !v.hasAttribute('data-ready')) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  if (c && (c.saveData || /(^|-)2g$/.test(c.effectiveType || ''))) return;
+  const phone = window.matchMedia('(max-width: 767px)').matches;
+  const start = () => {
+    v.src = phone ? v.dataset.phone : v.dataset.desk;
+    v.addEventListener('playing', () => v.classList.add('is-playing'), { once: true });
+    const p = v.play(); if (p && p.catch) p.catch(() => {});
+  };
+  if (phone) { if (document.readyState === 'complete') start(); else window.addEventListener('load', start, { once: true }); }
+  else start();
+})();

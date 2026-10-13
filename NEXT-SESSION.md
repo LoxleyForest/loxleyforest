@@ -73,10 +73,29 @@ contradicted.
   instead of a Netlify branch preview. That means a push to main of an
   unlisted folder only. Netlify branch previews remain the cleaner path and
   need one switch from him. `[MICK RATIFIES]` which.
-- **Next:** weight pass (9 HEIC out, 30 images recompressed), fonts to
-  `<link>`, Playfair out, Lenis in, the fixed Book button, the hero with the
-  chosen clip (Mick picks the letter tonight). Then the treehouse pages.
-  Google Ads is the following night.
+- **Done 2026-10-13 on this branch:** the 9 unreferenced HEIC files are out
+  (26 MB); the 9 heaviest images pages use are resized to display size (11.9
+  MB to 6.9 MB); fonts load from a `<link>` in each head, Playfair retired for
+  Cormorant; Lenis smooth scroll vendored in `js/vendor/`; the phone-only
+  "Book your dates" button with an acorn, which steps aside while another
+  Book button is on screen; the hero loop wired and dormant until the chosen
+  clip lands in `images/hero/` (set `data-ready` on the `<video>`; poster
+  stays the first paint, phones load the clip after the page finishes).
+  Tested locally at 1440 and 390 wide, analytics blocked: no errors, no
+  sideways scroll. `your-adventure.html` is left alone (its own fonts).
+- **Ruled 2026-10-13:** the new favicon and phone icon wait for the redesign
+  launch. Mick wants the acorn as a recurring motif (bullets, dividers, the
+  Book button), and seasonal versions of the reel and profile picture (fall
+  colour, s'mores at the fire pit, and the like) from time to time. He is
+  funding a bigger redesign, inspired by the mark.
+- **Baseline, Analyst 2026-10-13** (loxley-rescue
+  `docs/briefs/2026-10-13-analyst-website-baseline.md`): 6 of 19 bookings came
+  through the website (June to 26 September); 122 of 366 nights booked in the
+  last year; Ads logged 0 conversions 29 July to 27 August; no site visits on
+  record anywhere, so no conversion rate exists yet.
+- **Next:** Mick picks hero A, B or C; the clip and its poster land in
+  `images/hero/`. Then a staff table on the redesign plan, then the treehouse
+  pages. Google Ads after that.
 
 ---
 
