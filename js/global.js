@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  if (hero) {
+  if (hero && nav) {
     nav.classList.add('nav--transparent');
   }
 

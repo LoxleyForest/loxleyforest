@@ -31,7 +31,8 @@
 
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap">
   <link rel="stylesheet" href="css/global.css">
-  <link rel="stylesheet" href="css/home.css">
+  <link rel="stylesheet" href="css/gatehouse.css">
+  <link rel="stylesheet" href="css/v2.css">
 
   <!-- Schema: LodgingBusiness -->
   <script type="application/ld+json">
@@ -59,325 +60,249 @@
   <link rel="preload" as="image" type="image/webp" href="images/hero/hero-poster-desk.webp" media="(min-width: 768px)" fetchpriority="high">
   <link rel="preload" as="image" type="image/webp" href="images/hero/hero-poster-phone.webp" media="(max-width: 767px)" fetchpriority="high">
 </head>
-<body>
+<body class="v2">
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5N4BX66K"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
   <a href="#main" class="skip-link">Skip to content</a>
 
-  <!-- ========== ANNOUNCEMENT BAR ========== -->
-  <div class="announcement-bar">
-    <div class="announcement-bar__track">
-      <a href="/canopy-club" class="announcement-bar__message active">THE CANOPY CLUB — FOUNDING LIST OPEN · LIMITED TO 50 COUPLES</a>
-      <a href="/treehouses#treehouse-2" class="announcement-bar__message">TREEHOUSE 2 — COMING SOON · FIRST NIGHTS GO TO THE LIST</a>
-      <a href="/treehouses" class="announcement-bar__message">A HANDFUL OF FULLY SUSPENDED TREEHOUSES EXIST ON EARTH — THIS FOREST GROWS THEM</a>
-    </div>
-    <button class="announcement-bar__close" aria-label="Dismiss announcement">&times;</button>
-  </div>
-
-  <!-- ========== NAVIGATION ========== -->
-  <nav class="nav nav--transparent">
-    <a href="/" class="nav__wordmark">Loxley Forest</a>
-
-    <div class="nav__links">
-      <a href="/treehouses" class="nav__link">The Treehouses</a>
-      <a href="/elopements" class="nav__link">Elopements</a>
-      <a href="/experiences" class="nav__link">Experiences</a>
-      <a href="/canopy-club" class="nav__link">Canopy Club</a>
-      <a href="/our-story" class="nav__link">Our Story</a>
-      <a href="/gallery" class="nav__link">Gallery</a>
-      <a href="/local-guide" class="nav__link">Local Guide</a>
-    </div>
-
-    <a href="/book" class="btn btn--primary nav__cta">Book Your Stay</a>
-
-    <button class="nav__hamburger" aria-label="Toggle menu">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-  </nav>
-
-  <!-- Mobile Menu Overlay -->
-  <div class="nav__overlay">
-    <a href="/treehouses" class="nav__link">The Treehouses</a>
-    <a href="/elopements" class="nav__link">Elopements</a>
-    <a href="/experiences" class="nav__link">Experiences</a>
-    <a href="/canopy-club" class="nav__link">Canopy Club</a>
-    <a href="/our-story" class="nav__link">Our Story</a>
-    <a href="/gallery" class="nav__link">Gallery</a>
-    <a href="/local-guide" class="nav__link">Local Guide</a>
-    <a href="/book" class="btn btn--primary" style="margin-top: 16px;">Book Your Stay</a>
+  <!-- ========== HEADER ========== -->
+  <header class="lf-hdr">
+    <a href="/" class="lf-hdr__mark" aria-label="Loxley Forest, home"><img src="images/brand/logo/loxley-wordmark-on-dark.svg" alt="Loxley Forest" width="236" height="32"></a>
+    <nav class="lf-hdr__nav" aria-label="Main"><a href="/treehouses">The Treehouse</a><a href="/experiences">Experiences</a><a href="/elopements">Elopements</a><a href="/our-story">Our Story</a><a href="/gallery">Gallery</a><a href="/local-guide">Local Guide</a></nav>
+    <a href="#book" class="lf-btn lf-hdr__book">Book your dates</a>
+    <button class="lf-menu-btn" type="button" aria-expanded="false" aria-controls="lf-menu" aria-label="Open menu"><span></span></button>
+  </header>
+  <div class="lf-menu" id="lf-menu" aria-hidden="true">
+    <nav aria-label="Menu"><a href="/treehouses">The Treehouse</a><a href="/experiences">Experiences</a><a href="/elopements">Elopements</a><a href="/our-story">Our Story</a><a href="/gallery">Gallery</a><a href="/local-guide">Local Guide</a><a href="/faq">Questions</a></nav>
+    <a href="#book" class="lf-btn"><svg viewBox="0 0 16 20" aria-hidden="true"><path fill="currentColor" d="M8 2.2C4.6 2.2 1.9 4.6 1.9 8H14.1C14.1 4.6 11.4 2.2 8 2.2ZM2.8 8.9H13.2C13.2 13.4 10.8 17.2 8 19.2C5.2 17.2 2.8 13.4 2.8 8.9ZM7.6 2.4C7.7 1.2 8.4 .4 9.6 .1L9.9 .7C9 1 8.5 1.6 8.5 2.4Z"/></svg>Book your dates</a>
+    <p class="lf-menu__foot">Dahlonega, Georgia<br>Just over an hour from Atlanta</p>
   </div>
 
   <main id="main">
 
-    <!-- ========== SECTION 1: HERO ========== -->
-    <section class="hero">
+    <!-- ========== HERO: the crossing ========== -->
+    <section class="lf-hero" aria-label="Loxley Forest">
       <div class="hero__media">
         <picture>
           <source media="(max-width: 767px)" srcset="images/hero/hero-poster-phone.webp" type="image/webp">
-          <img src="images/hero/hero-poster-desk.webp" alt="The rope bridge strung with lights, leading through the forest to the treehouse at dusk" width="1920" height="1080" fetchpriority="high" style="width:100%;height:100%;object-fit:cover;">
+          <img src="images/hero/hero-poster-desk.webp" alt="The rope bridge strung with lights, leading through the forest to the treehouse at dusk" width="1920" height="1080" fetchpriority="high">
         </picture>
-        <!-- The hero loop: the crossing. On the bridge, across, and arriving at the treehouse, graded to match, looping seamlessly. -->
         <video class="hero__video" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" data-ready
           data-desk="images/hero/hero-desk.mp4" data-desk-webm="images/hero/hero-desk.webm" data-phone="images/hero/hero-phone.mp4"></video>
       </div>
-      <div class="hero__overlay"></div>
-      <div class="hero__content">
-        <p class="eyebrow hero__eyebrow reveal">Dahlonega, Georgia · 1,470 Feet</p>
-        <h1 class="headline-hero hero__headline reveal">Sleep Where the<br>Forest Holds You</h1>
-        <p class="hero__sub reveal">Luxury treehouses suspended 60 feet in the ancient canopy. 100-foot rope bridges. 42 acres of silence. Hand-built in a canopy you'll never want to leave.</p>
-        <div class="btn-group hero__buttons reveal">
-          <a href="/book" class="btn btn--primary">Book Your Stay</a>
-          <a href="/treehouses" class="btn btn--ghost">Explore the Treehouses</a>
+      <div class="lf-hero__shade"></div>
+      <div class="lf-hero__inner">
+        <p class="lf-eyebrow">Dahlonega, Georgia · 1,470 feet</p>
+        <h1 class="lf-h1">Sleep where the forest <em>holds you</em></h1>
+        <p class="lf-lead">A hand-built treehouse sixty feet up in the canopy, reached by a hundred-foot rope bridge. Just over an hour from Atlanta.</p>
+        <div class="lf-actions">
+          <a href="#book" class="lf-btn"><svg viewBox="0 0 16 20" aria-hidden="true"><path fill="currentColor" d="M8 2.2C4.6 2.2 1.9 4.6 1.9 8H14.1C14.1 4.6 11.4 2.2 8 2.2ZM2.8 8.9H13.2C13.2 13.4 10.8 17.2 8 19.2C5.2 17.2 2.8 13.4 2.8 8.9ZM7.6 2.4C7.7 1.2 8.4 .4 9.6 .1L9.9 .7C9 1 8.5 1.6 8.5 2.4Z"/></svg>Check your dates</a>
+          <a href="/treehouses" class="lf-link">See the treehouse</a>
         </div>
-        <div class="rating-badge reveal" style="margin-top: 28px;">
-          <span class="rating-badge__stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-          <span class="rating-badge__text">4.98 · 200+ Reviews</span>
-        </div>
+        <p class="lf-proof"><span class="lf-proof__stars" aria-hidden="true">★★★★★</span><span>4.98 from 200+ reviews</span><span aria-hidden="true">·</span><span>Airbnb Superhost</span></p>
       </div>
     </section>
 
-    <!-- ========== SECTION 2: OPENING STATEMENT ========== -->
-    <section class="section section--linen">
-      <div class="container--narrow text-center">
-        <hr class="divider reveal">
-        <p class="body-large reveal" style="color: var(--bark);">
-          This is not a cabin with a view. This is a home in the sky — suspended in a canopy of white oak and beech that has stood for over a century. You'll cross a thirty-foot rope bridge through the trees as a warm-up. Then the hundred-foot bridge appears — the one that makes your heart beat faster before the forest slows it back down. That one takes you to your front door. You'll fall asleep sixty feet in the air with nothing above you but stars and nothing below you but the creek rolling through the forest floor. And in the morning, you'll understand why no one who comes here leaves the same.
-        </p>
-        <hr class="divider reveal">
-      </div>
-    </section>
-
-    <!-- ========== SECTION 3: THREE PILLARS ========== -->
-    <section class="section section--cream">
-      <div class="container">
-        <div class="pillars reveal-stagger">
-
-          <div class="pillar reveal">
-            <div class="pillar__image-wrap">
-              <picture><source srcset="images/EQ3A9079.webp" type="image/webp"><img src="images/EQ3A9079.webp" alt="Winter treehouse with sun flare" class="pillar__image" style="width:100%;height:100%;object-fit:cover;" loading="lazy"></picture>
-            </div>
-            <div class="pillar__content">
-              <p class="eyebrow">The Treehouses</p>
-              <h2 class="headline-section">Suspended<br>in Silence</h2>
-              <p class="body-text">Two hand-built treehouses suspended in the canopy. Queen beds. Panoramic windows. Private decks above the forest floor. No neighbors. No noise. Just you and the oldest trees in these mountains.</p>
-              <a href="/treehouses" class="pillar__link">Explore the Treehouses <span>&rarr;</span></a>
-            </div>
-          </div>
-
-          <div class="pillar reveal">
-            <div class="pillar__image-wrap">
-              <picture><source srcset="images/EQ3A0160.webp" type="image/webp"><img src="images/EQ3A0160.webp" alt="Fall bridge at eye level with string lights" class="pillar__image" style="width:100%;height:100%;object-fit:cover;" loading="lazy"></picture>
-            </div>
-            <div class="pillar__content">
-              <p class="eyebrow">Elopements</p>
-              <h2 class="headline-section">The Most Dramatic Aisle in the Southeast</h2>
-              <p class="body-text">Cross a hundred-foot rope bridge to say your vows. Exchange rings beside a boulder fire pit that looks like it emerged from the earth centuries ago. Begin your marriage in a place that was built for exactly this moment.</p>
-              <a href="/elopements" class="pillar__link">Plan Your Elopement <span>&rarr;</span></a>
-            </div>
-          </div>
-
-          <div class="pillar reveal">
-            <div class="pillar__image-wrap">
-              <picture><source srcset="images/IMG_1717.webp" type="image/webp"><img src="images/IMG_1717.webp" alt="Boulder fire pit with ferns and forest" class="pillar__image" style="width:100%;height:100%;object-fit:cover;" loading="lazy"></picture>
-            </div>
-            <div class="pillar__content">
-              <p class="eyebrow">Canopy Club</p>
-              <h2 class="headline-section">Not a Membership.<br>A Homecoming.</h2>
-              <p class="body-text">Founding memberships for couples who want this place to be theirs. Priority booking. Member-only nights. A key to 42 acres of forest whenever you need it. Limited to 50 founding couples.</p>
-              <a href="/canopy-club" class="pillar__link">Join the Canopy Club <span>&rarr;</span></a>
-            </div>
-          </div>
-
+    <!-- ========== THE CROSSING ========== -->
+    <section class="lf-sec lf-light lf-center">
+      <div class="lf-wrap">
+        <p class="lf-eyebrow lf-rise">The crossing</p>
+        <p class="lf-statement lf-rise">This is not a cabin with a view. This is a home in the sky, suspended in a canopy of white oak and beech that has stood for over a century.</p>
+        <div class="lf-body lf-rise">
+          <p>You'll cross a thirty-foot rope bridge through the trees as a warm-up. Then the hundred-foot bridge appears, the one that makes your heart beat faster before the forest slows it back down. That one takes you to your front door.</p>
+          <p>You'll fall asleep sixty feet in the air with nothing above you but stars and nothing below you but the creek rolling through the forest floor.</p>
         </div>
+        <div class="lf-rise" style="margin-top:56px"><svg class="lf-arrow" viewBox="0 0 524 28" aria-hidden="true" focusable="false"><path d="M3.86 14 H491.48" stroke="currentColor" stroke-width="1.3" fill="none"/><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9.44 13.26 L3.24 5.32 C14.65 4.58 31.31 5.63 43.81 9.66 C51.1 11.83 57.35 13.13 61.52 13.44M9.44 14.74 L3.24 22.68 C14.65 23.42 31.31 22.37 43.81 18.34 C51.1 16.17 57.35 14.87 61.52 14.56" stroke-width="0.9"/><path d="M8.82 13.01 Q7.27 9.12 5.41 5.87M8.82 14.99 Q7.27 18.88 5.41 22.13M10.25 13.01 Q8.7 9.1 6.84 5.83M10.25 14.99 Q8.7 18.9 6.84 22.17M11.67 13.01 Q10.12 9.11 8.26 5.85M11.67 14.99 Q10.12 18.89 8.26 22.15M13.1 13.01 Q11.55 9.13 9.69 5.88M13.1 14.99 Q11.55 18.87 9.69 22.12M14.52 13.01 Q12.97 9.14 11.11 5.9M14.52 14.99 Q12.97 18.86 11.11 22.1M15.95 13.01 Q14.4 9.15 12.54 5.92M15.95 14.99 Q14.4 18.85 12.54 22.08M17.38 13.01 Q15.83 9.17 13.97 5.95M17.38 14.99 Q15.83 18.83 13.97 22.05M18.8 13.01 Q17.25 9.18 15.39 5.97M18.8 14.99 Q17.25 18.82 15.39 22.03M20.23 13.01 Q18.68 9.2 16.82 6M20.23 14.99 Q18.68 18.8 16.82 22M21.65 13.01 Q20.1 9.21 18.24 6.02M21.65 14.99 Q20.1 18.79 18.24 21.98M23.08 13.01 Q21.53 9.23 19.67 6.04M23.08 14.99 Q21.53 18.77 19.67 21.96M24.51 13.01 Q22.96 9.24 21.1 6.07M24.51 14.99 Q22.96 18.76 21.1 21.93M25.93 13.01 Q24.38 9.25 22.52 6.09M25.93 14.99 Q24.38 18.75 22.52 21.91M27.36 13.01 Q25.81 9.27 23.95 6.11M27.36 14.99 Q25.81 18.73 23.95 21.89M28.78 13.01 Q27.23 9.28 25.37 6.14M28.78 14.99 Q27.23 18.72 25.37 21.86M30.21 13.01 Q28.66 9.3 26.8 6.16M30.21 14.99 Q28.66 18.7 26.8 21.84M31.64 13.01 Q30.09 9.36 28.23 6.27M31.64 14.99 Q30.09 18.64 28.23 21.73M33.06 13.01 Q31.51 9.63 29.65 6.72M33.06 14.99 Q31.51 18.37 29.65 21.28M34.49 13.01 Q32.94 9.91 31.08 7.18M34.49 14.99 Q32.94 18.09 31.08 20.82M35.91 13.01 Q34.36 10.18 32.5 7.63M35.91 14.99 Q34.36 17.82 32.5 20.37M37.34 13.01 Q35.79 10.45 33.93 8.09M37.34 14.99 Q35.79 17.55 33.93 19.91M38.77 13.01 Q37.22 10.73 35.36 8.54M38.77 14.99 Q37.22 17.27 35.36 19.46M40.19 13.01 Q38.64 11 36.78 9M40.19 14.99 Q38.64 17 36.78 19M41.62 13.01 Q40.07 11.27 38.21 9.45M41.62 14.99 Q40.07 16.73 38.21 18.55M43.04 13.01 Q41.49 11.55 39.63 9.91M43.04 14.99 Q41.49 16.45 39.63 18.09M44.47 13.01 Q42.92 11.77 41.06 10.29M44.47 14.99 Q42.92 16.23 41.06 17.71M45.9 13.01 Q44.35 11.95 42.49 10.58M45.9 14.99 Q44.35 16.05 42.49 17.42M47.32 13.01 Q45.77 12.13 43.91 10.88M47.32 14.99 Q45.77 15.87 43.91 17.12M48.75 13.01 Q47.2 12.3 45.34 11.17M48.75 14.99 Q47.2 15.7 45.34 16.83M50.17 13.01 Q48.62 12.48 46.76 11.47M50.17 14.99 Q48.62 15.52 46.76 16.53M51.6 13.01 Q50.05 12.66 48.19 11.76M51.6 14.99 Q50.05 15.34 48.19 16.24M53.03 13.01 Q51.48 12.83 49.62 12.05M53.03 14.99 Q51.48 15.17 49.62 15.95M54.45 13.01 Q52.9 13.01 51.04 12.35M54.45 14.99 Q52.9 14.99 51.04 15.65M55.88 13.01 Q54.33 13.18 52.47 12.64M55.88 14.99 Q54.33 14.82 52.47 15.36M57.3 13.01 Q55.75 13.36 53.89 12.93M57.3 14.99 Q55.75 14.64 53.89 15.07" stroke-width="0.5"/><path d="M3.86 14 H62.76" stroke-width="1.2"/></g><path d="M4.48 12.57 L2 11.77 L2.99 14 L2 16.23 L4.48 15.43 ZM489.62 12.7 H497.06 V15.3 H489.62 ZM520 14 C512.56 12.51 503.88 9.04 497.68 6.87 L494.27 5.94 C497.06 10.28 497.68 12.14 496.44 12.95 L496.44 15.05 C497.68 15.86 497.06 17.72 494.27 22.06 L497.68 21.13 C503.88 18.96 512.56 15.49 520 14 Z" fill="currentColor"/></svg></div>
       </div>
     </section>
 
-    <!-- ========== SECTION 4: SOCIAL PROOF BAR ========== -->
-    <div class="proof-bar">
-      <div class="proof-bar__inner">
-        <span class="proof-bar__item">200+ Five-Star Reviews</span>
-        <span class="proof-bar__sep">&#9670;</span>
-        <span class="proof-bar__item">4.98 Rating</span>
-        <span class="proof-bar__sep">&#9670;</span>
-        <span class="proof-bar__item">One of a Kind</span>
-        <span class="proof-bar__sep">&#9670;</span>
-        <span class="proof-bar__item">42 Acres</span>
-        <span class="proof-bar__sep">&#9670;</span>
-        <span class="proof-bar__item">60 Feet in the Air</span>
+    <!-- ========== YOUR DATES: the Gatehouse ========== -->
+    <section class="lf-sec lf-parch lf-book" id="book" aria-labelledby="book-h">
+      <div class="lf-book__head">
+        <p class="lf-eyebrow">Your dates</p>
+        <h2 class="lf-h2" id="book-h">Pick your nights. <em>See the whole price at once.</em></h2>
+        <p class="lf-lead" style="margin-left:auto;margin-right:auto">Every open night shows its rate. Choose your dates and the total appears, taxes and cleaning included. Book direct and deal with the family who built it.</p>
+        <ul class="lf-promise">
+          <li>$250 reserves any stay</li>
+          <li>The balance is due 21 days before you arrive</li>
+          <li>One free reschedule within a year, up to 7 days out</li>
+        </ul>
       </div>
-    </div>
+      <div id="gatehouse"
+           data-api=""
+           data-unit="loxley-forest-canopy-treehouse-dahlonega"
+           data-stripe-key=""
+           data-snapshot="data/gatehouse-snapshot.json"
+           data-fallback="#gh-fallback"></div>
+      <div id="gh-fallback" class="lf-book__alt" hidden>
+        <p>Booking is resting for a moment. <a href="/book">Send us your dates</a> and we'll write back.</p>
+      </div>
+      <p class="lf-book__alt">Questions before you book? <a href="/faq">Read the answers</a> or write to stay@loxleyforest.com.</p>
+    </section>
 
-    <!-- ========== SECTION 5: EXPERIENCE TEASER ========== -->
-    <section class="split split--55-45 section--linen">
-      <div class="split__image">
-        <picture><source srcset="images/EQ3A0943.webp" type="image/webp"><img src="images/EQ3A0943.webp" alt="Bridge and platform through fall foliage" style="width:100%;height:100%;object-fit:cover;" loading="lazy"></picture>
+    <!-- ========== SIXTY FEET UP ========== -->
+    <section class="lf-sec lf-dark" aria-label="The treehouse in numbers">
+      <div class="lf-wrap">
+        <ul class="lf-facts">
+          <li class="lf-rise"><b>60 ft</b><span>Up in the canopy</span></li>
+          <li class="lf-rise"><b>100 ft</b><span>Of rope bridge to your door</span></li>
+          <li class="lf-rise"><b>42</b><span>Acres of cove forest</span></li>
+          <li class="lf-rise"><b>1,470 ft</b><span>Above sea level</span></li>
+          <li class="lf-rise"><b>Just over an hour</b><span>From Atlanta</span></li>
+        </ul>
       </div>
-      <div class="split__content">
-        <p class="eyebrow reveal">The Loxley Experience</p>
-        <h2 class="headline-section reveal">Your Stay Is a Story,<br>Not a Checklist</h2>
-        <p class="body-large reveal">
-          We don't offer amenities. We offer chapters. <em>The Crossing</em> — your first steps across the rope bridge. <em>First Light</em> — dawn breaking through the canopy from your pillow. <em>Fire &amp; Flour</em> — pizza you made yourself on the sky deck. <em>After Dark</em> — the stars you forgot existed, framed by the canopy above you.
-        </p>
-        <p class="body-text reveal" style="color: var(--stone); margin-bottom: 36px;">
-          Every moment at Loxley is designed. Not manufactured — designed. The way a great novel is designed: with tension, release, and a climax you'll remember for the rest of your life.
-        </p>
-        <div class="reveal">
-          <a href="/experiences" class="btn btn--secondary">See All Experiences</a>
+    </section>
+
+    <!-- ========== CHAPTERS ========== -->
+    <section class="lf-sec lf-dark" style="padding-top:0" aria-labelledby="ch-h">
+      <div class="lf-wrap">
+        <p class="lf-eyebrow lf-rise">The Loxley experience</p>
+        <h2 class="lf-h2 lf-rise" id="ch-h">Your stay is a story, <em>not a checklist</em></h2>
+        <div class="lf-chapters">
+          <figure class="lf-chapter lf-rise"><img src="images/v2/eq3a0943-800.webp" srcset="images/v2/eq3a0943-800.webp 800w" sizes="(min-width: 900px) 25vw, 78vw" width="800" height="1200" alt="The rope bridge at night, strung with warm lights" loading="lazy" decoding="async"><figcaption><span class="lf-chapter__n">Chapter one</span><h3 class="lf-h3">The Crossing</h3><p>Your first steps across the rope bridge.</p></figcaption></figure>
+          <figure class="lf-chapter lf-rise"><img src="images/v2/img_0828-800.webp" srcset="images/v2/img_0828-800.webp 800w, images/v2/img_0828-1600.webp 1600w" sizes="(min-width: 900px) 25vw, 78vw" width="800" height="600" alt="The bed beneath the treehouse windows in warm light" loading="lazy" decoding="async"><figcaption><span class="lf-chapter__n">Chapter two</span><h3 class="lf-h3">First Light</h3><p>Dawn breaking through the canopy, from your pillow.</p></figcaption></figure>
+          <figure class="lf-chapter lf-rise"><img src="images/v2/eq3a0222-800.webp" srcset="images/v2/eq3a0222-800.webp 800w, images/v2/eq3a0222-1600.webp 1600w" sizes="(min-width: 900px) 25vw, 78vw" width="800" height="533" alt="The pizza oven on the sky deck" loading="lazy" decoding="async"><figcaption><span class="lf-chapter__n">Chapter three</span><h3 class="lf-h3">Fire &amp; Flour</h3><p>Pizza you made yourself on the sky deck.</p></figcaption></figure>
+          <figure class="lf-chapter lf-rise"><img src="images/v2/eq3a0907-800.webp" srcset="images/v2/eq3a0907-800.webp 800w, images/v2/eq3a0907-1600.webp 1600w" sizes="(min-width: 900px) 25vw, 78vw" width="800" height="533" alt="The treehouse canvas glowing at dusk with string lights" loading="lazy" decoding="async"><figcaption><span class="lf-chapter__n">Chapter four</span><h3 class="lf-h3">After Dark</h3><p>The stars you forgot existed, framed by the canopy.</p></figcaption></figure>
+        </div>
+        <div class="lf-actions lf-rise"><a href="/experiences" class="lf-link">See every experience</a></div>
+      </div>
+    </section>
+
+    <!-- ========== WHAT'S INCLUDED ========== -->
+    <section class="lf-sec lf-light" aria-labelledby="inc-h">
+      <div class="lf-wrap lf-split">
+        <figure class="lf-photo lf-photo--tall lf-rise"><img src="images/v2/img_0838_3-800.webp" srcset="images/v2/img_0838_3-800.webp 800w, images/v2/img_0838_3-1600.webp 1600w" sizes="(min-width: 900px) 50vw, 100vw" width="800" height="1066" alt="Inside the treehouse: the bed, the canvas walls and the chandelier" loading="lazy" decoding="async"></figure>
+        <div>
+          <p class="lf-eyebrow lf-rise">The treehouse</p>
+          <h2 class="lf-h2 lf-rise" id="inc-h">Everything you need. <em>Nothing you don't.</em></h2>
+          <ul class="lf-acorns lf-rise">
+            <li>A queen bed framed by panoramic windows</li>
+            <li>A private deck above the forest floor</li>
+            <li><b>Fire &amp; Flour:</b> fresh dough and a wood-fired oven on your sky deck</li>
+            <li><b>TreeMail:</b> morning coffee and seasonal treats, delivered</li>
+            <li>A pop-up projector for cinema night in the canopy</li>
+            <li>A fire pit on the forest floor</li>
+            <li>Heated for the cold seasons, with windows that open to the forest in summer</li>
+            <li>A kitchen for morning coffee and midnight snacks</li>
+            <li>42 acres of cove forest to explore</li>
+          </ul>
+          <p class="lf-body lf-rise" style="margin-top:26px">What we don't include: televisions. You won't need one.</p>
         </div>
       </div>
     </section>
 
-    <!-- ========== SECTION 6: BUILDER'S STORY TEASER ========== -->
-    <section class="cta-block builder-story">
-      <div class="cta-block__bg">
-        <picture><source srcset="images/EQ3A2149.webp" type="image/webp"><img src="images/EQ3A2149.webp" alt="Platform timber truss from below" style="width:100%;height:100%;object-fit:cover;" loading="lazy"></picture>
-      </div>
-      <div class="cta-block__overlay"></div>
-      <div class="cta-block__content">
-        <p class="eyebrow reveal" style="color: var(--gold); margin-bottom: 20px;">Built by Hand</p>
-        <h2 class="headline-section reveal" style="color: var(--white);">A Family That Lives in the<br>Forest They Built</h2>
-        <p class="body-large reveal" style="color: rgba(255,255,255,0.88); margin-bottom: 16px;">
-          They carried every beam and board down four hundred feet of mountain by hand because they wouldn't let a machine touch the forest. Mick built the framing sixty feet in the air while Livy grew their first daughter. The arborists said the rope bridge was too long. They built it anyway. Two weeks. A hundred feet. Suspended over the valley.
-        </p>
-        <p class="body-large reveal" style="color: rgba(255,255,255,0.88); margin-bottom: 16px;">
-          They live here now — Mick, Livy, Aurora, and Tilly Mac. The girls think rope bridges are a normal way to get home. When you arrive, the people who designed and built your treehouse are the same people handing you a welcome basket.
-        </p>
-        <p class="body-large reveal" style="color: rgba(255,255,255,0.88); margin-bottom: 40px;">
-          That's Loxley. There's nowhere else like it because nobody else would build it this way.
-        </p>
-        <div class="reveal">
-          <a href="/our-story" class="btn btn--ghost">Read Our Story</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========== SECTION 7: GUEST TESTIMONIALS ========== -->
-    <section class="section section--parchment">
-      <div class="container text-center">
-        <p class="eyebrow reveal" style="margin-bottom: 16px;">Guest Stories</p>
-        <h2 class="headline-section reveal" style="margin-bottom: 60px;">What They Remember Most</h2>
-      </div>
-      <div class="container review-rotator" data-review-rotator>
-        <div class="testimonial__card review-rotator__card">
-          <div class="testimonial__stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-          <p class="testimonial__quote">"The only sounds you hear are the birds chirping and the gentle rushing of water below. It feels very private and secluded. The perfect adventure to feel like you are camping in the woods, but with a bed and bathroom."</p>
-          <p class="testimonial__author">Kellie · Marietta, GA</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========== SECTION 8: LOCATION ========== -->
-    <section class="split section--linen">
-      <div class="split__image">
-        <picture><source srcset="images/dji_fly_20251103_164714_787_1762207575279_photo.webp" type="image/webp"><img src="images/dji_fly_20251103_164714_787_1762207575279_photo.webp" alt="Drone sunset over fall mountain canopy" style="width:100%;height:100%;object-fit:cover;" loading="lazy"></picture>
-      </div>
-      <div class="split__content">
-        <p class="eyebrow reveal">Find Us</p>
-        <h2 class="headline-section reveal">Closer Than You Think.<br>Further Than You've<br>Ever Been.</h2>
-        <p class="body-large reveal" style="margin-bottom: 32px;">
-          Just over an hour from Atlanta. A world away from everything. In the foothills above Dahlonega — Georgia's wine country, the southern tip of the Appalachian Trail, and 42 acres of forest where the only schedule is sunrise and sunset.
-        </p>
-        <div class="location-distances reveal">
-          <div class="location-distances__grid">
-            <div class="location-distance">
-              <span class="location-distance__city">From Atlanta</span>
-              <span class="location-distance__time">Just over 1 hr</span>
-            </div>
-            <div class="location-distance">
-              <span class="location-distance__city">From Chattanooga</span>
-              <span class="location-distance__time">2 hrs</span>
-            </div>
-            <div class="location-distance">
-              <span class="location-distance__city">From Greenville, SC</span>
-              <span class="location-distance__time">2 hrs</span>
-            </div>
-            <div class="location-distance">
-              <span class="location-distance__city">From Charlotte</span>
-              <span class="location-distance__time">3.5 hrs</span>
-            </div>
-            <div class="location-distance">
-              <span class="location-distance__city">From Birmingham</span>
-              <span class="location-distance__time">3 hrs</span>
-            </div>
+    <!-- ========== REVIEWS ========== -->
+    <section class="lf-sec lf-parch lf-center lf-reviews" aria-labelledby="rv-h">
+      <div class="lf-wrap">
+        <p class="lf-eyebrow">Guest stories</p>
+        <h2 class="lf-h2" id="rv-h" style="margin-bottom:34px">What they remember most</h2>
+        <div class="review-rotator" data-review-rotator>
+          <div class="review-rotator__card">
+            <div class="testimonial__stars" aria-hidden="true">★★★★★</div>
+            <p class="testimonial__quote">"The only sounds you hear are the birds chirping and the gentle rushing of water below. It feels very private and secluded. The perfect adventure to feel like you are camping in the woods, but with a bed and bathroom."</p>
+            <p class="testimonial__author">Kellie · Marietta, GA</p>
           </div>
         </div>
-        <div class="btn-group reveal" style="margin-top: 36px;">
-          <a href="https://maps.google.com/?q=Loxley+Forest+Dahlonega+GA" target="_blank" rel="noopener" class="btn btn--primary">Get Directions</a>
-          <a href="/local-guide" class="btn btn--secondary">Explore the Local Guide</a>
+        <p class="lf-reviews__note">4.98 from 200+ reviews on Airbnb · Superhost · Tap for another story</p>
+      </div>
+    </section>
+
+    <!-- ========== BUILT BY HAND ========== -->
+    <section class="lf-sec lf-dark" aria-labelledby="bh-h">
+      <div class="lf-bg"><img src="images/v2/eq3a2149-800.webp" srcset="images/v2/eq3a2149-800.webp 800w, images/v2/eq3a2149-1600.webp 1600w" sizes="100vw" width="800" height="533" alt="" loading="lazy" decoding="async"></div>
+      <div class="lf-wrap lf-over">
+        <p class="lf-eyebrow lf-rise">Built by hand</p>
+        <h2 class="lf-h2 lf-rise" id="bh-h">A family that lives in the <em>forest they built</em></h2>
+        <div class="lf-body lf-rise" style="margin-top:24px">
+          <p>They carried every beam and board down four hundred feet of mountain by hand, because they wouldn't let a machine touch the forest. The arborists said the rope bridge was too long. They built it anyway.</p>
+          <p>They live here now: Mick, Livy, Aurora and Tilly Mac. When you arrive, the people who designed and built your treehouse are the same people handing you a welcome basket.</p>
+        </div>
+        <div class="lf-actions lf-rise"><a href="/our-story" class="lf-link">Read our story</a></div>
+      </div>
+    </section>
+
+    <!-- ========== ELOPEMENTS ========== -->
+    <section class="lf-sec lf-light" aria-labelledby="el-h">
+      <div class="lf-wrap lf-split lf-split--flip">
+        <figure class="lf-photo lf-photo--tall lf-rise"><img src="images/v2/eq3a0160-800.webp" srcset="images/v2/eq3a0160-800.webp 800w, images/v2/eq3a0160-1600.webp 1600w" sizes="(min-width: 900px) 50vw, 100vw" width="800" height="533" alt="The rope bridge to the treehouse in fall colour" loading="lazy" decoding="async"></figure>
+        <div>
+          <p class="lf-eyebrow lf-rise">Elopements</p>
+          <h2 class="lf-h2 lf-rise" id="el-h">The most dramatic aisle <em>in the Southeast</em></h2>
+          <p class="lf-lead lf-rise">Cross a hundred-foot rope bridge to say your vows. Exchange rings beside a boulder fire pit that looks like it emerged from the earth centuries ago.</p>
+          <div class="lf-actions lf-rise"><a href="/elopements" class="lf-link">Plan your elopement</a></div>
         </div>
       </div>
     </section>
 
-    <!-- ========== SECTION 9: FINAL CTA ========== -->
-    <section class="cta-block">
-      <div class="cta-block__bg">
-        <picture><source srcset="images/EQ3A0907_2.webp" type="image/webp"><img src="images/EQ3A0907_2.webp" alt="Treehouse dusk glow wider view" style="width:100%;height:100%;object-fit:cover;" loading="lazy"></picture>
-      </div>
-      <div class="cta-block__overlay"></div>
-      <div class="cta-block__content">
-        <h2 class="headline-section reveal" style="color: var(--white); font-size: clamp(32px, 4vw, 48px);">Some Places You Visit.<br>This One Changes You.</h2>
-        <p class="subheadline reveal" style="color: rgba(255,255,255,0.85); margin-bottom: 40px;">Check availability and book direct for the best rate, guaranteed.</p>
-        <div class="btn-group reveal" style="justify-content: center;">
-          <a href="/book" class="btn btn--primary">Book Your Stay</a>
-          <a href="/canopy-club" class="btn btn--ghost">Join the Canopy Club</a>
+    <!-- ========== TREEHOUSE TWO ========== -->
+    <section class="lf-sec lf-dark" id="treehouse-two" aria-labelledby="t2-h">
+      <div class="lf-wrap lf-split">
+        <div>
+          <p class="lf-eyebrow lf-rise">Coming soon</p>
+          <h2 class="lf-h2 lf-rise" id="t2-h">Treehouse two is <em>almost here</em></h2>
+          <p class="lf-lead lf-rise">Same hand-built craft. Same sixty-foot elevation. A different view of the same forest. The first nights go to the list.</p>
+          <form class="lf-signup lf-rise" name="treehouse-2-list" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" data-lf-ajax action="/success.html">
+            <input type="hidden" name="form-name" value="treehouse-2-list">
+            <p hidden><label>Leave this empty <input name="bot-field"></label></p>
+            <label for="t2-email">Your email</label>
+            <input id="t2-email" type="email" name="email" required autocomplete="email" placeholder="you@example.com">
+            <button class="lf-btn" type="submit">Join the list</button>
+            <p class="lf-signup__done" role="status" hidden>You're on the list. We'll write when the first nights open.</p>
+          </form>
         </div>
+        <figure class="lf-photo lf-photo--tall lf-rise"><img src="images/v2/img_2546-800.webp" srcset="images/v2/img_2546-800.webp 800w" sizes="(min-width: 900px) 50vw, 100vw" width="800" height="1067" alt="A treehouse deck with chairs above the forest" loading="lazy" decoding="async"></figure>
+      </div>
+    </section>
+
+    <!-- ========== FIND US ========== -->
+    <section class="lf-sec lf-dark" aria-labelledby="fu-h">
+      <div class="lf-bg"><img src="images/v2/eq3a0107-800.webp" srcset="images/v2/eq3a0107-800.webp 800w, images/v2/eq3a0107-1600.webp 1600w" sizes="100vw" width="800" height="533" alt="" loading="lazy" decoding="async"></div>
+      <div class="lf-wrap lf-over">
+        <p class="lf-eyebrow lf-rise">Find us</p>
+        <h2 class="lf-h2 lf-rise" id="fu-h">Closer than you think. <em>Further than you've ever been.</em></h2>
+        <p class="lf-lead lf-rise">In the foothills above Dahlonega: Georgia's wine country, the southern tip of the Appalachian Trail, and 42 acres of forest where the only schedule is sunrise and sunset.</p>
+        <ul class="lf-drive lf-rise">
+          <li><span>From Atlanta</span><b>Just over an hour</b></li>
+          <li><span>From Chattanooga</span><b>2 hours</b></li>
+          <li><span>From Greenville, SC</span><b>2 hours</b></li>
+          <li><span>From Birmingham</span><b>3 hours</b></li>
+          <li><span>From Charlotte</span><b>3.5 hours</b></li>
+        </ul>
+        <div class="lf-actions lf-rise"><a href="https://maps.google.com/?q=Loxley+Forest+Dahlonega+GA" target="_blank" rel="noopener" class="lf-link">Get directions</a><a href="/local-guide" class="lf-link">The local guide</a></div>
+      </div>
+    </section>
+
+    <!-- ========== FINAL CALL ========== -->
+    <section class="lf-sec lf-dark lf-center" aria-labelledby="fc-h">
+      <div class="lf-wrap">
+        <div class="lf-rise" style="margin-bottom:44px"><svg class="lf-arrow" viewBox="0 0 524 28" aria-hidden="true" focusable="false"><path d="M3.86 14 H491.48" stroke="currentColor" stroke-width="1.3" fill="none"/><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9.44 13.26 L3.24 5.32 C14.65 4.58 31.31 5.63 43.81 9.66 C51.1 11.83 57.35 13.13 61.52 13.44M9.44 14.74 L3.24 22.68 C14.65 23.42 31.31 22.37 43.81 18.34 C51.1 16.17 57.35 14.87 61.52 14.56" stroke-width="0.9"/><path d="M8.82 13.01 Q7.27 9.12 5.41 5.87M8.82 14.99 Q7.27 18.88 5.41 22.13M10.25 13.01 Q8.7 9.1 6.84 5.83M10.25 14.99 Q8.7 18.9 6.84 22.17M11.67 13.01 Q10.12 9.11 8.26 5.85M11.67 14.99 Q10.12 18.89 8.26 22.15M13.1 13.01 Q11.55 9.13 9.69 5.88M13.1 14.99 Q11.55 18.87 9.69 22.12M14.52 13.01 Q12.97 9.14 11.11 5.9M14.52 14.99 Q12.97 18.86 11.11 22.1M15.95 13.01 Q14.4 9.15 12.54 5.92M15.95 14.99 Q14.4 18.85 12.54 22.08M17.38 13.01 Q15.83 9.17 13.97 5.95M17.38 14.99 Q15.83 18.83 13.97 22.05M18.8 13.01 Q17.25 9.18 15.39 5.97M18.8 14.99 Q17.25 18.82 15.39 22.03M20.23 13.01 Q18.68 9.2 16.82 6M20.23 14.99 Q18.68 18.8 16.82 22M21.65 13.01 Q20.1 9.21 18.24 6.02M21.65 14.99 Q20.1 18.79 18.24 21.98M23.08 13.01 Q21.53 9.23 19.67 6.04M23.08 14.99 Q21.53 18.77 19.67 21.96M24.51 13.01 Q22.96 9.24 21.1 6.07M24.51 14.99 Q22.96 18.76 21.1 21.93M25.93 13.01 Q24.38 9.25 22.52 6.09M25.93 14.99 Q24.38 18.75 22.52 21.91M27.36 13.01 Q25.81 9.27 23.95 6.11M27.36 14.99 Q25.81 18.73 23.95 21.89M28.78 13.01 Q27.23 9.28 25.37 6.14M28.78 14.99 Q27.23 18.72 25.37 21.86M30.21 13.01 Q28.66 9.3 26.8 6.16M30.21 14.99 Q28.66 18.7 26.8 21.84M31.64 13.01 Q30.09 9.36 28.23 6.27M31.64 14.99 Q30.09 18.64 28.23 21.73M33.06 13.01 Q31.51 9.63 29.65 6.72M33.06 14.99 Q31.51 18.37 29.65 21.28M34.49 13.01 Q32.94 9.91 31.08 7.18M34.49 14.99 Q32.94 18.09 31.08 20.82M35.91 13.01 Q34.36 10.18 32.5 7.63M35.91 14.99 Q34.36 17.82 32.5 20.37M37.34 13.01 Q35.79 10.45 33.93 8.09M37.34 14.99 Q35.79 17.55 33.93 19.91M38.77 13.01 Q37.22 10.73 35.36 8.54M38.77 14.99 Q37.22 17.27 35.36 19.46M40.19 13.01 Q38.64 11 36.78 9M40.19 14.99 Q38.64 17 36.78 19M41.62 13.01 Q40.07 11.27 38.21 9.45M41.62 14.99 Q40.07 16.73 38.21 18.55M43.04 13.01 Q41.49 11.55 39.63 9.91M43.04 14.99 Q41.49 16.45 39.63 18.09M44.47 13.01 Q42.92 11.77 41.06 10.29M44.47 14.99 Q42.92 16.23 41.06 17.71M45.9 13.01 Q44.35 11.95 42.49 10.58M45.9 14.99 Q44.35 16.05 42.49 17.42M47.32 13.01 Q45.77 12.13 43.91 10.88M47.32 14.99 Q45.77 15.87 43.91 17.12M48.75 13.01 Q47.2 12.3 45.34 11.17M48.75 14.99 Q47.2 15.7 45.34 16.83M50.17 13.01 Q48.62 12.48 46.76 11.47M50.17 14.99 Q48.62 15.52 46.76 16.53M51.6 13.01 Q50.05 12.66 48.19 11.76M51.6 14.99 Q50.05 15.34 48.19 16.24M53.03 13.01 Q51.48 12.83 49.62 12.05M53.03 14.99 Q51.48 15.17 49.62 15.95M54.45 13.01 Q52.9 13.01 51.04 12.35M54.45 14.99 Q52.9 14.99 51.04 15.65M55.88 13.01 Q54.33 13.18 52.47 12.64M55.88 14.99 Q54.33 14.82 52.47 15.36M57.3 13.01 Q55.75 13.36 53.89 12.93M57.3 14.99 Q55.75 14.64 53.89 15.07" stroke-width="0.5"/><path d="M3.86 14 H62.76" stroke-width="1.2"/></g><path d="M4.48 12.57 L2 11.77 L2.99 14 L2 16.23 L4.48 15.43 ZM489.62 12.7 H497.06 V15.3 H489.62 ZM520 14 C512.56 12.51 503.88 9.04 497.68 6.87 L494.27 5.94 C497.06 10.28 497.68 12.14 496.44 12.95 L496.44 15.05 C497.68 15.86 497.06 17.72 494.27 22.06 L497.68 21.13 C503.88 18.96 512.56 15.49 520 14 Z" fill="currentColor"/></svg></div>
+        <h2 class="lf-h2 lf-rise" id="fc-h">Some places you visit. <em>This one changes you.</em></h2>
+        <p class="lf-lead lf-rise">Book direct with the family who built it.</p>
+        <div class="lf-actions lf-rise" style="justify-content:center"><a href="#book" class="lf-btn"><svg viewBox="0 0 16 20" aria-hidden="true"><path fill="currentColor" d="M8 2.2C4.6 2.2 1.9 4.6 1.9 8H14.1C14.1 4.6 11.4 2.2 8 2.2ZM2.8 8.9H13.2C13.2 13.4 10.8 17.2 8 19.2C5.2 17.2 2.8 13.4 2.8 8.9ZM7.6 2.4C7.7 1.2 8.4 .4 9.6 .1L9.9 .7C9 1 8.5 1.6 8.5 2.4Z"/></svg>Check your dates</a></div>
       </div>
     </section>
 
   </main>
 
-  <!-- ========== FOOTER ========== -->
-  <footer class="footer">
-    <div class="footer__grid">
-
-      <div class="footer__col">
-        <div class="footer__wordmark">Loxley Forest</div>
-        <p class="footer__text">Suspended between earth and sky<br>in the North Georgia mountains.</p>
+  <footer class="lf-foot">
+    <div class="lf-foot__grid">
+      <div>
+        <img src="images/brand/logo/loxley-wordmark-on-dark.svg" alt="Loxley Forest" width="220" height="30" loading="lazy">
+        <p style="margin-top:18px;font-size:1.1rem">Dahlonega, Georgia. Just over an hour from Atlanta.<br>42 acres of hardwood cove forest at 1,470 feet.</p>
       </div>
-
-      <div class="footer__col">
-        <p class="footer__heading">Explore</p>
-        <a href="/treehouses" class="footer__link">The Treehouses</a>
-        <a href="/elopements" class="footer__link">Elopements</a>
-        <a href="/experiences" class="footer__link">Experiences</a>
-        <a href="/canopy-club" class="footer__link">Canopy Club</a>
-        <a href="/our-story" class="footer__link">Our Story</a>
-        <a href="/gallery" class="footer__link">Gallery</a>
-        <a href="/local-guide" class="footer__link">Local Guide</a>
-        <a href="/faq" class="footer__link">FAQ</a>
-      </div>
-
-      <div class="footer__col">
-        <p class="footer__heading">Connect</p>
-        <a href="https://instagram.com/loxleyforest" class="footer__link" target="_blank" rel="noopener">Instagram</a>
-        <a href="mailto:stay@loxleyforest.com" class="footer__link">stay@loxleyforest.com</a>
-        <a href="tel:+17065024823" class="footer__link">706-502-4823</a>
-      </div>
-
-      <div class="footer__col">
-        <p class="footer__heading">Visit</p>
-        <p class="footer__text">Dahlonega, Georgia<br>just over an hour from Atlanta<br>42 acres of hardwood cove forest<br>at 1,470 feet</p>
-      </div>
-
-    </div>
-
-    <div class="footer__bottom">
-      <p class="footer__copyright">&copy; 2026 Loxley Forest. All rights reserved.</p>
-      <div class="footer__legal">
-        <a href="/privacy">Privacy</a>
-        <a href="/terms">Terms</a>
-        <a href="/cancellation">Cancellation Policy</a>
-      </div>
+      <nav aria-label="Footer"><a href="/treehouses">The Treehouse</a><a href="/experiences">Experiences</a><a href="/elopements">Elopements</a><a href="/our-story">Our Story</a><a href="/gallery">Gallery</a><a href="/local-guide">Local Guide</a><a href="/faq">Questions</a></nav>
+      <nav aria-label="Contact"><a href="https://instagram.com/loxleyforest" target="_blank" rel="noopener">Instagram</a><a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a><a href="tel:+17065024823">706-502-4823</a></nav>
+      <div class="lf-foot__small"><span>&copy; 2026 Loxley Forest</span><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/cancellation">Cancellation</a></div>
     </div>
   </footer>
 
-  <a href="/book" class="book-fab"><svg viewBox="0 0 16 20" aria-hidden="true"><path fill="currentColor" d="M8 2.2C4.6 2.2 1.9 4.6 1.9 8H14.1C14.1 4.6 11.4 2.2 8 2.2ZM2.8 8.9H13.2C13.2 13.4 10.8 17.2 8 19.2C5.2 17.2 2.8 13.4 2.8 8.9ZM7.6 2.4C7.7 1.2 8.4 .4 9.6 .1L9.9 .7C9 1 8.5 1.6 8.5 2.4Z"/></svg>Book your dates</a>
+  <a href="#book" class="book-fab"><svg viewBox="0 0 16 20" aria-hidden="true"><path fill="currentColor" d="M8 2.2C4.6 2.2 1.9 4.6 1.9 8H14.1C14.1 4.6 11.4 2.2 8 2.2ZM2.8 8.9H13.2C13.2 13.4 10.8 17.2 8 19.2C5.2 17.2 2.8 13.4 2.8 8.9ZM7.6 2.4C7.7 1.2 8.4 .4 9.6 .1L9.9 .7C9 1 8.5 1.6 8.5 2.4Z"/></svg>Book your dates</a>
   <script src="js/vendor/lenis.min.js"></script>
   <script src="js/global.js"></script>
+  <script src="js/v2.js"></script>
   <script src="js/reviews.js" defer></script>
+  <script src="js/gatehouse.js" defer></script>
 </body>
 </html>
