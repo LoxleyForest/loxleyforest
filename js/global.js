@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  if (hero) {
+  if (hero && nav) {
     nav.classList.add('nav--transparent');
   }
 
@@ -283,7 +283,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const target = document.querySelector(anchor.getAttribute('href'));
       if (target) {
         e.preventDefault();
-        if (window.lfLenis) window.lfLenis.scrollTo(target);
+        const hdr = document.querySelector('.lf-hdr');
+        if (window.lfLenis) window.lfLenis.scrollTo(target, { offset: hdr ? -hdr.offsetHeight : 0 });
         else target.scrollIntoView({ behavior: 'smooth' });
       }
     });
@@ -326,6 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
   (function () {
     const page = (location.pathname.split('/').pop() || 'index').replace('.html', '');
     if (page === 'book' || page === 'booking-confirmed') return;
+    if (document.querySelector('.book-fab')) return; // the one fixed Book button already carries it
 
     const bookBar = document.createElement('a');
     bookBar.className = 'mobile-book-bar';
@@ -432,13 +434,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // One gold Book button per screen: step aside while another one is in view, or the menu is open.
   let menuOpen = false;
   const inView = new Set();
-  const update = () => fab.classList.toggle('is-hidden', menuOpen || inView.size > 0);
+  const update = () => fab.classList.toggle('is-hidden', menuOpen || document.documentElement.classList.contains('lf-menu-open') || inView.size > 0);
+  if ('MutationObserver' in window) new MutationObserver(update).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
   if ('IntersectionObserver' in window) {
     const io = new IntersectionObserver((entries) => {
       entries.forEach((e) => { if (e.isIntersecting) inView.add(e.target); else inView.delete(e.target); });
       update();
     });
-    document.querySelectorAll('main a.btn--primary[href="/book"]').forEach((el) => io.observe(el));
+    document.querySelectorAll('main a.btn--primary[href="/book"], main a.lf-btn[href="#book"], main #book').forEach((el) => io.observe(el));
   }
   if (overlay && 'MutationObserver' in window) {
     new MutationObserver(() => {
