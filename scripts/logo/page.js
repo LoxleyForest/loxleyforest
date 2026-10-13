@@ -91,7 +91,9 @@ figcaption { font-size: 12.5px; color: var(--muted); line-height: 1.55 }
     <ul class="notes">
       <li><b>Five oaks hold the house.</b> Two on each side and one behind it. The front right oak runs up through the deck, as it does in the photograph.</li>
       <li><b>Every cable starts at the truss.</b> The frame under the deck ends in two bottom hubs, and each cable runs from a hub up to a collar on an oak. Nothing ties to the spire tops.</li>
-      <li><b>The canvas glows.</b> The spires are the brightest lines in the drawing, the window is lit, and the bridge and rail carry their string lights.</li>
+      <li><b>The canvas glows.</b> The spires are the brightest lines in the drawing, and the bridge and rail carry their string lights.</li>
+      <li><b>The fly window.</b> A canvas panel that follows the lines of the canvas, pointed at the top and lit from inside, with the zipper down its centre. (Mick's note, 13 October.)</li>
+      <li><b>A sketch artist's hand.</b> The canvas lines swell and thin as the pen presses and eases, lift now and then, and carry light cross-hatching where the glow is strongest. (Livy's note, 13 October.)</li>
       <li><b>Open air below.</b> The deck sits high, with ferns on the forest floor far beneath.</li>
       <li><b>An acorn crowns the arch.</b> For the five oaks, and to echo the gold finials on the spires.</li>
       <li><b>The arrow stays.</b> It runs through the name as it does in the current logo, now with drawn feathers.</li>
