@@ -476,6 +476,10 @@
             el('div', { 'class': 'gh-agreement', tabindex: '0', 'aria-label': 'Rental agreement',
               text: state.agreement ? state.agreement.text : 'The rental agreement appears here once it is published. [Preview]' })
           ]),
+      // Georgia looks for a release "explicit, prominent, clear and unambiguous", and weighs
+      // whether it sits next to the signature: so the agreement's bold release is repeated
+      // here, beside the box, word for word (Scout, 2026-10-13).
+      state.payMode === 'hold' ? null : releaseLine(),
       state.payMode === 'hold' ? null
         : el('label', { 'class': 'gh-agree' }, [
             el('input', { type: 'checkbox', id: 'gh-agree', required: 'required' }),
@@ -488,6 +492,12 @@
         onclick: function () { state.step = null; render(); } })
     ]);
     return el('div', { 'class': 'gh-checkout' }, [form, el('div', { id: 'gh-pay', 'class': 'gh-pay' })]);
+  }
+
+  function releaseLine() {
+    var text = state.agreement && state.agreement.text;
+    var m = text && text.match(/\*\*([^*]*release[^*]*)\*\*/i);
+    return m ? el('p', { 'class': 'gh-release' }, [el('strong', { text: m[1] })]) : null;
   }
 
   function showAgreement() {
