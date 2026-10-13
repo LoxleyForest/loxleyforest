@@ -31,9 +31,29 @@ contradicted.
 - **Tools:** a standalone ffmpeg lives in `~/bin` on the workshop (no admin
   rights needed). Netlify branch previews for `next-level` still need Mick to
   switch them on.
+- **Where the work is seen (private links, Mick's account):** the logo canvas
+  https://claude.ai/artifact/8zSL1LXVp6Yrs7Znri6MUn (four boards: now beside
+  proposed, three marks, lockups, in use) and the hero candidates
+  https://claude.ai/artifact/ShWtbAPDS1F6fFjCa4ocH6 (A bridge lights, B bridge
+  to the treehouse at half speed, C the treehouse at dusk; phone and desktop
+  cuts of each). The cut clips live only in the workshop's scratch space and
+  can be re-cut from Drive in minutes with the standalone ffmpeg.
+- **Mick's read of the mark, 2026-10-12:** the sail peak reads as a tent, not
+  a treehouse in the canopy. The current logo's tree is cool but busy, and
+  its cottage is not the building. Next pass: make the mark read as *hung in
+  the trees* (trunks, the bridge, air beneath the deck), keep the arrow.
+  The arrow through the name is the keeper. The current logo's screenshot is
+  at `images/brand/current-logo-2026-screenshot.jpg`; the vector master is
+  still on Mick's laptop, not in Drive.
+- **Preview path:** Mick asked for the field-guide method, an unlisted
+  `/private/<slug>-<random>/` copy on the live domain, noindex, unlinked,
+  instead of a Netlify branch preview. That means a push to main of an
+  unlisted folder only. Netlify branch previews remain the cleaner path and
+  need one switch from him. `[MICK RATIFIES]` which.
 - **Next:** weight pass (9 HEIC out, 30 images recompressed), fonts to
   `<link>`, Playfair out, Lenis in, the fixed Book button, the hero with the
-  chosen clip. Then the treehouse pages. Google Ads is the following night.
+  chosen clip (Mick picks the letter tonight). Then the treehouse pages.
+  Google Ads is the following night.
 
 ---
 
