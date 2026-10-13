@@ -434,7 +434,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // One gold Book button per screen: step aside while another one is in view, or the menu is open.
   let menuOpen = false;
   const inView = new Set();
-  const update = () => fab.classList.toggle('is-hidden', menuOpen || document.documentElement.classList.contains('lf-menu-open') || inView.size > 0);
+  // it waits until the first screen has been read, then stays out of the way of any other Book button
+  const pastFirst = () => window.scrollY > window.innerHeight * 0.6;
+  const update = () => fab.classList.toggle('is-hidden', !pastFirst() || menuOpen || document.documentElement.classList.contains('lf-menu-open') || inView.size > 0);
+  window.addEventListener('scroll', update, { passive: true });
+  update();
   if ('MutationObserver' in window) new MutationObserver(update).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
   if ('IntersectionObserver' in window) {
     const io = new IntersectionObserver((entries) => {

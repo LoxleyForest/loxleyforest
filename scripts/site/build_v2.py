@@ -95,8 +95,8 @@ BOOK = f'''    <section class="lf-sec lf-parch lf-book" id="book" aria-labelledb
         <h2 class="lf-h2" id="book-h">Pick your nights. <em>See the whole price at once.</em></h2>
         <p class="lf-lead" style="margin-left:auto;margin-right:auto">Every open night shows its rate. Choose your dates and the total appears, taxes and cleaning included. Book direct and deal with the family who built it.</p>
         <ul class="lf-promise">
-          <li>$250 reserves any stay</li>
-          <li>The balance is due 21 days before you arrive</li>
+          <li>A 25% retainer holds your nights</li>
+          <li>The rest is due 30 days before you arrive</li>
           <li>One free reschedule within a year, up to 7 days out</li>
         </ul>
       </div>
@@ -327,9 +327,9 @@ def page_treehouses():
       <div class="hero__media">{pic('eq3a0907', 'The treehouse canvas glowing at dusk, string lights running out along the bridge', '100vw', eager=True)}</div>
       <div class="lf-hero__shade"></div>
       <div class="lf-hero__inner">
-        <p class="lf-eyebrow">42 acres · 60 feet · 100-foot rope bridges</p>
+        <p class="lf-eyebrow">60 feet up · a 100-foot rope bridge</p>
         <h1 class="lf-h1">Not a cabin with a view. <em>A home in the sky.</em></h1>
-        <p class="lf-lead">Hand-built, suspended in a canopy that has been growing for over a hundred years, and reached by a rope bridge that makes your heart beat faster before the forest slows it back down.</p>
+        <p class="lf-lead">Hand-built, sixty feet up in a canopy that has been growing for over a hundred years.</p>
         <div class="lf-actions"><a href="#book" class="lf-btn">{ACORN}Check your dates</a></div>
       </div>
     </section>

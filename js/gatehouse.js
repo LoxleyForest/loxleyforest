@@ -196,7 +196,8 @@
     var today = iso(new Date());
     var balanceOn = addDays(ci, -s.balance_days);
     var inFull = balanceOn <= today;
-    var deposit = Math.min(s.deposit_cents, total);
+    // The retainer: a share of the all-in total (Mick, 2026-10-13); the flat amount is the old rule.
+    var deposit = s.retainer_pct ? Math.round(total * s.retainer_pct / 100) : Math.min(s.deposit_cents, total);
     var plans = {};
     if (!inFull) plans.deposit = [{ kind: 'deposit', amount_cents: deposit, due_on: null },
                                   { kind: 'balance', amount_cents: total - deposit, due_on: balanceOn }];
@@ -335,8 +336,9 @@
   function planLine(mode, q) {
     var plan = q.plans[mode];
     if (mode === 'deposit') {
-      return { title: money(plan[0].amount_cents) + ' today reserves it',
-               sub: 'The rest, ' + money(plan[1].amount_cents, true) + ', on ' + pretty(plan[1].due_on) + '.' };
+      return { title: money(plan[0].amount_cents) + ' today holds your nights',
+               sub: (q.promise.retainer_pct ? 'A ' + q.promise.retainer_pct + '% retainer deposit, non-refundable. ' : '') +
+                    'The rest, ' + money(plan[1].amount_cents, true) + ', on ' + pretty(plan[1].due_on) + '.' };
     }
     if (mode === 'affirm') {
       return { title: 'Pay monthly with Affirm',
@@ -401,6 +403,8 @@
   // restating the ruled terms; wording [MICK RATIFIES] before launch.
   function promiseBlock(p) {
     return el('ul', { 'class': 'gh-promise', 'aria-label': 'The Loxley Promise' }, [
+      p.retainer_pct ? el('li', { text: 'A ' + p.retainer_pct + '% retainer deposit holds your nights. It is non-refundable.' }) : null,
+      el('li', { text: 'The balance is charged ' + p.balance_days + ' days before you arrive. Inside ' + p.balance_days + ' days, the stay is paid in full.' }),
       el('li', { text: 'Plans change. Move your stay once, free, to any open date within 12 months, up to ' + p.lock_days + ' days before arrival.' }),
       el('li', { text: 'Everything you have paid carries to your new dates.' }),
       el('li', { text: 'Within ' + p.lock_days + ' days of arrival, your stay is set.' }),
@@ -441,7 +445,7 @@
       field('occasion', 'Celebrating something?', 'text', false, 'off'),
       state.payMode === 'hold'
         ? el('p', { 'class': 'gh-fine', text: 'We hold these nights for ' + q.promise.hold_hours +
-            ' hours. Your card is authorized for ' + money(Math.min(q.promise.deposit_cents, q.quote.total_cents)) +
+            ' hours. Your card is authorized for ' + money(q.plans.deposit ? q.plans.deposit[0].amount_cents : Math.min(q.promise.deposit_cents, q.quote.total_cents)) +
             ' but not charged; if you do not book, the hold simply lets go.' })
         : el('div', { 'class': 'gh-terms' }, [
             // Shown in full, not only linked: Stripe's dispute guidance says a
