@@ -276,3 +276,23 @@
 .lf-btn--ghost:hover { background: rgba(247, 243, 237, 0.08); }
 .lf-hero--page picture { display: block; width: 100%; height: 100%; }
 .lf-hero--page picture img { width: 100%; height: 100%; object-fit: cover; }
+
+/* the hero frame clips its picture, and the old site's scroll-scale stays off the new hero
+   (it slid the poster out below the frame on phones: Mick's "gap", 2026-10-13) */
+.lf-hero .hero__media { overflow: hidden; }
+.lf-hero .hero__media img { transform: none !important; }
+
+/* phones: more air around the words (Mick, 2026-10-13: "the text is still kind of crammed") */
+@media (max-width: 767px) {
+  :root { --pad-x: 24px; --pad-y: 88px; }
+  .lf-h1 { line-height: 1.05; }
+  .lf-h2 { font-size: clamp(2rem, 8.6vw, 2.6rem); line-height: 1.1; }
+  .lf-lead { font-size: 1.15rem; line-height: 1.62; margin-top: 18px; }
+  .lf-body { font-size: 1.12rem; line-height: 1.72; }
+  .lf-body p + p { margin-top: 1.1em; }
+  .lf-statement { font-size: 1.6rem; line-height: 1.34; }
+  .lf-acorns { gap: 16px; }
+  .lf-acorns li { font-size: 1.12rem; }
+  .lf-eyebrow { letter-spacing: 0.24em; margin-bottom: 14px; }
+  .lf-actions { margin-top: 28px; }
+}

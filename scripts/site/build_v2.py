@@ -340,7 +340,7 @@ def page_treehouses():
         <h2 class="lf-h2 lf-rise" id="or-h">The treehouse that <em>started everything</em></h2>
         <p class="lf-lead lf-rise">A queen bed framed by panoramic windows that turn every morning into a painting you've never seen before. A private deck suspended above the forest floor. A pizza oven on your sky deck, because even pizza is better in the canopy. This is where 200+ five-star reviews began.</p>
         <ul class="lf-chips lf-rise">
-          <li>Sleeps 2</li><li>Queen bed</li><li>Full bathroom</li><li>60 feet up</li><li>Private deck</li><li>Heated</li><li>Fire pit</li>
+          <li>Sleeps 4 comfortably</li><li>Queen bed</li><li>Full bathroom</li><li>60 feet up</li><li>Private deck</li><li>Heated</li><li>Fire pit</li>
         </ul>
         <div class="lf-chapters lf-gallery">{shots}</div>
       </div>
