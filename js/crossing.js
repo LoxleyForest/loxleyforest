@@ -23,6 +23,7 @@
   const words = Array.from(sec.querySelectorAll('[data-from]'));
   const countEl = sec.querySelector('[data-walk-count]');
   const markEl = sec.querySelector('[data-walk-mark]');
+  const skipEl = sec.querySelector('.lf-walk__skip');
   // the still engraving for reduced motion, and for browsers that cannot pin the stage
   const STILL = sec.hasAttribute('data-still') || window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
     !(window.CSS && CSS.supports('overflow-x', 'clip'));
@@ -81,7 +82,7 @@
   const floorY = (x, z) => { const d = x - creekX(z); return FLOOR - 6 + (d < 0 ? Math.min(16, 0.22 * -d) : Math.min(14, 0.35 * d)) + 0.5 * Math.sin(x * 0.21 + z * 0.13); };
   const CASCADE = [42, 54];
   // the landing deck (a half-octagon around the great oak), the sky deck below it, the tent
-  const OAK = { x: 1.3, z: 106.5, r: 1.75 };
+  const OAK = { x: 1.6, z: 108.5, r: 1.75 };
   const LANDING = [[-3.5, 100], [5, 100], [9, 103.5], [9, 110], [5.5, 113.5], [-3.5, 113.5]];
   const SKY = { x: -1, z: 120, R: 6.5, y: -4 };
   const SPIRES = [
@@ -367,7 +368,7 @@
       const o = obj(creekX(z0 + 4), FLOOR - 6, z0 + 4), nz = noise1(Math.round(z0) + 31);
       for (let off = -2.6; off <= 2.61; off += 0.4) {
         let run = [];
-        const flush = () => { if (run.length > 1) ln(o, run, 0.22, 'l', 1 - Math.abs(off) * 0.14, { taper: 1, minTone: 0.55 }); run = []; };
+        const flush = () => { if (run.length > 1) ln(o, run, 0.4, 'l', 1 - Math.abs(off) * 0.12, { taper: 1, minTone: 0.72 }); run = []; };
         for (let z = z0; z <= z0 + 8.01; z += 1) {
           if (nz(z * 0.35 + off * 3) > -0.3) { const x = creekX(z) + off; run.push([x, floorY(creekX(z), z) - 0.4, z]); } else flush();
         }
@@ -380,7 +381,7 @@
       const o = obj(creekX(48), FLOOR - 7, 48), R = rng(4848);
       for (let i = 0; i < 70; i++) {
         const z = lerp(CASCADE[0], CASCADE[1], R()), x = creekX(z) + (R() - 0.5) * 5, y = floorY(creekX(z), z) - 0.3 + R() * 1.2, l = 0.6 + R() * 1.3;
-        ln(o, [[x, y + 0.5, z], [x + (R() - 0.5) * 0.4, y - 0.3, z + l]], 0.12, 'l', 1, { taper: 1, minTone: 0.7 });
+        ln(o, [[x, y + 0.5, z], [x + (R() - 0.5) * 0.4, y - 0.3, z + l]], 0.22, 'l', 1, { taper: 1, minTone: 0.9 });
       }
       for (let i = 0; i < 9; i++) { // the rocks in the stream
         const z = lerp(CASCADE[0], CASCADE[1], (i + 0.5) / 9), x = creekX(z) + (R() - 0.5) * 4.5, r = 0.8 + R() * 1.4, y0 = floorY(creekX(z), z);
@@ -434,17 +435,17 @@
   // the walk: where you stand and where you look, for p from 0 (the first platform) to 1 (the deck)
   function walk(p) {
     const e = 0.6 * p + 0.4 * (0.5 - 0.5 * Math.cos(Math.PI * p));
-    const z = lerp(-5.5, SPAN + 0.8, e);
+    const z = lerp(-5.5, SPAN - 1.5, e);
     const plateau = (v, a, b, c, d) => smooth((v - a) / (b - a)) * (1 - smooth((v - c) / (d - c)));
     const down = plateau(z, 16, 32, 44, 60);       // the heart beats faster: the creek, sixty feet down
     const arrive = smooth((z - 82) / 18);          // the house rises
     const step = STILL ? 0 : Math.sin(z * Math.PI * 2 / 2.7);
-    const pitch = rad(-4 - 40 * down + 10 * arrive);
-    const yaw = rad(56 * down - 13 * smooth((z - 90) / 10));
+    const pitch = rad(-4 - 44 * down + 9 * arrive);
+    const yaw = rad(62 * down - 8 * smooth((z - 88) / 10));
     const roll = STILL ? 0 : rad(0.35 * Math.sin(z * Math.PI / 2.7) + 0.6 * Math.sin(z * 0.09));
     const y = deckY(Math.max(0, Math.min(SPAN, z))) + EYE + 0.05 * step;
     const x = STILL ? 0 : 0.12 * Math.sin(z * 0.09);
-    return { x, y, z, pitch, yaw, roll, ft: clamp(z, 0, SPAN) };
+    return { x, y, z, pitch, yaw, roll, ft: clamp((z * SPAN) / (SPAN - 1.5), 0, SPAN) }; // the last plank under your feet reads 100
   }
 
   // ---------------------------------------------------------------- the painter
@@ -918,6 +919,8 @@
     const ft = Math.round(s.ft);
     if (countEl) countEl.textContent = ft;
     if (markEl) markEl.style.transform = 'translateX(' + ft + '%)';
+    // across: the way out becomes the way in
+    if (skipEl && !STILL) { const there = ft >= 96; if (skipEl.classList.contains('is-there') !== there) { skipEl.classList.toggle('is-there', there); skipEl.textContent = there ? 'Pick your nights' : 'Skip to your dates'; } }
     for (const w of words) {
       const a = +w.dataset.from, b = +w.dataset.to, z = s.z;
       const v = STILL ? 1 : smooth((z - a) / 4) * (1 - smooth((z - b) / 4));
@@ -938,7 +941,7 @@
   function resize() {
     const r = stage.getBoundingClientRect(), W = Math.round(r.width), H = Math.round(r.height);
     if (W === cam.W && Math.abs(H - cam.H) < 90) return false;
-    if (!cam.W && !frames && W < 768) dprCap = 1.5;
+    if (!cam.W && !frames && W < 768 && !STEADY) dprCap = 1.5;
     dpr = Math.min(dprCap, window.devicePixelRatio || 1);
     cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
     sky = null;

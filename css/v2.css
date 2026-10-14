@@ -317,12 +317,16 @@ html, body.v2 { overflow-x: clip; }
 }
 .lf-walk__line { margin: 0; }
 .lf-walk__count { display: none; }
+/* the way past the walk, always in reach (Mick, 2026-10-14: "we just make it bold") */
 .lf-walk__skip {
   position: absolute; right: var(--pad-x); bottom: calc(26px + env(safe-area-inset-bottom, 0px));
-  font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 0.6875rem; letter-spacing: 0.2em;
-  text-transform: uppercase; color: var(--on-dark-muted); text-decoration: underline; text-underline-offset: 4px;
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px;
+  border: 1px solid rgba(247, 243, 237, 0.7); background: rgba(20, 36, 24, 0.72); color: var(--on-dark);
+  font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 0.6875rem; letter-spacing: 0.18em;
+  text-transform: uppercase; text-decoration: none; transition: background 0.25s, color 0.25s, border-color 0.25s;
 }
-.lf-walk__skip:hover, .lf-walk__skip:focus-visible { color: var(--on-dark); }
+.lf-walk__skip:hover, .lf-walk__skip:focus-visible { background: rgba(247, 243, 237, 0.12); }
+.lf-walk__skip.is-there { background: var(--gold); border-color: var(--gold); color: var(--forest-deep); }
 
 /* walking: the section is the length of the walk, the stage holds still while you scroll it */
 .js .lf-walk.is-ready:not(.is-still) { height: 560svh; }
