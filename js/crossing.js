@@ -941,7 +941,7 @@
   function resize() {
     const r = stage.getBoundingClientRect(), W = Math.round(r.width), H = Math.round(r.height);
     if (W === cam.W && Math.abs(H - cam.H) < 90) return false;
-    if (!cam.W && !frames && W < 768) dprCap = 1.5;
+    if (!cam.W && !frames && W < 768 && !STEADY) dprCap = 1.5;
     dpr = Math.min(dprCap, window.devicePixelRatio || 1);
     cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
     sky = null;
