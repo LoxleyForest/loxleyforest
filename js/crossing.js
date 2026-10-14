@@ -368,7 +368,7 @@
   // ---------------------------------------------------------------- the painter
   const BK = Array.from({ length: 80 }, () => ({ p: [], c: [] }));
   const used = [];
-  function put(key, poly) { const b = BK[key]; if (!b.p.length && !b.c.length) used.push(key); b.p.push(poly); }
+  function put(key, poly) { if (window.lfPut) window.lfPut(key, poly); const b = BK[key]; if (!b.p.length && !b.c.length) used.push(key); b.p.push(poly); }
   function dot(key, x, y, r) { const b = BK[key]; if (!b.p.length && !b.c.length) used.push(key); b.c.push(x, y, r); }
   function flush() {
     used.sort((a, b) => a - b);
@@ -575,7 +575,7 @@
     const Z = C[2];
     if (Z < NEAR * 4) return;
     const sx = cam.cx + (cam.f * C[0]) / Z, sy = cam.cy - (cam.f * C[1]) / Z, rs = (c.R * cam.f) / Z;
-    if (rs < 1.2 || sx + rs * 1.3 < 0 || sx - rs * 1.3 > cam.W || sy + rs < 0 || sy - rs > cam.H) return;
+    if (rs < 1.2 || rs > cam.H * 0.8 || sx + rs * 1.3 < 0 || sx - rs * 1.3 > cam.W || sy + rs < 0 || sy - rs > cam.H) return;
     const lobe = (a) => 1 + 0.12 * Math.sin(a * 5 + c.lob[0]) + 0.09 * Math.sin(a * 11 + c.lob[1]) + 0.05 * Math.sin(a * 19 + c.lob[2]);
     const q = new Array(52);
     for (let i = 0; i < 26; i++) { const a = (i / 26) * Math.PI * 2, r = rs * lobe(a); q[i * 2] = sx + r * Math.cos(a); q[i * 2 + 1] = sy + r * Math.sin(a) * 0.82; }
@@ -751,6 +751,7 @@
     const list = OBJ.filter((o) => o.d > -30).sort((a, b) => b.d - a.d);
     for (const o of list) {
       if (window.lfOnly && !window.lfOnly(o)) continue;
+      const T0 = window.lfProf ? performance.now() : 0;
       if (o.draw) o.draw(o);
       for (const it of o.items) {
         if (it.k === 0) paintLine(it, o.d);
@@ -758,6 +759,7 @@
         else paintBulb(it);
       }
       flush();
+      if (window.lfProf) window.lfProf(o, performance.now() - T0);
     }
     // the words and the count
     const ft = Math.round(s.ft);
