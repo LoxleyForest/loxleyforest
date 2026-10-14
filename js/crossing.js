@@ -23,7 +23,9 @@
   const words = Array.from(sec.querySelectorAll('[data-from]'));
   const countEl = sec.querySelector('[data-walk-count]');
   const markEl = sec.querySelector('[data-walk-mark]');
-  const STILL = sec.hasAttribute('data-still') || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // the still engraving for reduced motion, and for browsers that cannot pin the stage
+  const STILL = sec.hasAttribute('data-still') || window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+    !(window.CSS && CSS.supports('overflow-x', 'clip'));
   const STEADY = sec.hasAttribute('data-steady'); // full detail always: for rendering the still posters
 
   // ---------------------------------------------------------------- ink

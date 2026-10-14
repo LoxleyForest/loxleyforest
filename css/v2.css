@@ -297,6 +297,10 @@
   .lf-actions { margin-top: 28px; }
 }
 
+/* clip, not hidden: hidden turns the body into a scroll box of its own, and then nothing on the
+   page can stay pinned while it scrolls (the crossing's stage needs to) */
+html, body.v2 { overflow-x: clip; }
+
 /* ---- the crossing, walked (js/crossing.js) --------------------------
    A tall section with a stage pinned inside it: scrolling the section
    walks the bridge. Without script, or with reduced motion, the stage
