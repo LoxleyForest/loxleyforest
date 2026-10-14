@@ -276,3 +276,71 @@
 .lf-btn--ghost:hover { background: rgba(247, 243, 237, 0.08); }
 .lf-hero--page picture { display: block; width: 100%; height: 100%; }
 .lf-hero--page picture img { width: 100%; height: 100%; object-fit: cover; }
+
+/* the hero frame clips its picture, and the old site's scroll-scale stays off the new hero
+   (it slid the poster out below the frame on phones: Mick's "gap", 2026-10-13) */
+.lf-hero .hero__media { overflow: hidden; }
+.lf-hero .hero__media img { transform: none !important; }
+
+/* phones: more air around the words (Mick, 2026-10-13: "the text is still kind of crammed") */
+@media (max-width: 767px) {
+  :root { --pad-x: 24px; --pad-y: 88px; }
+  .lf-h1 { line-height: 1.05; }
+  .lf-h2 { font-size: clamp(2rem, 8.6vw, 2.6rem); line-height: 1.1; }
+  .lf-lead { font-size: 1.15rem; line-height: 1.62; margin-top: 18px; }
+  .lf-body { font-size: 1.12rem; line-height: 1.72; }
+  .lf-body p + p { margin-top: 1.1em; }
+  .lf-statement { font-size: 1.6rem; line-height: 1.34; }
+  .lf-acorns { gap: 16px; }
+  .lf-acorns li { font-size: 1.12rem; }
+  .lf-eyebrow { letter-spacing: 0.24em; margin-bottom: 14px; }
+  .lf-actions { margin-top: 28px; }
+}
+
+/* ---- the crossing, walked (js/crossing.js) --------------------------
+   A tall section with a stage pinned inside it: scrolling the section
+   walks the bridge. Without script, or with reduced motion, the stage
+   shows one still engraving and the words sit on it as a paragraph. */
+.lf-walk { position: relative; background: #1a2e1a; color: var(--on-dark); }
+.lf-walk__stage { position: relative; height: 100svh; min-height: 520px; overflow: hidden; }
+.lf-walk__stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.lf-walk__words {
+  position: absolute; left: var(--pad-x); right: var(--pad-x); top: calc(var(--hdr-h) + 7svh);
+  max-width: 21ch; margin: 0 auto; text-align: center;
+  font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 300;
+  font-size: clamp(1.9rem, 6.6vw, 3.3rem); line-height: 1.14; text-wrap: balance;
+  text-shadow: 0 0 22px #1a2e1a, 0 0 6px #1a2e1a, 0 0 2px #1a2e1a;
+}
+.lf-walk__line { margin: 0; }
+.lf-walk__count { display: none; }
+.lf-walk__skip {
+  position: absolute; right: var(--pad-x); bottom: calc(26px + env(safe-area-inset-bottom, 0px));
+  font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 0.6875rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--on-dark-muted); text-decoration: underline; text-underline-offset: 4px;
+}
+.lf-walk__skip:hover, .lf-walk__skip:focus-visible { color: var(--on-dark); }
+
+/* walking: the section is the length of the walk, the stage holds still while you scroll it */
+.js .lf-walk.is-ready:not(.is-still) { height: 560svh; }
+.js .lf-walk.is-ready:not(.is-still) .lf-walk__stage { position: sticky; top: 0; }
+.js .lf-walk.is-ready:not(.is-still) .lf-walk__line {
+  position: absolute; left: 0; right: 0; top: 0; opacity: 0; will-change: opacity, transform;
+}
+.js .lf-walk.is-ready:not(.is-still) .lf-walk__count {
+  display: grid; gap: 10px; position: absolute; left: var(--pad-x); bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  width: min(40vw, 220px); color: var(--on-dark);
+}
+.lf-walk__count p { margin: 0; display: flex; align-items: baseline; gap: 8px; }
+.lf-walk__count b {
+  font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 300; font-size: 3.1rem; line-height: 0.9;
+  font-variant-numeric: lining-nums tabular-nums; min-width: 2.1ch;
+}
+.lf-walk__count span {
+  font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 0.6875rem; letter-spacing: 0.24em;
+  text-transform: uppercase; color: var(--on-dark-muted);
+}
+.lf-walk__bar { position: relative; height: 1px; background: rgba(247, 243, 237, 0.32); }
+.lf-walk__mark { position: absolute; left: 0; right: 0; top: -9px; height: 0; }
+.lf-walk__mark svg { position: absolute; left: -6px; top: 0; width: 12px; height: 15px; color: var(--gold); }
+/* the phone Book button sits bottom right; the skip link moves up out of its way */
+@media (max-width: 767px) { .lf-walk__skip { bottom: auto; top: calc(var(--hdr-h) + 12px); } .js .lf-walk.is-ready:not(.is-still) .lf-walk__count { bottom: calc(30px + env(safe-area-inset-bottom, 0px)); } }
