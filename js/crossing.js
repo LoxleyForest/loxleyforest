@@ -655,9 +655,25 @@
           return pts;
         };
         paintFill({ P: Float32Array.from(panel(0.36, 0.47, 0.83).flat()), n: 17 });
-        const lit = panel(0.29, 0.505, 0.815), q = [];
-        for (const p of lit) { toCam(p[0], p[1], p[2]); if (C[2] < NEAR) return; q.push(cam.cx + (cam.f * C[0]) / C[2], cam.cy - (cam.f * C[1]) / C[2]); }
-        put(4 * 16 + level(fd), q);
+        // the light inside, engraved: close level strokes across the panel, heaviest at its middle
+        const vT = 0.505, vB = 0.815, du = 0.29, scr = (p) => { toCam(p[0], p[1], p[2]); return C[2] < NEAR ? null : [cam.cx + (cam.f * C[0]) / C[2], cam.cy - (cam.f * C[1]) / C[2]]; };
+        const top = scr(at(wf, vT)), bot = scr(at(wf, vB));
+        if (!top || !bot) return;
+        const tall = Math.abs(bot[1] - top[1]), rows = Math.max(4, Math.round(tall / 2.9));
+        for (let r = 0; r <= rows; r++) {
+          const k = r / rows, v = lerp(vT, vB, k), e = Math.min(1, k / 0.3), half = du * Math.sin((e * Math.PI) / 2) * 0.96;
+          let m = 0;
+          for (let s = 0; s <= 6; s++) {
+            const p = scr(at(wf + lerp(-half, half, s / 6), v));
+            if (!p) continue;
+            SX[m] = p[0]; SY[m] = p[1]; SW[m] = (tall / rows) * (0.2 + 0.2 * Math.sin(Math.PI * k)) * (0.75 + 0.25 * Math.sin(Math.PI * s / 6)); SN[m] = 0; m++;
+          }
+          ribbon(m, 3 * 16 + level(fd), false);
+        }
+        // the zipper, down the middle
+        let m = 0;
+        for (let s = 0; s <= 6; s++) { const p = scr(at(wf, lerp(vT + 0.01, vB, s / 6))); if (p) { SX[m] = p[0]; SY[m] = p[1]; SW[m] = Math.max(0.5, tall * 0.006); SN[m] = 0; m++; } }
+        ribbon(m, 0, false);
       }
     }
     // the finial: a slender gold cap and a bead
