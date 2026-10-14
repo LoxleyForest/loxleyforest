@@ -56,7 +56,8 @@ the box. Loxley Forest LLC on the agreement.
    old browsers get the still engraving. Note: `html, body.v2` now use `overflow-x: clip`
    (hidden broke pinning). Private preview with the real calendar after it:
    https://claude.ai/artifact/UyuRfjKG8D6MWm7gaV6wPR. Waiting on Mick's look and his
-   bridge facts and footage (asked 2026-10-14). Open call for Mick: placement (after the
+   bridge facts and footage (asked 2026-10-14). Reels for Mick and Livy (with words, and clean)
+   are in the unlisted folder at private/new-site-371cf1/reel/ (re-render: scripts/crossing/). Open call for Mick: placement (after the
    opening statement moves the calendar above "what's included").
 1. **"The crossing, walked"**, approved by Mick to build and see: after the
    opening statement, scroll carries the guest across the hundred-foot bridge
