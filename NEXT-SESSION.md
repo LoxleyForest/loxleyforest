@@ -48,6 +48,16 @@ to the Scout's Georgia case law; the checkout repeats its bold release beside
 the box. Loxley Forest LLC on the agreement.
 
 ## Next, in order
+0. **The crossing, first build done 2026-10-14** (`js/crossing.js`, styles at the end of
+   `css/v2.css`; not on any page yet). Drawn live in canvas: the bridge, the lights, the
+   netting, the oaks, the creek 60 ft down; a 0 to 100 ft counter; Mick's own sentence as
+   the captions; a look over the rope at "heart beat faster"; arrival at the lit spire; a
+   speed governor (lower resolution, then less detail, on slow phones); reduced motion and
+   old browsers get the still engraving. Note: `html, body.v2` now use `overflow-x: clip`
+   (hidden broke pinning). Private preview with the real calendar after it:
+   https://claude.ai/artifact/UyuRfjKG8D6MWm7gaV6wPR. Waiting on Mick's look and his
+   bridge facts and footage (asked 2026-10-14). Open call for Mick: placement (after the
+   opening statement moves the calendar above "what's included").
 1. **"The crossing, walked"**, approved by Mick to build and see: after the
    opening statement, scroll carries the guest across the hundred-foot bridge
    drawn in the logo's engraving, a counter 0 to 100 ft, the far end opening
