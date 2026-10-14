@@ -67,8 +67,8 @@
   // the treehouse
   const HOUSE = { x0: -19, x1: 6, z0: 100.6, z1: 124 };
   const SPIRES = [
-    { cx: -13.6, cz: 117.5, r: 4.6, h: 13.5, M: 18, seams: 2, bright: 0.75, win: false, seed: 55 },
-    { cx: -5.4, cz: 112.5, r: 7.0, h: 19.5, M: 30, seams: 3, bright: 1, win: true, seed: 77 },
+    { cx: -13.6, cz: 117.5, r: 4.6, h: 13.5, M: 28, seams: 2, bright: 0.75, win: false, seed: 55 },
+    { cx: -5.4, cz: 112.5, r: 7.0, h: 19.5, M: 48, seams: 3, bright: 1, win: true, seed: 77 },
   ];
 
   // ---------------------------------------------------------------- the scene, as objects of world-space marks
@@ -294,10 +294,10 @@
       flush();
     }
     // water: horizontal strokes, brightest in the middle of the stream
-    for (let off = -2.8; off <= 2.81; off += 0.4) {
+    for (let off = -4.2; off <= 4.21; off += 0.42) {
       const o = obj(0, FLOOR, creekZ(0) + off), nz = noise1(Math.round(off * 100) + 31);
       let run = [];
-      const flush = () => { if (run.length > 1) ln(o, run, 0.26, 'l', 1 - Math.abs(off) * 0.16, { taper: 1, minTone: 0.55 }); run = []; };
+      const flush = () => { if (run.length > 1) ln(o, run, 0.3, 'l', 1 - Math.abs(off) * 0.1, { taper: 1, minTone: 0.62 }); run = []; };
       for (let x = -150; x <= 150; x += 2.5) {
         if (nz(x * 0.12) > -0.25) { run.push([x, FLOOR - 0.3, creekZ(x) + off]); if (run.length > 4) flush(); } else flush();
       }
@@ -305,7 +305,30 @@
     }
     for (const side of [-1, 1]) {
       const o = obj(0, FLOOR, creekZ(0) + side * 3.4);
-      ln(o, along((t) => { const x = lerp(-150, 150, t); return [x, FLOOR + 0.2, creekZ(x) + side * (3.4 + 0.5 * Math.sin(x * 0.3))]; }, 120), 0.14, 'g', 0.9, { minTone: 0.45 });
+      ln(o, along((t) => { const x = lerp(-150, 150, t); return [x, FLOOR + 0.2, creekZ(x) + side * (4.9 + 0.6 * Math.sin(x * 0.3))]; }, 120), 0.16, 'g', 0.9, { minTone: 0.5 });
+    }
+  }
+  {
+    const R = rng(808);
+    // boulders: an outline on the ground and a few strokes of shade across the lit face
+    for (let i = 0; i < 26; i++) {
+      const x = (R() - 0.5) * 150, side = R() < 0.5 ? -1 : 1, z = creekZ(x) + side * (5.5 + R() * 9), r = 1.6 + R() * 2.8;
+      const o = obj(x, FLOOR, z), y0 = floorY(x, z), nz = noise1(i + 300), ring = [];
+      for (let k = 0; k <= 18; k++) { const a = (k / 18) * Math.PI * 2, rr = r * (1 + 0.18 * nz(k * 0.7)); ring.push([x + rr * Math.cos(a), y0 + Math.max(0, Math.sin(a)) * r * 0.55, z + rr * Math.sin(a) * 0.8]); }
+      fill(o, ring);
+      ln(o, ring, 0.09, 'g', 0.8, { minTone: 0.35 });
+      for (let k = 0; k < 4; k++) { const a = -0.3 + k * 0.28; ln(o, along((t) => [x + r * lerp(-0.6, 0.6, t), y0 + r * (0.45 - k * 0.1), z - r * 0.5 + a], 2), 0.05, 'g', 0.55, { taper: 1, lod: 120 }); }
+    }
+    // fern fronds, the logo's: a curving stem, leaflets both sides
+    for (let i = 0; i < 70; i++) {
+      const x = (R() - 0.5) * 170, z = creekZ(x) + (R() - 0.5) * 34, len = 2 + R() * 2.2, dir = R() * Math.PI * 2;
+      const o = obj(x, FLOOR, z), y0 = floorY(x, z), dx = Math.cos(dir), dz = Math.sin(dir);
+      const stem = (t) => [x + dx * len * 0.7 * t, y0 + len * (0.8 * t - 0.45 * t * t), z + dz * len * 0.7 * t];
+      ln(o, along(stem, 6), 0.07, 'g', 0.7, { minTone: 0.3 });
+      for (let j = 1; j < 7; j++) {
+        const t = j / 7, p = stem(t), l = (1 - t) * len * 0.3 + 0.2;
+        for (const sg of [-1, 1]) ln(o, [p, [p[0] - dz * sg * l + dx * l * 0.4, p[1] - l * 0.2, p[2] + dx * sg * l + dz * l * 0.4]], 0.05, 'g', 0.6, { taper: 1, lod: 110, minTone: 0.25 });
+      }
     }
   }
   // the spires
@@ -334,8 +357,8 @@
     const down = plateau(z, 16, 32, 44, 60);       // the heart beats faster: the creek, sixty feet down
     const arrive = smooth((z - 78) / 24);          // the house rises
     const step = STILL ? 0 : Math.sin(z * Math.PI * 2 / 2.7);
-    const pitch = rad(-4 - 46 * down + 13 * arrive);
-    const yaw = rad(14 * down - 15 * arrive);
+    const pitch = rad(-4 - 40 * down + 13 * arrive);
+    const yaw = rad(36 * down - 15 * arrive);
     const roll = STILL ? 0 : rad(0.35 * Math.sin(z * Math.PI / 2.7) + 0.6 * Math.sin(z * 0.09));
     const y = deckY(Math.max(0, Math.min(SPAN, z))) + EYE + 0.05 * step;
     const x = STILL ? 0 : 0.12 * Math.sin(z * 0.09);
@@ -646,7 +669,7 @@
     }
     // the fly window, lit from inside, and its zipper; it faces the bridge
     if (sp.win) {
-      const wf = -Math.PI / 2, face = Math.cos(wf - ang);
+      const wf = Math.atan2(SPAN + 2 - sp.cz, 0 - sp.cx), face = Math.cos(wf - ang);
       if (face > 0.15) {
         const panel = (du, vT, vB) => {
           const pts = [at(wf, vT, 0)];
@@ -726,6 +749,7 @@
     for (const o of OBJ) { toCam(o.x, o.y, o.z); o.d = C[2]; }
     const list = OBJ.filter((o) => o.d > -30).sort((a, b) => b.d - a.d);
     for (const o of list) {
+      if (window.lfOnly && !window.lfOnly(o)) continue;
       if (o.draw) o.draw(o);
       for (const it of o.items) {
         if (it.k === 0) paintLine(it, o.d);
@@ -771,7 +795,7 @@
     if (sized || Math.abs(eased - shown) > 0.00005) { render(eased); shown = eased; }
     requestAnimationFrame(frame);
   }
-  window.lfCrossing = { render: (p) => { resize(); render(p); }, walk };
+  window.lfCrossing = { render: (p) => { resize(); render(p); }, walk, OBJ, cam };
   if (STILL) sec.classList.add('is-still');
   sec.classList.add('is-ready');
   resize(); eased = STILL ? 0 : progress(); render(eased); shown = eased;

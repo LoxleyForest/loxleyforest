@@ -328,9 +328,9 @@
 }
 .js .lf-walk.is-ready:not(.is-still) .lf-walk__count {
   display: grid; gap: 10px; position: absolute; left: var(--pad-x); bottom: calc(24px + env(safe-area-inset-bottom, 0px));
-  width: min(40vw, 220px); color: var(--on-dark);
+  width: min(52vw, 230px); color: var(--on-dark);
 }
-.lf-walk__count p { margin: 0; display: flex; align-items: baseline; gap: 8px; }
+.lf-walk__count p { margin: 0; display: flex; align-items: baseline; gap: 10px; white-space: nowrap; }
 .lf-walk__count b {
   font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 300; font-size: 3.1rem; line-height: 0.9;
   font-variant-numeric: lining-nums tabular-nums; min-width: 2.1ch;
