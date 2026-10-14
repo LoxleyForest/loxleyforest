@@ -67,8 +67,8 @@
   // the treehouse
   const HOUSE = { x0: -19, x1: 6, z0: 100.6, z1: 124 };
   const SPIRES = [
-    { cx: -13.6, cz: 117.5, r: 4.6, h: 13.5, M: 28, seams: 2, bright: 0.75, win: false, seed: 55 },
-    { cx: -5.4, cz: 112.5, r: 7.0, h: 19.5, M: 48, seams: 3, bright: 1, win: true, seed: 77 },
+    { cx: -13.6, cz: 117.5, r: 4.6, h: 13.5, M: 64, seams: 2, bright: 0.75, win: false, seed: 55 },
+    { cx: -5.4, cz: 112.5, r: 7.0, h: 19.5, M: 96, seams: 3, bright: 1, win: true, seed: 77 },
   ];
 
   // ---------------------------------------------------------------- the scene, as objects of world-space marks
@@ -235,7 +235,7 @@
     return t;
   }
   // "suspended between two ancient white oaks"
-  tree(-4.3, -1.2, 1.7); tree(4.4, 0.6, 1.55);
+  tree(-5.8, -1.6, 1.7); tree(6.0, 0.4, 1.55);
   // five oaks hold the house up
   [[4.6, 102.2, 1.6], [-22.5, 106.5, 1.3], [9, 119.5, 1.4], [-20.5, 125.5, 1.2], [-8.5, 131, 1.1]].forEach(([x, z, r]) => tree(x, z, r, { house: true }));
   {
@@ -352,13 +352,13 @@
   // the walk: where you stand and where you look, for p from 0 (the first platform) to 1 (the deck)
   function walk(p) {
     const e = 0.6 * p + 0.4 * (0.5 - 0.5 * Math.cos(Math.PI * p));
-    const z = lerp(-7.5, SPAN + 2.5, e);
+    const z = lerp(-5.5, SPAN + 2.5, e);
     const plateau = (v, a, b, c, d) => smooth((v - a) / (b - a)) * (1 - smooth((v - c) / (d - c)));
     const down = plateau(z, 16, 32, 44, 60);       // the heart beats faster: the creek, sixty feet down
     const arrive = smooth((z - 78) / 24);          // the house rises
     const step = STILL ? 0 : Math.sin(z * Math.PI * 2 / 2.7);
-    const pitch = rad(-4 - 40 * down + 13 * arrive);
-    const yaw = rad(36 * down - 15 * arrive);
+    const pitch = rad(-4 - 44 * down + 13 * arrive);
+    const yaw = rad(48 * down - 15 * arrive);
     const roll = STILL ? 0 : rad(0.35 * Math.sin(z * Math.PI / 2.7) + 0.6 * Math.sin(z * 0.09));
     const y = deckY(Math.max(0, Math.min(SPAN, z))) + EYE + 0.05 * step;
     const x = STILL ? 0 : 0.12 * Math.sin(z * 0.09);
@@ -622,10 +622,10 @@
     // the canvas lines, from the finial to the hem, swelling as the hand presses
     toCam(sp.cx, sp.h * 0.5, sp.cz); const Zc = C[2];
     if (Zc < NEAR) return;
-    const fd = fade(Zc);
+    const fd = fade(Zc), big = (sp.r * cam.f) / Zc, every = big > 110 ? 1 : big > 45 ? 2 : 4;
     for (let i = 0; i < sp.M; i++) {
       const phi = (i / sp.M) * Math.PI * 2 + 0.05, face = Math.cos(phi - ang);
-      if (face < 0.02) continue;
+      if (face < 0.02 || i % every) continue;
       const tone = (0.3 + 0.7 * face ** 0.7) * sp.bright;
       const seam = i % (sp.M / n / 2) === 0;
       const press = noise1(i * 7 + sp.seed);
@@ -641,8 +641,9 @@
       ribbon(m, (seam ? 1 : 3) * 16 + level(tone * fd), true);
     }
     // hatching across the lit canvas, following its curve: short strokes, densest where it glows
-    for (let r = 0; r < 12; r++) {
-      const v = lerp(0.5, 0.95, r / 11);
+    const hrows = big > 110 ? 26 : big > 45 ? 16 : 10;
+    for (let r = 0; r < hrows; r++) {
+      const v = lerp(0.42, 0.96, r / (hrows - 1));
       let u = -1.2 + R() * 0.08;
       while (u < 1.2) {
         const len = 0.1 + R() * 0.16, u1 = Math.min(1.2, u + len), um = (u + u1) / 2;
@@ -721,7 +722,7 @@
     const Y = dy * cam.cp - Z1 * cam.sp, Z = dy * cam.sp + Z1 * cam.cp;
     if (Z < 0.05) return;
     const gx = cam.cx + (cam.f * X) / Z, gy = cam.cy - (cam.f * Y) / Z;
-    const Rk = Math.max(cam.W, cam.H) * 0.62;
+    const Rk = Math.max(cam.W, cam.H) * 0.8;
     const step = 3.3, x0 = -cam.W * 0.1, x1 = cam.W * 1.1, dxs = 9;
     const nz = noise1(5);
     let row = 0;
