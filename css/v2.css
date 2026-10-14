@@ -348,3 +348,6 @@ html, body.v2 { overflow-x: clip; }
 .lf-walk__mark svg { position: absolute; left: -6px; top: 0; width: 12px; height: 15px; color: var(--gold); }
 /* the phone Book button sits bottom right; the skip link moves up out of its way */
 @media (max-width: 767px) { .lf-walk__skip { bottom: auto; top: calc(var(--hdr-h) + 12px); } .js .lf-walk.is-ready:not(.is-still) .lf-walk__count { bottom: calc(30px + env(safe-area-inset-bottom, 0px)); } }
+/* still: the words sit on the engraving as one paragraph */
+.lf-walk.is-still .lf-walk__words { font-size: clamp(1.4rem, 5vw, 2.1rem); max-width: 24ch; }
+.lf-walk.is-still .lf-walk__line { display: inline; }

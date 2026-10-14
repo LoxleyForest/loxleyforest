@@ -56,28 +56,43 @@
   const rad = (d) => (d * Math.PI) / 180;
 
   // ---------------------------------------------------------------- the place
+  // From Mick, 2026-10-14, and his photographs: aircraft cable on the catenaries, natural rope
+  // verticals tied to them, rope netting lashed to the verticals, 42 inches high; the cables at
+  // least 4 feet apart and wider in places; the cables run low enough mid-span that the netting
+  // sits at your chest. The bridge lands on a half-octagon deck around a great oak (3.5 feet
+  // through, 120 feet tall) that carries the house and the bridge's cables; ship stairs drop
+  // about 4 feet to the octagon sky deck; the big spire stands on a knee wall to your left.
+  // The creek runs downhill on your right, alongside the bridge, with a cascade near the middle.
   const SPAN = 100;      // the bridge, feet
-  const SAG = 4.2;       // its sag at the middle
+  const SAG = 4.2;       // the deck's sag at the middle
   const EYE = 5.3;       // eye height above the deck
-  const FLOOR = -62;     // the forest floor, sixty feet down
-  const TOP = 96;        // where trunks leave the frame
+  const FLOOR = -62;     // the forest floor, about sixty feet down
+  const TOP = 110;       // where trunks leave the frame
   const HALF = 1.5;      // half the walking width
-  const H0 = 2.0, H1 = 2.6, RAIL = 4.1; // netting from the deck edge out and up to the top rope
+  const NET = 3.5;       // the netting, 42 inches
   const deckY = (z) => (z <= 0 || z >= SPAN ? 0 : -SAG * 4 * (z / SPAN) * (1 - z / SPAN));
-  // the creek, crossing beneath the bridge
-  const creekZ = (x) => 47 + 8 * Math.sin(x * 0.034 + 0.9) + 3 * Math.sin(x * 0.11 + 2);
-  const floorY = (x, z) => FLOOR + Math.min(26, 0.05 * Math.abs(z - creekZ(x)) ** 1.35) + 0.6 * Math.sin(x * 0.21 + z * 0.13);
-  // the treehouse
-  const HOUSE = { x0: -19, x1: 6, z0: 100.6, z1: 124 };
+  const mid2 = (z) => { const u = clamp(z / SPAN, 0, 1) * 2 - 1; return u * u; }; // 0 mid-span, 1 at the ends
+  const cableH = (z) => 4.4 + 2.6 * mid2(z);   // above the deck: chest height mid-span, overhead at the ends
+  const cableX = (z) => 2.05 + 0.4 * mid2(z);  // never closer than 4 feet apart
+  const POST = 1.95;                           // where the verticals tie to the crossbeams
+  const wallX = (z, y) => lerp(POST, cableX(z), clamp(y / cableH(z), 0, 1)); // the side leans out with the verticals
+  // the creek: downhill on the right, alongside the bridge
+  const creekX = (z) => 34 + 5 * Math.sin(z * 0.045 + 1) + 2 * Math.sin(z * 0.13);
+  const floorY = (x, z) => { const d = x - creekX(z); return FLOOR - 6 + (d < 0 ? Math.min(16, 0.22 * -d) : Math.min(14, 0.35 * d)) + 0.5 * Math.sin(x * 0.21 + z * 0.13); };
+  const CASCADE = [42, 54];
+  // the landing deck (a half-octagon around the great oak), the sky deck below it, the tent
+  const OAK = { x: 1.3, z: 106.5, r: 1.75 };
+  const LANDING = [[-3.5, 100], [5, 100], [9, 103.5], [9, 110], [5.5, 113.5], [-3.5, 113.5]];
+  const SKY = { x: -1, z: 120, R: 6.5, y: -4 };
   const SPIRES = [
-    { cx: -13.6, cz: 117.5, r: 4.6, h: 13.5, M: 128, seams: 2, bright: 0.75, win: false, seed: 55 },
-    { cx: -5.4, cz: 112.5, r: 7.0, h: 19.5, M: 192, seams: 3, bright: 1, win: true, seed: 77 },
+    { cx: -17, cz: 122, r: 5, h: 15, y0: -1.5, M: 128, seams: 2, arch: 2.2, bright: 0.75, win: false, seed: 55 },
+    { cx: -10, cz: 113, r: 7, h: 22, y0: -1.5, M: 192, seams: 3, arch: 3, bright: 1, win: true, seed: 77 },
   ];
 
   // ---------------------------------------------------------------- the scene, as objects of world-space marks
   const OBJ = [];
   let SEED = 11;
-  function obj(x, y, z, draw) { const o = { x, y, z, items: [], draw, d: 0 }; OBJ.push(o); return o; }
+  function obj(x, y, z, draw) { const o = { x, y, z, items: [], draw, d: 0, bias: 0 }; OBJ.push(o); return o; }
   // a line through world points; w = width in feet; tone 0..1; lod = farthest depth it is drawn at
   function ln(o, pts, w, c, tone, extra) {
     const n = pts.length, P = new Float32Array(n * 3), N = new Float32Array(n), nz = noise1(SEED++);
@@ -97,8 +112,9 @@
     pts.forEach((p, i) => { P[i * 3] = p[0]; P[i * 3 + 1] = p[1]; P[i * 3 + 2] = p[2]; });
     o.items.push({ k: 1, P, n: pts.length });
   }
-  function bulb(o, x, y, z, r) { o.items.push({ k: 2, x, y, z, r: r || 0.13 }); }
+  function bulb(o, x, y, z, r) { o.items.push({ k: 2, x, y, z, r: r || 0.11 }); }
   const along = (fn, n) => { const a = []; for (let i = 0; i <= n; i++) a.push(fn(i / n)); return a; };
+  const seg = (a, b, n) => along((t) => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)], n || 1);
 
   // ---- the bridge, in two-foot bays
   for (let z0 = 0; z0 < SPAN; z0 += 2) {
@@ -115,50 +131,46 @@
       if ((z0 + b * 3) % 10 === 0) ln(o, [at(xa, 0, z0 + 0.02), at(xb, 0, z0 + 0.02)], 0.02, 'g', 0.6, { lod: 40 });
     }
     for (const s of [-1, 1]) {
-      // the crossbeam's end, past the boards
-      ln(o, [at(s * 1.46, -0.06, zm), at(s * 2.24, -0.06, zm)], 0.2, 'g', 0.7);
-      // ropes: the deck edge, the middle, the top rope that carries the lights
-      ln(o, zs.map((z) => at(s * H0, 0.04, z)), 0.06, 'g', 0.85);
-      ln(o, zs.map((z) => at(s * lerp(H0, H1, 0.5), RAIL * 0.5, z)), 0.028, 'g', 0.55);
-      ln(o, zs.map((z) => at(s * H1, RAIL, z)), 0.075, 'g', 1);
-      // a hanger every four feet
-      if (z0 % 4 === 0) ln(o, along((t) => at(s * lerp(H0, H1, t), RAIL * t, z0), 2), 0.034, 'g', 0.9);
-      // the netting: two families of diagonals in the plane of the side
-      const D = 1.5, m = 0.5, wall = (z, v) => at(s * lerp(H0, H1, v), RAIL * v, z);
+      // the crossbeam's end, past the boards, where the vertical is tied
+      ln(o, [at(s * 1.46, -0.06, zm), at(s * 2.2, -0.06, zm)], 0.2, 'g', 0.7);
+      // the aircraft cable, steel, carrying everything
+      ln(o, zs.map((z) => at(s * cableX(z), cableH(z), z)), 0.055, 'g', 1);
+      // the netting's lashed top edge and its foot along the deck
+      ln(o, zs.map((z) => at(s * wallX(z, NET), NET, z)), 0.04, 'g', 0.7);
+      ln(o, zs.map((z) => at(s * POST, 0.05, z)), 0.05, 'g', 0.8);
+      // a natural rope vertical every two feet, knotted at the cable
+      {
+        const z = zm, top = cableH(z);
+        ln(o, along((t) => at(s * wallX(z, top * t), top * t, z), 3), 0.045, 'g', 0.85);
+        ln(o, [at(s * cableX(z), top - 0.05, z), at(s * wallX(z, top - 0.45), top - 0.45, z)], 0.11, 'g', 0.75, { lod: 40 });
+      }
+      // the rope netting: diamonds, lashed to the verticals
+      const D = NET, m = 0.6;
       for (const dir of [1, -1]) {
         let k = 0;
         for (let c = z0 - D; c < z1 + D; c += m, k++) {
           // z = c + dir * v * D, clipped to this bay and to 0..1 in v
-          let va = 0, vb = 1;
-          const zA = (v) => c + dir * v * D;
           const vAt = (z) => (z - c) / (dir * D);
           let lo = vAt(z0), hi = vAt(z1); if (lo > hi) [lo, hi] = [hi, lo];
-          va = Math.max(va, lo); vb = Math.min(vb, hi);
+          const va = Math.max(0, lo), vb = Math.min(1, hi);
           if (vb - va < 0.02) continue;
-          ln(o, along((t) => wall(zA(lerp(va, vb, t)), lerp(va, vb, t)), 2), 0.011, 'g', 0.46, { lod: k % 2 ? 34 : 70, maxPx: 0.9 });
+          ln(o, along((t) => { const v = lerp(va, vb, t), z = c + dir * v * D; return at(s * wallX(z, NET * v), NET * v, z); }, 2), 0.014, 'g', 0.5, { lod: k % 2 ? 34 : 70, maxPx: 1 });
         }
       }
-      // the lights ride the top rope, one each bay, staggered side to side
-      const zb = s > 0 ? z0 + 0.5 : z0 + 1.5;
-      ln(o, [at(s * H1, RAIL, zb), at(s * H1, RAIL - 0.2, zb)], 0.012, 'g', 0.7, { lod: 30 });
-      bulb(o, s * H1, deckY(zb) + RAIL - 0.27, zb);
+      // string lights along the cable, about a foot apart
+      for (let zb = z0 + (s > 0 ? 0.25 : 0.75); zb < z1; zb += 1) bulb(o, s * cableX(zb), deckY(zb) + cableH(zb) - 0.16, zb);
     }
   }
 
-  // ---- the platforms and their gateways: the first one under the camera, the far one at the deck
-  function gateway(z) {
-    const o = obj(0, 3.5, z);
-    for (const s of [-1, 1]) {
-      const x = s * 2.35;
-      fill(o, [[x - 0.2, 0, z], [x + 0.2, 0, z], [x + 0.2, 7.4, z], [x - 0.2, 7.4, z]]);
-      ln(o, [[x - 0.2 * s, 0, z], [x - 0.2 * s, 7.4, z]], 0.06, 'g', 0.95);
-      ln(o, [[x + 0.2 * s, 0, z], [x + 0.2 * s, 7.4, z]], 0.03, 'g', 0.5);
-      for (let y = 0.6; y < 7; y += 0.9 + (y * 7 % 1) * 0.6) ln(o, [[x - 0.1, y, z], [x - 0.08, y + 0.5, z]], 0.012, 'g', 0.5, { lod: 20 });
-    }
-    fill(o, [[-3.1, 7.4, z], [3.1, 7.4, z], [3.1, 7.95, z], [-3.1, 7.95, z]]);
-    ln(o, along((t) => [lerp(-3.1, 3.1, t), 7.42, z], 4), 0.05, 'g', 1);
-    ln(o, along((t) => [lerp(-3.1, 3.1, t), 7.93, z], 4), 0.025, 'g', 0.6);
-    for (let i = 0; i < 4; i++) { const y = 7.52 + i * 0.1, a = -3 + (i % 2) * 0.9; ln(o, along((t) => [lerp(a, a + 4.2, t), y + 0.01 * Math.sin(t * 9 + i), z], 4), 0.01, 'g', 0.4, { lod: 26, taper: 1 }); }
+  // ---- the spreader beams that hang across each end of the bridge, from the cables (no posts)
+  function spreader(z) {
+    const o = obj(0, 7, z), y = cableH(z) + 0.15, w = cableX(z) + 0.7;
+    fill(o, [[-w, y, z], [w, y, z], [w, y + 0.5, z], [-w, y + 0.5, z]]);
+    ln(o, seg([-w, y + 0.02, z], [w, y + 0.02, z], 4), 0.05, 'g', 1);
+    ln(o, seg([-w, y + 0.48, z], [w, y + 0.48, z], 4), 0.025, 'g', 0.6);
+    for (let i = 0; i < 3; i++) { const yy = y + 0.12 + i * 0.12, a = -w + 0.2 + (i % 2) * 0.8; ln(o, seg([a, yy, z], [a + w * 1.2, yy + 0.01, z], 4), 0.01, 'g', 0.4, { lod: 26, taper: 1 }); }
+    for (const s of [-1, 1]) ln(o, seg([s * (w - 0.3), y + 0.5, z], [s * (w - 0.6), y + 3.2, z + (z > 1 ? -1.2 : 1.2)], 2), 0.03, 'g', 0.75);
+    return o;
   }
   {
     // the first platform: boards across, a rail each side
@@ -172,51 +184,91 @@
         ln(o, [[s * 4.4, 0, z0], [s * 4.4, 3.4, z0]], 0.06, 'g', 0.85);
       }
     }
-    gateway(-0.3);
-    gateway(SPAN + 0.3);
+    spreader(0);
+    spreader(SPAN);
+    // past the far beam the cables run on to the great oak, where a collar takes them
+    const o = obj(OAK.x, 8, SPAN + 3);
+    for (const s of [-1, 1]) ln(o, seg([s * (cableX(SPAN) + 0.4), cableH(SPAN) + 0.4, SPAN], [OAK.x + s * OAK.r * 0.8, 10.5, OAK.z - OAK.r * 0.6], 4), 0.05, 'g', 0.9);
   }
 
-  // ---- the treehouse: its deck, rail and lights; the spires are drawn below
+  // ---- the landing deck: boards along the bridge, a hog-fence rail with lights, braces to the oak
+  const insidePoly = (poly, x, z) => { let inside = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, zi] = poly[i], [xj, zj] = poly[j]; if ((zi > z) !== (zj > z) && x < ((xj - xi) * (z - zi)) / (zj - zi) + xi) inside = !inside; } return inside; };
+  // a rail of wooden posts, top and bottom rails, the welded-wire grid between, lights on top
+  function railRun(a, b, y0, h, lights) {
+    const oo = obj((a[0] + b[0]) / 2, y0 + h / 2, (a[1] + b[1]) / 2);
+    const len = Math.hypot(b[0] - a[0], b[1] - a[1]), P = (t, y) => [lerp(a[0], b[0], t), y0 + y, lerp(a[1], b[1], t)];
+    const nPost = Math.max(1, Math.round(len / 3.6));
+    ln(oo, along((t) => P(t, h), 4), 0.12, 'g', 0.95);
+    ln(oo, along((t) => P(t, h - 0.25), 4), 0.03, 'g', 0.55);
+    ln(oo, along((t) => P(t, 0.3), 4), 0.06, 'g', 0.65);
+    for (let i = 0; i <= nPost; i++) ln(oo, [P(i / nPost, 0), P(i / nPost, h)], 0.11, 'g', 0.9);
+    for (let d = 0.35; d < len; d += 0.35) ln(oo, [P(d / len, 0.3), P(d / len, h - 0.25)], 0.008, 'g', 0.4, { lod: 30, maxPx: 0.7 });
+    for (let y = 0.8; y < h - 0.3; y += 0.5) ln(oo, along((t) => P(t, y), 2), 0.008, 'g', 0.4, { lod: 30, maxPx: 0.7 });
+    if (lights) for (let d = 0.7; d < len; d += 1.4) { const p = P(d / len, h - 0.12); bulb(oo, p[0], p[1], p[2]); }
+    return oo;
+  }
   {
-    const { x0, x1, z0, z1 } = HOUSE;
-    for (let zz = z0; zz < z1; zz += 4) {
-      const o = obj((x0 + x1) / 2, 0, zz + 2);
-      const zb = Math.min(z1, zz + 4);
-      fill(o, [[x0, 0, zz], [x1, 0, zz], [x1, 0, zb], [x0, 0, zb]]);
-      for (let z = zz + 0.27; z < zb; z += 0.55) ln(o, along((t) => [lerp(x0, x1, t), 0, z], 6), 0.02, 'g', 0.62, { lod: 50 });
+    // boards in three strips, so the oak can stand among them
+    for (const [xa, xb] of [[-3.5, 0.5], [0.5, 4.5], [4.5, 9]]) {
+      const o = obj((xa + xb) / 2, -0.5, 106.8);
+      o.bias = 6; // a floor sorts behind what stands on it
+      const strip = [];
+      for (const [x, z] of [[xa, 99.9], [xb, 99.9], [xb, 113.6], [xa, 113.6]]) strip.push([x, 0, z]);
+      fill(o, LANDING.map(([x, z]) => [clamp(x, xa, xb), 0, z]));
+      for (let x = xa + 0.25; x < xb; x += 0.5) {
+        let za = null, zb = null;
+        for (let z = 99.9; z < 113.7; z += 0.25) if (insidePoly(LANDING, x, z)) { if (za === null) za = z; zb = z; }
+        if (za !== null && Math.hypot(x - OAK.x, 0) > OAK.r + 0.2) ln(o, seg([x, 0, za], [x, 0, zb], 6), 0.02, 'g', 0.62, { lod: 60 });
+        else if (za !== null) { const dz = Math.sqrt(Math.max(0, (OAK.r + 0.3) ** 2 - (x - OAK.x) ** 2)); ln(o, seg([x, 0, za], [x, 0, OAK.z - dz], 3), 0.02, 'g', 0.62, { lod: 60 }); ln(o, seg([x, 0, OAK.z + dz], [x, 0, zb], 3), 0.02, 'g', 0.62, { lod: 60 }); }
+      }
     }
-    // the fascia and the rail, with mesh panels and lights, along the front and the sides
-    const o = obj((x0 + x1) / 2, 0, z0 - 0.5);
-    ln(o, along((t) => [lerp(x0, x1, t), 0, z0], 8), 0.08, 'g', 1);
-    ln(o, along((t) => [lerp(x0, x1, t), -0.9, z0], 8), 0.04, 'g', 0.7);
-    const railRun = (a, b) => {
-      const oo = obj((a[0] + b[0]) / 2, 2, (a[2] + b[2]) / 2);
-      const len = Math.hypot(b[0] - a[0], b[2] - a[2]), nPost = Math.max(1, Math.round(len / 4));
-      ln(oo, along((t) => [lerp(a[0], b[0], t), 3.5, lerp(a[2], b[2], t)], 6), 0.07, 'g', 0.95);
-      ln(oo, along((t) => [lerp(a[0], b[0], t), 0.25, lerp(a[2], b[2], t)], 6), 0.04, 'g', 0.6);
-      for (let i = 0; i <= nPost; i++) { const t = i / nPost, x = lerp(a[0], b[0], t), z = lerp(a[2], b[2], t); ln(oo, [[x, 0, z], [x, 3.5, z]], 0.07, 'g', 0.9); }
-      for (let d = 0.4; d < len; d += 0.55) { const t = d / len, x = lerp(a[0], b[0], t), z = lerp(a[2], b[2], t), t2 = Math.min(1, (d + 1.6) / len); ln(oo, [[x, 0.3, z], [lerp(a[0], b[0], t2), 3.4, lerp(a[2], b[2], t2)]], 0.011, 'g', 0.42, { lod: 40 }); }
-      for (let d = 1; d < len; d += 2.2) { const t = d / len; bulb(oo, lerp(a[0], b[0], t), 3.25, lerp(a[2], b[2], t)); }
-    };
-    railRun([x0, 0, z0], [-8, 0, z0]); railRun([-8, 0, z0], [-2.6, 0, z0]);
-    railRun([2.6, 0, z0], [x1, 0, z0]);
-    for (const x of [x0, x1]) for (let zz = z0; zz < z1 - 0.1; zz += 8) railRun([x, 0, zz], [x, 0, Math.min(z1, zz + 8)]);
-    // the truss beneath the deck: frame lines to two hubs, every cable from the hubs to an oak
-    const ot = obj(-6, -5, 112);
-    const hubs = [[-10, -6.4, 110], [-2.5, -6.8, 114]];
-    const nodes = [[-17, -0.9, 104], [-6, -0.9, 101.5], [4.5, -0.9, 106], [-7, -0.9, 122]];
-    [[0, 0], [1, 0], [1, 1], [2, 1], [3, 0], [3, 1]].forEach(([n, h]) => ln(ot, along((t) => [lerp(nodes[n][0], hubs[h][0], t), lerp(nodes[n][1], hubs[h][1], t), lerp(nodes[n][2], hubs[h][2], t)], 3), 0.09, 'g', 0.8));
-    ln(ot, along((t) => [lerp(hubs[0][0], hubs[1][0], t), lerp(hubs[0][1], hubs[1][1], t), lerp(hubs[0][2], hubs[1][2], t)], 3), 0.09, 'g', 0.8);
-    ot.hubs = hubs;
+    // the fascia under the deck edge
+    const of = obj(3, -0.5, 106.8); of.bias = 6;
+    for (let i = 0; i < LANDING.length; i++) { const a = LANDING[i], b = LANDING[(i + 1) % LANDING.length]; ln(of, seg([a[0], -0.05, a[1]], [b[0], -0.05, b[1]], 3), 0.07, 'g', 0.9); ln(of, seg([a[0], -0.9, a[1]], [b[0], -0.9, b[1]], 3), 0.035, 'g', 0.6); }
+    // the hog-fence rail around the octagon's sides, open where the bridge lands and where the stairs go down
+    railRun([2.15, 100], [5, 100], 0, 3.4, true);
+    railRun([5, 100], [9, 103.5], 0, 3.4, true);
+    railRun([9, 103.5], [9, 110], 0, 3.4, true);
+    railRun([9, 110], [5.5, 113.5], 0, 3.4, true);
+    railRun([5.5, 113.5], [0.2, 113.5], 0, 3.4, true);
+    railRun([-3.5, 100], [-2.15, 100], 0, 3.4, false);
+    railRun([-3.5, 100], [-3.5, 113.5], 0, 3.0, true); // the low rail in front of the tent
+    // ship stairs down to the sky deck: two stringers and the treads
+    const os = obj(-1.6, -2, 115);
+    for (const x of [-3.3, 0]) ln(os, seg([x, 0, 113.5], [x, SKY.y, 116.8], 3), 0.1, 'g', 0.9);
+    for (let i = 1; i <= 5; i++) { const t = i / 6, y = lerp(0, SKY.y, t), z = lerp(113.5, 116.8, t); fill(os, [[-3.3, y, z], [0, y, z], [0, y, z + 0.6], [-3.3, y, z + 0.6]]); ln(os, seg([-3.3, y, z], [0, y, z], 3), 0.05, 'g', 0.85); }
+    for (const x of [-3.3, 0]) ln(os, seg([x, 3, 113.5], [x, SKY.y + 3, 116.8], 3), 0.06, 'g', 0.8);
+    // braces under the deck, down to the oak
+    const ob = obj(OAK.x, -6, OAK.z); ob.bias = 8;
+    for (const [x, z] of [[-3, 102], [7.5, 102.5], [8, 110.5], [-3, 112]]) ln(ob, seg([x, -0.9, z], [OAK.x + Math.sign(x - OAK.x) * OAK.r, -9, OAK.z + Math.sign(z - OAK.z) * 0.6], 3), 0.18, 'g', 0.8);
+  }
+  // ---- the sky deck, an octagon four feet down, in front of the tent
+  {
+    const o = obj(SKY.x, SKY.y, SKY.z); o.bias = 6;
+    const pts = [];
+    for (let i = 0; i < 8; i++) { const a = (i / 8) * Math.PI * 2 + Math.PI / 8; pts.push([SKY.x + SKY.R * Math.cos(a), SKY.z + SKY.R * Math.sin(a)]); }
+    fill(o, pts.map(([x, z]) => [x, SKY.y, z]));
+    for (let x = SKY.x - SKY.R + 0.25; x < SKY.x + SKY.R; x += 0.5) {
+      let za = null, zb = null;
+      for (let z = SKY.z - SKY.R; z <= SKY.z + SKY.R; z += 0.25) if (insidePoly(pts, x, z)) { if (za === null) za = z; zb = z; }
+      if (za !== null) ln(o, seg([x, SKY.y, za], [x, SKY.y, zb], 4), 0.02, 'g', 0.6, { lod: 60 });
+    }
+    // its rail, except on the tent's side and at the foot of the stairs
+    for (let i = 0; i < 8; i++) {
+      const a = pts[i], b = pts[(i + 1) % 8], mx = (a[0] + b[0]) / 2, mz = (a[1] + b[1]) / 2;
+      if (Math.hypot(mx - SPIRES[1].cx, mz - SPIRES[1].cz) < 10.5 || (mz < SKY.z - 4 && mx < 1)) continue;
+      railRun(a, b, SKY.y, 3.4, true);
+    }
   }
 
-  // ---- the oaks: the two at the first platform, the five that hold the house, and the forest
+  // ---- the oaks: the two at the first platform, the great oak at the landing, and the forest
   const TREES = [];
   function tree(x, z, r, opts) {
     const R = rng(Math.round(x * 13 + z * 7 + 999));
-    const t = { x, z, r, lean: [(R() - 0.5) * 0.04, (R() - 0.5) * 0.03], bend: (R() - 0.5) * 2.4, seed: Math.round(R() * 1e6), bark: [], limbs: [], house: opts && opts.house };
+    const t = { x, z, r, lean: [(R() - 0.5) * 0.04, (R() - 0.5) * 0.03], bend: (R() - 0.5) * 2.4, seed: Math.round(R() * 1e6), bark: [], limbs: [] };
+    if (opts && opts.straight) { t.lean = [0, 0]; t.bend = 0.6; }
     // bark: broken strokes in columns, densest on the lit half
-    const nB = r > 1.2 ? 11 : 8;
+    const nB = r > 1.5 ? 14 : r > 1.2 ? 11 : 8;
     for (let j = 0; j < nB; j++) {
       const fx = (j + 0.5) / nB;
       if (fx < 0.3 && R() > 0.4) continue;
@@ -224,10 +276,11 @@
       while (y < TOP) { const len = 2.5 + R() * 8, y2 = Math.min(TOP, y + len); t.bark.push(fx, y, y2, 0.6 + R() * 0.6); y = y2 + 0.7 + R() * 3.5; }
     }
     // limbs reaching out and up, each ending in clumps of leaves
-    const nL = r > 0.85 ? 1 + Math.floor(R() * 3) : R() < 0.5 ? 1 : 0;
+    const nL = opts && opts.high ? 2 : r > 0.85 ? 1 + Math.floor(R() * 3) : R() < 0.5 ? 1 : 0;
     for (let i = 0; i < nL; i++) {
       const out = x > 0 ? 0 : Math.PI, near = Math.abs(x) < 12;
-      const yb = near ? 26 + R() * 20 : 6 + R() * 34, ang = out + (R() - 0.5) * (near ? 1.4 : 2.6), len = 9 + R() * 16, rise = 0.5 + R() * 0.7;
+      const yb = opts && opts.high ? 30 + R() * 20 : near ? 26 + R() * 20 : 6 + R() * 34;
+      const ang = out + (R() - 0.5) * (near ? 1.4 : 2.6), len = 9 + R() * 16, rise = 0.5 + R() * 0.7;
       const a = [x, yb, z], dx = Math.cos(ang), dz = Math.sin(ang);
       const e = [x + dx * len, yb + len * rise, z + dz * len], c = [x + dx * len * 0.55, yb + len * rise * 0.25, z + dz * len * 0.55];
       t.limbs.push({ a, c, e, r0: r * 0.42, seed: Math.round(R() * 1e5) });
@@ -238,14 +291,17 @@
   }
   // "suspended between two ancient white oaks"
   tree(-5.8, -1.6, 1.7); tree(6.0, 0.4, 1.55);
-  // five oaks hold the house up
-  [[4.6, 102.2, 1.6], [-22.5, 106.5, 1.3], [9, 119.5, 1.4], [-20.5, 125.5, 1.2], [-8.5, 131, 1.1]].forEach(([x, z, r]) => tree(x, z, r, { house: true }));
+  // the great oak: the bridge's cables end at it, the house hangs from it
+  tree(OAK.x, OAK.z, OAK.r, { straight: true, high: true });
+  // the others around the house
+  [[-24, 104, 1.3], [12.5, 121, 1.3], [-27, 127, 1.2], [-9, 134, 1.1]].forEach(([x, z, r]) => tree(x, z, r));
   {
     const R = rng(4242);
     for (let tries = 0; tries < 1400 && TREES.length < 104; tries++) {
       const side = R() < 0.5 ? -1 : 1, x = side * (6.5 + R() ** 0.8 * 120), z = -50 + R() * 290, r = 0.55 + R() ** 1.6 * 1.1;
-      if (x > HOUSE.x0 - 6 && x < HOUSE.x1 + 5 && z > HOUSE.z0 - 5 && z < HOUSE.z1 + 10) continue;
+      if (x > -32 && x < 16 && z > 95 && z < 138) continue;
       if (Math.abs(x) < 9 && z > -14 && z < 2) continue;
+      if (Math.abs(x - creekX(z)) < 5) continue;
       let ok = true;
       for (const t of TREES) if (Math.hypot(t.x - x, t.z - z) < 7 + (t.r + r) * 1.5) { ok = false; break; }
       if (ok) tree(x, z, r);
@@ -277,44 +333,67 @@
     const R = rng(77);
     for (let i = 0; i < 150; i++) {
       const x = (R() - 0.5) * 220, z = -40 + R() * 280, y = 34 + R() * 46;
-      if (Math.abs(x) < 26 && z > 40 && z < 150 && y < 74) continue; // the opening over the far half and the house
+      if (Math.abs(x + 4) < 26 && z > 40 && z < 150 && y < 74) continue; // the opening over the far half and the house
       clump(x, y, z, 4 + R() * 5, seed++);
     }
+    // the understory along the creek: mountain laurel, low and dark, hiding the water in places
+    const L = rng(515);
+    for (let i = 0; i < 70; i++) {
+      const z = -30 + L() * 240, side = L() < 0.5 ? -1 : 1, x = creekX(z) + side * (4 + L() * 16), r = 3 + L() * 4;
+      clump(x, floorY(x, z) + r * 0.6, z, r, seed++);
+    }
+    for (let i = 0; i < 26; i++) { // and a few right over the water, so it shows in pieces
+      const z = -20 + L() * 220; if (z > CASCADE[0] - 4 && z < CASCADE[1] + 4) continue;
+      const x = creekX(z) + (L() - 0.5) * 4, r = 4 + L() * 4;
+      clump(x, floorY(x, z) + r * 0.7, z, r, seed++);
+    }
   }
-  // the forest floor: rows of broken lines that only catch light near the creek; the creek itself in light
+  // the forest floor: broken lines that only catch light near the creek; the creek itself in light
   {
     for (let z = -40; z < 240; z += 3.2) {
-      const o = obj(0, FLOOR, z);
+      const o = obj(30, FLOOR, z);
       let run = [];
       const flush = () => { if (run.length > 1) ln(o, run.map((p) => p.slice(0, 3)), 0.16, 'g', run.reduce((s, p) => s + p[3], 0) / run.length, { taper: 1, lod: 160 }); run = []; };
       const nz = noise1(Math.round(z * 10) + 5);
       for (let x = -150; x <= 150; x += 5) {
-        const zz = z + 1.2 * Math.sin(x * 0.07 + z), near = Math.exp(-(((zz - creekZ(x)) / 16) ** 2));
-        const tone = 0.1 + 0.75 * near + 0.1 * nz(x * 0.05);
-        if (tone > 0.14 && nz(x * 0.09 + 3) > -0.45) { run.push([x, floorY(x, zz), zz, tone]); if (run.length > 6) { flush(); } } else flush();
+        const zz = z + 1.2 * Math.sin(x * 0.07 + z), near = Math.exp(-(((x - creekX(zz)) / 18) ** 2));
+        const tone = 0.1 + 0.7 * near + 0.1 * nz(x * 0.05);
+        if (tone > 0.14 && nz(x * 0.09 + 3) > -0.45) { run.push([x, floorY(x, zz), zz, tone]); if (run.length > 6) flush(); } else flush();
       }
       flush();
     }
-    // water: horizontal strokes, brightest in the middle of the stream
-    for (let off = -4.2; off <= 4.21; off += 0.42) {
-      const o = obj(0, FLOOR, creekZ(0) + off), nz = noise1(Math.round(off * 100) + 31);
-      let run = [];
-      const flush = () => { if (run.length > 1) ln(o, run, 0.3, 'l', 1 - Math.abs(off) * 0.1, { taper: 1, minTone: 0.62 }); run = []; };
-      for (let x = -150; x <= 150; x += 2.5) {
-        if (nz(x * 0.12) > -0.25) { run.push([x, FLOOR - 0.3, creekZ(x) + off]); if (run.length > 4) flush(); } else flush();
+    // water: strokes running with the stream, brightest mid-stream, in pieces
+    for (let z0 = -40; z0 < 230; z0 += 8) {
+      const o = obj(creekX(z0 + 4), FLOOR - 6, z0 + 4), nz = noise1(Math.round(z0) + 31);
+      for (let off = -2.6; off <= 2.61; off += 0.4) {
+        let run = [];
+        const flush = () => { if (run.length > 1) ln(o, run, 0.22, 'l', 1 - Math.abs(off) * 0.14, { taper: 1, minTone: 0.55 }); run = []; };
+        for (let z = z0; z <= z0 + 8.01; z += 1) {
+          if (nz(z * 0.35 + off * 3) > -0.3) { const x = creekX(z) + off; run.push([x, floorY(creekX(z), z) - 0.4, z]); } else flush();
+        }
+        flush();
       }
-      flush();
+      for (const side of [-1, 1]) ln(o, along((t) => { const z = z0 + t * 8, x = creekX(z) + side * (3.2 + 0.5 * Math.sin(z * 0.3)); return [x, floorY(x, z) + 0.2, z]; }, 6), 0.14, 'g', 0.85, { minTone: 0.45 });
     }
-    for (const side of [-1, 1]) {
-      const o = obj(0, FLOOR, creekZ(0) + side * 3.4);
-      ln(o, along((t) => { const x = lerp(-150, 150, t); return [x, FLOOR + 0.2, creekZ(x) + side * (4.9 + 0.6 * Math.sin(x * 0.3))]; }, 120), 0.16, 'g', 0.9, { minTone: 0.5 });
+    // the cascade: the stream steps down over rock, white water in short broken strokes
+    {
+      const o = obj(creekX(48), FLOOR - 7, 48), R = rng(4848);
+      for (let i = 0; i < 70; i++) {
+        const z = lerp(CASCADE[0], CASCADE[1], R()), x = creekX(z) + (R() - 0.5) * 5, y = floorY(creekX(z), z) - 0.3 + R() * 1.2, l = 0.6 + R() * 1.3;
+        ln(o, [[x, y + 0.5, z], [x + (R() - 0.5) * 0.4, y - 0.3, z + l]], 0.12, 'l', 1, { taper: 1, minTone: 0.7 });
+      }
+      for (let i = 0; i < 9; i++) { // the rocks in the stream
+        const z = lerp(CASCADE[0], CASCADE[1], (i + 0.5) / 9), x = creekX(z) + (R() - 0.5) * 4.5, r = 0.8 + R() * 1.4, y0 = floorY(creekX(z), z);
+        const ring = []; for (let k = 0; k <= 12; k++) { const a = (k / 12) * Math.PI * 2; ring.push([x + r * Math.cos(a), y0 + Math.max(0, Math.sin(a)) * r * 0.6, z + r * Math.sin(a) * 0.8]); }
+        fill(o, ring); ln(o, ring, 0.08, 'g', 0.85, { minTone: 0.45 });
+      }
     }
   }
   {
     const R = rng(808);
-    // boulders: an outline on the ground and a few strokes of shade across the lit face
+    // boulders along the banks: an outline and a few strokes of shade across the lit face
     for (let i = 0; i < 26; i++) {
-      const x = (R() - 0.5) * 150, side = R() < 0.5 ? -1 : 1, z = creekZ(x) + side * (5.5 + R() * 9), r = 1.6 + R() * 2.8;
+      const z = -30 + R() * 230, side = R() < 0.5 ? -1 : 1, x = creekX(z) + side * (5 + R() * 9), r = 1.6 + R() * 2.8;
       const o = obj(x, FLOOR, z), y0 = floorY(x, z), nz = noise1(i + 300), ring = [];
       for (let k = 0; k <= 18; k++) { const a = (k / 18) * Math.PI * 2, rr = r * (1 + 0.18 * nz(k * 0.7)); ring.push([x + rr * Math.cos(a), y0 + Math.max(0, Math.sin(a)) * r * 0.55, z + rr * Math.sin(a) * 0.8]); }
       fill(o, ring);
@@ -323,7 +402,7 @@
     }
     // fern fronds, the logo's: a curving stem, leaflets both sides
     for (let i = 0; i < 70; i++) {
-      const x = (R() - 0.5) * 170, z = creekZ(x) + (R() - 0.5) * 34, len = 2 + R() * 2.2, dir = R() * Math.PI * 2;
+      const z = -30 + R() * 230, x = creekX(z) + (R() - 0.5) * 34, len = 2 + R() * 2.2, dir = R() * Math.PI * 2;
       const o = obj(x, FLOOR, z), y0 = floorY(x, z), dx = Math.cos(dir), dz = Math.sin(dir);
       const stem = (t) => [x + dx * len * 0.7 * t, y0 + len * (0.8 * t - 0.45 * t * t), z + dz * len * 0.7 * t];
       ln(o, along(stem, 6), 0.07, 'g', 0.7, { minTone: 0.3 });
@@ -334,7 +413,7 @@
     }
   }
   // the spires
-  for (const sp of SPIRES) obj(sp.cx, sp.h * 0.4, sp.cz, drawSpire).sp = sp;
+  for (const sp of SPIRES) obj(sp.cx, sp.y0 + sp.h * 0.4, sp.cz, drawSpire).sp = sp;
 
   // ---------------------------------------------------------------- the camera
   const cam = { x: 0, y: 0, z: 0, pitch: 0, yaw: 0, roll: 0, f: 300, W: 0, H: 0, cx: 0, cy: 0, sp: 0, cp: 1, sy: 0, cyw: 1 };
@@ -355,13 +434,13 @@
   // the walk: where you stand and where you look, for p from 0 (the first platform) to 1 (the deck)
   function walk(p) {
     const e = 0.6 * p + 0.4 * (0.5 - 0.5 * Math.cos(Math.PI * p));
-    const z = lerp(-5.5, SPAN + 4.5, e);
+    const z = lerp(-5.5, SPAN + 0.8, e);
     const plateau = (v, a, b, c, d) => smooth((v - a) / (b - a)) * (1 - smooth((v - c) / (d - c)));
     const down = plateau(z, 16, 32, 44, 60);       // the heart beats faster: the creek, sixty feet down
-    const arrive = smooth((z - 84) / 20);          // the house rises
+    const arrive = smooth((z - 82) / 18);          // the house rises
     const step = STILL ? 0 : Math.sin(z * Math.PI * 2 / 2.7);
-    const pitch = rad(-4 - 44 * down + 13 * arrive);
-    const yaw = rad(48 * down - 22 * smooth((z - 97) / 7.5));
+    const pitch = rad(-4 - 40 * down + 10 * arrive);
+    const yaw = rad(56 * down - 13 * smooth((z - 90) / 10));
     const roll = STILL ? 0 : rad(0.35 * Math.sin(z * Math.PI / 2.7) + 0.6 * Math.sin(z * 0.09));
     const y = deckY(Math.max(0, Math.min(SPAN, z))) + EYE + 0.05 * step;
     const x = STILL ? 0 : 0.12 * Math.sin(z * 0.09);
@@ -634,21 +713,34 @@
   function drawSpire(o) {
     const sp = o.sp, R = rng(sp.seed);
     const ang = Math.atan2(cam.z - sp.cz, cam.x - sp.cx); // toward the camera, in the x-z plane
+    const n = sp.seams;
+    // the window faces the end of the bridge; the hem is pulled down to an anchor beneath it
+    // and arches up between anchors (Mick's photographs: the canvas over a wooden knee wall)
+    const wf = Math.atan2(SPAN - sp.cz, 0 - sp.cx);
+    const hemLift = (phi) => { const k = (((((phi - wf) / (Math.PI * 2)) * n * 2) % 1) + 1) % 1; return sp.arch * 4 * k * (1 - k); };
     const at = (phi, v, lift) => {
       const r = sp.r * bez(0, 0.3, 0.68, 1, v), drop = sp.h * bez(0, 0.52, 0.9, 1, v);
-      const hem = v > 0.999 ? hemLift(phi) : 0;
-      return [sp.cx + r * Math.cos(phi), sp.h - drop + (lift || 0) + hem, sp.cz + r * Math.sin(phi)];
+      return [sp.cx + r * Math.cos(phi), sp.y0 + Math.max(sp.h - drop, hemLift(phi)) + (lift || 0), sp.cz + r * Math.sin(phi)];
     };
-    const n = sp.seams;
-    const hemLift = (phi) => { const k = ((((phi / (Math.PI * 2)) * n * 2) % 1) + 1) % 1; return 0.75 * 4 * k * (1 - k); };
-    // the dark body: the silhouette, generator to generator around the front
+    const ring = (phi, y) => [sp.cx + sp.r * Math.cos(phi), y, sp.cz + sp.r * Math.sin(phi)];
+    // where each canvas line meets the hem
+    const vEnd = (phi) => { const goal = sp.h - hemLift(phi); let lo = 0.5, hi = 1; for (let k = 0; k < 14; k++) { const m = (lo + hi) / 2; if (sp.h * bez(0, 0.52, 0.9, 1, m) < goal) lo = m; else hi = m; } return lo; };
+    // the dark body: the silhouette down to the floor, the knee wall's front around the bottom
     const sil = [];
     for (let i = 0; i <= 12; i++) sil.push(at(ang + Math.PI / 2, i / 12));
-    for (let i = 0; i <= 24; i++) { const phi = ang + Math.PI / 2 - (Math.PI * i) / 24; sil.push(at(phi, 1)); }
+    sil.push(ring(ang + Math.PI / 2, SKY.y));
+    for (let i = 0; i <= 24; i++) sil.push(ring(ang + Math.PI / 2 - (Math.PI * i) / 24, SKY.y));
+    sil.push(ring(ang - Math.PI / 2, SKY.y));
     for (let i = 12; i >= 0; i--) sil.push(at(ang - Math.PI / 2, i / 12));
     paintFill({ P: Float32Array.from(sil.flat()), n: sil.length });
+    // the knee wall: board seams around its front, a cap where the canvas sits
+    for (const [y, w, tone] of [[sp.y0, 0.12, 0.95], [sp.y0 - 0.8, 0.03, 0.55], [sp.y0 - 1.6, 0.03, 0.5], [SKY.y + 0.05, 0.06, 0.7]]) {
+      let m = 0;
+      for (let i = 0; i <= 24; i++) { const p = ring(ang + Math.PI / 2 - (Math.PI * i) / 24, y); toCam(p[0], p[1], p[2]); if (C[2] < NEAR) continue; SX[m] = cam.cx + (cam.f * C[0]) / C[2]; SY[m] = cam.cy - (cam.f * C[1]) / C[2]; SW[m] = clamp((w * cam.f) / C[2], 0.3, 3) / 2; SN[m] = 0; m++; }
+      ribbon(m, K(GOLD, level(tone * fade(sp.r + 3))), false);
+    }
     // the canvas lines, from the finial to the hem, swelling as the hand presses
-    toCam(sp.cx, sp.h * 0.5, sp.cz); const Zc = C[2];
+    toCam(sp.cx, sp.y0 + sp.h * 0.5, sp.cz); const Zc = C[2];
     if (Zc < NEAR) return;
     const fd = fade(Zc), big = (sp.r * cam.f) / Zc, gap = 3.6;
     if (!sp.press) sp.press = Array.from({ length: sp.M }, (_, i) => noise1(i * 7 + sp.seed));
@@ -667,10 +759,10 @@
       const phi = (i / sp.M) * Math.PI * 2 + 0.05, face = Math.cos(phi - ang);
       const tone = (0.3 + 0.7 * face ** 0.7) * sp.bright;
       const press = sp.press[i];
-      const v0 = 0.04 + (i % 2 ? 0.1 : 0.02);
+      const v0 = 0.04 + (i % 2 ? 0.1 : 0.02), ve = sp.vEnd ? sp.vEnd[i] : (sp.vEnd = Array.from({ length: sp.M }, (_, j) => vEnd((j / sp.M) * Math.PI * 2 + 0.05)))[i];
       let m = 0;
       for (let s = 0; s <= 10; s++) {
-        const v = lerp(v0, 1, s / 10), p = at(phi, v, v > 0.98 ? -0.15 : 0);
+        const v = lerp(v0, ve, s / 10), p = at(phi, v);
         toCam(p[0], p[1], p[2]); if (C[2] < NEAR) { m = 0; break; }
         SX[m] = cam.cx + (cam.f * C[0]) / C[2]; SY[m] = cam.cy - (cam.f * C[1]) / C[2];
         const w = (seam ? 0.2 : 0.155) * tone * Math.max(0.12, 0.15 + 0.85 * v ** 0.8) * (0.62 + 0.62 * (0.5 + 0.5 * press(v * 5.5)));
@@ -681,7 +773,7 @@
     // hatching across the lit canvas, following its curve: short strokes, densest where it glows
     const hrows = big > 110 ? 26 : big > 45 ? 16 : 10;
     for (let r = 0; r < hrows; r++) {
-      const v = lerp(0.42, 0.96, r / (hrows - 1));
+      const v = lerp(0.42, 0.86, r / (hrows - 1));
       let u = -1.2 + R() * 0.08;
       while (u < 1.2) {
         const len = 0.1 + R() * 0.16, u1 = Math.min(1.2, u + len), um = (u + u1) / 2;
@@ -697,7 +789,7 @@
     // the hem, scalloped between its anchors
     {
       let m = 0;
-      for (let i = 0; i <= 40; i++) { const phi = ang + Math.PI / 2 - (Math.PI * i) / 40, p = at(phi, 1); toCam(p[0], p[1], p[2]); if (C[2] < NEAR) continue; SX[m] = cam.cx + (cam.f * C[0]) / C[2]; SY[m] = cam.cy - (cam.f * C[1]) / C[2]; SW[m] = clamp((0.09 * sp.bright * cam.f) / C[2], 0.4, 3) / 2; m++; }
+      for (let i = 0; i <= 60; i++) { const phi = ang + Math.PI / 2 - (Math.PI * i) / 60, p = at(phi, 1); toCam(p[0], p[1], p[2]); if (C[2] < NEAR) continue; SX[m] = cam.cx + (cam.f * C[0]) / C[2]; SY[m] = cam.cy - (cam.f * C[1]) / C[2]; SW[m] = clamp((0.09 * sp.bright * cam.f) / C[2], 0.4, 3) / 2; m++; }
       ribbon(m, K(LIGHT, level(sp.bright * fd)), false);
     }
     // the silhouette, bolder on the side toward the light
@@ -708,7 +800,7 @@
     }
     // the fly window, lit from inside, and its zipper; it faces the bridge
     if (sp.win) {
-      const wf = Math.atan2(SPAN + 2 - sp.cz, 0 - sp.cx), face = Math.cos(wf - ang);
+      const face = Math.cos(wf - ang);
       if (face > 0.15) {
         const panel = (du, vT, vB) => {
           const pts = [at(wf, vT, 0)];
@@ -717,8 +809,10 @@
           return pts;
         };
         paintFill({ P: Float32Array.from(panel(0.36, 0.47, 0.83).flat()), n: 17 });
+        // the window's frame
+        { let m = 0; for (const p of panel(0.33, 0.485, 0.815)) { toCam(p[0], p[1], p[2]); if (C[2] < NEAR) continue; SX[m] = cam.cx + (cam.f * C[0]) / C[2]; SY[m] = cam.cy - (cam.f * C[1]) / C[2]; SW[m] = clamp((0.09 * cam.f) / C[2], 0.4, 3) / 2; SN[m] = 0; m++; } if (m > 2) { SX[m] = SX[0]; SY[m] = SY[0]; SW[m] = SW[0]; m++; } ribbon(m, K(LIGHT, level(0.75 * fd)), false); }
         // the light inside, engraved: close level strokes across the panel, heaviest at its middle
-        const vT = 0.505, vB = 0.815, du = 0.29, scr = (p) => { toCam(p[0], p[1], p[2]); return C[2] < NEAR ? null : [cam.cx + (cam.f * C[0]) / C[2], cam.cy - (cam.f * C[1]) / C[2]]; };
+        const vT = 0.505, vB = 0.8, du = 0.29, scr = (p) => { toCam(p[0], p[1], p[2]); return C[2] < NEAR ? null : [cam.cx + (cam.f * C[0]) / C[2], cam.cy - (cam.f * C[1]) / C[2]]; };
         const top = scr(at(wf, vT)), bot = scr(at(wf, vB));
         if (!top || !bot) return;
         const tall = Math.abs(bot[1] - top[1]), rows = Math.max(4, Math.round(tall / 2.9));
@@ -739,7 +833,7 @@
       }
     }
     // the finial: a slender gold cap and a bead
-    toCam(sp.cx, sp.h + 0.2, sp.cz);
+    toCam(sp.cx, sp.y0 + sp.h + 0.2, sp.cz);
     if (C[2] > NEAR) {
       const x = cam.cx + (cam.f * C[0]) / C[2], y = cam.cy - (cam.f * C[1]) / C[2], s = (0.12 * cam.f) / C[2] * (sp.win ? 1 : 0.8);
       const hh = 20 * s, w = 4.2 * s, q = [];
@@ -809,7 +903,7 @@
     ctx.translate(W / 2, H / 2); ctx.rotate(cam.roll); ctx.scale(1.02, 1.02); ctx.translate(-W / 2, -H / 2);
     paintSky();
     marks = 0;
-    for (const o of OBJ) { toCam(o.x, o.y, o.z); o.d = C[2]; }
+    for (const o of OBJ) { toCam(o.x, o.y, o.z); o.d = C[2] + o.bias; }
     const list = OBJ.filter((o) => o.d > -30).sort((a, b) => b.d - a.d);
     for (const o of list) {
       if (o.draw) o.draw(o);
