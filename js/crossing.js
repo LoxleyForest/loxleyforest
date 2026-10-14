@@ -24,6 +24,7 @@
   const countEl = sec.querySelector('[data-walk-count]');
   const markEl = sec.querySelector('[data-walk-mark]');
   const STILL = sec.hasAttribute('data-still') || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const STEADY = sec.hasAttribute('data-steady'); // full detail always: for rendering the still posters
 
   // ---------------------------------------------------------------- ink
   // The colour emblem's three inks (scripts/logo/emblem2.js).
@@ -67,8 +68,8 @@
   // the treehouse
   const HOUSE = { x0: -19, x1: 6, z0: 100.6, z1: 124 };
   const SPIRES = [
-    { cx: -13.6, cz: 117.5, r: 4.6, h: 13.5, M: 64, seams: 2, bright: 0.75, win: false, seed: 55 },
-    { cx: -5.4, cz: 112.5, r: 7.0, h: 19.5, M: 96, seams: 3, bright: 1, win: true, seed: 77 },
+    { cx: -13.6, cz: 117.5, r: 4.6, h: 13.5, M: 128, seams: 2, bright: 0.75, win: false, seed: 55 },
+    { cx: -5.4, cz: 112.5, r: 7.0, h: 19.5, M: 192, seams: 3, bright: 1, win: true, seed: 77 },
   ];
 
   // ---------------------------------------------------------------- the scene, as objects of world-space marks
@@ -183,10 +184,11 @@
       for (let z = zz + 0.27; z < zb; z += 0.55) ln(o, along((t) => [lerp(x0, x1, t), 0, z], 6), 0.02, 'g', 0.62, { lod: 50 });
     }
     // the fascia and the rail, with mesh panels and lights, along the front and the sides
-    const o = obj((x0 + x1) / 2, 2, z0);
+    const o = obj((x0 + x1) / 2, 0, z0 - 0.5);
     ln(o, along((t) => [lerp(x0, x1, t), 0, z0], 8), 0.08, 'g', 1);
     ln(o, along((t) => [lerp(x0, x1, t), -0.9, z0], 8), 0.04, 'g', 0.7);
-    const railRun = (a, b, oo) => {
+    const railRun = (a, b) => {
+      const oo = obj((a[0] + b[0]) / 2, 2, (a[2] + b[2]) / 2);
       const len = Math.hypot(b[0] - a[0], b[2] - a[2]), nPost = Math.max(1, Math.round(len / 4));
       ln(oo, along((t) => [lerp(a[0], b[0], t), 3.5, lerp(a[2], b[2], t)], 6), 0.07, 'g', 0.95);
       ln(oo, along((t) => [lerp(a[0], b[0], t), 0.25, lerp(a[2], b[2], t)], 6), 0.04, 'g', 0.6);
@@ -194,11 +196,9 @@
       for (let d = 0.4; d < len; d += 0.55) { const t = d / len, x = lerp(a[0], b[0], t), z = lerp(a[2], b[2], t), t2 = Math.min(1, (d + 1.6) / len); ln(oo, [[x, 0.3, z], [lerp(a[0], b[0], t2), 3.4, lerp(a[2], b[2], t2)]], 0.011, 'g', 0.42, { lod: 40 }); }
       for (let d = 1; d < len; d += 2.2) { const t = d / len; bulb(oo, lerp(a[0], b[0], t), 3.25, lerp(a[2], b[2], t)); }
     };
-    railRun([x0, 0, z0], [-2.6, 0, z0], o);
-    railRun([2.6, 0, z0], [x1, 0, z0], o);
-    const sideL = obj(HOUSE.x0, 2, (z0 + z1) / 2), sideR = obj(HOUSE.x1, 2, (z0 + z1) / 2);
-    railRun([x0, 0, z0], [x0, 0, z1], sideL);
-    railRun([x1, 0, z0], [x1, 0, z1], sideR);
+    railRun([x0, 0, z0], [-8, 0, z0]); railRun([-8, 0, z0], [-2.6, 0, z0]);
+    railRun([2.6, 0, z0], [x1, 0, z0]);
+    for (const x of [x0, x1]) for (let zz = z0; zz < z1 - 0.1; zz += 8) railRun([x, 0, zz], [x, 0, Math.min(z1, zz + 8)]);
     // the truss beneath the deck: frame lines to two hubs, every cable from the hubs to an oak
     const ot = obj(-6, -5, 112);
     const hubs = [[-10, -6.4, 110], [-2.5, -6.8, 114]];
@@ -353,13 +353,13 @@
   // the walk: where you stand and where you look, for p from 0 (the first platform) to 1 (the deck)
   function walk(p) {
     const e = 0.6 * p + 0.4 * (0.5 - 0.5 * Math.cos(Math.PI * p));
-    const z = lerp(-5.5, SPAN + 2.5, e);
+    const z = lerp(-5.5, SPAN + 4.5, e);
     const plateau = (v, a, b, c, d) => smooth((v - a) / (b - a)) * (1 - smooth((v - c) / (d - c)));
     const down = plateau(z, 16, 32, 44, 60);       // the heart beats faster: the creek, sixty feet down
-    const arrive = smooth((z - 78) / 24);          // the house rises
+    const arrive = smooth((z - 84) / 20);          // the house rises
     const step = STILL ? 0 : Math.sin(z * Math.PI * 2 / 2.7);
     const pitch = rad(-4 - 44 * down + 13 * arrive);
-    const yaw = rad(48 * down - 15 * arrive);
+    const yaw = rad(48 * down - 22 * smooth((z - 97) / 7.5));
     const roll = STILL ? 0 : rad(0.35 * Math.sin(z * Math.PI / 2.7) + 0.6 * Math.sin(z * 0.09));
     const y = deckY(Math.max(0, Math.min(SPAN, z))) + EYE + 0.05 * step;
     const x = STILL ? 0 : 0.12 * Math.sin(z * 0.09);
@@ -648,13 +648,23 @@
     // the canvas lines, from the finial to the hem, swelling as the hand presses
     toCam(sp.cx, sp.h * 0.5, sp.cz); const Zc = C[2];
     if (Zc < NEAR) return;
-    const fd = fade(Zc), big = (sp.r * cam.f) / Zc, every = big > 110 ? 1 : big > 45 ? 2 : 4;
+    const fd = fade(Zc), big = (sp.r * cam.f) / Zc, gap = 3.6;
+    if (!sp.press) sp.press = Array.from({ length: sp.M }, (_, i) => noise1(i * 7 + sp.seed));
+    const order = [];
     for (let i = 0; i < sp.M; i++) {
-      const phi = (i / sp.M) * Math.PI * 2 + 0.05, face = Math.cos(phi - ang);
-      if (face < 0.02 || i % every) continue;
-      const tone = (0.3 + 0.7 * face ** 0.7) * sp.bright;
+      let d = (i / sp.M) * Math.PI * 2 + 0.05 - ang;
+      d = Math.atan2(Math.sin(d), Math.cos(d));
+      if (Math.abs(d) < Math.PI / 2 - 0.02) order.push([Math.sin(d), i]);
+    }
+    order.sort((a, b) => a[0] - b[0]);
+    let lastS = -9;
+    for (const [sd, i] of order) {
       const seam = i % (sp.M / n / 2) === 0;
-      const press = noise1(i * 7 + sp.seed);
+      if (!seam && (sd - lastS) * big < gap) continue;
+      lastS = sd;
+      const phi = (i / sp.M) * Math.PI * 2 + 0.05, face = Math.cos(phi - ang);
+      const tone = (0.3 + 0.7 * face ** 0.7) * sp.bright;
+      const press = sp.press[i];
       const v0 = 0.04 + (i % 2 ? 0.1 : 0.02);
       let m = 0;
       for (let s = 0; s <= 10; s++) {
@@ -674,9 +684,9 @@
       while (u < 1.2) {
         const len = 0.1 + R() * 0.16, u1 = Math.min(1.2, u + len), um = (u + u1) / 2;
         const glow = Math.cos(um) ** 1.3 * clamp((v - 0.4) / 0.45, 0, 1);
-        if (glow > 0.4 + R() * 0.3) {
+        if (glow > 0.3 + R() * 0.3) {
           let m = 0;
-          for (let s = 0; s <= 3; s++) { const p = at(ang + lerp(u, u1, s / 3), v - 0.012 * (s - 1.5)); toCam(p[0], p[1], p[2]); if (C[2] < NEAR) { m = 0; break; } SX[m] = cam.cx + (cam.f * C[0]) / C[2]; SY[m] = cam.cy - (cam.f * C[1]) / C[2]; SW[m] = clamp(((0.03 + 0.05 * glow) * cam.f) / C[2], 0.2, 2.2) / 2 * taperAt(s / 3); m++; }
+          for (let s = 0; s <= 3; s++) { const p = at(ang + lerp(u, u1, s / 3), v - 0.012 * (s - 1.5)); toCam(p[0], p[1], p[2]); if (C[2] < NEAR) { m = 0; break; } SX[m] = cam.cx + (cam.f * C[0]) / C[2]; SY[m] = cam.cy - (cam.f * C[1]) / C[2]; SW[m] = clamp(((0.04 + 0.07 * glow) * cam.f) / C[2], 0.2, 2.4) / 2 * taperAt(s / 3); m++; }
           ribbon(m, K(LIGHT, level((0.45 + 0.5 * glow) * sp.bright * fd)), false);
         }
         u = u1 + 0.05 + R() * 0.12;
@@ -800,8 +810,6 @@
     for (const o of OBJ) { toCam(o.x, o.y, o.z); o.d = C[2]; }
     const list = OBJ.filter((o) => o.d > -30).sort((a, b) => b.d - a.d);
     for (const o of list) {
-      if (window.lfOnly && !window.lfOnly(o)) continue;
-      const T0 = window.lfProf ? performance.now() : 0;
       if (o.draw) o.draw(o);
       for (const it of o.items) {
         if (it.k === 0) paintLine(it, o.d);
@@ -809,7 +817,6 @@
         else paintBulb(it);
       }
       flush();
-      if (window.lfProf) window.lfProf(o, performance.now() - T0);
     }
     // the words and the count
     const ft = Math.round(s.ft);
@@ -824,7 +831,7 @@
     // keep the walk smooth: if frames run slow, draw at a lower resolution, then with less detail
     const ms = performance.now() - T;
     frames++; ema = frames < 4 ? ms : ema * 0.85 + ms * 0.15;
-    if (frames > 12 && ema > 20 && !window.lfSteady) {
+    if (frames > 12 && ema > 20 && !STEADY) {
       if (dprCap > 1) { dprCap = Math.max(1, dprCap - 0.5); cam.W = 0; } else LITE = true;
       frames = 4; ema = 12;
     }
@@ -858,7 +865,8 @@
     if (sized || Math.abs(eased - shown) > 0.00005) { render(eased); shown = eased; }
     requestAnimationFrame(frame);
   }
-  window.lfCrossing = { render: (p) => { resize(); render(p); }, walk, OBJ, cam, stats: () => ({ marks, ema, dpr, LITE }) };
+  // for the poster renderer and speed checks
+  window.lfCrossing = { render: (p) => { resize(); render(p); }, stats: () => ({ marks, ema, dpr, LITE }) };
   if (STILL) sec.classList.add('is-still');
   sec.classList.add('is-ready');
   resize(); eased = STILL ? 0 : progress(); render(eased); shown = eased;
