@@ -132,7 +132,7 @@
           let lo = vAt(z0), hi = vAt(z1); if (lo > hi) [lo, hi] = [hi, lo];
           va = Math.max(va, lo); vb = Math.min(vb, hi);
           if (vb - va < 0.02) continue;
-          ln(o, along((t) => wall(zA(lerp(va, vb, t)), lerp(va, vb, t)), 2), 0.013, 'g', 0.5, { lod: k % 2 ? 34 : 70 });
+          ln(o, along((t) => wall(zA(lerp(va, vb, t)), lerp(va, vb, t)), 2), 0.011, 'g', 0.46, { lod: k % 2 ? 34 : 70, maxPx: 0.9 });
         }
       }
       // the lights ride the top rope, one each bay, staggered side to side
@@ -147,15 +147,15 @@
     const o = obj(0, 3.5, z);
     for (const s of [-1, 1]) {
       const x = s * 2.35;
-      fill(o, [[x - 0.2, 0, z], [x + 0.2, 0, z], [x + 0.2, 7.5, z], [x - 0.2, 7.5, z]]);
+      fill(o, [[x - 0.2, 0, z], [x + 0.2, 0, z], [x + 0.2, 7.4, z], [x - 0.2, 7.4, z]]);
       ln(o, [[x - 0.2 * s, 0, z], [x - 0.2 * s, 7.4, z]], 0.06, 'g', 0.95);
       ln(o, [[x + 0.2 * s, 0, z], [x + 0.2 * s, 7.4, z]], 0.03, 'g', 0.5);
       for (let y = 0.6; y < 7; y += 0.9 + (y * 7 % 1) * 0.6) ln(o, [[x - 0.1, y, z], [x - 0.08, y + 0.5, z]], 0.012, 'g', 0.5, { lod: 20 });
     }
-    fill(o, [[-3.1, 7.3, z], [3.1, 7.3, z], [3.1, 8.1, z], [-3.1, 8.1, z]]);
-    ln(o, [[-3.1, 7.32, z], [3.1, 7.32, z]], 0.06, 'g', 1);
-    ln(o, [[-3.1, 8.08, z], [3.1, 8.08, z]], 0.03, 'g', 0.6);
-    for (let i = 0; i < 9; i++) { const x = -2.9 + i * 0.7; ln(o, [[x, 7.5, z], [x + 0.5, 7.52, z]], 0.012, 'g', 0.45, { lod: 24 }); }
+    fill(o, [[-3.1, 7.4, z], [3.1, 7.4, z], [3.1, 7.95, z], [-3.1, 7.95, z]]);
+    ln(o, along((t) => [lerp(-3.1, 3.1, t), 7.42, z], 4), 0.05, 'g', 1);
+    ln(o, along((t) => [lerp(-3.1, 3.1, t), 7.93, z], 4), 0.025, 'g', 0.6);
+    for (let i = 0; i < 4; i++) { const y = 7.52 + i * 0.1, a = -3 + (i % 2) * 0.9; ln(o, along((t) => [lerp(a, a + 4.2, t), y + 0.01 * Math.sin(t * 9 + i), z], 4), 0.01, 'g', 0.4, { lod: 26, taper: 1 }); }
   }
   {
     // the first platform: boards across, a rail each side
@@ -214,7 +214,7 @@
     const R = rng(Math.round(x * 13 + z * 7 + 999));
     const t = { x, z, r, lean: [(R() - 0.5) * 0.04, (R() - 0.5) * 0.03], bend: (R() - 0.5) * 2.4, seed: Math.round(R() * 1e6), bark: [], limbs: [], house: opts && opts.house };
     // bark: broken strokes in columns, densest on the lit half
-    const nB = 7;
+    const nB = r > 1.2 ? 11 : 8;
     for (let j = 0; j < nB; j++) {
       const fx = (j + 0.5) / nB;
       if (fx < 0.3 && R() > 0.4) continue;
@@ -224,7 +224,8 @@
     // limbs reaching out and up, each ending in clumps of leaves
     const nL = r > 0.85 ? 1 + Math.floor(R() * 3) : R() < 0.5 ? 1 : 0;
     for (let i = 0; i < nL; i++) {
-      const yb = 6 + R() * 34, ang = R() * Math.PI * 2, len = 9 + R() * 16, rise = 0.5 + R() * 0.7;
+      const out = x > 0 ? 0 : Math.PI, near = Math.abs(x) < 12;
+      const yb = near ? 26 + R() * 20 : 6 + R() * 34, ang = out + (R() - 0.5) * (near ? 1.4 : 2.6), len = 9 + R() * 16, rise = 0.5 + R() * 0.7;
       const a = [x, yb, z], dx = Math.cos(ang), dz = Math.sin(ang);
       const e = [x + dx * len, yb + len * rise, z + dz * len], c = [x + dx * len * 0.55, yb + len * rise * 0.25, z + dz * len * 0.55];
       t.limbs.push({ a, c, e, r0: r * 0.42, seed: Math.round(R() * 1e5) });
@@ -283,20 +284,20 @@
     for (let z = -40; z < 240; z += 3.2) {
       const o = obj(0, FLOOR, z);
       let run = [];
-      const flush = () => { if (run.length > 1) ln(o, run.map((p) => p.slice(0, 3)), 0.07, 'g', run.reduce((s, p) => s + p[3], 0) / run.length, { taper: 1 }); run = []; };
+      const flush = () => { if (run.length > 1) ln(o, run.map((p) => p.slice(0, 3)), 0.16, 'g', run.reduce((s, p) => s + p[3], 0) / run.length, { taper: 1 }); run = []; };
       const nz = noise1(Math.round(z * 10) + 5);
       for (let x = -150; x <= 150; x += 5) {
-        const zz = z + 1.2 * Math.sin(x * 0.07 + z), near = Math.exp(-(((zz - creekZ(x)) / 13) ** 2));
-        const tone = 0.08 + 0.55 * near + 0.08 * nz(x * 0.05);
+        const zz = z + 1.2 * Math.sin(x * 0.07 + z), near = Math.exp(-(((zz - creekZ(x)) / 16) ** 2));
+        const tone = 0.1 + 0.75 * near + 0.1 * nz(x * 0.05);
         if (tone > 0.14 && nz(x * 0.09 + 3) > -0.45) { run.push([x, floorY(x, zz), zz, tone]); if (run.length > 6) { flush(); } } else flush();
       }
       flush();
     }
     // water: horizontal strokes, brightest in the middle of the stream
-    for (let off = -2.7; off <= 2.71; off += 0.6) {
+    for (let off = -2.8; off <= 2.81; off += 0.4) {
       const o = obj(0, FLOOR, creekZ(0) + off), nz = noise1(Math.round(off * 100) + 31);
       let run = [];
-      const flush = () => { if (run.length > 1) ln(o, run, 0.09, 'l', 0.92 - Math.abs(off) * 0.22, { taper: 1 }); run = []; };
+      const flush = () => { if (run.length > 1) ln(o, run, 0.26, 'l', 1 - Math.abs(off) * 0.16, { taper: 1, minTone: 0.55 }); run = []; };
       for (let x = -150; x <= 150; x += 2.5) {
         if (nz(x * 0.12) > -0.25) { run.push([x, FLOOR - 0.3, creekZ(x) + off]); if (run.length > 4) flush(); } else flush();
       }
@@ -304,7 +305,7 @@
     }
     for (const side of [-1, 1]) {
       const o = obj(0, FLOOR, creekZ(0) + side * 3.4);
-      ln(o, along((t) => { const x = lerp(-150, 150, t); return [x, FLOOR + 0.2, creekZ(x) + side * (3.4 + 0.5 * Math.sin(x * 0.3))]; }, 120), 0.06, 'g', 0.75);
+      ln(o, along((t) => { const x = lerp(-150, 150, t); return [x, FLOOR + 0.2, creekZ(x) + side * (3.4 + 0.5 * Math.sin(x * 0.3))]; }, 120), 0.14, 'g', 0.9, { minTone: 0.45 });
     }
   }
   // the spires
@@ -333,8 +334,8 @@
     const down = plateau(z, 16, 32, 44, 60);       // the heart beats faster: the creek, sixty feet down
     const arrive = smooth((z - 78) / 24);          // the house rises
     const step = STILL ? 0 : Math.sin(z * Math.PI * 2 / 2.7);
-    const pitch = rad(-4 - 40 * down + 13 * arrive);
-    const yaw = rad(9 * down * Math.sin(z * 0.05) - 15 * arrive);
+    const pitch = rad(-4 - 46 * down + 13 * arrive);
+    const yaw = rad(14 * down - 15 * arrive);
     const roll = STILL ? 0 : rad(0.35 * Math.sin(z * Math.PI / 2.7) + 0.6 * Math.sin(z * 0.09));
     const y = deckY(Math.max(0, Math.min(SPAN, z))) + EYE + 0.05 * step;
     const x = STILL ? 0 : 0.12 * Math.sin(z * 0.09);
@@ -396,14 +397,14 @@
       if (m >= 2) {
         const Zm = zsum / m, wm = wsum / m;
         const thin = Math.min(1, (wm * 2) / MINPX);
-        const key = (it.c === 'l' ? 3 : 1) * 16 + level(it.tone * fade(Zm) * thin);
+        const key = (it.c === 'l' ? 3 : 1) * 16 + level(Math.max(it.minTone || 0, it.tone * fade(Zm) * thin));
         ribbon(m, key, true);
       }
       m = 0; zsum = 0; wsum = 0;
     };
     const push = (X, Y, Z, i, t) => {
       const px = (it.w * cam.f) / Z;
-      let h = clamp(px, MINPX, MAXPX) / 2;
+      let h = clamp(px, MINPX, it.maxPx || MAXPX) / 2;
       if (it.taper) h *= taperAt(t);
       SX[m] = cam.cx + (cam.f * X) / Z; SY[m] = cam.cy - (cam.f * Y) / Z; SW[m] = h;
       SN[m] = it.N[i] * Math.min(1.1, 0.25 + px * 0.12);
@@ -681,7 +682,7 @@
     const Y = dy * cam.cp - Z1 * cam.sp, Z = dy * cam.sp + Z1 * cam.cp;
     if (Z < 0.05) return;
     const gx = cam.cx + (cam.f * X) / Z, gy = cam.cy - (cam.f * Y) / Z;
-    const Rk = Math.max(cam.W, cam.H) * 0.95;
+    const Rk = Math.max(cam.W, cam.H) * 0.62;
     const step = 3.3, x0 = -cam.W * 0.1, x1 = cam.W * 1.1, dxs = 9;
     const nz = noise1(5);
     let row = 0;
