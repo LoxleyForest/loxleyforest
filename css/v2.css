@@ -326,7 +326,8 @@ html, body.v2 { overflow-x: clip; }
   text-transform: uppercase; text-decoration: none; transition: background 0.25s, color 0.25s, border-color 0.25s;
 }
 .lf-walk__skip:hover, .lf-walk__skip:focus-visible { background: rgba(247, 243, 237, 0.12); }
-.lf-walk__skip.is-there { background: var(--gold); border-color: var(--gold); color: var(--forest-deep); }
+/* across: the way in, in linen (gold stays the Book button's alone) */
+.lf-walk__skip.is-there { background: var(--linen); border-color: var(--linen); color: var(--forest-deep); }
 
 /* walking: the section is the length of the walk, the stage holds still while you scroll it */
 .js .lf-walk.is-ready:not(.is-still) { height: 560svh; }
@@ -351,7 +352,10 @@ html, body.v2 { overflow-x: clip; }
 .lf-walk__mark { position: absolute; left: 0; right: 0; top: -9px; height: 0; }
 .lf-walk__mark svg { position: absolute; left: -6px; top: 0; width: 12px; height: 15px; color: var(--gold); }
 /* the phone Book button sits bottom right; the skip link moves up out of its way */
-@media (max-width: 767px) { .lf-walk__skip { bottom: auto; top: calc(var(--hdr-h) + 12px); } .js .lf-walk.is-ready:not(.is-still) .lf-walk__count { bottom: calc(30px + env(safe-area-inset-bottom, 0px)); } }
+@media (max-width: 767px) { .lf-walk__skip { bottom: auto; top: calc(var(--hdr-h) + 12px); } .js .lf-walk.is-ready:not(.is-still) .lf-walk__count { bottom: calc(96px + env(safe-area-inset-bottom, 0px)); } }
 /* still: the words sit on the engraving as one paragraph */
 .lf-walk.is-still .lf-walk__words { font-size: clamp(1.4rem, 5vw, 2.1rem); max-width: 24ch; }
 .lf-walk.is-still .lf-walk__line { display: inline; }
+/* without script: the opening view as a still engraving (loaded only then) */
+html:not(.js) .lf-walk__stage { background: #1a2e1a url("../images/crossing/crossing-still-phone.webp") center / cover no-repeat; }
+@media (min-width: 768px) { html:not(.js) .lf-walk__stage { background-image: url("../images/crossing/crossing-still-desk.webp"); } }

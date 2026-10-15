@@ -114,6 +114,21 @@ BOOK = f'''    <section class="lf-sec lf-parch lf-book" id="book" aria-labelledb
     </section>
 '''
 
+WALK = f'''    <section class="lf-walk" data-crossing aria-label="The crossing: a hundred feet of rope bridge to the treehouse">
+      <div class="lf-walk__stage">
+        <canvas aria-hidden="true"></canvas>
+        <div class="lf-walk__words">
+          <p class="lf-walk__line" data-from="-20" data-to="12">Then the hundred-foot bridge appears,</p>
+          <p class="lf-walk__line" data-from="20" data-to="50">the one that makes your heart beat faster</p>
+          <p class="lf-walk__line" data-from="56" data-to="80">before the forest slows it back down.</p>
+          <p class="lf-walk__line" data-from="88" data-to="999">That one takes you to your front door.</p>
+        </div>
+        <div class="lf-walk__count" aria-hidden="true"><p><b data-walk-count>0</b><span>feet across</span></p><i class="lf-walk__bar"><i class="lf-walk__mark" data-walk-mark>{ACORN}</i></i></div>
+        <a class="lf-walk__skip" href="#book">Skip to your dates</a>
+      </div>
+    </section>
+'''
+
 REVIEWS = '''    <section class="lf-sec lf-parch lf-center lf-reviews" aria-labelledby="rv-h">
       <div class="lf-wrap">
         <p class="lf-eyebrow">Guest stories</p>
@@ -214,12 +229,29 @@ def page_index():
         <p class="lf-eyebrow lf-rise">The crossing</p>
         <p class="lf-statement lf-rise">This is not a cabin with a view. This is a home in the sky, suspended in a canopy of white oak and beech that has stood for over a century.</p>
         <div class="lf-body lf-rise">
-          <p>You'll cross a thirty-foot rope bridge through the trees as a warm-up. Then the hundred-foot bridge appears, the one that makes your heart beat faster before the forest slows it back down. That one takes you to your front door.</p>
-          <p>You'll fall asleep sixty feet in the air with nothing above you but stars and nothing below you but the creek rolling through the forest floor.</p>
+          <p>You'll cross a thirty-foot rope bridge through the trees as a warm-up.</p>
         </div>
-        <div class="lf-rise" style="margin-top:56px">{ARROW}</div>
       </div>
     </section>
+
+    <!-- ========== THE CROSSING, WALKED (js/crossing.js): the far end opens onto the calendar ========== -->
+{WALK}
+    <!-- ========== YOUR DATES: the Gatehouse, at the far end of the bridge ========== -->
+{BOOK}
+{REVIEWS}
+    <!-- ========== WHAT'S INCLUDED ========== -->
+    <section class="lf-sec lf-light" aria-labelledby="inc-h">
+      <div class="lf-wrap lf-split">
+        <figure class="lf-photo lf-photo--tall lf-rise">{pic('img_0831', 'The bed beneath the treehouse windows', '(min-width: 900px) 50vw, 100vw')}</figure>
+        <div>
+          <p class="lf-eyebrow lf-rise">The treehouse</p>
+          <h2 class="lf-h2 lf-rise" id="inc-h">Everything you need. <em>Nothing you don't.</em></h2>
+          <p class="lf-lead lf-rise">You'll fall asleep sixty feet in the air with nothing above you but stars and nothing below you but the creek rolling through the forest floor.</p>
+{INCLUDED}          <p class="lf-body lf-rise" style="margin-top:26px">What we don't include: televisions. You won't need one.</p>
+        </div>
+      </div>
+    </section>
+
 
     <!-- ========== SIXTY FEET UP ========== -->
     <section class="lf-sec lf-dark" aria-label="The treehouse in numbers">
@@ -248,21 +280,6 @@ def page_index():
       </div>
     </section>
 
-    <!-- ========== WHAT'S INCLUDED ========== -->
-    <section class="lf-sec lf-light" aria-labelledby="inc-h">
-      <div class="lf-wrap lf-split">
-        <figure class="lf-photo lf-photo--tall lf-rise">{pic('img_0831', 'The bed beneath the treehouse windows', '(min-width: 900px) 50vw, 100vw')}</figure>
-        <div>
-          <p class="lf-eyebrow lf-rise">The treehouse</p>
-          <h2 class="lf-h2 lf-rise" id="inc-h">Everything you need. <em>Nothing you don't.</em></h2>
-{INCLUDED}          <p class="lf-body lf-rise" style="margin-top:26px">What we don't include: televisions. You won't need one.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========== YOUR DATES: the Gatehouse, after the bed and before the reviews ========== -->
-{BOOK}
-{REVIEWS}
     <!-- ========== BUILT BY HAND ========== -->
     <section class="lf-sec lf-dark" aria-labelledby="bh-h">
       <div class="lf-bg">{pic('eq3a2149', '', '100vw')}</div>
@@ -401,7 +418,8 @@ def page_treehouses():
 def build(page):
     name, head, gtm, body, book, gatehouse = page()
     html = (head + '<body class="v2">\n' + gtm + '\n' + header(book) + '\n  <main id="main">\n' + body + '\n  </main>\n\n'
-            + footer(book, gatehouse) + '</body>\n</html>\n')
+            + footer(book, gatehouse) + ('  <script src="js/crossing.js" defer></script>\n' if 'data-crossing' in body else '')
+            + '</body>\n</html>\n')
     open(os.path.join(ROOT, name), 'w').write(html)
     print('wrote', name, len(html))
 
