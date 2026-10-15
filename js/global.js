@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  if (hero && nav) {
+  if (hero) {
     nav.classList.add('nav--transparent');
   }
 
@@ -283,9 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const target = document.querySelector(anchor.getAttribute('href'));
       if (target) {
         e.preventDefault();
-        const hdr = document.querySelector('.lf-hdr');
-        if (window.lfLenis) window.lfLenis.scrollTo(target, { offset: hdr ? -hdr.offsetHeight : 0 });
-        else target.scrollIntoView({ behavior: 'smooth' });
+        target.scrollIntoView({ behavior: 'smooth' });
       }
     });
   });
@@ -327,7 +325,6 @@ document.addEventListener('DOMContentLoaded', () => {
   (function () {
     const page = (location.pathname.split('/').pop() || 'index').replace('.html', '');
     if (page === 'book' || page === 'booking-confirmed') return;
-    if (document.querySelector('.book-fab')) return; // the one fixed Book button already carries it
 
     const bookBar = document.createElement('a');
     bookBar.className = 'mobile-book-bar';
@@ -409,87 +406,3 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 });
-
-/* ============================================================
-   SMOOTH SCROLL (Lenis, vendored in js/vendor)
-   Off for anyone who asks the system for reduced motion.
-   ============================================================ */
-(function () {
-  if (!window.Lenis) return;
-  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const lenis = new window.Lenis({ lerp: 0.1, smoothWheel: true });
-  function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
-  requestAnimationFrame(raf);
-  window.lfLenis = lenis;
-})();
-
-/* ============================================================
-   THE BOOK BUTTON (phones): hides while the menu is open,
-   since the menu carries its own Book button.
-   ============================================================ */
-document.addEventListener('DOMContentLoaded', () => {
-  const fab = document.querySelector('.book-fab');
-  const overlay = document.querySelector('.nav__overlay');
-  if (!fab) return;
-  // One gold Book button per screen: step aside while another one is in view, or the menu is open.
-  let menuOpen = false;
-  const inView = new Set();
-  // it waits until the first screen has been read, then stays out of the way of any other Book button
-  const pastFirst = () => window.scrollY > window.innerHeight * 0.6;
-  const update = () => fab.classList.toggle('is-hidden', !pastFirst() || menuOpen || document.documentElement.classList.contains('lf-menu-open') || inView.size > 0);
-  window.addEventListener('scroll', update, { passive: true });
-  update();
-  if ('MutationObserver' in window) new MutationObserver(update).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-  if ('IntersectionObserver' in window) {
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => { if (e.isIntersecting) inView.add(e.target); else inView.delete(e.target); });
-      update();
-    });
-    document.querySelectorAll('main a.btn--primary[href="/book"], main a.lf-btn[href="#book"], main #book').forEach((el) => io.observe(el));
-  }
-  if (overlay && 'MutationObserver' in window) {
-    new MutationObserver(() => {
-      menuOpen = overlay.classList.contains('open');
-      update();
-      if (window.lfLenis) { if (menuOpen) window.lfLenis.stop(); else window.lfLenis.start(); }
-    }).observe(overlay, { attributes: true, attributeFilter: ['class'] });
-  }
-});
-
-/* ============================================================
-   HERO LOOP
-   The poster photo stays the first thing painted (it is what the
-   ads' landing-page score measures). The clip loads after that:
-   on desktop right away, on phones after the page has finished
-   loading, and never on Save-Data or a slow connection.
-   Dormant until the <video> carries data-ready.
-   ============================================================ */
-(function () {
-  const v = document.querySelector('.hero__video');
-  if (!v || !v.hasAttribute('data-ready')) return;
-  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-  if (c && (c.saveData || /(^|-)2g$/.test(c.effectiveType || ''))) return;
-  const phone = window.matchMedia('(max-width: 767px)').matches;
-  const btn = document.querySelector('.lf-hero__pause');
-  const tryPlay = () => { const p = v.play(); if (p && p.catch) p.catch(() => {}); };
-  const start = () => {
-    // iPhones want these set as properties, not only as attributes, before the source arrives
-    v.muted = true; v.defaultMuted = true; v.playsInline = true;
-    v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('autoplay', '');
-    const webm = !phone && v.dataset.deskWebm && v.canPlayType('video/webm; codecs="vp9"');
-    v.src = phone ? v.dataset.phone : (webm ? v.dataset.deskWebm : v.dataset.desk);
-    v.load();
-    v.addEventListener('playing', () => { v.classList.add('is-playing'); if (btn) btn.hidden = false; }, { once: true });
-    tryPlay();
-    // An iPhone in Low Power Mode refuses autoplay; the first touch starts the loop instead.
-    const kick = () => { if (v.paused && !v.dataset.userPaused) tryPlay(); };
-    ['touchstart', 'pointerdown', 'keydown'].forEach((ev) => window.addEventListener(ev, kick, { once: true, passive: true }));
-  };
-  if (btn) btn.addEventListener('click', () => {
-    if (v.paused) { delete v.dataset.userPaused; tryPlay(); btn.setAttribute('aria-label', 'Pause the video'); btn.classList.remove('is-paused'); }
-    else { v.dataset.userPaused = '1'; v.pause(); btn.setAttribute('aria-label', 'Play the video'); btn.classList.add('is-paused'); }
-  });
-  if (phone) { if (document.readyState === 'complete') start(); else window.addEventListener('load', start, { once: true }); }
-  else start();
-})();
