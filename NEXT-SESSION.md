@@ -57,8 +57,10 @@ the box. Loxley Forest LLC on the agreement.
    (hidden broke pinning). Private preview with the real calendar after it:
    https://claude.ai/artifact/UyuRfjKG8D6MWm7gaV6wPR. Waiting on Mick's look and his
    bridge facts and footage (asked 2026-10-14). Reels for Mick and Livy (with words, and clean)
-   are in the unlisted folder at private/new-site-371cf1/reel/ (re-render: scripts/crossing/). Open call for Mick: placement (after the
-   opening statement moves the calendar above "what's included").
+   are in the unlisted folder at private/new-site-371cf1/reel/ (re-render: scripts/crossing/). On the home page since 2026-10-14 (Mick agreed): hero,
+   the opening statement, the walk, the calendar, reviews, what's included. Tag Manager events:
+   crossing_start, crossing_half, crossing_end, crossing_skip, crossing_book (with crossing_ft);
+   compare walkers' booking starts with skippers' after launch. Mick ruled the drawing good as is.
 1. **"The crossing, walked"**, approved by Mick to build and see: after the
    opening statement, scroll carries the guest across the hundred-foot bridge
    drawn in the logo's engraving, a counter 0 to 100 ft, the far end opening
