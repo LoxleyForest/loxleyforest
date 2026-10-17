@@ -93,6 +93,9 @@ the box. Loxley Forest LLC on the agreement.
 - His own: the Instagram and Facebook profile pictures (`kit/loxley-profile-1080.jpg`).
 
 ## Ideas waiting (logged, not started)
+The pizza guide (private/pizza-guide-5a376f/ on main, 2026-10-17: sauce first, no cornmeal by
+Mick's preference, timers built in) becomes a chapter of the guidebook; the stay guides already
+link it.
 The animated guidebook in the logo's style (drive in and the bee yard,
 parking and trailhead, trail to the bridge, TreeMail, the fire pit, the
 treehouse, the pizza guide) from Mick's photographs and voice notes, in place
