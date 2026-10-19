@@ -30,84 +30,135 @@
 
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap">
   <link rel="stylesheet" href="css/global.css">
-  <link rel="stylesheet" href="css/gatehouse.css">
-  <link rel="stylesheet" href="css/v2.css">
-  <link rel="stylesheet" href="css/v2-pages.css">
 </head>
-<body class="v2">
+<body>
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5N4BX66K"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
   <a href="#main" class="skip-link">Skip to content</a>
 
-  <header class="lf-hdr">
-    <a href="/" class="lf-hdr__mark" aria-label="Loxley Forest, home"><img src="images/brand/logo/loxley-wordmark-on-dark.svg" alt="Loxley Forest" width="236" height="32"></a>
-    <nav class="lf-hdr__nav" aria-label="Main"><a href="/treehouses">The Treehouse</a><a href="/experiences">Experiences</a><a href="/elopements">Elopements</a><a href="/our-story">Our Story</a><a href="/gallery">Gallery</a><a href="/local-guide">Local Guide</a></nav>
-    <a href="/book" class="lf-btn lf-hdr__book">Book your dates</a>
-    <button class="lf-menu-btn" type="button" aria-expanded="false" aria-controls="lf-menu" aria-label="Open menu"><span></span></button>
-  </header>
-  <div class="lf-menu" id="lf-menu" aria-hidden="true">
-    <nav aria-label="Menu"><a href="/treehouses">The Treehouse</a><a href="/experiences">Experiences</a><a href="/elopements">Elopements</a><a href="/our-story">Our Story</a><a href="/gallery">Gallery</a><a href="/local-guide">Local Guide</a><a href="/faq">Questions</a></nav>
-    <a href="/book" class="lf-btn"><svg viewBox="0 0 16 20" aria-hidden="true"><path fill="currentColor" d="M8 2.2C4.6 2.2 1.9 4.6 1.9 8H14.1C14.1 4.6 11.4 2.2 8 2.2ZM2.8 8.9H13.2C13.2 13.4 10.8 17.2 8 19.2C5.2 17.2 2.8 13.4 2.8 8.9ZM7.6 2.4C7.7 1.2 8.4 .4 9.6 .1L9.9 .7C9 1 8.5 1.6 8.5 2.4Z"/></svg>Book your dates</a>
-    <p class="lf-menu__foot">Dahlonega, Georgia<br>Just over an hour from Atlanta</p>
+  <!-- ========== ANNOUNCEMENT BAR ========== -->
+  <div class="announcement-bar">
+    <div class="announcement-bar__track">
+      <a href="/canopy-club" class="announcement-bar__message active">THE CANOPY CLUB — FOUNDING LIST OPEN · LIMITED TO 50 COUPLES</a>
+      <a href="/treehouses#treehouse-2" class="announcement-bar__message">TREEHOUSE 2 — COMING SOON · FIRST NIGHTS GO TO THE LIST</a>
+      <a href="/treehouses" class="announcement-bar__message">A HANDFUL OF FULLY SUSPENDED TREEHOUSES EXIST ON EARTH — THIS FOREST GROWS THEM</a>
+    </div>
+    <button class="announcement-bar__close" aria-label="Dismiss announcement">&times;</button>
+  </div>
+
+  <!-- ========== NAVIGATION ========== -->
+  <nav class="nav nav--scrolled">
+    <a href="/" class="nav__wordmark">Loxley Forest</a>
+    <div class="nav__links">
+      <a href="/treehouses" class="nav__link">The Treehouses</a>
+      <a href="/elopements" class="nav__link">Elopements</a>
+      <a href="/experiences" class="nav__link">Experiences</a>
+      <a href="/canopy-club" class="nav__link">Canopy Club</a>
+      <a href="/our-story" class="nav__link">Our Story</a>
+      <a href="/gallery" class="nav__link">Gallery</a>
+      <a href="/local-guide" class="nav__link">Local Guide</a>
+    </div>
+    <a href="/book" class="btn btn--primary nav__cta">Book Your Stay</a>
+    <button class="nav__hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="nav__overlay">
+    <a href="/treehouses" class="nav__link">The Treehouses</a>
+    <a href="/elopements" class="nav__link">Elopements</a>
+    <a href="/experiences" class="nav__link">Experiences</a>
+    <a href="/canopy-club" class="nav__link">Canopy Club</a>
+    <a href="/our-story" class="nav__link">Our Story</a>
+    <a href="/gallery" class="nav__link">Gallery</a>
+    <a href="/local-guide" class="nav__link">Local Guide</a>
+    <a href="/book" class="btn btn--primary" style="margin-top: 16px;">Book Your Stay</a>
   </div>
 
   <main id="main">
 
-    <section class="lf-sec lf-dark lf-legal-top" aria-labelledby="lg-h">
-      <div class="lf-wrap">
-        <p class="lf-eyebrow">Cancellation</p>
-        <h1 class="lf-h1" id="lg-h">Cancellation &amp; Changes</h1>
-        <p class="lf-lead">The Forest Holds Your Spot</p>
+    <!-- ========== HEADER ========== -->
+    <section class="faq-header" style="padding-top: 140px;">
+      <div class="container--narrow text-center">
+        <p class="eyebrow reveal" style="margin-bottom: 16px;">Cancellation</p>
+        <h1 class="headline-page reveal" style="margin-bottom: 12px;">Cancellation &amp; Changes</h1>
+        <p class="subheadline reveal" style="color: var(--stone);">The Forest Holds Your Spot</p>
+        <hr class="divider reveal">
       </div>
     </section>
 
-    <section class="lf-sec lf-light lf-legal">
-      <div class="lf-legal__text">
+    <!-- ========== BODY ========== -->
+    <section class="section section--linen" style="padding-top: 0;">
+      <div class="container--narrow">
+        <p class="body-text">We get it: life happens. Cars break down, kids catch colds, and occasionally a cousin decides to get married on the exact weekend of your forest retreat. Here is exactly how it works.</p>
 
-      <p>We get it: life happens. Cars break down, kids catch colds, and occasionally a cousin decides to get married on the exact weekend of your forest retreat. Here is exactly how it works.</p>
+        <h3 class="headline-section" style="font-size: 24px; margin-top: 40px; margin-bottom: 12px;">Payment</h3>
+        <p class="body-text">Half of your stay is paid at booking. The balance is charged 30 days before check-in. Stays booked within 30 days of check-in are paid in full at booking.</p>
 
-      <h2>Payment</h2>
-      <p>Half of your stay is paid at booking. The balance is charged 30 days before check-in. Stays booked within 30 days of check-in are paid in full at booking.</p>
+        <h3 class="headline-section" style="font-size: 24px; margin-top: 40px; margin-bottom: 12px;">If you need to cancel</h3>
+        <p class="body-text">We don't offer cash refunds for cancellations (though we make rare exceptions for genuinely extraordinary circumstances we can verify). Instead, we'll happily provide a credit for a future stay, redeemable within 6 months of your original booking date. Think of it as the forest saving your spot among the leaves for when the timing is better.</p>
 
-      <h2>If you need to cancel</h2>
-      <p>We don't offer cash refunds for cancellations (though we make rare exceptions for genuinely extraordinary circumstances we can verify). Instead, we'll happily provide a credit for a future stay, redeemable within 6 months of your original booking date. Think of it as the forest saving your spot among the leaves for when the timing is better.</p>
+        <h3 class="headline-section" style="font-size: 24px; margin-top: 40px; margin-bottom: 12px;">If we rebook your dates</h3>
+        <p class="body-text">If we're able to rebook your dates after a cancellation, we'll be more flexible about refund options. After all, if another guest gets to enjoy your spot, the forest is appeased.</p>
 
-      <h2>If we rebook your dates</h2>
-      <p>If we're able to rebook your dates after a cancellation, we'll be more flexible about refund options. After all, if another guest gets to enjoy your spot, the forest is appeased.</p>
+        <h3 class="headline-section" style="font-size: 24px; margin-top: 40px; margin-bottom: 12px;">Weather</h3>
+        <p class="body-text">The forest is beautiful in all conditions: rain brings mist, snow transforms the trees, and sunshine dapples through the canopy. We don't offer cancellations due to weather unless Mother Nature gets truly dramatic (hurricane-level dramatic).</p>
 
-      <h2>Weather</h2>
-      <p>The forest is beautiful in all conditions: rain brings mist, snow transforms the trees, and sunshine dapples through the canopy. We don't offer cancellations due to weather unless Mother Nature gets truly dramatic (hurricane-level dramatic).</p>
+        <h3 class="headline-section" style="font-size: 24px; margin-top: 40px; margin-bottom: 12px;">How to cancel or change</h3>
+        <p class="body-text">Email <a href="mailto:stay@loxleyforest.com" style="color: var(--gold);">stay@loxleyforest.com</a> or call <a href="tel:+17065024823" style="color: var(--gold);">706-502-4823</a>. We respond within 2 hours. Cancellation is confirmed when you receive written confirmation from us.</p>
 
-      <h2>How to cancel or change</h2>
-      <p>Email <a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a> or call <a href="tel:+17065024823">706-502-4823</a>. We respond within 2 hours. Cancellation is confirmed when you receive written confirmation from us.</p>
+        <h3 class="headline-section" style="font-size: 24px; margin-top: 40px; margin-bottom: 12px;">Our philosophy</h3>
+        <p class="body-text">We'd always rather have you here than issue a refund. If your plans change, talk to us before assuming the worst. We're a family, not a corporation — and we'll always try to find a way to make it work.</p>
 
-      <h2>Our philosophy</h2>
-      <p>We'd always rather have you here than issue a refund. If your plans change, talk to us before assuming the worst. We're a family, not a corporation — and we'll always try to find a way to make it work.</p>
-
-      <p class="lf-legal-sign">— Mick &amp; Livy</p>
+        <p class="body-text" style="font-style: italic; margin-top: 32px;">— Mick &amp; Livy</p>
       </div>
     </section>
 
   </main>
 
-  <footer class="lf-foot">
-    <div class="lf-foot__grid">
-      <div>
-        <img src="images/brand/logo/loxley-wordmark-on-dark.svg" alt="Loxley Forest" width="220" height="30" loading="lazy">
-        <p style="margin-top:18px;font-size:1.1rem">Dahlonega, Georgia. Just over an hour from Atlanta.<br>42 acres of hardwood cove forest at 1,470 feet.</p>
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="footer__grid">
+      <div class="footer__col">
+        <div class="footer__wordmark">Loxley Forest</div>
+        <p class="footer__text">Suspended between earth and sky<br>in the North Georgia mountains.</p>
       </div>
-      <nav aria-label="Footer"><a href="/treehouses">The Treehouse</a><a href="/experiences">Experiences</a><a href="/elopements">Elopements</a><a href="/our-story">Our Story</a><a href="/gallery">Gallery</a><a href="/local-guide">Local Guide</a><a href="/faq">Questions</a></nav>
-      <nav aria-label="Contact"><a href="https://instagram.com/loxleyforest" target="_blank" rel="noopener">Instagram</a><a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a><a href="tel:+17065024823">706-502-4823</a></nav>
-      <div class="lf-foot__small"><span>&copy; 2026 Loxley Forest</span><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/cancellation">Cancellation</a></div>
+      <div class="footer__col">
+        <p class="footer__heading">Explore</p>
+        <a href="/treehouses" class="footer__link">The Treehouses</a>
+        <a href="/elopements" class="footer__link">Elopements</a>
+        <a href="/experiences" class="footer__link">Experiences</a>
+        <a href="/canopy-club" class="footer__link">Canopy Club</a>
+        <a href="/our-story" class="footer__link">Our Story</a>
+        <a href="/gallery" class="footer__link">Gallery</a>
+        <a href="/local-guide" class="footer__link">Local Guide</a>
+        <a href="/faq" class="footer__link">FAQ</a>
+      </div>
+      <div class="footer__col">
+        <p class="footer__heading">Connect</p>
+        <a href="https://instagram.com/loxleyforest" class="footer__link" target="_blank" rel="noopener">Instagram</a>
+        <a href="mailto:stay@loxleyforest.com" class="footer__link">stay@loxleyforest.com</a>
+        <a href="tel:+17065024823" class="footer__link">706-502-4823</a>
+      </div>
+      <div class="footer__col">
+        <p class="footer__heading">Visit</p>
+        <p class="footer__text">Dahlonega, Georgia<br>just over an hour from Atlanta<br>42 acres of hardwood cove forest<br>at 1,470 feet</p>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <p class="footer__copyright">&copy; 2026 Loxley Forest. All rights reserved.</p>
+      <div class="footer__legal">
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+        <a href="/cancellation">Cancellation Policy</a>
+      </div>
     </div>
   </footer>
 
   <a href="/book" class="book-fab"><svg viewBox="0 0 16 20" aria-hidden="true"><path fill="currentColor" d="M8 2.2C4.6 2.2 1.9 4.6 1.9 8H14.1C14.1 4.6 11.4 2.2 8 2.2ZM2.8 8.9H13.2C13.2 13.4 10.8 17.2 8 19.2C5.2 17.2 2.8 13.4 2.8 8.9ZM7.6 2.4C7.7 1.2 8.4 .4 9.6 .1L9.9 .7C9 1 8.5 1.6 8.5 2.4Z"/></svg>Book your dates</a>
   <script src="js/vendor/lenis.min.js"></script>
   <script src="js/global.js"></script>
-  <script src="js/v2.js"></script>
-  <script src="js/reviews.js" defer></script>
 </body>
 </html>
