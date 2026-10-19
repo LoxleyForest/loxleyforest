@@ -15,7 +15,10 @@ import sys
 
 SRC = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 ROBOTS = '<meta name="robots" content="noindex, nofollow, noarchive">'
-PAGES = ['index.html', 'treehouses.html']
+PAGES = ['index.html', 'treehouses.html', 'experiences.html', 'elopements.html', 'our-story.html', 'gallery.html',
+         'faq.html', 'local-guide.html', 'book.html', 'booking-confirmed.html', 'success.html', '404.html',
+         'terms.html', 'privacy.html', 'cancellation.html']
+CLEAN = [p[:-5] for p in PAGES if p != 'index.html']
 ASSETS = ['css/global.css', 'css/gatehouse.css', 'css/v2.css', 'css/v2-pages.css', 'js/vendor/lenis.min.js', 'js/global.js', 'js/v2.js',
           'js/reviews.js', 'js/gatehouse.js', 'js/crossing.js', 'images/crossing/crossing-still-phone.webp',
           'images/crossing/crossing-still-desk.webp', 'data/gatehouse-snapshot.json', 'images/brand/logo/loxley-wordmark-on-dark.svg',
@@ -29,8 +32,23 @@ def strip(s):
     s = re.sub(r'\s*<link rel="icon" type="image/png"[^>]*>', '', s)
     s = s.replace('href="/favicon.svg"', 'href="favicon.svg"').replace('href="/apple-touch-icon.png"', 'href="apple-touch-icon.png"')
     s = s.replace('<meta charset="UTF-8">', '<meta charset="UTF-8">\n  ' + ROBOTS, 1)
-    s = s.replace('href="/treehouses"', 'href="treehouses.html"').replace('href="/"', 'href="./"')
+    # clean paths point at the preview's own copies, so the whole new site can be walked
+    for c in CLEAN:
+        s = re.sub(r'href="/' + re.escape(c) + r'(#[^"]*)?"', lambda m: 'href="' + c + '.html' + (m.group(1) or '') + '"', s)
+    s = s.replace('href="/"', 'href="./"')
     return s
+
+
+def referenced(html):
+    """Local files a page points at (src, href, srcset, poster, data-*, url()), relative to the site root."""
+    found = set()
+    for m in re.finditer(r'(?:src|href|poster|data-[a-z-]+)="([^"#?]+)"|srcset="([^"]+)"|url\(["\']?([^"\')]+)', html):
+        for v in filter(None, m.groups()):
+            for part in v.split(','):
+                u = part.strip().split(' ')[0].lstrip('/')
+                if u and not u.startswith(('http', 'mailto', 'tel', 'sms', 'data:')) and os.path.isfile(os.path.join(SRC, u)):
+                    found.add(u)
+    return found
 
 
 def main(dest_root, slug='new-site-371cf1'):
@@ -38,6 +56,10 @@ def main(dest_root, slug='new-site-371cf1'):
     os.makedirs(dst, exist_ok=True)
     files = ASSETS + ['images/hero/' + f for f in os.listdir(os.path.join(SRC, 'images/hero'))]
     files += ['images/v2/' + f for f in os.listdir(os.path.join(SRC, 'images/v2'))]
+    for p in PAGES:
+        files += sorted(referenced(open(os.path.join(SRC, p)).read()))
+    files += sorted(referenced(open(os.path.join(SRC, 'css/v2.css')).read()) | referenced(open(os.path.join(SRC, 'css/v2-pages.css')).read()))
+    files = sorted(set(files))
     for f in files:
         os.makedirs(os.path.dirname(os.path.join(dst, f)), exist_ok=True)
         shutil.copy2(os.path.join(SRC, f), os.path.join(dst, f))
