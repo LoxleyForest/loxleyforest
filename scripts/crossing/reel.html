@@ -1,0 +1,47 @@
+<!doctype html><html lang="en" class="js"><head><meta charset="utf-8">
+<link rel="stylesheet" href="../../css/global.css"><link rel="stylesheet" href="../../css/v2.css">
+<style>
+@font-face{font-family:'Cormorant Garamond';font-style:italic;font-weight:300;src:url(fonts/CormorantGaramond-LightItalic.ttf)}
+@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:300;src:url(fonts/CormorantGaramond-Light.ttf)}
+@font-face{font-family:'Montserrat';font-weight:500;src:url(fonts/Montserrat-500.ttf)}
+@font-face{font-family:'Montserrat';font-weight:600;src:url(fonts/Montserrat-600.ttf)}
+html,body{margin:0;width:540px;height:960px;overflow:hidden;background:#1a2e1a}
+body{animation:none}
+.lf-walk{height:960px!important}
+.lf-walk__stage{height:960px;min-height:0}
+.lf-walk__skip{display:none!important}
+/* clear of the reel's own captions and buttons */
+.lf-walk__words{top:150px}
+.js .lf-walk.is-ready:not(.is-still) .lf-walk__count{bottom:210px}
+.clean .lf-walk__words,.clean .lf-walk__count{display:none!important}
+#card{position:absolute;inset:0;background:#1a2e1a;opacity:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:34px;z-index:5}
+#card img{width:440px;height:auto}
+#card p{margin:0;font-family:'Montserrat',sans-serif;font-weight:500;font-size:15px;letter-spacing:.34em;color:#f7f3ed;text-transform:uppercase;padding-left:.34em}
+</style></head><body class="v2"><main>
+<section class="lf-walk" data-crossing data-steady>
+  <div class="lf-walk__stage">
+    <canvas aria-hidden="true"></canvas>
+    <div class="lf-walk__words">
+      <p class="lf-walk__line" data-from="-20" data-to="12">Then the hundred-foot bridge appears,</p>
+      <p class="lf-walk__line" data-from="20" data-to="50">the one that makes your heart beat faster</p>
+      <p class="lf-walk__line" data-from="56" data-to="80">before the forest slows it back down.</p>
+      <p class="lf-walk__line" data-from="88" data-to="999">That one takes you to your front door.</p>
+    </div>
+    <div class="lf-walk__count"><p><b data-walk-count>0</b><span>feet across</span></p><i class="lf-walk__bar"><i class="lf-walk__mark" data-walk-mark><svg viewBox="0 0 16 20"><path fill="currentColor" d="M8 2.2C4.6 2.2 1.9 4.6 1.9 8H14.1C14.1 4.6 11.4 2.2 8 2.2ZM2.8 8.9H13.2C13.2 13.4 10.8 17.2 8 19.2C5.2 17.2 2.8 13.4 2.8 8.9ZM7.6 2.4C7.7 1.2 8.4 .4 9.6 .1L9.9 .7C9 1 8.5 1.6 8.5 2.4Z"/></svg></i></i></div>
+    <a class="lf-walk__skip" href="#">x</a>
+    <div id="card"><img src="../../images/brand/logo/loxley-stacked-on-dark.svg" alt=""><p>loxleyforest.com</p></div>
+  </div>
+</section>
+</main><script src="../../js/crossing.js"></script>
+<script>
+// the reel's clock: a breath on the first platform, the walk, a breath at the door, the end card
+const sm = (t) => { t = Math.max(0, Math.min(1, t)); return t * t * (3 - 2 * t); };
+window.seek = (t) => {
+  const p = Math.max(0, Math.min(1, (t - 1.2) / 18.5));
+  window.lfCrossing.render(p);
+  const c = sm((t - 21) / 1.1);
+  document.getElementById('card').style.opacity = c.toFixed(3);
+  document.querySelector('#card img').style.transform = 'translateY(' + ((1 - c) * 14).toFixed(1) + 'px)';
+};
+if (location.hash === '#clean') document.body.classList.add('clean');
+</script></body></html>

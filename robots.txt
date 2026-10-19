@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+Disallow: /private/
+Disallow: /stay
+Disallow: /booked
+Disallow: /manage
+Disallow: /data/
+Disallow: /images/placeholders/
+Disallow: /images/untitled folder/
+
+Sitemap: https://loxleyforest.com/sitemap.xml
