@@ -5,7 +5,8 @@ checkout); netlify.toml sends its old links to /book.
 
 The words are legal content and are carried exactly as they stood on the old pages, em dashes
 included (the one place the no-dash rule does not reach). Only the markup changed: the old
-h3 headings are h2, the classes and inline styles are gone. Restyle here, never reword."""
+h3 headings are h2, the classes and inline styles are gone. Restyle here, never reword. One ruled
+exception: on /terms, "pets" became "dogs" to match the stay agreement (Mick, 2026-10-19: dogs only)."""
 import re
 
 import build_v2 as B
@@ -26,8 +27,8 @@ TERMS = ('Terms &amp; Conditions', 'The Ground Rules', 'Written like a conversat
       <h2>Children</h2>
       <p>Absolutely welcome. We have two of our own. The rope bridge and elevated platforms require supervision of young children — the forest is an adventure, and we want everyone safe to enjoy it.</p>
 
-      <h2>Pets</h2>
-      <p>Well-behaved pets are welcome. We ask that you let us know at booking so we can prepare. Please keep pets off the furniture and bedding, and clean up after them on the trails. If your pet has an accident, we get it — just let us know.</p>
+      <h2>Dogs</h2>
+      <p>Well-behaved dogs are welcome. We ask that you let us know at booking so we can prepare. Please keep dogs off the furniture and bedding, and clean up after them on the trails. If your dog has an accident, we get it — just let us know.</p>
 
       <h2>Smoking</h2>
       <p>No smoking in or near the treehouses. The structures are canvas and wood, suspended in a forest. We think you understand why. If you'd like to smoke, we ask that you do so at the fire pit area on the ground level, away from the structures.</p>
