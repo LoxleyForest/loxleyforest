@@ -1,1 +1,78 @@
 /* Built by scripts/site/build_v2.py from scripts/site/pages/*.py. Do not edit by hand. */
+
+/* ---- faq ---- */
+/* a shorter page hero for pages that are mostly words (questions, guides) */
+@media (min-width: 900px) { .lf-hero--short, .lf-hero--short .hero__media { min-height: 64svh; } }
+@media (max-width: 767px) { .lf-hero--short .hero__media { height: 40svh; min-height: 260px; } }
+
+/* questions: one rule between each, the answer under its button */
+.lf-faq { max-width: 46rem; }
+.lf-faq__item { border-top: 1px solid rgba(26, 46, 26, 0.16); }
+.lf-faq__item:last-child { border-bottom: 1px solid rgba(26, 46, 26, 0.16); }
+.lf-faq__q { margin: 0; font: inherit; }
+.lf-faq__q button {
+  width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 64px; padding: 20px 0;
+  background: none; border: 0; text-align: left; cursor: pointer; color: var(--forest-deep);
+  font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 400; font-size: clamp(1.45rem, 4.6vw, 1.8rem); line-height: 1.2;
+}
+.lf-faq__q button:focus-visible { outline: 2px solid var(--forest-deep); outline-offset: 4px; }
+.lf-faq__icon { position: relative; flex: none; width: 16px; height: 16px; }
+.lf-faq__icon::before, .lf-faq__icon::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1.5px; margin-top: -0.75px; background: var(--stone); transition: transform 0.25s var(--ease-natural); }
+.lf-faq__icon::after { transform: rotate(90deg); }
+.lf-faq__q button[aria-expanded="true"] .lf-faq__icon::after { transform: rotate(0deg); }
+.lf-faq__a { padding: 0 0 26px; }
+.lf-faq__a p { margin: 0; max-width: 40rem; font-size: 1.15rem; line-height: 1.72; color: var(--stone); }
+.lf-faq__a a, .lf-faq__plain { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+.lf-dark .lf-faq__plain { color: var(--on-dark); }
+
+/* the contact form, on the dark forest */
+.lf-form { display: grid; gap: 8px; max-width: 30rem; }
+.lf-form label { margin-top: 12px; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--on-dark-muted); }
+.lf-form input[type="text"], .lf-form input[type="email"], .lf-form textarea {
+  width: 100%; min-height: 52px; padding: 12px 16px; border: 1px solid rgba(247, 243, 237, 0.35); border-radius: 0;
+  background: rgba(247, 243, 237, 0.06); color: var(--on-dark); font: 400 1.15rem 'Cormorant Garamond', Georgia, serif;
+}
+.lf-form textarea { min-height: 140px; resize: vertical; }
+.lf-form input:focus-visible, .lf-form textarea:focus-visible { outline: 2px solid var(--on-dark); outline-offset: 2px; }
+.lf-form .lf-btn { margin-top: 18px; justify-self: start; }
+.lf-form__done p { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.6rem; line-height: 1.35; color: var(--on-dark); }
+.lf-form__done .lf-form__sig { margin-top: 12px; font-style: italic; font-size: 1.25rem; color: var(--on-dark-muted); }
+
+/* ---- local_guide ---- */
+.lf-guide__note { margin: 18px 0 0; font-family: 'Montserrat', sans-serif; font-size: 0.8125rem; letter-spacing: 0.04em; line-height: 1.6; color: var(--on-dark-muted); }
+.lf-jump ul { list-style: none; margin: 26px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.lf-jump a { display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border: 1px solid rgba(247, 243, 237, 0.35); color: var(--on-dark); text-decoration: none; font-family: 'Montserrat', sans-serif; font-size: 0.6875rem; letter-spacing: 0.14em; text-transform: uppercase; }
+.lf-jump a:hover { background: rgba(247, 243, 237, 0.08); }
+.lf-jump a:focus-visible { outline: 2px solid var(--on-dark); outline-offset: 2px; }
+.lf-guide.lf-split { align-items: start; }
+.lf-guide__photo img { aspect-ratio: 4 / 3; object-fit: cover; }
+@media (min-width: 900px) { .lf-guide__photo { position: sticky; top: calc(var(--hdr-h) + 32px); } .lf-guide__photo img { aspect-ratio: 4 / 5; } }
+.lf-sec[id] { scroll-margin-top: var(--hdr-h); }
+
+/* the places: name, drive time, what it is, Mick's pick */
+.lf-places { list-style: none; margin: 34px 0 0; padding: 0; max-width: 36rem; }
+.lf-place { padding: 22px 0; border-top: 1px solid rgba(26, 46, 26, 0.16); }
+.lf-dark .lf-place { border-top-color: rgba(247, 243, 237, 0.16); }
+.lf-place__name { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 400; font-size: 1.7rem; line-height: 1.15; color: var(--forest-deep); }
+.lf-dark .lf-place__name { color: var(--on-dark); }
+.lf-place__time { margin: 6px 0 0; font-family: 'Montserrat', sans-serif; font-size: 0.6875rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--stone); }
+.lf-dark .lf-place__time { color: var(--on-dark-muted); }
+.lf-place__what { margin: 10px 0 0; font-size: 1.12rem; line-height: 1.65; color: var(--stone); }
+.lf-dark .lf-place__what { color: var(--on-dark-muted); }
+.lf-place__pick { position: relative; margin: 12px 0 0; padding-left: 24px; font-size: 1.12rem; line-height: 1.55; font-style: italic; color: var(--forest-deep); }
+.lf-dark .lf-place__pick { color: var(--on-dark); }
+.lf-place__pick::before { content: ''; position: absolute; left: 0; top: 0.3em; width: 11px; height: 14px; background: var(--acorn) center / contain no-repeat; }
+.lf-place__pick span { font-style: normal; font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 0.6875rem; letter-spacing: 0.16em; text-transform: uppercase; margin-right: 6px; }
+
+/* seasons on parchment: the chapter cards with dark ink */
+.lf-seasons .lf-chapter .lf-h3 { color: var(--forest-deep); }
+.lf-seasons .lf-chapter p { color: var(--stone); }
+.lf-seasons .lf-chapter img { aspect-ratio: 4 / 3; }
+
+/* the short list */
+.lf-short { margin: 40px 0 0; display: grid; gap: 0 56px; }
+@media (min-width: 900px) { .lf-short { grid-template-columns: 1fr 1fr; } }
+.lf-short > div { display: grid; gap: 4px; padding: 18px 0; border-top: 1px solid rgba(26, 46, 26, 0.16); }
+.lf-short dt { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 1.3rem; color: var(--stone); }
+.lf-short dd { margin: 0; font-size: 1.12rem; line-height: 1.55; color: var(--stone); }
+.lf-short dd b { font-weight: 600; color: var(--forest-deep); }
