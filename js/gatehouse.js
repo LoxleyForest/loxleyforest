@@ -394,11 +394,14 @@
   var HANDOFF = root.getAttribute('data-handoff') || '';
   var FALLBACK = root.getAttribute('data-fallback') || '';
   var QS = new URLSearchParams(location.search);
+  // Keys arrive after # and are lifted out of the address bar by the head script on /book
+  // (build_v2.py KEYS_SCRIPT) before Tag Manager loads; they live in window.__ghKeys.
+  var KEYS = window.__ghKeys || {};
   // A guest returning from a Hold my dates link made before it was retired.
   // No new holds exist; the API simply ignores a hold it no longer has.
-  var HOLD = QS.get('hold') || '';
-  // A credit to spend: the manage key of a cancelled stay, from its manage page.
-  var CREDIT = QS.get('credit') || '';
+  var HOLD = KEYS.hold || '';
+  // A credit to spend: the manage key of a cancelled stay, from its manage page (/book#credit=).
+  var CREDIT = KEYS.credit || '';
 
   var state = {
     agreement: null,
@@ -858,7 +861,7 @@
       if (!reuse) state.pending = { key: key, res: res, at: Date.now() };
       if (!res.client_secret) {
         // Nothing to pay today (a credit covered it): the stay is booked.
-        if (res.manage_token) { location.href = '/manage?token=' + encodeURIComponent(res.manage_token); return; }
+        if (res.manage_token) { location.href = '/manage#token=' + encodeURIComponent(res.manage_token); return; }
         throw new Error('Your booking went through with nothing to pay today. Your confirmation email is on its way. Questions? Call or text ' + PHONE + '.');
       }
       var due = res.summary && res.summary.today_cents !== undefined ? res.summary.today_cents

@@ -20,7 +20,10 @@
   var UNIT = root.getAttribute('data-unit') || '';
   var STRIPE_KEY = root.getAttribute('data-stripe-key') || '';
   var PAGE = root.getAttribute('data-page');
-  var qs = new URLSearchParams(location.search);
+  // The manage key and the payment session arrive after # (or, from an older link, in the
+  // query) and are lifted out of the address bar by the head script before Tag Manager loads
+  // (build_v2.py KEYS_SCRIPT). They live in window.__ghKeys, never in a URL a tag can read.
+  var KEYS = window.__ghKeys || {};
   var title = document.getElementById('gh-title');
 
   function call(path, body) { return G.api(API, path, body); }
@@ -37,7 +40,9 @@
     return (stay.payments || []).filter(function (p) { return p.status === 'succeeded'; })
       .reduce(function (a, p) { return a + p.amount_cents; }, 0);
   }
-  function manageUrl(token) { return location.origin + '/manage?token=' + encodeURIComponent(token); }
+  // Every link this site makes carries the key after #: a fragment is never sent to a server.
+  function manageLink(token) { return '/manage#token=' + encodeURIComponent(token); }
+  function manageUrl(token) { return location.origin + manageLink(token); }
 
   // ---- the stay, as the guest reads it ---------------------------------------
 
@@ -87,7 +92,7 @@
   // ---- booked: the welcome ----------------------------------------------------
 
   function booked() {
-    var sid = qs.get('session_id');
+    var sid = KEYS.session_id || '';
     if (!sid) return problem('This page opens from the payment link, and this one is missing its key. Your confirmation email has everything.');
     var tries = 0;
     (function load() {
@@ -109,9 +114,22 @@
     })();
   }
 
+  // The purchase for the tag manager. Its id is a one-way hash of the payment session, so
+  // analytics can count a booking once without ever holding a key that opens it.
+  function anonId(s) {
+    if (!(window.crypto && crypto.subtle && window.TextEncoder)) return Promise.resolve('');
+    return crypto.subtle.digest('SHA-256', new TextEncoder().encode('loxley-purchase:' + s)).then(function (b) {
+      return 'lf-' + Array.prototype.map.call(new Uint8Array(b).slice(0, 8), function (x) { return ('0' + x.toString(16)).slice(-2); }).join('');
+    }).catch(function () { return ''; });
+  }
   function purchase(stay, sid) {
-    try { if (sessionStorage.getItem('gh_purchase_' + sid)) return; sessionStorage.setItem('gh_purchase_' + sid, '1'); } catch (e) {}
-    G.track('purchase', { transaction_id: sid, value: stay.total_cents / 100, currency: 'USD', gh_paid_now: paidCents(stay) / 100 });
+    anonId(sid).then(function (id) {
+      var seen = 'gh_purchase_' + (id || 'x');
+      try { if (sessionStorage.getItem(seen)) return; sessionStorage.setItem(seen, '1'); } catch (e) {}
+      var data = { value: stay.total_cents / 100, currency: 'USD', gh_paid_now: paidCents(stay) / 100 };
+      if (id) data.transaction_id = id;
+      G.track('purchase', data);
+    });
   }
 
   function welcome(stay) {
@@ -134,7 +152,7 @@
       stayCard(stay, 'Your stay'),
       el('div', { 'class': 'gh-actions' }, [
         calendarButton(stay, token),
-        token ? el('a', { 'class': 'lf-btn gh-btn--quiet', href: '/manage?token=' + encodeURIComponent(token), text: 'Manage my stay' }) : null
+        token ? el('a', { 'class': 'lf-btn gh-btn--quiet', href: manageLink(token), text: 'Manage my stay' }) : null
       ]),
       el('section', { 'class': 'gh-panel', 'aria-labelledby': 'gh-next-h' }, [
         el('h2', { 'class': 'gh-eyebrow', id: 'gh-next-h', text: 'What happens next' }), next,
@@ -150,7 +168,7 @@
   var confirmCancel = false;
 
   function manage() {
-    token = qs.get('token') || '';
+    token = KEYS.token || '';
     if (!token) return problem('This link is missing its key. Use the link in your confirmation email.');
     reload();
   }
@@ -194,7 +212,7 @@
       el('h2', { 'class': 'gh-eyebrow', id: 'gh-credit-h', text: 'Your credit' }),
       el('p', { 'class': 'gh-big', text: money(credit.cents) }),
       el('p', { 'class': 'gh-body', text: 'Good toward a stay until ' + long(credit.expires_on) + '. Choose your new nights and it comes off at checkout.' }),
-      el('a', { 'class': 'lf-btn gh-cta', href: '/book?credit=' + encodeURIComponent(token), text: 'Choose new dates' })
+      el('a', { 'class': 'lf-btn gh-cta', href: '/book#credit=' + encodeURIComponent(token), text: 'Choose new dates' })
     ]);
   }
 

@@ -2,6 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <!-- Booking keys: out of the address bar before anything loads -->
+  <meta name="referrer" content="strict-origin">
+  <script>(function(){var N=['token','credit','session_id','hold'],k={},f=!1,st={},p=location.pathname.replace(/\.html$/,'');
+  try{st=JSON.parse(sessionStorage.getItem('gh_keys')||'{}')||{}}catch(e){}
+  var q=new URLSearchParams(location.search),hp=location.hash.indexOf('=')>0,h=new URLSearchParams(hp?location.hash.slice(1):'');
+  N.forEach(function(n){var v=h.get(n)||q.get(n);if(q.has(n)||h.has(n)){f=!0;q.delete(n);h.delete(n)}if(v)k[n]=v});
+  if(f){st[p]=k;try{sessionStorage.setItem('gh_keys',JSON.stringify(st))}catch(e){}
+  var s=q.toString(),t=hp?h.toString():location.hash.slice(1);history.replaceState(history.state,'',location.pathname+(s?'?'+s:'')+(t?'#'+t:''))}
+  else{var nv=(performance.getEntriesByType&&performance.getEntriesByType('navigation')[0])||{};if(nv.type==='reload'||nv.type==='back_forward')k=st[p]||{}}
+  window.__ghKeys=k;addEventListener('hashchange',function(){if(/(^#|&)(token|credit|session_id|hold)=/.test(location.hash))location.reload()})})();</script>
+  <!-- End booking keys -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -80,7 +91,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <p class="lf-eyebrow">Make it yours</p>
           <h2 class="lf-h2" id="add-h">Things you can <em>ask us for</em></h2>
           <p class="lf-lead">Reply to your confirmation email, or write to <a class="lf-stay__mail" href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a>, with any you would like, and we'll arrange them before you arrive.</p>
-          <ul class="lf-acorns lf-addons"><li><b>Morning Moments.</b> Champagne brunch at sunrise, crafted by Livy.</li><li><b>The Dawn Table.</b> Breakfast carried across the bridge to your door, with a late checkout to go with it.</li><li><b>Forest Tableau.</b> Our signature evening on a white oak slab from our forest.</li><li><b>The Flight Deck.</b> Sommelier-curated wines. Four pours. No two ever the same.</li><li><b>The Landing.</b> Artisan cheese paired to the Flight Deck.</li><li><b>Golden Hour Beer Board.</b> Craft beers, warm pretzels, a slow evening in the canopy.</li><li><b>Khachapuri.</b> Georgian cheese bread from our stone oven. Ancient tradition, sixty feet up.</li><li><b>After Dark.</b> Champagne, strawberries, a blanket, and the sky you've never actually seen.</li><li><b>Romance Package.</b> Champagne, candles, rose petals. Arranged before you arrive.</li><li><b>Celebration Package.</b> Tell us what you're celebrating. We'll make it right.</li><li><b>A cake for the occasion.</b> Name the occasion and we take it from there.</li><li><b>Tea service.</b> For the slow morning on the deck.</li><li><b>The s'mores board.</b> Not the grocery-store kind. The board changes with the micro-season.</li><li><b>Firewood.</b> A stack ready by the pit, so the first night needs no gathering.</li><li><b>Loxley Provisions Box.</b> A curated box of the region to take home.</li></ul>
+          <ul class="lf-acorns lf-addons"><li><b>The Dawn Table.</b> Breakfast carried across the bridge to your door, with a late checkout to go with it.</li><li><b>Forest Tableau.</b> Our signature evening on a white oak slab from our forest.</li><li><b>The Flight Deck.</b> Sommelier-curated wines. Four pours. No two ever the same.</li><li><b>The Landing.</b> Artisan cheese paired to the Flight Deck.</li><li><b>Golden Hour Beer Board.</b> Craft beers, warm pretzels, a slow evening in the canopy.</li><li><b>Khachapuri.</b> Georgian cheese bread from our stone oven. Ancient tradition, sixty feet up.</li><li><b>After Dark.</b> Champagne, strawberries, a blanket, and the sky you've never actually seen.</li><li><b>Romance Package.</b> Champagne, candles, rose petals. Arranged before you arrive.</li><li><b>Celebration Package.</b> Tell us what you're celebrating. We'll make it right.</li><li><b>A cake for the occasion.</b> Name the occasion and we take it from there.</li><li><b>Tea service.</b> For the slow morning on the deck.</li><li><b>The s'mores board.</b> Not the grocery-store kind. The board changes with the micro-season.</li><li><b>Firewood.</b> A stack ready by the pit, so the first night needs no gathering.</li><li><b>Loxley Provisions Box.</b> A curated box of the region to take home.</li></ul>
         </div>
         <figure class="lf-photo lf-photo--tall"><img src="images/v2/img_2546-800.webp" srcset="images/v2/img_2546-800.webp 800w" sizes="(min-width: 900px) 50vw, 100vw" width="800" height="1067" alt="A treehouse deck with chairs above the forest" loading="lazy" decoding="async"></figure>
       </div>
