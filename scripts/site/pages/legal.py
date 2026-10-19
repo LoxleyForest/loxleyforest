@@ -1,0 +1,138 @@
+"""The legal pages: /terms, /privacy, /cancellation.
+
+The words are legal content and are carried exactly as they stood on the old pages, em dashes
+included (the one place the no-dash rule does not reach). Only the markup changed: the old
+h3 headings are h2, the classes and inline styles are gone. Restyle here, never reword."""
+import re
+
+import build_v2 as B
+
+
+def tidy(head):
+    """head_from adds a blank line before </head> on every build when there is no preload;
+    keep it at one so a rebuild writes the same file (reported to the Forge)."""
+    return re.sub(r'\s*</head>\n$', '\n</head>\n', head)
+
+
+TERMS = ('Terms &amp; Conditions', 'The Ground Rules', 'Written like a conversation, not a contract.', '''
+      <p>Loxley Forest is our home. When you book a stay, you're a guest in it — and we treat you like one. Here's what we ask in return.</p>
+
+      <h2>Occupancy</h2>
+      <p>Each treehouse accommodates up to 6 guests. All guests must be listed at the time of booking. If your group changes, just let us know — we're flexible, not rigid.</p>
+
+      <h2>Children</h2>
+      <p>Absolutely welcome. We have two of our own. The rope bridge and elevated platforms require supervision of young children — the forest is an adventure, and we want everyone safe to enjoy it.</p>
+
+      <h2>Pets</h2>
+      <p>Well-behaved pets are welcome. We ask that you let us know at booking so we can prepare. Please keep pets off the furniture and bedding, and clean up after them on the trails. If your pet has an accident, we get it — just let us know.</p>
+
+      <h2>Smoking</h2>
+      <p>No smoking in or near the treehouses. The structures are canvas and wood, suspended in a forest. We think you understand why. If you'd like to smoke, we ask that you do so at the fire pit area on the ground level, away from the structures.</p>
+
+      <h2>Fires &amp; Safety</h2>
+      <p>The fire pit is yours to enjoy. We provide firewood and s'mores kits. We ask that you never use gasoline, lighter fluid, or accelerants. Keep fires in the fire pit only — never on the decks or platforms. Extinguish completely before going to sleep.</p>
+
+      <h2>The Property</h2>
+      <p>Loxley Forest is 42 acres of working forest. Trails are natural and unimproved — wear appropriate footwear. The creek and terrain can be slippery. Please stay on marked trails and respect the forest. This land has been here a long time, and we'd like to keep it that way.</p>
+
+      <h2>Noise</h2>
+      <p>We don't have formal quiet hours — it's never been an issue. The forest does the work. We ask that you keep noise at a level that respects the natural setting, especially after dark. No amplified music outdoors.</p>
+
+      <h2>Damage &amp; Liability</h2>
+      <p>We ask that you treat the treehouses with care. If something breaks or gets damaged during your stay, please let us know — accidents happen and honesty goes a long way. Guests are responsible for damage beyond normal wear.</p>
+      <p>Loxley Forest is not responsible for injury resulting from use of the property, trails, fire pit, rope bridges, or natural features. By booking, you acknowledge the inherent adventure of staying in a treehouse 60 feet in the air in a mountain forest — and you embrace it.</p>
+
+      <h2>Check-In &amp; Check-Out</h2>
+      <p>Check-in: 3:00 PM. Check-out: 11:00 AM. Early check-in or late check-out may be available — just ask. We'll accommodate when we can.</p>
+
+      <h2>Changes to These Terms</h2>
+      <p>We may update these terms as our property evolves. The current version always lives at this page.</p>
+
+      <p>Questions about anything here? Call <a href="tel:+17065024823">706-502-4823</a> or email <a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a>. We'd rather talk it through than have you guess.</p>
+      <p class="lf-legal-sign">— Mick &amp; Livy</p>
+''')
+
+PRIVACY = ('Privacy', 'Your Privacy at Loxley', 'Simple, plain-spoken, and personal.', '''
+      <p>We keep this simple because we believe it should be.</p>
+      <p>When you book a stay, submit an inquiry, or join our email list, we collect the information you provide — your name, email, phone number, and stay preferences. That's it.</p>
+      <p>We use this information for one purpose: to communicate with you about your stay, your experience, and occasional updates from the forest. We will never sell, rent, or share your personal information with third parties. Period.</p>
+      <p>If you receive emails from us and decide you'd rather not, every email includes an unsubscribe link that works immediately. No hoops.</p>
+      <p>We use cookies to understand how visitors interact with our website so we can make it better. No personal data is sold through these tools.</p>
+      <p>If you have questions about your privacy or want us to remove your information entirely, email <a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a> or call <a href="tel:+17065024823">706-502-4823</a>. We'll take care of it personally.</p>
+      <p class="lf-legal-sign">— Mick &amp; Livy</p>
+''')
+
+CANCELLATION = ('Cancellation', 'Cancellation &amp; Changes', 'The Forest Holds Your Spot', '''
+      <p>We get it: life happens. Cars break down, kids catch colds, and occasionally a cousin decides to get married on the exact weekend of your forest retreat. Here is exactly how it works.</p>
+
+      <h2>Payment</h2>
+      <p>Half of your stay is paid at booking. The balance is charged 30 days before check-in. Stays booked within 30 days of check-in are paid in full at booking.</p>
+
+      <h2>If you need to cancel</h2>
+      <p>We don't offer cash refunds for cancellations (though we make rare exceptions for genuinely extraordinary circumstances we can verify). Instead, we'll happily provide a credit for a future stay, redeemable within 6 months of your original booking date. Think of it as the forest saving your spot among the leaves for when the timing is better.</p>
+
+      <h2>If we rebook your dates</h2>
+      <p>If we're able to rebook your dates after a cancellation, we'll be more flexible about refund options. After all, if another guest gets to enjoy your spot, the forest is appeased.</p>
+
+      <h2>Weather</h2>
+      <p>The forest is beautiful in all conditions: rain brings mist, snow transforms the trees, and sunshine dapples through the canopy. We don't offer cancellations due to weather unless Mother Nature gets truly dramatic (hurricane-level dramatic).</p>
+
+      <h2>How to cancel or change</h2>
+      <p>Email <a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a> or call <a href="tel:+17065024823">706-502-4823</a>. We respond within 2 hours. Cancellation is confirmed when you receive written confirmation from us.</p>
+
+      <h2>Our philosophy</h2>
+      <p>We'd always rather have you here than issue a refund. If your plans change, talk to us before assuming the worst. We're a family, not a corporation — and we'll always try to find a way to make it work.</p>
+
+      <p class="lf-legal-sign">— Mick &amp; Livy</p>
+''')
+
+def legal(page, text):
+    eyebrow, h1, sub, words = text
+    head, gtm = B.head_from(page)
+    head = tidy(head)
+    body = f'''
+    <section class="lf-sec lf-dark lf-legal-top" aria-labelledby="lg-h">
+      <div class="lf-wrap">
+        <p class="lf-eyebrow">{eyebrow}</p>
+        <h1 class="lf-h1" id="lg-h">{h1}</h1>
+        <p class="lf-lead">{sub}</p>
+      </div>
+    </section>
+
+    <section class="lf-sec lf-light lf-legal">
+      <div class="lf-legal__text">
+{words}      </div>
+    </section>
+'''
+    return page, head, gtm, body, '/book', False
+
+
+def page_terms():
+    return legal('terms.html', TERMS)
+
+
+def page_privacy():
+    return legal('privacy.html', PRIVACY)
+
+
+def page_cancellation():
+    return legal('cancellation.html', CANCELLATION)
+
+
+PAGES = [page_terms, page_privacy, page_cancellation]
+
+CSS = '''
+.lf-legal-top { padding-top: calc(var(--hdr-h) + clamp(44px, 8vw, 96px)); padding-bottom: clamp(48px, 7vw, 80px); }
+.lf-legal-top .lf-wrap { max-width: 40rem; }
+.lf-legal-top .lf-h1 { font-size: clamp(2.6rem, 8vw, 4.2rem); }
+.lf-legal { padding-top: clamp(48px, 7vw, 88px); }
+.lf-legal__text { max-width: 40rem; margin: 0 auto; font-size: 1.2rem; line-height: 1.72; color: var(--bark); text-wrap: pretty; }
+.lf-legal__text p { margin: 0; }
+.lf-legal__text p + p { margin-top: 1em; }
+.lf-legal__text h2 { margin: 2.1em 0 0.45em; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 400; font-size: 1.8rem; line-height: 1.15; color: var(--forest-deep); text-wrap: balance; }
+.lf-legal__text h2 + p { margin-top: 0; }
+.lf-legal__text a { color: var(--forest-deep); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; white-space: nowrap; }
+.lf-legal__text a:hover { color: var(--bark); }
+.lf-legal__text .lf-legal-sign { margin-top: 1.6em; font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 1.4rem; color: var(--stone); }
+@media (max-width: 767px) { .lf-legal__text { font-size: 1.12rem; } .lf-legal__text h2 { font-size: 1.6rem; } }
+'''
