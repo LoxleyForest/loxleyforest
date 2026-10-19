@@ -16,6 +16,7 @@ scripts/site/v2img.py makes images/v2/<name>-800.webp and -1600.webp for pic().
 """
 import glob
 import importlib.util
+import json
 import os
 import re
 import sys
@@ -76,8 +77,12 @@ def header(book):
 
 
 def footer(book, gatehouse):
+    """gatehouse: False, True (the booking calendar) or 'stay' (the calendar's helpers and the
+    after-booking pages, /booked and /manage)."""
     links = ''.join(f'<a href="{h}">{t}</a>' for h, t in NAV)
     gh = '\n  <script src="js/gatehouse.js" defer></script>' if gatehouse else ''
+    if gatehouse == 'stay':
+        gh += '\n  <script src="js/gatehouse-stay.js" defer></script>'
     return f'''  <footer class="lf-foot">
     <div class="lf-foot__grid">
       <div>
@@ -86,7 +91,7 @@ def footer(book, gatehouse):
       </div>
       <nav aria-label="Footer">{links}<a href="/faq">Questions</a></nav>
       <nav aria-label="Contact"><a href="https://instagram.com/loxleyforest" target="_blank" rel="noopener">Instagram</a><a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a><a href="tel:+17065024823">706-502-4823</a></nav>
-      <div class="lf-foot__small"><span>&copy; 2026 Loxley Forest</span><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/cancellation">Cancellation</a></div>
+      <div class="lf-foot__small"><span>&copy; 2026 Loxley Forest</span><a href="/privacy">Privacy</a><a href="/terms">Terms</a></div>
     </div>
   </footer>
 
@@ -98,26 +103,32 @@ def footer(book, gatehouse):
 '''
 
 
+API = 'https://book.loxleyforest.com'
+UNIT = 'loxley-forest-canopy-treehouse-dahlonega'
+PRECONNECT = f'<link rel="preconnect" href="{API}" crossorigin>'
+
+# What the booking calendar shows until the open nights arrive: the shape of a month and a
+# sentence, never a blank box (js/gatehouse.js replaces it). Without script, a way to book.
+GH_WAIT = ('<div class="gh-wait" role="status"><div class="gh-wait__cal" aria-hidden="true">' + '<i></i>' * 35 + '</div>'
+           '<p class="gh-wait__words">Opening the calendar: every open night and its price.</p></div>'
+           '<noscript><p class="lf-book__alt">The calendar needs JavaScript to run. <a href="/book#inquiry">Send us your dates</a>, '
+           'or call or text <a href="tel:+17065024823">706-502-4823</a>.</p></noscript>')
+
+# The calendar on the home, treehouse and experiences pages: live nights and the all-in total,
+# then "Book these nights" carries the dates to /book, where the checkout is.
 BOOK = f'''    <section class="lf-sec lf-parch lf-book" id="book" aria-labelledby="book-h">
       <div class="lf-book__head">
         <p class="lf-eyebrow">Your dates</p>
         <h2 class="lf-h2" id="book-h">Pick your nights. <em>See the whole price at once.</em></h2>
         <p class="lf-lead" style="margin-left:auto;margin-right:auto">Every open night shows its rate. Choose your dates and the total appears, taxes and cleaning included. Book direct and deal with the family who built it.</p>
-        <ul class="lf-promise" data-gh-live-only hidden>
-          <li>A 25% retainer holds your nights</li>
-          <li>The rest is due 30 days before you arrive</li>
-          <li>One free reschedule within a year, up to 7 days out</li>
-        </ul>
       </div>
       <div id="gatehouse"
-           data-api="https://book.loxleyforest.com"
-           data-unit="loxley-forest-canopy-treehouse-dahlonega"
-           data-stripe-key=""
-           data-snapshot="data/gatehouse-snapshot.json"
+           data-api="{API}"
+           data-unit="{UNIT}"
            data-handoff="/book"
-           data-fallback="#gh-fallback"></div>
+           data-fallback="#gh-fallback">{GH_WAIT}</div>
       <div id="gh-fallback" class="lf-book__alt" hidden>
-        <p>Booking is resting for a moment. <a href="/book">Send us your dates</a> and we'll write back.</p>
+        <p>Our booking calendar isn't answering just now. <a href="/book#inquiry">Send us your dates</a> and we'll write back within two hours, or call or text <a href="tel:+17065024823">706-502-4823</a>.</p>
       </div>
       <p class="lf-book__alt">Questions before you book? <a href="/faq">Read the answers</a> or write to stay@loxleyforest.com.</p>
     </section>
@@ -203,6 +214,92 @@ def final_call(book):
 '''
 
 
+# ------------------------------------------------- readable by AI assistants
+
+# schema.org for the home page (the place) and the treehouse page (the stay itself). Facts only
+# from the site and loxley-rescue canon/voice.md, "WHAT IS TRUE ABOUT THE PLACE", plus Mick's
+# rulings of 2026-10-19 (dogs). No prices (Mick's ruling: prices stay off the website; the live
+# price is at /book and the booking API) and no street address (it goes to booked guests only).
+# TODO(Architect): sameAs holds only Instagram, the one profile the site links. Add the Airbnb
+# listing and the Google Business Profile once their links are on the site.
+SITE = 'https://loxleyforest.com'
+ADDRESS = {'@type': 'PostalAddress', 'addressLocality': 'Dahlonega', 'addressRegion': 'GA', 'addressCountry': 'US'}
+RATING = {'@type': 'AggregateRating', 'ratingValue': '4.98', 'reviewCount': '200', 'bestRating': '5'}
+SAME_AS = ['https://instagram.com/loxleyforest']
+DOGS = 'Up to two well-behaved dogs are welcome.'
+RESERVE = {'@type': 'ReserveAction',
+           'target': {'@type': 'EntryPoint', 'urlTemplate': SITE + '/book?checkIn={checkIn}&checkOut={checkOut}',
+                      'actionPlatform': ['https://schema.org/DesktopWebPlatform', 'https://schema.org/MobileWebPlatform']},
+           'result': {'@type': 'LodgingReservation', 'name': 'A stay in the treehouse at Loxley Forest'}}
+
+
+def feature(name, value=True):
+    return {'@type': 'LocationFeatureSpecification', 'name': name, 'value': value}
+
+
+TREEHOUSE_FEATURES = [feature(n) for n in (
+    'Sixty feet up in the forest canopy', 'A hundred-foot suspended rope bridge to the door',
+    'A queen bed framed by panoramic windows', 'Full bathroom', 'A private deck above the forest floor',
+    'A wood-fired pizza oven on the sky deck, with fresh dough', 'A fire pit on the forest floor',
+    'Heated for the cold seasons', 'A kitchen', 'WiFi', 'A pop-up projector for cinema night',
+    '42 acres of cove forest to explore', 'Children welcome', 'Dogs welcome, up to two')] + [feature('Television', False)]
+
+
+def schema_home():
+    return {
+        '@context': 'https://schema.org', '@type': 'LodgingBusiness', '@id': SITE + '/#lodging',
+        'name': 'Loxley Forest', 'url': SITE,
+        'description': ('A hand-built luxury treehouse sixty feet up in the canopy of a North Georgia cove forest, reached by a '
+                         'hundred-foot suspended rope bridge, on 42 acres at 1,470 feet in Dahlonega, Georgia, just over an hour '
+                         'from Atlanta. One treehouse; it sleeps 4 comfortably and up to 6 guests. Children and up to two '
+                         'well-behaved dogs are welcome. No smoking. A second treehouse is coming soon.'),
+        'email': 'stay@loxleyforest.com', 'telephone': '+1-706-502-4823',
+        'image': [SITE + '/images/EQ3A0906.webp'],
+        'address': ADDRESS, 'checkinTime': '15:00', 'checkoutTime': '11:00',
+        'petsAllowed': DOGS, 'smokingAllowed': False,
+        'amenityFeature': TREEHOUSE_FEATURES,
+        'aggregateRating': RATING, 'sameAs': SAME_AS,
+        'containsPlace': {'@id': SITE + '/treehouses#treehouse'},
+        'potentialAction': RESERVE,
+    }
+
+
+def schema_treehouse():
+    return {
+        '@context': 'https://schema.org', '@type': 'Accommodation', '@id': SITE + '/treehouses#treehouse',
+        'name': 'The treehouse at Loxley Forest', 'url': SITE + '/treehouses',
+        'description': ('A hand-built treehouse with a canvas peak, sixty feet up in living oaks, reached by a hundred-foot '
+                        'suspended rope bridge strung with small warm lights. A queen bed framed by panoramic windows, a full '
+                        'bathroom, a private deck and a wood-fired pizza oven on the sky deck. Sleeps 4 comfortably, up to 6 '
+                        'guests in all. Children and up to two well-behaved dogs are welcome. No smoking. Check-in from 3:00 PM, '
+                        'check-out by 11:00 AM.'),
+        'image': [SITE + '/images/v2/eq3a0907-1600.webp', SITE + '/images/v2/img_0831-800.webp', SITE + '/images/v2/aerial-bridge-1600.webp'],
+        'address': ADDRESS,
+        'occupancy': {'@type': 'QuantitativeValue', 'minValue': 1, 'maxValue': 6, 'unitText': 'guests'},
+        'bed': {'@type': 'BedDetails', 'numberOfBeds': 1, 'typeOfBed': 'Queen'},
+        'numberOfFullBathrooms': 1,
+        'petsAllowed': DOGS, 'smokingAllowed': False,
+        'amenityFeature': TREEHOUSE_FEATURES,
+        'containedInPlace': {'@type': 'LodgingBusiness', '@id': SITE + '/#lodging', 'name': 'Loxley Forest', 'url': SITE,
+                             'address': ADDRESS, 'checkinTime': '15:00', 'checkoutTime': '11:00',
+                             'telephone': '+1-706-502-4823', 'aggregateRating': RATING, 'sameAs': SAME_AS},
+        'potentialAction': RESERVE,
+    }
+
+
+def set_schema(head, data):
+    """The page's schema.org block, written from data on every build (replaced in place, or
+    placed before the preloads so a rebuild writes the same file)."""
+    body = json.dumps(data, indent=2, ensure_ascii=False).replace('</', '<\\/')
+    block = '<!-- Schema: ' + data['@type'] + ' -->\n  <script type="application/ld+json">\n' + body + '\n  </script>'
+    pat = re.compile(r'<!-- Schema: [A-Za-z]+ -->\s*<script type="application/ld\+json">.*?</script>', re.S)
+    if pat.search(head):
+        return pat.sub(lambda m: block, head, count=1)
+    at = head.find('<link rel="preload"')
+    at = at if at >= 0 else head.rindex('</head>')
+    return head[:at] + block + '\n  ' + head[at:]
+
+
 # ---------------------------------------------------------------- the pages
 
 def page_index():
@@ -225,7 +322,7 @@ def page_index():
         <h1 class="lf-h1">Sleep where the forest <em>holds you</em></h1>
         <p class="lf-lead">A hand-built treehouse sixty feet up in the canopy, reached by a hundred-foot rope bridge. Just over an hour from Atlanta.</p>
         <div class="lf-actions">
-          <a href="#book" class="lf-btn">{ACORN}Book your dates</a>
+          <a href="/book" class="lf-btn">{ACORN}Book your dates</a>
           <a href="/treehouses" class="lf-link">See the treehouse</a>
         </div>
         <p class="lf-proof"><span class="lf-proof__stars" aria-hidden="true">★★★★★</span><span>4.98 from 200+ guest reviews</span></p>
@@ -335,8 +432,8 @@ def page_index():
       </div>
     </section>
 
-{final_call('#book')}'''
-    return 'index.html', head, gtm, body, '#book', True
+{final_call('/book')}'''
+    return 'index.html', set_schema(head, schema_home()), gtm, body, '/book', True
 
 
 def page_treehouses():
@@ -355,7 +452,7 @@ def page_treehouses():
         <p class="lf-eyebrow">60 feet up · a 100-foot rope bridge</p>
         <h1 class="lf-h1">Not a cabin with a view. <em>A home in the sky.</em></h1>
         <p class="lf-lead">Hand-built, sixty feet up in a canopy that has been growing for over a hundred years.</p>
-        <div class="lf-actions"><a href="#book" class="lf-btn">{ACORN}Book your dates</a></div>
+        <div class="lf-actions"><a href="/book" class="lf-btn">{ACORN}Book your dates</a></div>
       </div>
     </section>
 
@@ -420,12 +517,15 @@ def page_treehouses():
 {BOOK}
 {REVIEWS}
 {treehouse_two()}
-{final_call('#book')}'''
-    return 'treehouses.html', head, gtm, body, '#book', True
+{final_call('/book')}'''
+    return 'treehouses.html', set_schema(head, schema_treehouse()), gtm, body, '/book', True
 
 
 def build(page):
     name, head, gtm, body, book, gatehouse = page()
+    if gatehouse and PRECONNECT not in head:
+        head = head.replace('<link rel="preconnect" href="https://fonts.googleapis.com">',
+                            PRECONNECT + '\n  <link rel="preconnect" href="https://fonts.googleapis.com">', 1)
     html = (head + '<body class="v2">\n' + gtm + '\n' + header(book) + '\n  <main id="main">\n' + body + '\n  </main>\n\n'
             + footer(book, gatehouse) + ('  <script src="js/crossing.js" defer></script>\n' if 'data-crossing' in body else '')
             + '</body>\n</html>\n')

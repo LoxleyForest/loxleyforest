@@ -17,11 +17,11 @@ SRC = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 ROBOTS = '<meta name="robots" content="noindex, nofollow, noarchive">'
 PAGES = ['index.html', 'treehouses.html', 'experiences.html', 'elopements.html', 'our-story.html', 'gallery.html',
          'faq.html', 'local-guide.html', 'book.html', 'booking-confirmed.html', 'success.html', '404.html',
-         'terms.html', 'privacy.html', 'cancellation.html']
+         'terms.html', 'privacy.html']
 CLEAN = [p[:-5] for p in PAGES if p != 'index.html']
 ASSETS = ['css/global.css', 'css/gatehouse.css', 'css/v2.css', 'css/v2-pages.css', 'js/vendor/lenis.min.js', 'js/global.js', 'js/v2.js',
           'js/reviews.js', 'js/gatehouse.js', 'js/crossing.js', 'images/crossing/crossing-still-phone.webp',
-          'images/crossing/crossing-still-desk.webp', 'data/gatehouse-snapshot.json', 'images/brand/logo/loxley-wordmark-on-dark.svg',
+          'images/crossing/crossing-still-desk.webp', 'images/brand/logo/loxley-wordmark-on-dark.svg',
           'favicon.svg', 'apple-touch-icon.png']
 
 

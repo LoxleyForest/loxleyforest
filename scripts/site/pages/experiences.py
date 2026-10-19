@@ -98,7 +98,7 @@ def page_experiences():
         <p class="lf-eyebrow">The Loxley experience</p>
         <h1 class="lf-h1">We don't offer amenities. <em>We offer chapters.</em></h1>
         <p class="lf-lead">Your stay is a story with a beginning, a middle, and a moment you'll still be talking about five years from now.</p>
-        <div class="lf-actions"><a href="#book" class="lf-btn">{ACORN}Book your dates</a><a href="#more" class="lf-link">What you can add</a></div>
+        <div class="lf-actions"><a href="/book" class="lf-btn">{ACORN}Book your dates</a><a href="#more" class="lf-link">What you can add</a></div>
       </div>
     </section>
 
@@ -143,8 +143,8 @@ def page_experiences():
     <!-- ========== YOUR DATES ========== -->
 {B.BOOK}
 {B.REVIEWS}
-{B.final_call('#book')}'''
-    return 'experiences.html', head, gtm, body, '#book', True
+{B.final_call('/book')}'''
+    return 'experiences.html', head, gtm, body, '/book', True
 
 
 PAGES = [page_experiences]
