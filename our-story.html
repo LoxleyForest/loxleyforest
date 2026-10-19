@@ -30,357 +30,218 @@
 
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap">
   <link rel="stylesheet" href="css/global.css">
-  <link rel="stylesheet" href="css/our-story.css">
-  <link rel="preload" as="image" type="image/webp" href="images/EQ3A8862.webp">
+  <link rel="stylesheet" href="css/gatehouse.css">
+  <link rel="stylesheet" href="css/v2.css">
+  <link rel="stylesheet" href="css/v2-pages.css">
+  <link rel="preload" as="image" type="image/webp" href="images/v2/eq3a8862-1600.webp" media="(min-width: 768px)" fetchpriority="high">
+  <link rel="preload" as="image" type="image/webp" href="images/v2/eq3a8862-800.webp" media="(max-width: 767px)" fetchpriority="high">
 </head>
-<body>
+<body class="v2">
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5N4BX66K"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
   <a href="#main" class="skip-link">Skip to content</a>
 
-  <!-- ========== ANNOUNCEMENT BAR ========== -->
-  <div class="announcement-bar">
-    <div class="announcement-bar__track">
-      <a href="/canopy-club" class="announcement-bar__message active">THE CANOPY CLUB — FOUNDING LIST OPEN · LIMITED TO 50 COUPLES</a>
-      <a href="/treehouses#treehouse-2" class="announcement-bar__message">TREEHOUSE 2 — COMING SOON · FIRST NIGHTS GO TO THE LIST</a>
-      <a href="/treehouses" class="announcement-bar__message">A HANDFUL OF FULLY SUSPENDED TREEHOUSES EXIST ON EARTH — THIS FOREST GROWS THEM</a>
-    </div>
-    <button class="announcement-bar__close" aria-label="Dismiss announcement">&times;</button>
-  </div>
-
-  <!-- ========== NAVIGATION ========== -->
-  <nav class="nav nav--transparent">
-    <a href="/" class="nav__wordmark">Loxley Forest</a>
-    <div class="nav__links">
-      <a href="/treehouses" class="nav__link">The Treehouses</a>
-      <a href="/elopements" class="nav__link">Elopements</a>
-      <a href="/experiences" class="nav__link">Experiences</a>
-      <a href="/canopy-club" class="nav__link">Canopy Club</a>
-      <a href="/our-story" class="nav__link">Our Story</a>
-      <a href="/gallery" class="nav__link">Gallery</a>
-      <a href="/local-guide" class="nav__link">Local Guide</a>
-    </div>
-    <a href="/book" class="btn btn--primary nav__cta">Book Your Stay</a>
-    <button class="nav__hamburger" aria-label="Toggle menu">
-      <span></span><span></span><span></span>
-    </button>
-  </nav>
-
-  <div class="nav__overlay">
-    <a href="/treehouses" class="nav__link">The Treehouses</a>
-    <a href="/elopements" class="nav__link">Elopements</a>
-    <a href="/experiences" class="nav__link">Experiences</a>
-    <a href="/canopy-club" class="nav__link">Canopy Club</a>
-    <a href="/our-story" class="nav__link">Our Story</a>
-    <a href="/gallery" class="nav__link">Gallery</a>
-    <a href="/local-guide" class="nav__link">Local Guide</a>
-    <a href="/book" class="btn btn--primary" style="margin-top: 16px;">Book Your Stay</a>
+  <header class="lf-hdr">
+    <a href="/" class="lf-hdr__mark" aria-label="Loxley Forest, home"><img src="images/brand/logo/loxley-wordmark-on-dark.svg" alt="Loxley Forest" width="236" height="32"></a>
+    <nav class="lf-hdr__nav" aria-label="Main"><a href="/treehouses">The Treehouse</a><a href="/experiences">Experiences</a><a href="/elopements">Elopements</a><a href="/our-story">Our Story</a><a href="/gallery">Gallery</a><a href="/local-guide">Local Guide</a></nav>
+    <a href="/book" class="lf-btn lf-hdr__book">Book your dates</a>
+    <button class="lf-menu-btn" type="button" aria-expanded="false" aria-controls="lf-menu" aria-label="Open menu"><span></span></button>
+  </header>
+  <div class="lf-menu" id="lf-menu" aria-hidden="true">
+    <nav aria-label="Menu"><a href="/treehouses">The Treehouse</a><a href="/experiences">Experiences</a><a href="/elopements">Elopements</a><a href="/our-story">Our Story</a><a href="/gallery">Gallery</a><a href="/local-guide">Local Guide</a><a href="/faq">Questions</a></nav>
+    <a href="/book" class="lf-btn"><svg viewBox="0 0 16 20" aria-hidden="true"><path fill="currentColor" d="M8 2.2C4.6 2.2 1.9 4.6 1.9 8H14.1C14.1 4.6 11.4 2.2 8 2.2ZM2.8 8.9H13.2C13.2 13.4 10.8 17.2 8 19.2C5.2 17.2 2.8 13.4 2.8 8.9ZM7.6 2.4C7.7 1.2 8.4 .4 9.6 .1L9.9 .7C9 1 8.5 1.6 8.5 2.4Z"/></svg>Book your dates</a>
+    <p class="lf-menu__foot">Dahlonega, Georgia<br>Just over an hour from Atlanta</p>
   </div>
 
   <main id="main">
 
     <!-- ========== HERO ========== -->
-    <section class="hero">
-      <div class="hero__media">
-        <picture><source srcset="images/EQ3A8862.webp" type="image/webp"><img src="images/EQ3A8862.webp" alt="Treehouse in fog — ghost in the mist" style="width:100%;height:100%;object-fit:cover;"></picture>
-      </div>
-      <div class="hero__overlay"></div>
-      <div class="hero__content">
-        <p class="eyebrow hero__eyebrow reveal">Our Story</p>
-        <h1 class="headline-hero hero__headline reveal">We Came Here to Heal.<br>We Stayed to Build.</h1>
-      </div>
-    </section>
-
-    <!-- ========== SECTION 1: THE ORIGIN ========== -->
-    <section class="section section--linen">
-      <div class="container--narrow">
-
-        <p class="body-large story-paragraph story-paragraph--drop-cap reveal">
-          There's a place in the North Georgia foothills, just over an hour from Atlanta, where the road descends through a tunnel of mountain laurel so thick the branches nearly meet overhead.
-        </p>
-
-        <p class="body-large story-paragraph reveal">
-          Mick and Livy found it during the hardest season of their lives. They'd been through something that nearly broke them — the kind of loss that leaves you sitting on the couch for a week, barely speaking, because there aren't words for it yet. When words finally came back, they were small ones. Maybe a long weekend somewhere. A change of scenery. Just to breathe.
-        </p>
-
-        <p class="body-large story-paragraph reveal">
-          It was Livy's idea. A town some of her friends had visited for a wedding — a place called Dahlonega. Small town. Wineries. Mountains. "What about there?" she said. Mick had never heard of it.
-        </p>
-
-        <!-- Full-bleed image break -->
-        <div class="story-image reveal">
-          <picture><source srcset="images/EQ3A0107.webp" type="image/webp"><img src="images/EQ3A0107.webp" alt="Misty forest canopy — fog burning off the valley" style="width:100%;height:100%;object-fit:cover;" loading="lazy"></picture>
-        </div>
-
-        <p class="body-large story-paragraph reveal">
-          Two weeks later, on a cold January morning with fog still burning off the valley, they drove down a driveway lined with mountain laurel. Two hundred feet in, Livy said: "This is it. Come on."
-        </p>
-
-        <p class="body-large story-paragraph reveal">
-          They hadn't even seen the house yet.
-        </p>
-
-        <p class="body-large story-paragraph reveal">
-          They'd been looking for a place to start their family. Mick had just exited his construction business. Livy was transitioning out of running a gymnastics facility. They'd scouted land in North Carolina, South Carolina, Tennessee — nothing felt right. Dahlonega was supposed to be a weekend away, not a life change.
-        </p>
-
-        <p class="body-large story-paragraph reveal">
-          They stayed in a treehouse across the street from where they live now — not a real treehouse, just a house with a tree built into the deck. But something about the canopy, the creek, the elevation, the quiet — it planted a seed.
-        </p>
-
-        <!-- Full-bleed image break -->
-        <div class="story-image reveal">
-          <picture><source srcset="images/dji_fly_20251103_165546_797_1762207500788_pano.webp" type="image/webp"><img src="images/dji_fly_20251103_165546_797_1762207500788_pano.webp" alt="Aerial view of the 42-acre Loxley Forest property" style="width:100%;height:100%;object-fit:cover;" loading="lazy"></picture>
-        </div>
-
-        <p class="body-large story-paragraph reveal">
-          They looked at five properties that weekend. All overpriced. All wrong. They were ready to drive the nine hours back to Ohio and keep looking. Then their realtor called on Saturday night: "One more just popped up. The photos are terrible. But go see it tomorrow."
-        </p>
-
-        <p class="body-large story-paragraph reveal">
-          Mick wanted to skip it. He wanted cinnamon buns from Picnics and an early start on the drive home. Livy said, "Why don't we just take our coffee and walk around it?"
-        </p>
-
-        <p class="body-large story-paragraph reveal">
-          Two hundred feet down the driveway, through the laurel tunnel, through the fog — "This is it."
-        </p>
-
-        <p class="body-large story-paragraph reveal">
-          They wrote an offer within a week. Before they even closed, they had a treehouse designer on the property, picking sites. They found five.
-        </p>
-
+    <section class="lf-hero lf-hero--page st-hero" aria-label="Our story">
+      <div class="hero__media"><picture><source media="(max-width: 767px)" srcset="images/v2/eq3a8862-800.webp" type="image/webp"><img src="images/v2/eq3a8862-1600.webp" width="1600" height="1067" alt="The treehouse canvas in thick fog among bare trees" fetchpriority="high"></picture></div>
+      <div class="lf-hero__shade"></div>
+      <div class="lf-hero__inner">
+        <p class="lf-eyebrow">Our story</p>
+        <h1 class="lf-h1">We came here to heal. <em>We stayed to build.</em></h1>
+        <p class="lf-lead">Mick, Livy, Aurora and Tilly Mac. The family that built Loxley Forest by hand, and lives in it.</p>
       </div>
     </section>
 
-    <!-- ========== SECTION 2: WHAT WE WANTED TO BUILD ========== -->
-    <section class="section section--cream">
-      <div class="container--narrow">
-
-        <p class="eyebrow reveal" style="margin-bottom: 24px; text-align: center;">What We Wanted to Build</p>
-
-        <p class="body-large story-paragraph reveal">
-          Mick has always been the kind of person who recharges by disappearing. Multi-day hikes into backcountry. Canoe trips deep into places with no cell service. Hunting and fishing trips where the only sounds are water and wind. That was always his idea of a vacation — get lost, stay lost, come back different.
-        </p>
-
-        <p class="body-large story-paragraph reveal">
-          But most people don't have two or three weeks to paddle into the wilderness and set up camp. They have a weekend. Maybe two nights between the obligations that never stop pulling at them. They want the silence and the forest and the feeling of being truly away — but they don't have the time or the gear or the trail miles to earn it the hard way.
-        </p>
-
-        <p class="body-large story-paragraph reveal">
-          That's what Loxley was designed to solve.
-        </p>
-
-        <!-- Full-bleed image break -->
-        <div class="story-image reveal">
-          <picture><source srcset="images/EQ3A2186.webp" type="image/webp"><img src="images/EQ3A2186.webp" alt="Platform truss from below" style="width:100%;height:100%;object-fit:cover;" loading="lazy"></picture>
+    <!-- ========== HOW WE FOUND IT ========== -->
+    <section class="lf-sec lf-light" aria-labelledby="find-h">
+      <div class="st-prose">
+        <p class="lf-eyebrow lf-rise">How we found it</p>
+        <h2 class="lf-h2 lf-rise" id="find-h">A tunnel of <em>mountain laurel</em></h2>
+        <div class="lf-body st-body lf-rise">
+          <p class="st-drop">There's a place in the North Georgia foothills, just over an hour from Atlanta, where the road drops through a tunnel of mountain laurel so thick the branches nearly meet overhead.</p>
+          <p>Mick and Livy found it in the hardest season of their lives. They had been through a loss that nearly broke them, the kind that leaves you on the couch for a week, barely speaking, because there are no words for it yet. When words came back, they were small ones. A long weekend somewhere. A change of scenery. Just to breathe.</p>
+          <p>It was Livy's idea. Some of her friends had been to a wedding in a small town with wineries and mountains, a place called Dahlonega. "What about there?" she said. Mick had never heard of it.</p>
         </div>
-
-        <p class="body-large story-paragraph reveal">
-          We loved this property so much that we wanted to share it — not as a business first, but as a place where people could come and do what the forest does for us. Unplug. Breathe. Sit with the person you love and hear nothing but the creek and the wind through the canopy. Watch your kids discover what it's like to be somewhere with no screens competing for their attention.
-        </p>
-
-        <p class="body-large story-paragraph reveal">
-          We designated five treehouse sites on the property before we'd even closed on the land. The vision was always shared — Mick saw the engineering challenge, the structure, the way a platform could float between five trees. Livy saw the experience — the feeling of waking up in the canopy, the details that would make someone feel cared for, the reason a couple would drive just over an hour from Atlanta and never want to leave. Every design decision passed through both lenses: is it structurally extraordinary, and does it feel like someone thought about every moment of your stay?
-        </p>
-
-        <p class="body-large story-paragraph reveal">
-          How many people can say they've spent the night hanging from five oak trees, sixty feet in the air, with nothing between them and the stars but canvas and canopy? That's what we wanted to offer. Not a hotel room with a view. A night in the forest that changes how you feel when you drive home on Sunday.
-        </p>
-
+      </div>
+      <figure class="st-bleed lf-rise"><img src="images/v2/eq3a0107-800.webp" srcset="images/v2/eq3a0107-800.webp 800w, images/v2/eq3a0107-1600.webp 1600w" sizes="(min-width: 1200px) 1200px, 100vw" width="800" height="533" alt="Fog lifting through tall hardwoods, morning light coming through the trunks" loading="lazy" decoding="async"></figure>
+      <div class="st-prose">
+        <div class="lf-body st-body lf-rise">
+          <p>They had been looking for a place to start their family. Mick had just exited his construction business. Livy was moving on from running a gymnastics facility. They had scouted land in North Carolina, South Carolina and Tennessee, and nothing felt right. Dahlonega was supposed to be a weekend away, not a life change.</p>
+          <p>Two weeks later they were there. They stayed in a treehouse across the street from where they live now. Not a real treehouse, just a house with a tree built into the deck. But the canopy, the creek, the elevation and the quiet planted a seed.</p>
+          <p>They looked at five properties that weekend. All overpriced. All wrong. They were ready to drive the nine hours back to Ohio and keep looking. Then on Saturday night their realtor called: "One more just popped up. The photos are terrible. But go see it tomorrow."</p>
+          <p>Mick wanted to skip it. He wanted cinnamon buns from Picnics and an early start on the drive home. Livy said, "Why don't we just take our coffee and walk around it?"</p>
+          <p>So on a cold January morning, with fog still burning off the valley, they drove down a driveway lined with mountain laurel. Two hundred feet in, through the laurel tunnel, through the fog, Livy said it.</p>
+        </div>
+        <p class="st-quote lf-rise">&ldquo;This is it. Come on.&rdquo;</p>
+        <div class="lf-body st-body lf-rise">
+          <p>They hadn't even seen the house yet.</p>
+          <p>They wrote an offer within a week. Before they had even closed, a treehouse designer was on the property picking sites. They found five.</p>
+        </div>
       </div>
     </section>
 
-    <!-- ========== SECTION 3: WHAT WE ACTUALLY BUILT ========== -->
-    <section class="section section--linen">
-      <div class="container--narrow">
+    <!-- ========== THE LAND ========== -->
+    <figure class="st-band" aria-label="The land from above"><img src="images/v2/aerial-fall-800.webp" srcset="images/v2/aerial-fall-800.webp 800w, images/v2/aerial-fall-1600.webp 1600w" sizes="100vw" width="800" height="576" alt="From above in fall: the treehouse canvas showing through a canopy of orange, red and gold" loading="lazy" decoding="async"></figure>
 
-        <p class="eyebrow reveal" style="margin-bottom: 24px; text-align: center;">What We Actually Built</p>
-
-        <p class="body-large story-paragraph reveal">
-          Mick and Livy designed the treehouses in collaboration with a treehouse engineering firm — a tetrahedron frame system that sandwiches steel between wood for maximum strength at minimum weight, suspended from living trees by specialized hardware. The roof is canvas instead of timber, again to keep the load on the trees as light as possible. Every structural element was engineered, every connection point calculated. But engineering only gets you a platform in the sky. It was Livy who insisted on a full bathroom in the canopy — a waterfall shower sixty feet above the forest floor, because she wasn't climbing down a tree in the middle of the night, and neither should anyone else. The hidden details you'll discover during your stay — the warmth of the lighting, the placement of every window to frame the canopy just right, the way the interior feels intimate instead of exposed — that's Livy's hand.
-        </p>
-
-        <p class="body-large story-paragraph reveal">
-          Then the real work began.
-        </p>
-
-        <!-- Full-bleed image break -->
-        <div class="story-image reveal">
-          <picture><source srcset="images/EQ3A0946.webp" type="image/webp"><img src="images/EQ3A0946.webp" alt="Bridge underside steel and joinery" style="width:100%;height:100%;object-fit:cover;" loading="lazy"></picture>
+    <!-- ========== WHAT WE WANTED TO BUILD ========== -->
+    <section class="lf-sec lf-dark" aria-labelledby="want-h">
+      <div class="lf-wrap lf-split">
+        <div>
+          <p class="lf-eyebrow lf-rise">What we wanted to build</p>
+          <h2 class="lf-h2 lf-rise" id="want-h">Get lost. Stay lost. <em>Come back different.</em></h2>
+          <div class="lf-body lf-rise" style="margin-top:26px">
+            <p>Mick has always recharged by disappearing. Multi-day hikes into the backcountry. Canoe trips deep into places with no cell service. Hunting and fishing trips where the only sounds are water and wind. That was always his idea of a vacation.</p>
+            <p>Most people don't have two or three weeks to paddle into the wilderness and set up camp. They have a weekend. Maybe two nights between the obligations that never stop pulling at them. They want the silence, the forest and the feeling of being truly away, without the time, the gear or the trail miles to earn it the hard way.</p>
+            <p>That's what Loxley was designed to solve.</p>
+          </div>
         </div>
-
-        <p class="body-large story-paragraph reveal">
-          Nothing came in by machine. No ATVs. No excavators. Every beam, every bolt, every panel was carried four hundred feet down the mountainside by hand — by Mick, by a team of carpenters, and by a crew of arborists and riggers, some of whom had been featured on HGTV. They used wagons and carts when they could. They used their shoulders when they couldn't. They did it this way because Mick and Livy loved the forest too much to tear it up with equipment.
-        </p>
-
-        <p class="body-large story-paragraph reveal">
-          Mick built much of the framing himself. The modular system was designed to bolt together like a massive set of building blocks — triangles interlocking with triangles — but off-site engineering and on-site reality don't always agree. Making it fit, sixty feet in the air, in the canopy, over a creek, on the side of a ridge — that was the craft. Nine months from breaking ground to a finished treehouse. Triple what they'd planned. The terrain and complexity of building something this ambitious in a living forest humbled everyone involved.
-        </p>
-
-        <p class="body-large story-paragraph reveal">
-          Livy was pregnant with their first daughter, Aurora, through the entire build. Aurora arrived before it was finished. They paused for six months — because family comes first, always.
-        </p>
-
-        <!-- Full-bleed image break -->
-        <div class="story-image reveal">
-          <picture><source srcset="images/EQ3A0907.webp" type="image/webp"><img src="images/EQ3A0907.webp" alt="Rope bridge construction through the canopy" style="width:100%;height:100%;object-fit:cover;" loading="lazy"></picture>
+        <figure class="lf-photo lf-photo--tall lf-rise"><img src="images/v2/eq3a2186-800.webp" srcset="images/v2/eq3a2186-800.webp 800w, images/v2/eq3a2186-1600.webp 1600w" sizes="(min-width: 900px) 50vw, 100vw" width="800" height="533" alt="The treehouse platform seen from the forest floor, its wooden truss overhead" loading="lazy" decoding="async"></figure>
+      </div>
+      <div class="lf-wrap lf-split lf-split--flip" style="margin-top:72px">
+        <div>
+          <div class="lf-body lf-rise">
+            <p>We loved this land so much we wanted to share it. Not as a business first, but as a place where people could come and do what the forest does for us. Unplug. Breathe. Sit with the person you love and hear nothing but the creek and the wind in the canopy. Watch your kids find out what it's like to be somewhere with no screens competing for their attention.</p>
+            <p>We marked five treehouse sites before we had even closed on the land. The vision was always shared. Mick saw the engineering: the structure, the way a platform could float between five trees. Livy saw the experience: waking up in the canopy, the details that make someone feel cared for, the reason a couple would drive just over an hour from Atlanta and never want to leave.</p>
+            <p>Every design decision passed through both. Is it structurally extraordinary? And does it feel like someone thought about every moment of your stay?</p>
+          </div>
         </div>
-
-        <p class="body-large story-paragraph reveal">
-          The rope bridge came later. Mick could see the path — a clear line through the canopy that screamed "this is where it goes." The arborists warned him: a hundred feet is a massive span, and trees could come down on it. They built it anyway. An elite crew of riggers from North Carolina strung the first cables between the trees, and in two weeks, those cables became a hundred-foot rope bridge suspended over the valley. Mick was alongside them the entire build, doing carpentry and saw work. The deck planks are milled from white oak salvaged from standing dead trees on the property — wood that was already here, given a second life.
-        </p>
-
-        <p class="body-large story-paragraph reveal">
-          By then, Livy was pregnant with their second daughter, Tilly Mac. The bridge was built while Tilly Mac was on the way.
-        </p>
-
-        <p class="body-large story-paragraph reveal">
-          That's the rhythm of Loxley Forest. Build. Pause for the family. Build again. No investor timelines. No grand opening deadlines. Just two people building something extraordinary at the pace that lets them be present for the life growing alongside it.
-        </p>
-
+        <figure class="lf-photo lf-photo--tall lf-rise"><img src="images/v2/eq3a2149-800.webp" srcset="images/v2/eq3a2149-800.webp 800w, images/v2/eq3a2149-1600.webp 1600w" sizes="(min-width: 900px) 50vw, 100vw" width="800" height="533" alt="The steel and wood frame beneath the treehouse deck, hung among fall trees" loading="lazy" decoding="async"></figure>
+      </div>
+      <div class="lf-wrap lf-center" style="margin-top:88px">
+        <p class="st-quote st-quote--wide lf-rise">How many people can say they've spent the night hanging from five oak trees, sixty feet in the air, with nothing between them and the stars but canvas and canopy?</p>
+        <p class="lf-lead lf-rise">Not a hotel room with a view. A night in the forest that changes how you feel when you drive home on Sunday.</p>
       </div>
     </section>
 
-    <!-- ========== SECTION 4: WHY LOXLEY ========== -->
-    <section class="section section--cream">
-      <div class="container--narrow">
-
-        <p class="eyebrow reveal" style="margin-bottom: 24px; text-align: center;">Why Loxley</p>
-
-        <p class="body-large story-paragraph reveal">
-          The name comes from Robin Hood — Robin of Loxley, who made his stand in Sherwood Forest. Mick and Livy always loved that story. Not the stealing-from-the-rich part — the living-in-the-forest part. The idea that a forest could be a home, a refuge, and an adventure at the same time. Instead of Sherwood, they called it Loxley. Their own forest. Their own story.
-        </p>
-
-      </div>
-    </section>
-
-    <!-- ========== SECTION 5: WHAT YOU'LL FIND HERE ========== -->
-    <section class="section section--linen">
-      <div class="container--narrow">
-
-        <p class="eyebrow reveal" style="margin-bottom: 24px; text-align: center;">What You'll Find Here</p>
-
-        <p class="body-large story-paragraph reveal">
-          Two treehouses suspended sixty feet in the canopy, connected by a hundred-foot rope bridge. The Woodland Yurt coming this fall. Forty-two acres of hardwood cove forest with trails down to the creek. A family that lives on the property and greets every guest personally. Two little girls who think rope bridges are a normal way to get home.
-        </p>
-
-        <!-- Full-bleed image break -->
-        <div class="story-image reveal">
-          <picture><source srcset="images/EQ3A9079.webp" type="image/webp"><img src="images/EQ3A9079.webp" alt="The family at Loxley Forest" style="width:100%;height:100%;object-fit:cover;" loading="lazy"></picture>
+    <!-- ========== WHAT WE ACTUALLY BUILT ========== -->
+    <section class="lf-sec lf-light" aria-labelledby="built-h">
+      <div class="st-prose">
+        <p class="lf-eyebrow lf-rise">What we actually built</p>
+        <h2 class="lf-h2 lf-rise" id="built-h">Engineered on paper. <em>Made to fit by hand.</em></h2>
+        <div class="lf-body st-body lf-rise">
+          <p>Mick and Livy designed the treehouses with a treehouse engineering firm: a tetrahedron frame that sandwiches steel between wood for the most strength at the least weight, hung from living trees by specialized hardware. The roof is canvas instead of timber, again to keep the load on the trees as light as possible. Every structural element was engineered. Every connection point was calculated.</p>
+          <p>But engineering only gets you a platform in the sky. It was Livy who insisted on a full bathroom in the canopy, a waterfall shower sixty feet above the forest floor, because she wasn't climbing down a tree in the middle of the night, and neither should anyone else. The details you'll find during your stay are Livy's hand: the warmth of the light, every window placed to frame the canopy, a room that feels intimate instead of exposed.</p>
         </div>
-
-        <p class="body-large story-paragraph reveal">
-          When you stay at Loxley, the man who engineered your treehouse is the same man who carried the beams down the mountain. The woman who designed every detail of the experience — the waterfall shower, the welcome note on the bed, the wildflowers, the candle placement, the feeling that someone was here before you and thought about everything — is the same woman running the Instagram account you probably found us on. We're not a brand. We're a family that built something in the sky and invites you to share it.
-        </p>
-
-        <p class="body-large story-paragraph reveal">
-          This isn't a hospitality brand. It's a family's home that we open to people who need what the forest gives — silence, elevation, and the feeling of being somewhere that was built with love by people who live inside it.
-        </p>
-
-        <p class="body-large story-paragraph story-paragraph--closing reveal">
-          We're glad you found us. Come up. The forest is waiting.
-        </p>
-
+        <p class="st-quote lf-rise">Then the real work began.</p>
+      </div>
+      <div class="st-pair">
+        <figure class="lf-rise"><img src="images/v2/eq3a0946-800.webp" srcset="images/v2/eq3a0946-800.webp 800w" sizes="(min-width: 900px) 600px, 50vw" width="800" height="1200" alt="The rope bridge at night, its rails strung with warm lights" loading="lazy" decoding="async"></figure>
+        <figure class="lf-rise"><img src="images/v2/eq3a2062-800.webp" srcset="images/v2/eq3a2062-800.webp 800w, images/v2/eq3a2062-1600.webp 1600w" sizes="(min-width: 900px) 600px, 50vw" width="800" height="533" alt="The treehouse among fall trees, sun breaking through the canopy" loading="lazy" decoding="async"></figure>
+      </div>
+      <div class="st-prose">
+        <div class="lf-body st-body lf-rise">
+          <p>Nothing came in by machine. No ATVs. No excavators. Every beam, every bolt, every panel was carried four hundred feet down the mountainside by hand: by Mick, by a team of carpenters, and by a crew of arborists and riggers, some of whom had been featured on HGTV. They used wagons and carts when they could. They used their shoulders when they couldn't. They did it this way because Mick and Livy loved the forest too much to tear it up with equipment.</p>
+          <p>Mick built much of the framing himself. The modular system was designed to bolt together like a giant set of building blocks, triangles locking into triangles. But off-site engineering and on-site reality don't always agree. Making it fit sixty feet in the air, in the canopy, over a creek, on the side of a ridge: that was the craft.</p>
+          <p>Nine months from breaking ground to a finished treehouse. Triple what they had planned. The terrain, and the work of building something this ambitious in a living forest, humbled everyone involved.</p>
+        </div>
+        <p class="st-note lf-rise">Livy was pregnant with their first daughter, Aurora, through the entire build. Aurora arrived before it was finished. They paused for six months, because family comes first. Always.</p>
+      </div>
+      <figure class="st-bleed lf-rise"><img src="images/v2/eq3a0907-800.webp" srcset="images/v2/eq3a0907-800.webp 800w, images/v2/eq3a0907-1600.webp 1600w" sizes="(min-width: 1200px) 1200px, 100vw" width="800" height="533" alt="The treehouse at dusk, its canvas glowing from inside, the rope bridge strung with lights" loading="lazy" decoding="async"></figure>
+      <div class="st-prose">
+        <div class="lf-body st-body lf-rise">
+          <p>The rope bridge came later. Mick could see the path, a clear line through the canopy that said this is where it goes. The arborists warned him: a hundred feet is a massive span, and trees could come down on it. They built it anyway.</p>
+          <p>An elite crew of riggers from North Carolina strung the first cables between the trees, and in two weeks those cables became a hundred-foot rope bridge suspended over the valley. Mick was alongside them the entire build, doing carpentry and saw work. The deck planks are white oak, salvaged and milled from standing dead trees on the property. Wood that was already here, given a second life.</p>
+        </div>
+        <p class="st-note lf-rise">By then Livy was pregnant with their second daughter, Tilly Mac. The bridge was built while Tilly Mac was on the way.</p>
+        <div class="lf-body st-body lf-rise">
+          <p>That's the rhythm of Loxley Forest. Build. Pause for the family. Build again. No investor timelines. No grand opening deadlines. Just two people building something extraordinary at a pace that lets them be present for the life growing alongside it.</p>
+        </div>
       </div>
     </section>
 
-    <!-- ========== FULL-BLEED AERIAL ========== -->
-    <div class="story-aerial">
-      <picture><source srcset="images/dji_fly_20251103_165546_797_1762207500788_pano.webp" type="image/webp"><img src="images/dji_fly_20251103_165546_797_1762207500788_pano.webp" alt="Aerial view of 42-acre Loxley Forest property" style="width:100%;height:100%;object-fit:cover;" loading="lazy"></picture>
-    </div>
+    <!-- ========== WHY LOXLEY ========== -->
+    <section class="lf-sec lf-parch lf-center" aria-labelledby="why-h">
+      <div class="lf-wrap">
+        <div class="lf-rise" style="margin-bottom:40px"><svg class="lf-arrow" viewBox="0 0 524 28" aria-hidden="true" focusable="false"><path d="M3.86 14 H491.48" stroke="currentColor" stroke-width="1.3" fill="none"/><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9.44 13.26 L3.24 5.32 C14.65 4.58 31.31 5.63 43.81 9.66 C51.1 11.83 57.35 13.13 61.52 13.44M9.44 14.74 L3.24 22.68 C14.65 23.42 31.31 22.37 43.81 18.34 C51.1 16.17 57.35 14.87 61.52 14.56" stroke-width="0.9"/><path d="M8.82 13.01 Q7.27 9.12 5.41 5.87M8.82 14.99 Q7.27 18.88 5.41 22.13M10.25 13.01 Q8.7 9.1 6.84 5.83M10.25 14.99 Q8.7 18.9 6.84 22.17M11.67 13.01 Q10.12 9.11 8.26 5.85M11.67 14.99 Q10.12 18.89 8.26 22.15M13.1 13.01 Q11.55 9.13 9.69 5.88M13.1 14.99 Q11.55 18.87 9.69 22.12M14.52 13.01 Q12.97 9.14 11.11 5.9M14.52 14.99 Q12.97 18.86 11.11 22.1M15.95 13.01 Q14.4 9.15 12.54 5.92M15.95 14.99 Q14.4 18.85 12.54 22.08M17.38 13.01 Q15.83 9.17 13.97 5.95M17.38 14.99 Q15.83 18.83 13.97 22.05M18.8 13.01 Q17.25 9.18 15.39 5.97M18.8 14.99 Q17.25 18.82 15.39 22.03M20.23 13.01 Q18.68 9.2 16.82 6M20.23 14.99 Q18.68 18.8 16.82 22M21.65 13.01 Q20.1 9.21 18.24 6.02M21.65 14.99 Q20.1 18.79 18.24 21.98M23.08 13.01 Q21.53 9.23 19.67 6.04M23.08 14.99 Q21.53 18.77 19.67 21.96M24.51 13.01 Q22.96 9.24 21.1 6.07M24.51 14.99 Q22.96 18.76 21.1 21.93M25.93 13.01 Q24.38 9.25 22.52 6.09M25.93 14.99 Q24.38 18.75 22.52 21.91M27.36 13.01 Q25.81 9.27 23.95 6.11M27.36 14.99 Q25.81 18.73 23.95 21.89M28.78 13.01 Q27.23 9.28 25.37 6.14M28.78 14.99 Q27.23 18.72 25.37 21.86M30.21 13.01 Q28.66 9.3 26.8 6.16M30.21 14.99 Q28.66 18.7 26.8 21.84M31.64 13.01 Q30.09 9.36 28.23 6.27M31.64 14.99 Q30.09 18.64 28.23 21.73M33.06 13.01 Q31.51 9.63 29.65 6.72M33.06 14.99 Q31.51 18.37 29.65 21.28M34.49 13.01 Q32.94 9.91 31.08 7.18M34.49 14.99 Q32.94 18.09 31.08 20.82M35.91 13.01 Q34.36 10.18 32.5 7.63M35.91 14.99 Q34.36 17.82 32.5 20.37M37.34 13.01 Q35.79 10.45 33.93 8.09M37.34 14.99 Q35.79 17.55 33.93 19.91M38.77 13.01 Q37.22 10.73 35.36 8.54M38.77 14.99 Q37.22 17.27 35.36 19.46M40.19 13.01 Q38.64 11 36.78 9M40.19 14.99 Q38.64 17 36.78 19M41.62 13.01 Q40.07 11.27 38.21 9.45M41.62 14.99 Q40.07 16.73 38.21 18.55M43.04 13.01 Q41.49 11.55 39.63 9.91M43.04 14.99 Q41.49 16.45 39.63 18.09M44.47 13.01 Q42.92 11.77 41.06 10.29M44.47 14.99 Q42.92 16.23 41.06 17.71M45.9 13.01 Q44.35 11.95 42.49 10.58M45.9 14.99 Q44.35 16.05 42.49 17.42M47.32 13.01 Q45.77 12.13 43.91 10.88M47.32 14.99 Q45.77 15.87 43.91 17.12M48.75 13.01 Q47.2 12.3 45.34 11.17M48.75 14.99 Q47.2 15.7 45.34 16.83M50.17 13.01 Q48.62 12.48 46.76 11.47M50.17 14.99 Q48.62 15.52 46.76 16.53M51.6 13.01 Q50.05 12.66 48.19 11.76M51.6 14.99 Q50.05 15.34 48.19 16.24M53.03 13.01 Q51.48 12.83 49.62 12.05M53.03 14.99 Q51.48 15.17 49.62 15.95M54.45 13.01 Q52.9 13.01 51.04 12.35M54.45 14.99 Q52.9 14.99 51.04 15.65M55.88 13.01 Q54.33 13.18 52.47 12.64M55.88 14.99 Q54.33 14.82 52.47 15.36M57.3 13.01 Q55.75 13.36 53.89 12.93M57.3 14.99 Q55.75 14.64 53.89 15.07" stroke-width="0.5"/><path d="M3.86 14 H62.76" stroke-width="1.2"/></g><path d="M4.48 12.57 L2 11.77 L2.99 14 L2 16.23 L4.48 15.43 ZM489.62 12.7 H497.06 V15.3 H489.62 ZM520 14 C512.56 12.51 503.88 9.04 497.68 6.87 L494.27 5.94 C497.06 10.28 497.68 12.14 496.44 12.95 L496.44 15.05 C497.68 15.86 497.06 17.72 494.27 22.06 L497.68 21.13 C503.88 18.96 512.56 15.49 520 14 Z" fill="currentColor"/></svg></div>
+        <p class="lf-eyebrow lf-rise">Why Loxley</p>
+        <h2 class="lf-h2 lf-rise" id="why-h">Their own forest. <em>Their own story.</em></h2>
+        <div class="lf-body lf-rise" style="margin-top:26px">
+          <p>The name comes from Robin Hood. Robin of Loxley made his stand in Sherwood Forest, and Mick and Livy always loved that story. Not the stealing from the rich. The living in the forest. The idea that a forest could be a home, a refuge and an adventure at the same time. Instead of Sherwood, they called it Loxley.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== WHAT YOU'LL FIND HERE ========== -->
+    <section class="lf-sec lf-dark" aria-labelledby="find-here-h">
+      <div class="lf-wrap lf-split">
+        <figure class="lf-photo lf-photo--tall lf-rise"><img src="images/v2/img_2726-800.webp" srcset="images/v2/img_2726-800.webp 800w, images/v2/img_2726-1600.webp 1600w" sizes="(min-width: 900px) 50vw, 100vw" width="800" height="600" alt="The rope bridge leading through the canopy to the treehouse at dusk" loading="lazy" decoding="async"></figure>
+        <div>
+          <p class="lf-eyebrow lf-rise">What you'll find here</p>
+          <h2 class="lf-h2 lf-rise" id="find-here-h">A family that lives <em>in the forest they built</em></h2>
+          <ul class="lf-acorns lf-rise">
+            <li>A treehouse sixty feet up in the canopy, reached by a hundred-foot rope bridge, with a thirty-foot bridge before it as the warm-up</li>
+            <li>A second treehouse, coming soon</li>
+            <li>42 acres of hardwood cove forest, with trails down to the creek</li>
+            <li>A family that lives on the property and greets every guest personally</li>
+            <li>Two little girls who think rope bridges are a normal way to get home</li>
+          </ul>
+          <div class="lf-body lf-rise" style="margin-top:30px">
+            <p>The man who engineered your treehouse is the same man who carried the beams down the mountain. The woman who designed every detail of your stay, the waterfall shower, the welcome note on the bed, the wildflowers, where the candles sit, the feeling that someone was here before you and thought of everything, is the same woman running the Instagram account you probably found us on.</p>
+            <p>This isn't a hospitality brand. It's a family's home, opened to people who need what the forest gives: silence, elevation, and the feeling of being somewhere built with love by the people who live inside it.</p>
+          </div>
+          <p class="st-quote st-quote--left lf-rise">We're glad you found us. Come up. The forest is waiting.</p>
+        </div>
+      </div>
+    </section>
 
     <!-- ========== THE VALUES ========== -->
-    <section class="section section--cream">
-      <div class="container">
-        <div class="text-center" style="margin-bottom: 72px;">
-          <p class="eyebrow reveal" style="margin-bottom: 16px;">What We Believe</p>
-          <h2 class="headline-page reveal">The Values</h2>
-        </div>
-
-        <div class="values reveal-stagger">
-
-          <div class="value reveal">
-            <h3 class="value__title">Built, Not Bought</h3>
-            <hr class="divider" style="margin: 20px 0;">
-            <p class="body-large">Every beam was carried down the mountain by hand because we loved the forest too much to bring in machines. That's how we do everything here.</p>
-          </div>
-
-          <div class="value reveal">
-            <h3 class="value__title">Family Is the Floor Plan</h3>
-            <hr class="divider" style="margin: 20px 0;">
-            <p class="body-large">We paused the build twice for our daughters. Every decision starts with: does this serve the family who lives here and the families who visit?</p>
-          </div>
-
-          <div class="value reveal">
-            <h3 class="value__title">Silence Is the Product</h3>
-            <hr class="divider" style="margin: 20px 0;">
-            <p class="body-large">We don't sell square footage or thread count. We sell the experience of being in a forest with nothing demanding your attention.</p>
-          </div>
-
-        </div>
+    <section class="lf-sec lf-dark" style="padding-top:0" aria-labelledby="val-h">
+      <div class="lf-wrap">
+        <p class="lf-eyebrow lf-rise">What we believe</p>
+        <h2 class="lf-h2 lf-rise" id="val-h">The values</h2>
+        <ol class="st-values">
+          <li class="lf-rise"><h3 class="lf-h3">Built, not bought</h3><p>Every beam was carried down the mountain by hand, because we loved the forest too much to bring in machines. That's how we do everything here.</p></li>
+          <li class="lf-rise"><h3 class="lf-h3">Family is the floor plan</h3><p>We paused the build twice for our daughters. Every decision starts with one question: does this serve the family who lives here and the families who visit?</p></li>
+          <li class="lf-rise"><h3 class="lf-h3">Silence is the product</h3><p>We don't sell square footage or thread count. We sell the experience of being in a forest with nothing demanding your attention.</p></li>
+        </ol>
       </div>
     </section>
 
-    <!-- ========== BOTTOM CTA ========== -->
-    <section class="cta-block">
-      <div class="cta-block__bg">
-        <picture><source srcset="images/EQ3A2149.webp" type="image/webp"><img src="images/EQ3A2149.webp" alt="Platform timber truss engineering" style="width:100%;height:100%;object-fit:cover;" loading="lazy"></picture>
-      </div>
-      <div class="cta-block__overlay"></div>
-      <div class="cta-block__content">
-        <h2 class="headline-section reveal" style="color: var(--white); margin-bottom: 16px;">Come See What One Family<br>Built in the Sky</h2>
-        <div class="btn-group reveal" style="justify-content: center;">
-          <a href="/book" class="btn btn--primary">Book Your Stay</a>
-          <a href="/treehouses" class="btn btn--ghost">Explore the Treehouses</a>
-        </div>
+    <!-- ========== THE CALL ========== -->
+    <section class="lf-sec lf-dark lf-center" aria-labelledby="fc-h">
+      <div class="lf-bg"><img src="images/v2/aerial-sunset-800.webp" srcset="images/v2/aerial-sunset-800.webp 800w, images/v2/aerial-sunset-1600.webp 1600w" sizes="100vw" width="800" height="599" alt="" loading="lazy" decoding="async"></div>
+      <div class="lf-wrap lf-over">
+        <div class="lf-rise" style="margin-bottom:44px"><svg class="lf-arrow" viewBox="0 0 524 28" aria-hidden="true" focusable="false"><path d="M3.86 14 H491.48" stroke="currentColor" stroke-width="1.3" fill="none"/><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9.44 13.26 L3.24 5.32 C14.65 4.58 31.31 5.63 43.81 9.66 C51.1 11.83 57.35 13.13 61.52 13.44M9.44 14.74 L3.24 22.68 C14.65 23.42 31.31 22.37 43.81 18.34 C51.1 16.17 57.35 14.87 61.52 14.56" stroke-width="0.9"/><path d="M8.82 13.01 Q7.27 9.12 5.41 5.87M8.82 14.99 Q7.27 18.88 5.41 22.13M10.25 13.01 Q8.7 9.1 6.84 5.83M10.25 14.99 Q8.7 18.9 6.84 22.17M11.67 13.01 Q10.12 9.11 8.26 5.85M11.67 14.99 Q10.12 18.89 8.26 22.15M13.1 13.01 Q11.55 9.13 9.69 5.88M13.1 14.99 Q11.55 18.87 9.69 22.12M14.52 13.01 Q12.97 9.14 11.11 5.9M14.52 14.99 Q12.97 18.86 11.11 22.1M15.95 13.01 Q14.4 9.15 12.54 5.92M15.95 14.99 Q14.4 18.85 12.54 22.08M17.38 13.01 Q15.83 9.17 13.97 5.95M17.38 14.99 Q15.83 18.83 13.97 22.05M18.8 13.01 Q17.25 9.18 15.39 5.97M18.8 14.99 Q17.25 18.82 15.39 22.03M20.23 13.01 Q18.68 9.2 16.82 6M20.23 14.99 Q18.68 18.8 16.82 22M21.65 13.01 Q20.1 9.21 18.24 6.02M21.65 14.99 Q20.1 18.79 18.24 21.98M23.08 13.01 Q21.53 9.23 19.67 6.04M23.08 14.99 Q21.53 18.77 19.67 21.96M24.51 13.01 Q22.96 9.24 21.1 6.07M24.51 14.99 Q22.96 18.76 21.1 21.93M25.93 13.01 Q24.38 9.25 22.52 6.09M25.93 14.99 Q24.38 18.75 22.52 21.91M27.36 13.01 Q25.81 9.27 23.95 6.11M27.36 14.99 Q25.81 18.73 23.95 21.89M28.78 13.01 Q27.23 9.28 25.37 6.14M28.78 14.99 Q27.23 18.72 25.37 21.86M30.21 13.01 Q28.66 9.3 26.8 6.16M30.21 14.99 Q28.66 18.7 26.8 21.84M31.64 13.01 Q30.09 9.36 28.23 6.27M31.64 14.99 Q30.09 18.64 28.23 21.73M33.06 13.01 Q31.51 9.63 29.65 6.72M33.06 14.99 Q31.51 18.37 29.65 21.28M34.49 13.01 Q32.94 9.91 31.08 7.18M34.49 14.99 Q32.94 18.09 31.08 20.82M35.91 13.01 Q34.36 10.18 32.5 7.63M35.91 14.99 Q34.36 17.82 32.5 20.37M37.34 13.01 Q35.79 10.45 33.93 8.09M37.34 14.99 Q35.79 17.55 33.93 19.91M38.77 13.01 Q37.22 10.73 35.36 8.54M38.77 14.99 Q37.22 17.27 35.36 19.46M40.19 13.01 Q38.64 11 36.78 9M40.19 14.99 Q38.64 17 36.78 19M41.62 13.01 Q40.07 11.27 38.21 9.45M41.62 14.99 Q40.07 16.73 38.21 18.55M43.04 13.01 Q41.49 11.55 39.63 9.91M43.04 14.99 Q41.49 16.45 39.63 18.09M44.47 13.01 Q42.92 11.77 41.06 10.29M44.47 14.99 Q42.92 16.23 41.06 17.71M45.9 13.01 Q44.35 11.95 42.49 10.58M45.9 14.99 Q44.35 16.05 42.49 17.42M47.32 13.01 Q45.77 12.13 43.91 10.88M47.32 14.99 Q45.77 15.87 43.91 17.12M48.75 13.01 Q47.2 12.3 45.34 11.17M48.75 14.99 Q47.2 15.7 45.34 16.83M50.17 13.01 Q48.62 12.48 46.76 11.47M50.17 14.99 Q48.62 15.52 46.76 16.53M51.6 13.01 Q50.05 12.66 48.19 11.76M51.6 14.99 Q50.05 15.34 48.19 16.24M53.03 13.01 Q51.48 12.83 49.62 12.05M53.03 14.99 Q51.48 15.17 49.62 15.95M54.45 13.01 Q52.9 13.01 51.04 12.35M54.45 14.99 Q52.9 14.99 51.04 15.65M55.88 13.01 Q54.33 13.18 52.47 12.64M55.88 14.99 Q54.33 14.82 52.47 15.36M57.3 13.01 Q55.75 13.36 53.89 12.93M57.3 14.99 Q55.75 14.64 53.89 15.07" stroke-width="0.5"/><path d="M3.86 14 H62.76" stroke-width="1.2"/></g><path d="M4.48 12.57 L2 11.77 L2.99 14 L2 16.23 L4.48 15.43 ZM489.62 12.7 H497.06 V15.3 H489.62 ZM520 14 C512.56 12.51 503.88 9.04 497.68 6.87 L494.27 5.94 C497.06 10.28 497.68 12.14 496.44 12.95 L496.44 15.05 C497.68 15.86 497.06 17.72 494.27 22.06 L497.68 21.13 C503.88 18.96 512.56 15.49 520 14 Z" fill="currentColor"/></svg></div>
+        <h2 class="lf-h2 lf-rise" id="fc-h">Come see what one family <em>built in the sky</em></h2>
+        <p class="lf-lead lf-rise">Book direct with the family who built it.</p>
+        <div class="lf-actions lf-rise" style="justify-content:center"><a href="/book" class="lf-btn"><svg viewBox="0 0 16 20" aria-hidden="true"><path fill="currentColor" d="M8 2.2C4.6 2.2 1.9 4.6 1.9 8H14.1C14.1 4.6 11.4 2.2 8 2.2ZM2.8 8.9H13.2C13.2 13.4 10.8 17.2 8 19.2C5.2 17.2 2.8 13.4 2.8 8.9ZM7.6 2.4C7.7 1.2 8.4 .4 9.6 .1L9.9 .7C9 1 8.5 1.6 8.5 2.4Z"/></svg>Book your dates</a><a href="/treehouses" class="lf-link">See the treehouse</a></div>
       </div>
     </section>
 
   </main>
 
-  <!-- ========== FOOTER ========== -->
-  <footer class="footer">
-    <div class="footer__grid">
-      <div class="footer__col">
-        <div class="footer__wordmark">Loxley Forest</div>
-        <p class="footer__text">Suspended between earth and sky<br>in the North Georgia mountains.</p>
+  <footer class="lf-foot">
+    <div class="lf-foot__grid">
+      <div>
+        <img src="images/brand/logo/loxley-wordmark-on-dark.svg" alt="Loxley Forest" width="220" height="30" loading="lazy">
+        <p style="margin-top:18px;font-size:1.1rem">Dahlonega, Georgia. Just over an hour from Atlanta.<br>42 acres of hardwood cove forest at 1,470 feet.</p>
       </div>
-      <div class="footer__col">
-        <p class="footer__heading">Explore</p>
-        <a href="/treehouses" class="footer__link">The Treehouses</a>
-        <a href="/elopements" class="footer__link">Elopements</a>
-        <a href="/experiences" class="footer__link">Experiences</a>
-        <a href="/canopy-club" class="footer__link">Canopy Club</a>
-        <a href="/our-story" class="footer__link">Our Story</a>
-        <a href="/gallery" class="footer__link">Gallery</a>
-        <a href="/local-guide" class="footer__link">Local Guide</a>
-        <a href="/faq" class="footer__link">FAQ</a>
-      </div>
-      <div class="footer__col">
-        <p class="footer__heading">Connect</p>
-        <a href="https://instagram.com/loxleyforest" class="footer__link" target="_blank" rel="noopener">Instagram</a>
-        <a href="mailto:stay@loxleyforest.com" class="footer__link">stay@loxleyforest.com</a>
-        <a href="tel:+17065024823" class="footer__link">706-502-4823</a>
-      </div>
-      <div class="footer__col">
-        <p class="footer__heading">Visit</p>
-        <p class="footer__text">Dahlonega, Georgia<br>just over an hour from Atlanta<br>42 acres of hardwood cove forest<br>at 1,470 feet</p>
-      </div>
-    </div>
-    <div class="footer__bottom">
-      <p class="footer__copyright">&copy; 2026 Loxley Forest. All rights reserved.</p>
-      <div class="footer__legal">
-        <a href="/privacy">Privacy</a>
-        <a href="/terms">Terms</a>
-        <a href="/cancellation">Cancellation Policy</a>
-      </div>
+      <nav aria-label="Footer"><a href="/treehouses">The Treehouse</a><a href="/experiences">Experiences</a><a href="/elopements">Elopements</a><a href="/our-story">Our Story</a><a href="/gallery">Gallery</a><a href="/local-guide">Local Guide</a><a href="/faq">Questions</a></nav>
+      <nav aria-label="Contact"><a href="https://instagram.com/loxleyforest" target="_blank" rel="noopener">Instagram</a><a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a><a href="tel:+17065024823">706-502-4823</a></nav>
+      <div class="lf-foot__small"><span>&copy; 2026 Loxley Forest</span><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/cancellation">Cancellation</a></div>
     </div>
   </footer>
 
   <a href="/book" class="book-fab"><svg viewBox="0 0 16 20" aria-hidden="true"><path fill="currentColor" d="M8 2.2C4.6 2.2 1.9 4.6 1.9 8H14.1C14.1 4.6 11.4 2.2 8 2.2ZM2.8 8.9H13.2C13.2 13.4 10.8 17.2 8 19.2C5.2 17.2 2.8 13.4 2.8 8.9ZM7.6 2.4C7.7 1.2 8.4 .4 9.6 .1L9.9 .7C9 1 8.5 1.6 8.5 2.4Z"/></svg>Book your dates</a>
   <script src="js/vendor/lenis.min.js"></script>
   <script src="js/global.js"></script>
+  <script src="js/v2.js"></script>
+  <script src="js/reviews.js" defer></script>
 </body>
 </html>

@@ -1,3 +1,42 @@
+# START HERE FIRST · 2026-10-19 (the site is built; launch waits on Mick's "go")
+
+**Every public page is in the new design on `next-level`** (Home, Treehouse, Experiences,
+Elopements, Our Story, Gallery, FAQ, Local Guide, Book, booking-confirmed, success, 404, terms,
+privacy, cancellation). Each page is a module in `scripts/site/pages/` built by
+`python3 scripts/site/build_v2.py` (page CSS gathered into `css/v2-pages.css`; photos via
+`scripts/site/v2img.py`). Canopy Club removed with 301s in netlify.toml; sitemap updated; the
+Promise list stays hidden until our checkout is live (`.lf-promise[hidden]`). Swept at 390 px:
+no sideways scroll, no broken images, no errors, GTM on every page, forms intact, legal wording
+untouched (its dashes kept on purpose). Not converted (by design): stay, manage, booked (checkout
+pages, cutover) and your-adventure (questionnaire).
+
+**Preview Mick walks:** https://loxleyforest.com/private/new-site-371cf1/ (all 15 pages; its
+404 page shows unstyled there because it uses root paths; fine live).
+
+**Launch, on Mick's "go" only (a push to main is the live site):**
+1. `git fetch origin main && git merge origin/main` into next-level (main carries the private
+   stay guides, pizza guide and reels), rebuild, `python3 scripts/ensure_gtm.py --check`.
+2. Fast-forward main to next-level and push. Then delete `private/new-site-371cf1/` only (keep
+   field-guide, stay-guide-2026-10-17, pizza-guide, always-tea-time).
+3. Favicon and phone icon are already the new ones on next-level; confirm live.
+4. Walk the live site on Mick's phone; check the Hostfully widget on /book and the elopement form.
+
+**Mick's open questions (none block launch; pages keep what they said):** Experiences add-ons
+still offered (Forest Tableau, Flight Deck, The Landing, Beer Board, Khachapuri, After Dark,
+Romance, Celebration, Provisions Box); s'mores included or an add-on; The Letter still running;
+"Most popular" on The Crossing; elopement 2 to 20 ceremony guests vs a stay of up to 6; the
+Woodland Yurt line left off Our Story.
+
+**Interior video:** the Drive connector pulls only files under about 6.5 MB. Nine short clips
+(kitchen, table, s'more, oven, the bridge drift) are in `~/footage-in/` (not in any repo; contact
+sheets in `~/footage-in/sheets/`). No bed/ceiling/bathroom clip yet; the ten bigger clips need
+rclone set up by Mick (one Google sign-in) or his laptop: `scp ~/Downloads/*.MP4 workshop:~/footage-in/`.
+
+**Note:** a builder's first render on 10-19 sent a few GA page views from 127.0.0.1. Test renders
+must block outside requests (the sweep in this session did).
+
+---
+
 # START HERE · handoff of 2026-10-13 night (branch `next-level`)
 
 Mick cleared a long session here. This block is the whole state; the dated

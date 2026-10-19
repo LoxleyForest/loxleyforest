@@ -151,3 +151,4 @@ vite.config.ts.timestamp-*
 scripts/logo/fonts/
 scripts/logo/venv/
 .netlify/
+__pycache__/
