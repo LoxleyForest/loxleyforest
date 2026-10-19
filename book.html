@@ -30,89 +30,49 @@
 
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap">
   <link rel="stylesheet" href="css/global.css">
-  <link rel="stylesheet" href="css/book.css">
-  <link rel="preload" as="image" type="image/webp" href="images/EQ3A0906.webp">
+  <link rel="stylesheet" href="css/gatehouse.css">
+  <link rel="stylesheet" href="css/v2.css">
+  <link rel="stylesheet" href="css/v2-pages.css">
 </head>
-<body>
+<body class="v2">
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5N4BX66K"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
   <a href="#main" class="skip-link">Skip to content</a>
 
-  <!-- ========== ANNOUNCEMENT BAR ========== -->
-  <div class="announcement-bar">
-    <div class="announcement-bar__track">
-      <a href="/canopy-club" class="announcement-bar__message active">THE CANOPY CLUB — FOUNDING LIST OPEN · LIMITED TO 50 COUPLES</a>
-      <a href="/treehouses#treehouse-2" class="announcement-bar__message">TREEHOUSE 2 — COMING SOON · FIRST NIGHTS GO TO THE LIST</a>
-      <a href="/treehouses" class="announcement-bar__message">A HANDFUL OF FULLY SUSPENDED TREEHOUSES EXIST ON EARTH — THIS FOREST GROWS THEM</a>
-    </div>
-    <button class="announcement-bar__close" aria-label="Dismiss announcement">&times;</button>
-  </div>
-
-  <!-- ========== NAVIGATION ========== -->
-  <nav class="nav nav--transparent">
-    <a href="/" class="nav__wordmark">Loxley Forest</a>
-    <div class="nav__links">
-      <a href="/treehouses" class="nav__link">The Treehouses</a>
-      <a href="/elopements" class="nav__link">Elopements</a>
-      <a href="/experiences" class="nav__link">Experiences</a>
-      <a href="/canopy-club" class="nav__link">Canopy Club</a>
-      <a href="/our-story" class="nav__link">Our Story</a>
-      <a href="/gallery" class="nav__link">Gallery</a>
-      <a href="/local-guide" class="nav__link">Local Guide</a>
-    </div>
-    <a href="/book" class="btn btn--primary nav__cta">Book Your Stay</a>
-    <button class="nav__hamburger" aria-label="Toggle menu">
-      <span></span><span></span><span></span>
-    </button>
-  </nav>
-
-  <div class="nav__overlay">
-    <a href="/treehouses" class="nav__link">The Treehouses</a>
-    <a href="/elopements" class="nav__link">Elopements</a>
-    <a href="/experiences" class="nav__link">Experiences</a>
-    <a href="/canopy-club" class="nav__link">Canopy Club</a>
-    <a href="/our-story" class="nav__link">Our Story</a>
-    <a href="/gallery" class="nav__link">Gallery</a>
-    <a href="/local-guide" class="nav__link">Local Guide</a>
-    <a href="/book" class="btn btn--primary" style="margin-top: 16px;">Book Your Stay</a>
+  <header class="lf-hdr">
+    <a href="/" class="lf-hdr__mark" aria-label="Loxley Forest, home"><img src="images/brand/logo/loxley-wordmark-on-dark.svg" alt="Loxley Forest" width="236" height="32"></a>
+    <nav class="lf-hdr__nav" aria-label="Main"><a href="/treehouses">The Treehouse</a><a href="/experiences">Experiences</a><a href="/elopements">Elopements</a><a href="/our-story">Our Story</a><a href="/gallery">Gallery</a><a href="/local-guide">Local Guide</a></nav>
+    <a href="#book" class="lf-btn lf-hdr__book">Book your dates</a>
+    <button class="lf-menu-btn" type="button" aria-expanded="false" aria-controls="lf-menu" aria-label="Open menu"><span></span></button>
+  </header>
+  <div class="lf-menu" id="lf-menu" aria-hidden="true">
+    <nav aria-label="Menu"><a href="/treehouses">The Treehouse</a><a href="/experiences">Experiences</a><a href="/elopements">Elopements</a><a href="/our-story">Our Story</a><a href="/gallery">Gallery</a><a href="/local-guide">Local Guide</a><a href="/faq">Questions</a></nav>
+    <a href="#book" class="lf-btn"><svg viewBox="0 0 16 20" aria-hidden="true"><path fill="currentColor" d="M8 2.2C4.6 2.2 1.9 4.6 1.9 8H14.1C14.1 4.6 11.4 2.2 8 2.2ZM2.8 8.9H13.2C13.2 13.4 10.8 17.2 8 19.2C5.2 17.2 2.8 13.4 2.8 8.9ZM7.6 2.4C7.7 1.2 8.4 .4 9.6 .1L9.9 .7C9 1 8.5 1.6 8.5 2.4Z"/></svg>Book your dates</a>
+    <p class="lf-menu__foot">Dahlonega, Georgia<br>Just over an hour from Atlanta</p>
   </div>
 
   <main id="main">
 
-    <!-- ========== HERO (50vh) ========== -->
-    <section class="hero hero--half">
-      <div class="hero__media">
-        <picture><source srcset="images/EQ3A0906.webp" type="image/webp"><img src="images/EQ3A0906.webp" alt="Treehouse glowing at dusk" style="width:100%;height:100%;object-fit:cover;"></picture>
-      </div>
-      <div class="hero__overlay"></div>
-      <div class="hero__content">
-        <h1 class="headline-hero hero__headline reveal">Book Your Stay</h1>
-        <p class="hero__sub reveal">Book direct. No platform fees, no middleman. Just you, the forest, and the family who built it.</p>      </div>
-    </section>
-
-    <!-- ========== GUEST STORIES ========== -->
-    <section class="section section--parchment" style="padding-top: 56px; padding-bottom: 56px;">
-      <div class="container review-rotator" data-review-rotator>
-        <div class="testimonial__card review-rotator__card">
-          <div class="testimonial__stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-          <p class="testimonial__quote">"The only sounds you hear are the birds chirping and the gentle rushing of water below. It feels very private and secluded. The perfect adventure to feel like you are camping in the woods, but with a bed and bathroom."</p>
-          <p class="testimonial__author">Kellie · Marietta, GA</p>
-        </div>
+    <!-- ========== BOOK DIRECT ========== -->
+    <section class="lf-sec lf-dark lf-center lf-bk-top" aria-labelledby="bk-h">
+      <div class="lf-wrap">
+        <p class="lf-eyebrow">Dahlonega, Georgia</p>
+        <h1 class="lf-h1" id="bk-h">Book your stay</h1>
+        <p class="lf-lead">Book direct. No platform fees, no middleman. Just you, the forest, and the family who built it.</p>
+        <p class="lf-proof"><span class="lf-proof__stars" aria-hidden="true">★★★★★</span><span>4.98 from 200+ guest reviews</span></p>
       </div>
     </section>
 
-    <!-- ========== BOOKING WIDGET SECTION ========== -->
-    <section class="section section--linen book-widget-section">
-      <div class="container">
-        <p class="book-trust-line reveal" style="text-align:center; font-size:0.95rem; color:#6b6b5e; letter-spacing:0.03em; margin-bottom:32px;">Book direct and deal straight with the family who built it · Questions? Call or text <a href="tel:7065024823" style="color:#6b6b5e; text-decoration:underline;">706-502-4823</a></p>
-        <div class="widget-section__head reveal">
-          <p class="eyebrow">Book Your Stay</p>
-          <h2 class="headline-section">Check Availability &amp; Book</h2>
-          <p class="widget-section__sub">Select your dates, see live pricing, and book securely.</p>
-        </div>
-        <div class="hostfully-booking-wrap reveal">
+    <!-- ========== THE WIDGET (Hostfully, until the Gatehouse takes payments) ========== -->
+    <section class="lf-sec lf-parch lf-bk-book" id="book" aria-labelledby="bk-w">
+      <div class="lf-bk-head">
+        <h2 class="lf-h3" id="bk-w">Check availability and book</h2>
+        <p>Select your dates, see live pricing, and book securely.</p>
+        <p class="lf-bk-trust">Book direct and deal straight with the family who built it.</p>
+      </div>
+      <div class="hostfully-booking-wrap lf-bk-widget">
 <!-- ========== HOSTFULLY BOOKING WIDGET ========== -->
 <script type="text/javascript" src="https://platform.hostfully.com/assets/js/pikaday.js"></script>
 <script type="text/javascript" src="https://platform.hostfully.com/assets/js/leadCaptureWidget_2.0.js"></script>
@@ -136,220 +96,191 @@ window.__loxClickId = (function () {
 <script>
 var widget = new Widget('leadWidget', '9fe2c6da-b6b4-4a9c-a756-350d014c7140', {"maximun_availability":"2029-07-02T04:40:56.419Z","type":"agency","fields":[],"showAvailability":true,"lang":"US","minStay":true,"price":true,"hidePriceWithoutDates":true,"cc":"stay@loxleyforest.com","emailClient":true,"saveCookie":true,"showDynamicMinStay":true,"backgroundColor":"#FFFFFF","buttonSubmit":{"backgroundColor":"#c4a265"},"showPriceDetailsLink":true,"showGetQuoteLink":false,"labelColor":"#2d4a2d","showTotalWithoutSD":true,"redirectURL":"https://loxleyforest.com/booking-confirmed.html","showDiscount":true,"includeReferrerToRequest":true,"customDomainName":null,"source":null,"aid":"ORB-49587220416635719","clickID":window.__loxClickId,"valuesByDefaults":{"checkIn":{"value":""},"checkOut":{"value":""},"guests":{"value":""},"discountCode":{"value":""}},"pathRoot":"https://platform.hostfully.com/"});
 </script>
-        </div>
-
-        <div class="or-divider reveal"><span>or</span></div>
       </div>
+      <p class="lf-bk-contact">Questions? Call or text <a href="tel:+17065024823">706-502-4823</a>, or write to <a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a>.</p>
     </section>
 
-    <!-- ========== INQUIRY FORM SECTION ========== -->
-    <section id="inquiry" class="section section--linen book-form-section">
-      <div class="container">
-        <div class="book-form-single">
+    <!-- ========== INQUIRY (Netlify form booking-inquiry) ========== -->
+    <section id="inquiry" class="lf-sec lf-light lf-bk-ask" aria-labelledby="bk-q">
+      <div class="lf-bk-ask__in">
+        <p class="lf-bk-or"><span>or</span></p>
+        <h2 class="lf-h2" id="bk-q">Prefer a personal response?</h2>
+        <p class="lf-lead">Tell us what you're looking for and we'll respond within 2 hours.</p>
 
-          <div class="book-form-wrap reveal">
-            <h2 class="headline-section" style="margin-bottom: 12px;">Prefer a Personal Response?</h2>
-            <p class="body-text" style="color: var(--stone); margin-bottom: 36px;">Tell us what you're looking for and we'll respond within 2 hours.</p>
+        <form class="lf-bk-form" name="booking-inquiry" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" action="/success.html">
+          <input type="hidden" name="form-name" value="booking-inquiry">
 
-            <form class="book-form" name="booking-inquiry" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" action="/success.html">
-              <input type="hidden" name="form-name" value="booking-inquiry">
+          <!-- Ad attribution. Filled by the script below the form; empty
+               for visitors who arrived without an ad click, which is fine
+               and expected. Carries the click through to the inquiry so a
+               booking can be reported back to Google with real revenue. -->
+          <input type="hidden" name="gclid" id="attr-gclid">
+          <input type="hidden" name="fbclid" id="attr-fbclid">
+          <input type="hidden" name="utm_source" id="attr-utm_source">
+          <input type="hidden" name="utm_medium" id="attr-utm_medium">
+          <input type="hidden" name="utm_campaign" id="attr-utm_campaign">
+          <input type="hidden" name="landing_page" id="attr-landing">
+          <input type="hidden" name="referrer" id="attr-referrer">
+          <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
 
-              <!-- Ad attribution. Filled by the script below the form; empty
-                   for visitors who arrived without an ad click, which is fine
-                   and expected. Carries the click through to the inquiry so a
-                   booking can be reported back to Google with real revenue. -->
-              <input type="hidden" name="gclid" id="attr-gclid">
-              <input type="hidden" name="fbclid" id="attr-fbclid">
-              <input type="hidden" name="utm_source" id="attr-utm_source">
-              <input type="hidden" name="utm_medium" id="attr-utm_medium">
-              <input type="hidden" name="utm_campaign" id="attr-utm_campaign">
-              <input type="hidden" name="landing_page" id="attr-landing">
-              <input type="hidden" name="referrer" id="attr-referrer">
-              <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
-
-              <div class="form-group">
-                <label class="form-label" for="name">Your Name</label>
-                <input class="form-input" type="text" id="name" name="name" required autocomplete="name">
-              </div>
-
-              <div class="form-group">
-                <label class="form-label" for="email">Email</label>
-                <input class="form-input" type="email" id="email" name="email" required autocomplete="email">
-              </div>
-
-              <div class="form-group">
-                <label class="form-label" for="phone">Phone</label>
-                <input class="form-input" type="tel" id="phone" name="phone" autocomplete="tel">
-              </div>
-
-              <div class="form-row">
-                <div class="form-group">
-                  <label class="form-label" for="checkin">Preferred Check-In</label>
-                  <input class="form-input" type="date" id="checkin" name="checkin">
-                </div>
-                <div class="form-group">
-                  <label class="form-label" for="checkout">Preferred Check-Out</label>
-                  <input class="form-input" type="date" id="checkout" name="checkout">
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label" for="treehouse">Which Treehouse?</label>
-                <select class="form-input form-select" id="treehouse" name="treehouse">
-                  <option value="">Select...</option>
-                  <option value="treehouse-1">Treehouse 1</option>
-                  <option value="treehouse-2">Treehouse 2 (Coming Soon)</option>
-                  <option value="no-preference">No Preference</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label" for="occasion">What brings you to Loxley?</label>
-                <select class="form-input form-select" id="occasion" name="occasion">
-                  <option value="">Select...</option>
-                  <option value="getaway">Time Away</option>
-                  <option value="anniversary">Anniversary</option>
-                  <option value="birthday">Birthday</option>
-                  <option value="elopement">Elopement</option>
-                  <option value="proposal">Proposal</option>
-                  <option value="honeymoon">Honeymoon</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label" for="referral">How did you hear about us?</label>
-                <select class="form-input form-select" id="referral" name="referral">
-                  <option value="">Select...</option>
-                  <option value="instagram">Instagram</option>
-                  <option value="facebook">Facebook</option>
-                  <option value="pinterest">Pinterest</option>
-                  <option value="google">Google</option>
-                  <option value="airbnb">Airbnb</option>
-                  <option value="friend">Friend / Word of Mouth</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label" for="message">Anything else?</label>
-                <textarea class="form-input form-textarea" id="message" name="message" rows="4"></textarea>
-              </div>
-
-              <button type="submit" class="btn btn--primary" style="width: 100%;">Check Availability</button>
-            </form>
-
-            <script>
-            /* Fill the attribution fields from the URL or the stored click. */
-            (function () {
-              function put(id, value) {
-                var el = document.getElementById(id);
-                if (el && value) el.value = value;
-              }
-              var saved = {};
-              try {
-                saved = JSON.parse(window.localStorage.getItem('loxley_attribution') || '{}') || {};
-              } catch (e) {}
-              var p;
-              try { p = new URLSearchParams(window.location.search); } catch (e) { p = null; }
-              function pick(name) {
-                return (p && p.get(name)) || saved[name] || '';
-              }
-              put('attr-gclid', pick('gclid') || pick('gbraid') || pick('wbraid'));
-              put('attr-fbclid', pick('fbclid'));
-              put('attr-utm_source', pick('utm_source'));
-              put('attr-utm_medium', pick('utm_medium'));
-              put('attr-utm_campaign', pick('utm_campaign'));
-              put('attr-landing', saved.landing || window.location.pathname);
-              put('attr-referrer', saved.referrer || document.referrer || '');
-            })();
-            </script>
-            <div id="booking-success" class="elopement-success" hidden><p>The forest knows you're coming. We'll be in touch soon.</p><p style="margin-top:12px; font-style:italic;">&mdash; Mick &amp; Livy</p></div>
+          <div class="lf-bk-field">
+            <label for="name">Your name</label>
+            <input type="text" id="name" name="name" required autocomplete="name">
           </div>
+          <div class="lf-bk-field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required autocomplete="email">
+          </div>
+          <div class="lf-bk-field">
+            <label for="phone">Phone</label>
+            <input type="tel" id="phone" name="phone" autocomplete="tel">
+          </div>
+          <div class="lf-bk-row">
+            <div class="lf-bk-field">
+              <label for="checkin">Preferred check-in</label>
+              <input type="date" id="checkin" name="checkin">
+            </div>
+            <div class="lf-bk-field">
+              <label for="checkout">Preferred check-out</label>
+              <input type="date" id="checkout" name="checkout">
+            </div>
+          </div>
+          <div class="lf-bk-field">
+            <label for="treehouse">Which treehouse?</label>
+            <select id="treehouse" name="treehouse">
+              <option value="">Select...</option>
+              <option value="treehouse-1">Treehouse 1</option>
+              <option value="treehouse-2">Treehouse 2 (Coming Soon)</option>
+              <option value="no-preference">No Preference</option>
+            </select>
+          </div>
+          <div class="lf-bk-field">
+            <label for="occasion">What brings you to Loxley?</label>
+            <select id="occasion" name="occasion">
+              <option value="">Select...</option>
+              <option value="getaway">Time Away</option>
+              <option value="anniversary">Anniversary</option>
+              <option value="birthday">Birthday</option>
+              <option value="elopement">Elopement</option>
+              <option value="proposal">Proposal</option>
+              <option value="honeymoon">Honeymoon</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="lf-bk-field">
+            <label for="referral">How did you hear about us?</label>
+            <select id="referral" name="referral">
+              <option value="">Select...</option>
+              <option value="instagram">Instagram</option>
+              <option value="facebook">Facebook</option>
+              <option value="pinterest">Pinterest</option>
+              <option value="google">Google</option>
+              <option value="airbnb">Airbnb</option>
+              <option value="friend">Friend / Word of Mouth</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="lf-bk-field">
+            <label for="message">Anything else?</label>
+            <textarea id="message" name="message" rows="4"></textarea>
+          </div>
+          <button type="submit" class="lf-bk-send">Send your request</button>
+        </form>
 
-          <p class="book-contact-line reveal">Or call us at <a href="tel:+17065024823">706-502-4823</a> &middot; <a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a></p>
-
-        </div>
+        <script>
+        /* Fill the attribution fields from the URL or the stored click. */
+        (function () {
+          function put(id, value) {
+            var el = document.getElementById(id);
+            if (el && value) el.value = value;
+          }
+          var saved = {};
+          try {
+            saved = JSON.parse(window.localStorage.getItem('loxley_attribution') || '{}') || {};
+          } catch (e) {}
+          var p;
+          try { p = new URLSearchParams(window.location.search); } catch (e) { p = null; }
+          function pick(name) {
+            return (p && p.get(name)) || saved[name] || '';
+          }
+          put('attr-gclid', pick('gclid') || pick('gbraid') || pick('wbraid'));
+          put('attr-fbclid', pick('fbclid'));
+          put('attr-utm_source', pick('utm_source'));
+          put('attr-utm_medium', pick('utm_medium'));
+          put('attr-utm_campaign', pick('utm_campaign'));
+          put('attr-landing', saved.landing || window.location.pathname);
+          put('attr-referrer', saved.referrer || document.referrer || '');
+        })();
+        </script>
+        <div id="booking-success" class="lf-bk-done" hidden><p>The forest knows you're coming. We'll be in touch soon.</p><p class="lf-bk-sign">Mick &amp; Livy</p></div>
+        <script>
+          (function(){
+            if (location.search.indexOf('submitted=1') !== -1) {
+              var form = document.querySelector('form[name="booking-inquiry"]');
+              var success = document.getElementById('booking-success');
+              if (form) form.style.display = 'none';
+              if (success) success.hidden = false;
+            }
+          })();
+        </script>
       </div>
     </section>
 
-    <!-- ========== FUTURE PACING TIMELINE ========== -->
-    <section class="section timeline-section">
-      <div class="container">
-        <div class="widget-section__head reveal">
-          <p class="eyebrow">Your Stay</p>
-          <h2 class="headline-section">A Day in the Canopy</h2>
+    <section class="lf-sec lf-parch lf-center lf-reviews" aria-labelledby="rv-h">
+      <div class="lf-wrap">
+        <p class="lf-eyebrow">Guest stories</p>
+        <h2 class="lf-h2" id="rv-h" style="margin-bottom:34px">What they remember most</h2>
+        <div class="review-rotator" data-review-rotator>
+          <div class="review-rotator__card">
+            <div class="testimonial__stars" aria-hidden="true">★★★★★</div>
+            <p class="testimonial__quote">"The only sounds you hear are the birds chirping and the gentle rushing of water below. It feels very private and secluded. The perfect adventure to feel like you are camping in the woods, but with a bed and bathroom."</p>
+            <p class="testimonial__author">Kellie · Marietta, GA</p>
+          </div>
         </div>
-        <div class="timeline reveal">
-          <div class="timeline__row"><div class="timeline__time">3:00 PM</div><div class="timeline__dot"></div><div class="timeline__text">Turn off the paved road onto a gravel path through the forest. The world gets quieter with every turn.</div></div>
-          <div class="timeline__row"><div class="timeline__time">3:30 PM</div><div class="timeline__dot"></div><div class="timeline__text">Park at the trailhead. Walk four hundred feet through mountain laurel and fern. Hear the creek before you see it.</div></div>
-          <div class="timeline__row"><div class="timeline__time">3:45 PM</div><div class="timeline__dot"></div><div class="timeline__text">Cross the rope bridge for the first time. Your heart beats faster. Then the treehouse door opens.</div></div>
-          <div class="timeline__row"><div class="timeline__time">4:00 PM</div><div class="timeline__dot"></div><div class="timeline__text">Unpack. Step onto the deck. Realize you're sixty feet in the air and there isn't a single sound except wind through leaves.</div></div>
-          <div class="timeline__row"><div class="timeline__time">5:30 PM</div><div class="timeline__dot"></div><div class="timeline__text">Fire up the pizza oven on the sky deck. Open the bottle you brought. Burn the first pizza. Laugh about it. Nail the second one.</div></div>
-          <div class="timeline__row"><div class="timeline__time">7:00 PM</div><div class="timeline__dot"></div><div class="timeline__text">Watch the sun drop behind the ridgeline from your private deck. The forest turns gold, then amber, then blue.</div></div>
-          <div class="timeline__row"><div class="timeline__time">8:30 PM</div><div class="timeline__dot"></div><div class="timeline__text">Build a fire. Roast marshmallows. Look up. The Milky Way is right there.</div></div>
-          <div class="timeline__row"><div class="timeline__time">10:00 PM</div><div class="timeline__dot"></div><div class="timeline__text">Fall asleep to absolute silence, sixty feet above the forest floor.</div></div>
-          <div class="timeline__row"><div class="timeline__time">7:00 AM</div><div class="timeline__dot"></div><div class="timeline__text">Wake up to birdsong. Check the TreeMail box at the entrance to your bridge. Something is waiting inside.</div></div>
-        </div>
-        <p class="timeline__coda reveal">That's just one version. Every stay writes its own story.</p>
-        <p class="book-thanks reveal">Every direct booking supports a family-owned property and keeps Loxley independent. Thank you for booking with us.</p>
+        <p class="lf-reviews__note">4.98 from 200+ guest reviews, gathered on Airbnb and Google · Tap for another story</p>
+      </div>
+    </section>
+
+    <!-- ========== A DAY IN THE CANOPY ========== -->
+    <section class="lf-sec lf-dark" aria-labelledby="bk-d">
+      <div class="lf-wrap lf-bk-day">
+        <p class="lf-eyebrow lf-rise">Your stay</p>
+        <h2 class="lf-h2 lf-rise" id="bk-d">A day in the canopy</h2>
+        <ol class="lf-bk-times lf-rise">
+          <li><span>3:00 PM</span><p>Turn off the paved road onto a gravel path through the forest. The world gets quieter with every turn.</p></li>
+          <li><span>3:30 PM</span><p>Park at the trailhead. Walk four hundred feet through mountain laurel and fern. Hear the creek before you see it.</p></li>
+          <li><span>3:45 PM</span><p>Cross the rope bridge for the first time. Your heart beats faster. Then the treehouse door opens.</p></li>
+          <li><span>4:00 PM</span><p>Unpack. Step onto the deck. Realize you're sixty feet in the air and there isn't a single sound except wind through leaves.</p></li>
+          <li><span>5:30 PM</span><p>Fire up the pizza oven on the sky deck. Open the bottle you brought. Burn the first pizza. Laugh about it. Nail the second one.</p></li>
+          <li><span>7:00 PM</span><p>Watch the sun drop behind the ridgeline from your private deck. The forest turns gold, then amber, then blue.</p></li>
+          <li><span>8:30 PM</span><p>Build a fire. Roast marshmallows. Look up. The Milky Way is right there.</p></li>
+          <li><span>10:00 PM</span><p>Fall asleep to absolute silence, sixty feet above the forest floor.</p></li>
+          <li><span>8:30 AM</span><p>Wake up to birdsong. Check the TreeMail box at the entrance to your bridge. Something is waiting inside.</p></li>
+        </ol>
+        <p class="lf-lead lf-rise">That's just one version. Every stay writes its own story.</p>
+        <p class="lf-body lf-rise" style="margin-top:18px">Every direct booking supports a family-owned property and keeps Loxley independent. Thank you for booking with us.</p>
+        <div class="lf-actions lf-rise"><a href="#book" class="lf-btn"><svg viewBox="0 0 16 20" aria-hidden="true"><path fill="currentColor" d="M8 2.2C4.6 2.2 1.9 4.6 1.9 8H14.1C14.1 4.6 11.4 2.2 8 2.2ZM2.8 8.9H13.2C13.2 13.4 10.8 17.2 8 19.2C5.2 17.2 2.8 13.4 2.8 8.9ZM7.6 2.4C7.7 1.2 8.4 .4 9.6 .1L9.9 .7C9 1 8.5 1.6 8.5 2.4Z"/></svg>Book your dates</a></div>
       </div>
     </section>
 
   </main>
 
-  <!-- ========== FOOTER ========== -->
-  <footer class="footer">
-    <div class="footer__grid">
-      <div class="footer__col">
-        <div class="footer__wordmark">Loxley Forest</div>
-        <p class="footer__text">Suspended between earth and sky<br>in the North Georgia mountains.</p>
+  <footer class="lf-foot">
+    <div class="lf-foot__grid">
+      <div>
+        <img src="images/brand/logo/loxley-wordmark-on-dark.svg" alt="Loxley Forest" width="220" height="30" loading="lazy">
+        <p style="margin-top:18px;font-size:1.1rem">Dahlonega, Georgia. Just over an hour from Atlanta.<br>42 acres of hardwood cove forest at 1,470 feet.</p>
       </div>
-      <div class="footer__col">
-        <p class="footer__heading">Explore</p>
-        <a href="/treehouses" class="footer__link">The Treehouses</a>
-        <a href="/elopements" class="footer__link">Elopements</a>
-        <a href="/experiences" class="footer__link">Experiences</a>
-        <a href="/canopy-club" class="footer__link">Canopy Club</a>
-        <a href="/our-story" class="footer__link">Our Story</a>
-        <a href="/gallery" class="footer__link">Gallery</a>
-        <a href="/local-guide" class="footer__link">Local Guide</a>
-        <a href="/faq" class="footer__link">FAQ</a>
-      </div>
-      <div class="footer__col">
-        <p class="footer__heading">Connect</p>
-        <a href="https://instagram.com/loxleyforest" class="footer__link" target="_blank" rel="noopener">Instagram</a>
-        <a href="mailto:stay@loxleyforest.com" class="footer__link">stay@loxleyforest.com</a>
-        <a href="tel:+17065024823" class="footer__link">706-502-4823</a>
-      </div>
-      <div class="footer__col">
-        <p class="footer__heading">Visit</p>
-        <p class="footer__text">Dahlonega, Georgia<br>just over an hour from Atlanta<br>42 acres of hardwood cove forest<br>at 1,470 feet</p>
-      </div>
-    </div>
-    <div class="footer__bottom">
-      <p class="footer__copyright">&copy; 2026 Loxley Forest. All rights reserved.</p>
-      <div class="footer__legal">
-        <a href="/privacy">Privacy</a>
-        <a href="/terms">Terms</a>
-        <a href="/cancellation">Cancellation Policy</a>
-      </div>
+      <nav aria-label="Footer"><a href="/treehouses">The Treehouse</a><a href="/experiences">Experiences</a><a href="/elopements">Elopements</a><a href="/our-story">Our Story</a><a href="/gallery">Gallery</a><a href="/local-guide">Local Guide</a><a href="/faq">Questions</a></nav>
+      <nav aria-label="Contact"><a href="https://instagram.com/loxleyforest" target="_blank" rel="noopener">Instagram</a><a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a><a href="tel:+17065024823">706-502-4823</a></nav>
+      <div class="lf-foot__small"><span>&copy; 2026 Loxley Forest</span><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/cancellation">Cancellation</a></div>
     </div>
   </footer>
 
+  <a href="#book" class="book-fab"><svg viewBox="0 0 16 20" aria-hidden="true"><path fill="currentColor" d="M8 2.2C4.6 2.2 1.9 4.6 1.9 8H14.1C14.1 4.6 11.4 2.2 8 2.2ZM2.8 8.9H13.2C13.2 13.4 10.8 17.2 8 19.2C5.2 17.2 2.8 13.4 2.8 8.9ZM7.6 2.4C7.7 1.2 8.4 .4 9.6 .1L9.9 .7C9 1 8.5 1.6 8.5 2.4Z"/></svg>Book your dates</a>
   <script src="js/vendor/lenis.min.js"></script>
   <script src="js/global.js"></script>
+  <script src="js/v2.js"></script>
   <script src="js/reviews.js" defer></script>
-  <script>
-    (function(){
-      if (location.search.indexOf('submitted=1') !== -1) {
-        var form = document.querySelector('form[name="booking-inquiry"]');
-        var success = document.getElementById('booking-success');
-        if (form) form.style.display = 'none';
-        if (success) success.hidden = false;
-      }
-    })();
-  </script>
-
 </body>
 </html>
