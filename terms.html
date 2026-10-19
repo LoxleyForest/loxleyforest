@@ -30,98 +30,149 @@
 
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap">
   <link rel="stylesheet" href="css/global.css">
-  <link rel="stylesheet" href="css/gatehouse.css">
-  <link rel="stylesheet" href="css/v2.css">
-  <link rel="stylesheet" href="css/v2-pages.css">
 </head>
-<body class="v2">
+<body>
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5N4BX66K"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
   <a href="#main" class="skip-link">Skip to content</a>
 
-  <header class="lf-hdr">
-    <a href="/" class="lf-hdr__mark" aria-label="Loxley Forest, home"><img src="images/brand/logo/loxley-wordmark-on-dark.svg" alt="Loxley Forest" width="236" height="32"></a>
-    <nav class="lf-hdr__nav" aria-label="Main"><a href="/treehouses">The Treehouse</a><a href="/experiences">Experiences</a><a href="/elopements">Elopements</a><a href="/our-story">Our Story</a><a href="/gallery">Gallery</a><a href="/local-guide">Local Guide</a></nav>
-    <a href="/book" class="lf-btn lf-hdr__book">Book your dates</a>
-    <button class="lf-menu-btn" type="button" aria-expanded="false" aria-controls="lf-menu" aria-label="Open menu"><span></span></button>
-  </header>
-  <div class="lf-menu" id="lf-menu" aria-hidden="true">
-    <nav aria-label="Menu"><a href="/treehouses">The Treehouse</a><a href="/experiences">Experiences</a><a href="/elopements">Elopements</a><a href="/our-story">Our Story</a><a href="/gallery">Gallery</a><a href="/local-guide">Local Guide</a><a href="/faq">Questions</a></nav>
-    <a href="/book" class="lf-btn"><svg viewBox="0 0 16 20" aria-hidden="true"><path fill="currentColor" d="M8 2.2C4.6 2.2 1.9 4.6 1.9 8H14.1C14.1 4.6 11.4 2.2 8 2.2ZM2.8 8.9H13.2C13.2 13.4 10.8 17.2 8 19.2C5.2 17.2 2.8 13.4 2.8 8.9ZM7.6 2.4C7.7 1.2 8.4 .4 9.6 .1L9.9 .7C9 1 8.5 1.6 8.5 2.4Z"/></svg>Book your dates</a>
-    <p class="lf-menu__foot">Dahlonega, Georgia<br>Just over an hour from Atlanta</p>
+  <!-- ========== ANNOUNCEMENT BAR ========== -->
+  <div class="announcement-bar">
+    <div class="announcement-bar__track">
+      <a href="/canopy-club" class="announcement-bar__message active">THE CANOPY CLUB — FOUNDING LIST OPEN · LIMITED TO 50 COUPLES</a>
+      <a href="/treehouses#treehouse-2" class="announcement-bar__message">TREEHOUSE 2 — COMING SOON · FIRST NIGHTS GO TO THE LIST</a>
+      <a href="/treehouses" class="announcement-bar__message">A HANDFUL OF FULLY SUSPENDED TREEHOUSES EXIST ON EARTH — THIS FOREST GROWS THEM</a>
+    </div>
+    <button class="announcement-bar__close" aria-label="Dismiss announcement">&times;</button>
+  </div>
+
+  <!-- ========== NAVIGATION ========== -->
+  <nav class="nav nav--scrolled">
+    <a href="/" class="nav__wordmark">Loxley Forest</a>
+    <div class="nav__links">
+      <a href="/treehouses" class="nav__link">The Treehouses</a>
+      <a href="/elopements" class="nav__link">Elopements</a>
+      <a href="/experiences" class="nav__link">Experiences</a>
+      <a href="/canopy-club" class="nav__link">Canopy Club</a>
+      <a href="/our-story" class="nav__link">Our Story</a>
+      <a href="/gallery" class="nav__link">Gallery</a>
+      <a href="/local-guide" class="nav__link">Local Guide</a>
+    </div>
+    <a href="/book" class="btn btn--primary nav__cta">Book Your Stay</a>
+    <button class="nav__hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="nav__overlay">
+    <a href="/treehouses" class="nav__link">The Treehouses</a>
+    <a href="/elopements" class="nav__link">Elopements</a>
+    <a href="/experiences" class="nav__link">Experiences</a>
+    <a href="/canopy-club" class="nav__link">Canopy Club</a>
+    <a href="/our-story" class="nav__link">Our Story</a>
+    <a href="/gallery" class="nav__link">Gallery</a>
+    <a href="/local-guide" class="nav__link">Local Guide</a>
+    <a href="/book" class="btn btn--primary" style="margin-top: 16px;">Book Your Stay</a>
   </div>
 
   <main id="main">
 
-    <section class="lf-sec lf-dark lf-legal-top" aria-labelledby="lg-h">
-      <div class="lf-wrap">
-        <p class="lf-eyebrow">Terms &amp; Conditions</p>
-        <h1 class="lf-h1" id="lg-h">The Ground Rules</h1>
-        <p class="lf-lead">Written like a conversation, not a contract.</p>
+    <!-- ========== HEADER ========== -->
+    <section class="faq-header" style="padding-top: 140px;">
+      <div class="container--narrow text-center">
+        <p class="eyebrow reveal" style="margin-bottom: 16px;">Terms &amp; Conditions</p>
+        <h1 class="headline-page reveal" style="margin-bottom: 12px;">The Ground Rules</h1>
+        <p class="subheadline reveal" style="color: var(--stone);">Written like a conversation, not a contract.</p>
+        <hr class="divider reveal">
       </div>
     </section>
 
-    <section class="lf-sec lf-light lf-legal">
-      <div class="lf-legal__text">
+    <!-- ========== BODY ========== -->
+    <section class="section section--linen" style="padding-top: 0;">
+      <div class="container--narrow">
+        <p class="body-text">Loxley Forest is our home. When you book a stay, you're a guest in it — and we treat you like one. Here's what we ask in return.</p>
 
-      <p>Loxley Forest is our home. When you book a stay, you're a guest in it — and we treat you like one. Here's what we ask in return.</p>
+        <h3 class="headline-section" style="font-size: 24px; margin-top: 40px; margin-bottom: 12px;">Occupancy</h3>
+        <p class="body-text">Each treehouse accommodates up to 6 guests. All guests must be listed at the time of booking. If your group changes, just let us know — we're flexible, not rigid.</p>
 
-      <h2>Occupancy</h2>
-      <p>Each treehouse accommodates up to 6 guests. All guests must be listed at the time of booking. If your group changes, just let us know — we're flexible, not rigid.</p>
+        <h3 class="headline-section" style="font-size: 24px; margin-top: 40px; margin-bottom: 12px;">Children</h3>
+        <p class="body-text">Absolutely welcome. We have two of our own. The rope bridge and elevated platforms require supervision of young children — the forest is an adventure, and we want everyone safe to enjoy it.</p>
 
-      <h2>Children</h2>
-      <p>Absolutely welcome. We have two of our own. The rope bridge and elevated platforms require supervision of young children — the forest is an adventure, and we want everyone safe to enjoy it.</p>
+        <h3 class="headline-section" style="font-size: 24px; margin-top: 40px; margin-bottom: 12px;">Pets</h3>
+        <p class="body-text">Well-behaved pets are welcome. We ask that you let us know at booking so we can prepare. Please keep pets off the furniture and bedding, and clean up after them on the trails. If your pet has an accident, we get it — just let us know.</p>
 
-      <h2>Pets</h2>
-      <p>Well-behaved pets are welcome. We ask that you let us know at booking so we can prepare. Please keep pets off the furniture and bedding, and clean up after them on the trails. If your pet has an accident, we get it — just let us know.</p>
+        <h3 class="headline-section" style="font-size: 24px; margin-top: 40px; margin-bottom: 12px;">Smoking</h3>
+        <p class="body-text">No smoking in or near the treehouses. The structures are canvas and wood, suspended in a forest. We think you understand why. If you'd like to smoke, we ask that you do so at the fire pit area on the ground level, away from the structures.</p>
 
-      <h2>Smoking</h2>
-      <p>No smoking in or near the treehouses. The structures are canvas and wood, suspended in a forest. We think you understand why. If you'd like to smoke, we ask that you do so at the fire pit area on the ground level, away from the structures.</p>
+        <h3 class="headline-section" style="font-size: 24px; margin-top: 40px; margin-bottom: 12px;">Fires &amp; Safety</h3>
+        <p class="body-text">The fire pit is yours to enjoy. We provide firewood and s'mores kits. We ask that you never use gasoline, lighter fluid, or accelerants. Keep fires in the fire pit only — never on the decks or platforms. Extinguish completely before going to sleep.</p>
 
-      <h2>Fires &amp; Safety</h2>
-      <p>The fire pit is yours to enjoy. We provide firewood and s'mores kits. We ask that you never use gasoline, lighter fluid, or accelerants. Keep fires in the fire pit only — never on the decks or platforms. Extinguish completely before going to sleep.</p>
+        <h3 class="headline-section" style="font-size: 24px; margin-top: 40px; margin-bottom: 12px;">The Property</h3>
+        <p class="body-text">Loxley Forest is 42 acres of working forest. Trails are natural and unimproved — wear appropriate footwear. The creek and terrain can be slippery. Please stay on marked trails and respect the forest. This land has been here a long time, and we'd like to keep it that way.</p>
 
-      <h2>The Property</h2>
-      <p>Loxley Forest is 42 acres of working forest. Trails are natural and unimproved — wear appropriate footwear. The creek and terrain can be slippery. Please stay on marked trails and respect the forest. This land has been here a long time, and we'd like to keep it that way.</p>
+        <h3 class="headline-section" style="font-size: 24px; margin-top: 40px; margin-bottom: 12px;">Noise</h3>
+        <p class="body-text">We don't have formal quiet hours — it's never been an issue. The forest does the work. We ask that you keep noise at a level that respects the natural setting, especially after dark. No amplified music outdoors.</p>
 
-      <h2>Noise</h2>
-      <p>We don't have formal quiet hours — it's never been an issue. The forest does the work. We ask that you keep noise at a level that respects the natural setting, especially after dark. No amplified music outdoors.</p>
+        <h3 class="headline-section" style="font-size: 24px; margin-top: 40px; margin-bottom: 12px;">Damage &amp; Liability</h3>
+        <p class="body-text">We ask that you treat the treehouses with care. If something breaks or gets damaged during your stay, please let us know — accidents happen and honesty goes a long way. Guests are responsible for damage beyond normal wear.</p>
+        <p class="body-text">Loxley Forest is not responsible for injury resulting from use of the property, trails, fire pit, rope bridges, or natural features. By booking, you acknowledge the inherent adventure of staying in a treehouse 60 feet in the air in a mountain forest — and you embrace it.</p>
 
-      <h2>Damage &amp; Liability</h2>
-      <p>We ask that you treat the treehouses with care. If something breaks or gets damaged during your stay, please let us know — accidents happen and honesty goes a long way. Guests are responsible for damage beyond normal wear.</p>
-      <p>Loxley Forest is not responsible for injury resulting from use of the property, trails, fire pit, rope bridges, or natural features. By booking, you acknowledge the inherent adventure of staying in a treehouse 60 feet in the air in a mountain forest — and you embrace it.</p>
+        <h3 class="headline-section" style="font-size: 24px; margin-top: 40px; margin-bottom: 12px;">Check-In &amp; Check-Out</h3>
+        <p class="body-text">Check-in: 3:00 PM. Check-out: 11:00 AM. Early check-in or late check-out may be available — just ask. We'll accommodate when we can.</p>
 
-      <h2>Check-In &amp; Check-Out</h2>
-      <p>Check-in: 3:00 PM. Check-out: 11:00 AM. Early check-in or late check-out may be available — just ask. We'll accommodate when we can.</p>
+        <h3 class="headline-section" style="font-size: 24px; margin-top: 40px; margin-bottom: 12px;">Changes to These Terms</h3>
+        <p class="body-text">We may update these terms as our property evolves. The current version always lives at this page.</p>
 
-      <h2>Changes to These Terms</h2>
-      <p>We may update these terms as our property evolves. The current version always lives at this page.</p>
-
-      <p>Questions about anything here? Call <a href="tel:+17065024823">706-502-4823</a> or email <a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a>. We'd rather talk it through than have you guess.</p>
-      <p class="lf-legal-sign">— Mick &amp; Livy</p>
+        <p class="body-text" style="margin-top: 32px;">Questions about anything here? Call <a href="tel:+17065024823" style="color: var(--gold);">706-502-4823</a> or email <a href="mailto:stay@loxleyforest.com" style="color: var(--gold);">stay@loxleyforest.com</a>. We'd rather talk it through than have you guess.</p>
+        <p class="body-text" style="font-style: italic;">— Mick &amp; Livy</p>
       </div>
     </section>
 
   </main>
 
-  <footer class="lf-foot">
-    <div class="lf-foot__grid">
-      <div>
-        <img src="images/brand/logo/loxley-wordmark-on-dark.svg" alt="Loxley Forest" width="220" height="30" loading="lazy">
-        <p style="margin-top:18px;font-size:1.1rem">Dahlonega, Georgia. Just over an hour from Atlanta.<br>42 acres of hardwood cove forest at 1,470 feet.</p>
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="footer__grid">
+      <div class="footer__col">
+        <div class="footer__wordmark">Loxley Forest</div>
+        <p class="footer__text">Suspended between earth and sky<br>in the North Georgia mountains.</p>
       </div>
-      <nav aria-label="Footer"><a href="/treehouses">The Treehouse</a><a href="/experiences">Experiences</a><a href="/elopements">Elopements</a><a href="/our-story">Our Story</a><a href="/gallery">Gallery</a><a href="/local-guide">Local Guide</a><a href="/faq">Questions</a></nav>
-      <nav aria-label="Contact"><a href="https://instagram.com/loxleyforest" target="_blank" rel="noopener">Instagram</a><a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a><a href="tel:+17065024823">706-502-4823</a></nav>
-      <div class="lf-foot__small"><span>&copy; 2026 Loxley Forest</span><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/cancellation">Cancellation</a></div>
+      <div class="footer__col">
+        <p class="footer__heading">Explore</p>
+        <a href="/treehouses" class="footer__link">The Treehouses</a>
+        <a href="/elopements" class="footer__link">Elopements</a>
+        <a href="/experiences" class="footer__link">Experiences</a>
+        <a href="/canopy-club" class="footer__link">Canopy Club</a>
+        <a href="/our-story" class="footer__link">Our Story</a>
+        <a href="/gallery" class="footer__link">Gallery</a>
+        <a href="/local-guide" class="footer__link">Local Guide</a>
+        <a href="/faq" class="footer__link">FAQ</a>
+      </div>
+      <div class="footer__col">
+        <p class="footer__heading">Connect</p>
+        <a href="https://instagram.com/loxleyforest" class="footer__link" target="_blank" rel="noopener">Instagram</a>
+        <a href="mailto:stay@loxleyforest.com" class="footer__link">stay@loxleyforest.com</a>
+        <a href="tel:+17065024823" class="footer__link">706-502-4823</a>
+      </div>
+      <div class="footer__col">
+        <p class="footer__heading">Visit</p>
+        <p class="footer__text">Dahlonega, Georgia<br>just over an hour from Atlanta<br>42 acres of hardwood cove forest<br>at 1,470 feet</p>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <p class="footer__copyright">&copy; 2026 Loxley Forest. All rights reserved.</p>
+      <div class="footer__legal">
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+        <a href="/cancellation">Cancellation Policy</a>
+      </div>
     </div>
   </footer>
 
   <a href="/book" class="book-fab"><svg viewBox="0 0 16 20" aria-hidden="true"><path fill="currentColor" d="M8 2.2C4.6 2.2 1.9 4.6 1.9 8H14.1C14.1 4.6 11.4 2.2 8 2.2ZM2.8 8.9H13.2C13.2 13.4 10.8 17.2 8 19.2C5.2 17.2 2.8 13.4 2.8 8.9ZM7.6 2.4C7.7 1.2 8.4 .4 9.6 .1L9.9 .7C9 1 8.5 1.6 8.5 2.4Z"/></svg>Book your dates</a>
   <script src="js/vendor/lenis.min.js"></script>
   <script src="js/global.js"></script>
-  <script src="js/v2.js"></script>
-  <script src="js/reviews.js" defer></script>
 </body>
 </html>
