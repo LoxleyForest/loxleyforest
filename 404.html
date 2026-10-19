@@ -19,66 +19,45 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/images/brand/logo/kit/favicon-32.png">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap">
-  <link rel="stylesheet" href="/css/global.css">
-  <link rel="stylesheet" href="/css/gatehouse.css">
-  <link rel="stylesheet" href="/css/v2.css">
-  <link rel="stylesheet" href="/css/v2-pages.css">
+  <link rel="stylesheet" href="css/global.css">
 </head>
-<body class="v2">
+<body>
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5N4BX66K"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
-  <a href="#main" class="skip-link">Skip to content</a>
 
-  <header class="lf-hdr">
-    <a href="/" class="lf-hdr__mark" aria-label="Loxley Forest, home"><img src="images/brand/logo/loxley-wordmark-on-dark.svg" alt="Loxley Forest" width="236" height="32"></a>
-    <nav class="lf-hdr__nav" aria-label="Main"><a href="/treehouses">The Treehouse</a><a href="/experiences">Experiences</a><a href="/elopements">Elopements</a><a href="/our-story">Our Story</a><a href="/gallery">Gallery</a><a href="/local-guide">Local Guide</a></nav>
-    <a href="/book" class="lf-btn lf-hdr__book">Book your dates</a>
-    <button class="lf-menu-btn" type="button" aria-expanded="false" aria-controls="lf-menu" aria-label="Open menu"><span></span></button>
-  </header>
-  <div class="lf-menu" id="lf-menu" aria-hidden="true">
-    <nav aria-label="Menu"><a href="/treehouses">The Treehouse</a><a href="/experiences">Experiences</a><a href="/elopements">Elopements</a><a href="/our-story">Our Story</a><a href="/gallery">Gallery</a><a href="/local-guide">Local Guide</a><a href="/faq">Questions</a></nav>
-    <a href="/book" class="lf-btn"><svg viewBox="0 0 16 20" aria-hidden="true"><path fill="currentColor" d="M8 2.2C4.6 2.2 1.9 4.6 1.9 8H14.1C14.1 4.6 11.4 2.2 8 2.2ZM2.8 8.9H13.2C13.2 13.4 10.8 17.2 8 19.2C5.2 17.2 2.8 13.4 2.8 8.9ZM7.6 2.4C7.7 1.2 8.4 .4 9.6 .1L9.9 .7C9 1 8.5 1.6 8.5 2.4Z"/></svg>Book your dates</a>
-    <p class="lf-menu__foot">Dahlonega, Georgia<br>Just over an hour from Atlanta</p>
+  <!-- ========== ANNOUNCEMENT BAR ========== -->
+  <div class="announcement-bar">
+    <div class="announcement-bar__track">
+      <a href="/canopy-club" class="announcement-bar__message active">THE CANOPY CLUB — FOUNDING LIST OPEN · LIMITED TO 50 COUPLES</a>
+      <a href="/treehouses#treehouse-2" class="announcement-bar__message">TREEHOUSE 2 — COMING SOON · FIRST NIGHTS GO TO THE LIST</a>
+      <a href="/treehouses" class="announcement-bar__message">A HANDFUL OF FULLY SUSPENDED TREEHOUSES EXIST ON EARTH — THIS FOREST GROWS THEM</a>
+    </div>
+    <button class="announcement-bar__close" aria-label="Dismiss announcement">&times;</button>
   </div>
 
-  <main id="main">
+  <nav class="nav nav--scrolled">
+    <a href="/" class="nav__wordmark">Loxley Forest</a>
+    <a href="/book" class="btn btn--primary nav__cta">Book Your Stay</a>
+  </nav>
 
-    <section class="lf-sec lf-dark lf-off" aria-labelledby="off-h">
-      <div class="lf-wrap lf-split">
-        <div>
-          <p class="lf-eyebrow">404 · Off the trail</p>
-          <h1 class="lf-h1" id="off-h">You've wandered off the trail</h1>
-          <p class="lf-lead">The forest has many paths, but this one doesn't lead anywhere. Let's get you back to the canopy.</p>
-          <div class="lf-actions">
-            <a href="/book" class="lf-btn"><svg viewBox="0 0 16 20" aria-hidden="true"><path fill="currentColor" d="M8 2.2C4.6 2.2 1.9 4.6 1.9 8H14.1C14.1 4.6 11.4 2.2 8 2.2ZM2.8 8.9H13.2C13.2 13.4 10.8 17.2 8 19.2C5.2 17.2 2.8 13.4 2.8 8.9ZM7.6 2.4C7.7 1.2 8.4 .4 9.6 .1L9.9 .7C9 1 8.5 1.6 8.5 2.4Z"/></svg>Book your dates</a>
-            <a href="/" class="lf-link">Back to the forest</a>
-          </div>
-          <p class="lf-off__more"><a href="/treehouses">The treehouse</a><a href="/experiences">Experiences</a><a href="/faq">Questions</a></p>
+  <main>
+    <section class="not-found">
+      <div class="not-found__content">
+        <p class="eyebrow" style="margin-bottom: 24px;">404</p>
+        <h1 class="headline-page" style="margin-bottom: 24px;">You've Wandered Off the Trail</h1>
+        <p class="body-large" style="color: var(--stone); margin-bottom: 40px;">The forest has many paths, but this one doesn't lead anywhere. Let's get you back to the canopy.</p>
+        <div class="btn-group" style="justify-content: center;">
+          <a href="/" class="btn btn--primary">Back to the Forest</a>
+          <a href="/book" class="btn btn--secondary">Book Your Stay</a>
         </div>
-        <figure class="lf-photo"><img src="/images/v2/eq3a0337-800.webp" srcset="/images/v2/eq3a0337-800.webp 800w, /images/v2/eq3a0337-1600.webp 1600w" sizes="(min-width: 900px) 50vw, 100vw" width="800" height="533" alt="The start of the rope bridge in fall, the trail leading into the trees" fetchpriority="high"></figure>
       </div>
     </section>
-
   </main>
-
-  <footer class="lf-foot">
-    <div class="lf-foot__grid">
-      <div>
-        <img src="images/brand/logo/loxley-wordmark-on-dark.svg" alt="Loxley Forest" width="220" height="30" loading="lazy">
-        <p style="margin-top:18px;font-size:1.1rem">Dahlonega, Georgia. Just over an hour from Atlanta.<br>42 acres of hardwood cove forest at 1,470 feet.</p>
-      </div>
-      <nav aria-label="Footer"><a href="/treehouses">The Treehouse</a><a href="/experiences">Experiences</a><a href="/elopements">Elopements</a><a href="/our-story">Our Story</a><a href="/gallery">Gallery</a><a href="/local-guide">Local Guide</a><a href="/faq">Questions</a></nav>
-      <nav aria-label="Contact"><a href="https://instagram.com/loxleyforest" target="_blank" rel="noopener">Instagram</a><a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a><a href="tel:+17065024823">706-502-4823</a></nav>
-      <div class="lf-foot__small"><span>&copy; 2026 Loxley Forest</span><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/cancellation">Cancellation</a></div>
-    </div>
-  </footer>
 
   <a href="/book" class="book-fab"><svg viewBox="0 0 16 20" aria-hidden="true"><path fill="currentColor" d="M8 2.2C4.6 2.2 1.9 4.6 1.9 8H14.1C14.1 4.6 11.4 2.2 8 2.2ZM2.8 8.9H13.2C13.2 13.4 10.8 17.2 8 19.2C5.2 17.2 2.8 13.4 2.8 8.9ZM7.6 2.4C7.7 1.2 8.4 .4 9.6 .1L9.9 .7C9 1 8.5 1.6 8.5 2.4Z"/></svg>Book your dates</a>
   <script src="js/vendor/lenis.min.js"></script>
   <script src="js/global.js"></script>
-  <script src="js/v2.js"></script>
-  <script src="js/reviews.js" defer></script>
 </body>
 </html>
