@@ -110,7 +110,7 @@ BOOK = f'''    <section class="lf-sec lf-parch lf-book" id="book" aria-labelledb
         </ul>
       </div>
       <div id="gatehouse"
-           data-api=""
+           data-api="https://book.loxleyforest.com"
            data-unit="loxley-forest-canopy-treehouse-dahlonega"
            data-stripe-key=""
            data-snapshot="data/gatehouse-snapshot.json"
