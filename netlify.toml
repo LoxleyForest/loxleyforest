@@ -11,14 +11,3 @@
 [build]
   command = "python3 scripts/ensure_gtm.py"
   publish = "."
-
-# The Canopy Club is retired (Mick, 2026-10-13); old links land on the home page.
-[[redirects]]
-  from = "/canopy-club"
-  to = "/"
-  status = 301
-
-[[redirects]]
-  from = "/canopy-club.html"
-  to = "/"
-  status = 301
