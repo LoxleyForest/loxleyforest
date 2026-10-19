@@ -1,4 +1,7 @@
-"""The legal pages: /terms, /privacy, /cancellation.
+"""The legal pages: /terms, /privacy.
+
+/cancellation is gone (Mick, 2026-10-19: the terms live in the booking agreement, shown in full at
+checkout); netlify.toml sends its old links to /book.
 
 The words are legal content and are carried exactly as they stood on the old pages, em dashes
 included (the one place the no-dash rule does not reach). Only the markup changed: the old
@@ -62,30 +65,6 @@ PRIVACY = ('Privacy', 'Your Privacy at Loxley', 'Simple, plain-spoken, and perso
       <p class="lf-legal-sign">— Mick &amp; Livy</p>
 ''')
 
-CANCELLATION = ('Cancellation', 'Cancellation &amp; Changes', 'The Forest Holds Your Spot', '''
-      <p>We get it: life happens. Cars break down, kids catch colds, and occasionally a cousin decides to get married on the exact weekend of your forest retreat. Here is exactly how it works.</p>
-
-      <h2>Payment</h2>
-      <p>Half of your stay is paid at booking. The balance is charged 30 days before check-in. Stays booked within 30 days of check-in are paid in full at booking.</p>
-
-      <h2>If you need to cancel</h2>
-      <p>We don't offer cash refunds for cancellations (though we make rare exceptions for genuinely extraordinary circumstances we can verify). Instead, we'll happily provide a credit for a future stay, redeemable within 6 months of your original booking date. Think of it as the forest saving your spot among the leaves for when the timing is better.</p>
-
-      <h2>If we rebook your dates</h2>
-      <p>If we're able to rebook your dates after a cancellation, we'll be more flexible about refund options. After all, if another guest gets to enjoy your spot, the forest is appeased.</p>
-
-      <h2>Weather</h2>
-      <p>The forest is beautiful in all conditions: rain brings mist, snow transforms the trees, and sunshine dapples through the canopy. We don't offer cancellations due to weather unless Mother Nature gets truly dramatic (hurricane-level dramatic).</p>
-
-      <h2>How to cancel or change</h2>
-      <p>Email <a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a> or call <a href="tel:+17065024823">706-502-4823</a>. We respond within 2 hours. Cancellation is confirmed when you receive written confirmation from us.</p>
-
-      <h2>Our philosophy</h2>
-      <p>We'd always rather have you here than issue a refund. If your plans change, talk to us before assuming the worst. We're a family, not a corporation — and we'll always try to find a way to make it work.</p>
-
-      <p class="lf-legal-sign">— Mick &amp; Livy</p>
-''')
-
 def legal(page, text):
     eyebrow, h1, sub, words = text
     head, gtm = B.head_from(page)
@@ -115,11 +94,8 @@ def page_privacy():
     return legal('privacy.html', PRIVACY)
 
 
-def page_cancellation():
-    return legal('cancellation.html', CANCELLATION)
 
-
-PAGES = [page_terms, page_privacy, page_cancellation]
+PAGES = [page_terms, page_privacy]
 
 CSS = '''
 .lf-legal-top { padding-top: calc(var(--hdr-h) + clamp(44px, 8vw, 96px)); padding-bottom: clamp(48px, 7vw, 80px); }

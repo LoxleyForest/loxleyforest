@@ -1,10 +1,10 @@
-"""/book: where the home page calendar hands guests over.
+"""/book: our checkout (the Gatehouse, js/gatehouse.js), live against book.loxleyforest.com.
 
-Until the Gatehouse takes payments, this page is Hostfully's lead widget. The widget block
-(WIDGET below: Hostfully's two scripts, its container, the ad click ID and the constructor) is
-carried byte for byte from the old book.html; restyle around it, never inside it. The
-booking-inquiry Netlify form keeps its name, honeypot, hidden fields, every field name and its
-action. The header Book button goes to #book, the widget.
+Every Book button on the site lands here, and the home, treehouse and experiences calendars carry
+their dates here (/book?checkIn=YYYY-MM-DD&checkOut=YYYY-MM-DD). No Hostfully anywhere (Mick,
+2026-10-19). When the booking API cannot be reached, the calendar steps aside for the request-dates
+form below it; there is no preview. The booking-inquiry Netlify form keeps its name, honeypot,
+hidden fields, every field name and its action. The header Book button goes to #book, the calendar.
 """
 import re
 
@@ -16,30 +16,18 @@ def tidy(head):
     keep it at one so a rebuild writes the same file (reported to the Forge)."""
     return re.sub(r'\s*</head>\n$', '\n</head>\n', head)
 
-# Byte for byte from the old book.html. Do not edit, reindent or reformat.
-WIDGET = r'''<!-- ========== HOSTFULLY BOOKING WIDGET ========== -->
-<script type="text/javascript" src="https://platform.hostfully.com/assets/js/pikaday.js"></script>
-<script type="text/javascript" src="https://platform.hostfully.com/assets/js/leadCaptureWidget_2.0.js"></script>
-<div id="leadWidget"></div>
-<script>
-/* Ad click ID for the Hostfully widget.
-   Read here inline because global.js loads at the end of <body>, long after
-   this widget is constructed. URL first (this visit), then the stored value
-   (an earlier landing page on this site). See js/global.js for the store. */
-window.__loxClickId = (function () {
-  try {
-    var p = new URLSearchParams(window.location.search);
-    var direct = p.get('gclid') || p.get('gbraid') || p.get('wbraid');
-    if (direct) return direct;
-    var saved = JSON.parse(window.localStorage.getItem('loxley_attribution') || 'null');
-    if (saved) return saved.gclid || saved.gbraid || saved.wbraid || null;
-  } catch (e) {}
-  return null;
-})();
-</script>
-<script>
-var widget = new Widget('leadWidget', '9fe2c6da-b6b4-4a9c-a756-350d014c7140', {"maximun_availability":"2029-07-02T04:40:56.419Z","type":"agency","fields":[],"showAvailability":true,"lang":"US","minStay":true,"price":true,"hidePriceWithoutDates":true,"cc":"stay@loxleyforest.com","emailClient":true,"saveCookie":true,"showDynamicMinStay":true,"backgroundColor":"#FFFFFF","buttonSubmit":{"backgroundColor":"#c4a265"},"showPriceDetailsLink":true,"showGetQuoteLink":false,"labelColor":"#2d4a2d","showTotalWithoutSD":true,"redirectURL":"https://loxleyforest.com/booking-confirmed.html","showDiscount":true,"includeReferrerToRequest":true,"customDomainName":null,"source":null,"aid":"ORB-49587220416635719","clickID":window.__loxClickId,"valuesByDefaults":{"checkIn":{"value":""},"checkOut":{"value":""},"guests":{"value":""},"discountCode":{"value":""}},"pathRoot":"https://platform.hostfully.com/"});
-</script>'''
+
+# TODO(cutover, Architect): data-stripe-key takes the live publishable key (pk_live_...) at cutover.
+# Until it is set, the checkout runs to the agreement and then says plainly that payment opens
+# shortly, with the phone number; it never claims nights it cannot take payment for.
+GATEHOUSE = f'''<div id="gatehouse"
+           data-api="{B.API}"
+           data-unit="{B.UNIT}"
+           data-stripe-key=""
+           data-fallback="#gh-down">{B.GH_WAIT}</div>
+      <div id="gh-down" class="lf-book__alt" hidden>
+        <p>Our booking calendar isn't answering just now. Nothing is lost: <a href="#inquiry">send us your dates</a> and we'll write back within two hours, or call or text <a href="tel:+17065024823">706-502-4823</a>.</p>
+      </div>'''
 
 DAY = [('3:00 PM', 'Turn off the paved road onto a gravel path through the forest. The world gets quieter with every turn.'),
        ('3:30 PM', 'Park at the trailhead. Walk four hundred feet through mountain laurel and fern. Hear the creek before you see it.'),
@@ -68,16 +56,14 @@ def page_book():
       </div>
     </section>
 
-    <!-- ========== THE WIDGET (Hostfully, until the Gatehouse takes payments) ========== -->
-    <section class="lf-sec lf-parch lf-bk-book" id="book" aria-labelledby="bk-w">
+    <!-- ========== THE CHECKOUT: our calendar, our agreement, Stripe ========== -->
+    <section class="lf-sec lf-parch lf-book lf-bk-book" id="book" aria-labelledby="bk-w">
       <div class="lf-bk-head">
-        <h2 class="lf-h3" id="bk-w">Check availability and book</h2>
-        <p>Select your dates, see live pricing, and book securely.</p>
+        <h2 class="lf-h3" id="bk-w">Choose your nights</h2>
+        <p>Every open night shows its rate. Pick your dates and the whole price appears, taxes included. Then book right here.</p>
         <p class="lf-bk-trust">Book direct and deal straight with the family who built it.</p>
       </div>
-      <div class="hostfully-booking-wrap lf-bk-widget">
-{WIDGET}
-      </div>
+      {GATEHOUSE}
       <p class="lf-bk-contact">Questions? Call or text <a href="tel:+17065024823">706-502-4823</a>, or write to <a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a>.</p>
     </section>
 
@@ -221,7 +207,7 @@ def page_book():
       </div>
     </section>
 '''
-    return 'book.html', head, gtm, body, '#book', False
+    return 'book.html', head, gtm, body, '#book', True
 
 
 PAGES = [page_book]
@@ -236,13 +222,8 @@ CSS = '''
 .lf-bk-head .lf-h3 { color: var(--forest-deep); font-size: clamp(1.75rem, 5vw, 2.3rem); }
 .lf-bk-head p { margin: 10px 0 0; font-size: 1.2rem; line-height: 1.5; color: var(--stone); }
 .lf-bk-head .lf-bk-trust { margin-top: 14px; font-family: 'Montserrat', sans-serif; font-size: 0.8125rem; letter-spacing: 0.04em; color: var(--bark); }
-.lf-bk-widget { max-width: 560px; margin: 0 auto; background: #fff; padding: 36px 32px; border: 1px solid rgba(44, 34, 25, 0.1); box-shadow: 0 18px 48px rgba(26, 46, 26, 0.08); }
 .lf-bk-contact { max-width: 36rem; margin: 26px auto 0; text-align: center; font-size: 1.15rem; line-height: 1.6; color: var(--stone); }
 .lf-bk-contact a, .lf-bk-done a { color: var(--forest-deep); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; white-space: nowrap; }
-@media (max-width: 767px) {
-  .lf-bk-widget { padding: 24px 16px; margin: 0 -8px; }
-  #leadWidget { max-width: 100%; overflow: hidden; }
-}
 
 .lf-bk-ask { padding-top: clamp(48px, 7vw, 80px); }
 .lf-bk-ask__in { max-width: 36rem; margin: 0 auto; }
