@@ -25,6 +25,7 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="canonical" href="https://loxleyforest.com/book">
 
+  <link rel="preconnect" href="https://book.loxleyforest.com" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
@@ -65,37 +66,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
     </section>
 
-    <!-- ========== THE WIDGET (Hostfully, until the Gatehouse takes payments) ========== -->
-    <section class="lf-sec lf-parch lf-bk-book" id="book" aria-labelledby="bk-w">
+    <!-- ========== THE CHECKOUT: our calendar, our agreement, Stripe ========== -->
+    <section class="lf-sec lf-parch lf-book lf-bk-book" id="book" aria-labelledby="bk-w">
       <div class="lf-bk-head">
-        <h2 class="lf-h3" id="bk-w">Check availability and book</h2>
-        <p>Select your dates, see live pricing, and book securely.</p>
+        <h2 class="lf-h3" id="bk-w">Choose your nights</h2>
+        <p>Every open night shows its rate. Pick your dates and the whole price appears, taxes included. Then book right here.</p>
         <p class="lf-bk-trust">Book direct and deal straight with the family who built it.</p>
       </div>
-      <div class="hostfully-booking-wrap lf-bk-widget">
-<!-- ========== HOSTFULLY BOOKING WIDGET ========== -->
-<script type="text/javascript" src="https://platform.hostfully.com/assets/js/pikaday.js"></script>
-<script type="text/javascript" src="https://platform.hostfully.com/assets/js/leadCaptureWidget_2.0.js"></script>
-<div id="leadWidget"></div>
-<script>
-/* Ad click ID for the Hostfully widget.
-   Read here inline because global.js loads at the end of <body>, long after
-   this widget is constructed. URL first (this visit), then the stored value
-   (an earlier landing page on this site). See js/global.js for the store. */
-window.__loxClickId = (function () {
-  try {
-    var p = new URLSearchParams(window.location.search);
-    var direct = p.get('gclid') || p.get('gbraid') || p.get('wbraid');
-    if (direct) return direct;
-    var saved = JSON.parse(window.localStorage.getItem('loxley_attribution') || 'null');
-    if (saved) return saved.gclid || saved.gbraid || saved.wbraid || null;
-  } catch (e) {}
-  return null;
-})();
-</script>
-<script>
-var widget = new Widget('leadWidget', '9fe2c6da-b6b4-4a9c-a756-350d014c7140', {"maximun_availability":"2029-07-02T04:40:56.419Z","type":"agency","fields":[],"showAvailability":true,"lang":"US","minStay":true,"price":true,"hidePriceWithoutDates":true,"cc":"stay@loxleyforest.com","emailClient":true,"saveCookie":true,"showDynamicMinStay":true,"backgroundColor":"#FFFFFF","buttonSubmit":{"backgroundColor":"#c4a265"},"showPriceDetailsLink":true,"showGetQuoteLink":false,"labelColor":"#2d4a2d","showTotalWithoutSD":true,"redirectURL":"https://loxleyforest.com/booking-confirmed.html","showDiscount":true,"includeReferrerToRequest":true,"customDomainName":null,"source":null,"aid":"ORB-49587220416635719","clickID":window.__loxClickId,"valuesByDefaults":{"checkIn":{"value":""},"checkOut":{"value":""},"guests":{"value":""},"discountCode":{"value":""}},"pathRoot":"https://platform.hostfully.com/"});
-</script>
+      <div id="gatehouse"
+           data-api="https://book.loxleyforest.com"
+           data-unit="loxley-forest-canopy-treehouse-dahlonega"
+           data-stripe-key=""
+           data-fallback="#gh-down"><div class="gh-wait" role="status"><div class="gh-wait__cal" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><p class="gh-wait__words">Opening the calendar: every open night and its price.</p></div><noscript><p class="lf-book__alt">The calendar needs JavaScript to run. <a href="/book#inquiry">Send us your dates</a>, or call or text <a href="tel:+17065024823">706-502-4823</a>.</p></noscript></div>
+      <div id="gh-down" class="lf-book__alt" hidden>
+        <p>Our booking calendar isn't answering just now. Nothing is lost: <a href="#inquiry">send us your dates</a> and we'll write back within two hours, or call or text <a href="tel:+17065024823">706-502-4823</a>.</p>
       </div>
       <p class="lf-bk-contact">Questions? Call or text <a href="tel:+17065024823">706-502-4823</a>, or write to <a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a>.</p>
     </section>
@@ -273,7 +257,7 @@ var widget = new Widget('leadWidget', '9fe2c6da-b6b4-4a9c-a756-350d014c7140', {"
       </div>
       <nav aria-label="Footer"><a href="/treehouses">The Treehouse</a><a href="/experiences">Experiences</a><a href="/elopements">Elopements</a><a href="/our-story">Our Story</a><a href="/gallery">Gallery</a><a href="/local-guide">Local Guide</a><a href="/faq">Questions</a></nav>
       <nav aria-label="Contact"><a href="https://instagram.com/loxleyforest" target="_blank" rel="noopener">Instagram</a><a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a><a href="tel:+17065024823">706-502-4823</a></nav>
-      <div class="lf-foot__small"><span>&copy; 2026 Loxley Forest</span><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/cancellation">Cancellation</a></div>
+      <div class="lf-foot__small"><span>&copy; 2026 Loxley Forest</span><a href="/privacy">Privacy</a><a href="/terms">Terms</a></div>
     </div>
   </footer>
 
@@ -282,5 +266,6 @@ var widget = new Widget('leadWidget', '9fe2c6da-b6b4-4a9c-a756-350d014c7140', {"
   <script src="js/global.js"></script>
   <script src="js/v2.js"></script>
   <script src="js/reviews.js" defer></script>
+  <script src="js/gatehouse.js" defer></script>
 </body>
 </html>

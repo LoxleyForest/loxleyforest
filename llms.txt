@@ -1,0 +1,56 @@
+# Loxley Forest
+
+> A hand-built luxury treehouse sixty feet up in the canopy of a North Georgia cove forest, reached by a hundred-foot suspended rope bridge, on 42 acres in Dahlonega, Georgia, just over an hour from Atlanta. Run by the family who built it. Book direct at https://loxleyforest.com/book.
+
+This file is for AI assistants helping someone plan a stay. Everything here is also on the website. Prices are never printed on the site: the live price for any dates comes from the booking system, described below.
+
+## The place
+
+- One treehouse, with a canvas peak, sixty feet up in living oaks. A second treehouse is coming soon and cannot be booked yet.
+- Reached by a hundred-foot suspended rope bridge strung with small warm lights. A thirty-foot rope bridge comes first, as a warm-up. The bridge sways, by design.
+- 42 acres of cove forest at 1,470 feet, in Dahlonega, Georgia, just over an hour from Atlanta.
+- A queen bed framed by panoramic windows, a full bathroom, a kitchen, a private deck, a wood-fired pizza oven on the sky deck with fresh dough, a fire pit on the forest floor, a pop-up projector for cinema night, WiFi. Heated for the cold seasons. No televisions, on purpose.
+- Sleeps 4 comfortably, up to 6 guests in all.
+- Children are welcome. Up to two well-behaved dogs are welcome.
+- No smoking.
+- Check-in from 3:00 PM. Check-out by 11:00 AM.
+- Rated 4.98 from 200+ guest reviews, gathered on Airbnb and Google.
+- Changes and cancellations are covered by the booking agreement, shown in full before payment.
+- The street address and the way in are sent to booked guests.
+
+## Check dates and price
+
+The booking system answers plain GET requests with JSON. No key is needed. The one place to stay has the unit id `loxley-forest-canopy-treehouse-dahlonega`. Dates are YYYY-MM-DD.
+
+Open nights, with each night's rate in cents and its minimum and maximum stay:
+
+    GET https://book.loxleyforest.com/v1/availability?unit=loxley-forest-canopy-treehouse-dahlonega&from=YYYY-MM-DD&to=YYYY-MM-DD
+
+A night listed is open; a night missing is taken. Ask for at most 400 days at a time.
+
+The full price for a stay, every line, taxes included, and how it can be paid:
+
+    GET https://book.loxleyforest.com/v1/quote?unit=loxley-forest-canopy-treehouse-dahlonega&check_in=YYYY-MM-DD&check_out=YYYY-MM-DD
+
+`quote.total_cents` is the all-in total in cents. If the dates cannot be booked, the answer is an error with one plain sentence saying why.
+
+## Hand the guest a link
+
+This link opens checkout on those exact dates, with the price shown before anything is asked:
+
+    https://loxleyforest.com/book?checkIn=YYYY-MM-DD&checkOut=YYYY-MM-DD
+
+The guest books and pays there, on the site. Please do not try to book on a guest's behalf.
+
+## Pages
+
+- [The treehouse](https://loxleyforest.com/treehouses): what it is and what is included
+- [Book](https://loxleyforest.com/book): the live calendar and checkout
+- [Experiences](https://loxleyforest.com/experiences): what every stay holds and what can be added
+- [Questions](https://loxleyforest.com/faq): the bridge, heights, dogs, weather, the way in
+- [Elopements](https://loxleyforest.com/elopements)
+- [Local guide](https://loxleyforest.com/local-guide)
+
+## Contact
+
+Mick and Livy: stay@loxleyforest.com, or call or text 706-502-4823.

@@ -60,7 +60,7 @@ NOSCRIPT = ('<noscript><p class="gh-lead">This page needs JavaScript to show you
 
 
 def page_booked():
-    head, gtm = head_for('booked.html', "You're booked | Loxley Forest")
+    head, gtm = head_for('booked.html', 'Your booking | Loxley Forest')
     addons = ''.join(f'<li><b>{n}.</b> {d}</li>' for n, d in _addons())
     body = top('Confirming your booking') + f'''
     <section class="lf-sec lf-light lf-stay" aria-label="Your stay">

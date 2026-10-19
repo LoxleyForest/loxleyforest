@@ -263,7 +263,7 @@
           (isEdge ? ' gh-day--edge' : '') + (endable ? ' gh-day--endable' : '');
         var sr = long(day) + (priced ? ', ' + money(night.rate_cents) + ' a night' : night && night.own ? ', one of your nights' : endable ? ', check-out' : ', not available');
         g.appendChild(el('button', {
-          type: 'button', 'class': cls, 'aria-pressed': isEdge ? 'true' : 'false', disabled: usable ? null : 'disabled',
+          type: 'button', 'class': cls, 'data-day': day, 'aria-pressed': isEdge ? 'true' : 'false', disabled: usable ? null : 'disabled',
           onclick: (function (x) { return function () { c.pick(x); }; })(day)
         }, [el('span', { 'class': 'gh-num', text: String(d) }),
             el('span', { 'class': 'gh-rate', text: priced ? dollars(night.rate_cents) : '' }),

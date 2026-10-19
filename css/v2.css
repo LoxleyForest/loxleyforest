@@ -144,11 +144,7 @@
 /* ---- booking --------------------------------------------------------- */
 .lf-book { scroll-margin-top: var(--hdr-h); }
 .lf-book__head { max-width: 760px; margin: 0 auto 40px; text-align: center; }
-.lf-promise { list-style: none; margin: 28px auto 0; padding: 0; display: grid; gap: 12px; width: fit-content; max-width: 100%; text-align: left; font-family: 'Montserrat', sans-serif; font-size: 0.8125rem; line-height: 1.5; letter-spacing: 0.04em; color: var(--forest-deep); }
-@media (min-width: 900px) { .lf-promise { grid-auto-flow: column; gap: 32px; } }
-.lf-promise li { position: relative; padding-left: 22px; }
-.lf-promise li::before { content: ''; position: absolute; left: 0; top: 0.1em; width: 11px; height: 14px; background: var(--acorn) center / contain no-repeat; }
-.lf-book .gh-calendar, .lf-book .gh-summary, .lf-book .gh-checkout { box-shadow: 0 18px 48px rgba(26, 46, 26, 0.08); }
+.lf-book .gh-calendar, .lf-book .gh-summary, .lf-book .gh-checkout, .lf-book .gh-wait { box-shadow: 0 18px 48px rgba(26, 46, 26, 0.08); }
 .lf-book__alt { text-align: center; margin-top: 30px; font-size: 1.1rem; color: var(--stone); }
 .lf-book__alt a { color: var(--forest-deep); border-bottom: 1px solid currentColor; }
 
@@ -359,5 +355,3 @@ html, body.v2 { overflow-x: clip; }
 /* without script: the opening view as a still engraving (loaded only then) */
 html:not(.js) .lf-walk__stage { background: #1a2e1a url("../images/crossing/crossing-still-phone.webp") center / cover no-repeat; }
 @media (min-width: 768px) { html:not(.js) .lf-walk__stage { background-image: url("../images/crossing/crossing-still-desk.webp"); } }
-/* hidden means hidden: the Promise list stays out of sight until our checkout keeps it */
-.lf-promise[hidden] { display: none; }
