@@ -7,9 +7,18 @@ part), run `python3 scripts/site/build_v2.py`, commit the HTML it writes.
 
 Each page keeps its own <head> (Tag Manager, title, meta, schema) from the file
 already in the repo; the builder swaps only the stylesheets and the preload.
+
+Pages: the home page and the treehouse page are written here; every other page lives in its
+own module in scripts/site/pages/ (one file per page or group), which imports this module as
+`B` for the shared parts and exposes `PAGES = [fn, ...]` and, if it needs any, `CSS` (a string of rules).
+The builder gathers every module's CSS into css/v2-pages.css (do not hand-edit it). Photos:
+scripts/site/v2img.py makes images/v2/<name>-800.webp and -1600.webp for pic().
 """
+import glob
+import importlib.util
 import os
 import re
+import sys
 
 from PIL import Image
 
@@ -41,7 +50,7 @@ def head_from(page, preload=''):
     head = re.sub(r'\s*<link rel="stylesheet" href="css/(?!global\.css)[a-z0-9-]+\.css">', '', head)
     head = re.sub(r'\s*<link rel="preload" as="image"[^>]*>', '', head)
     head = head.replace('<link rel="stylesheet" href="css/global.css">',
-                        '<link rel="stylesheet" href="css/global.css">\n  <link rel="stylesheet" href="css/gatehouse.css">\n  <link rel="stylesheet" href="css/v2.css">')
+                        '<link rel="stylesheet" href="css/global.css">\n  <link rel="stylesheet" href="css/gatehouse.css">\n  <link rel="stylesheet" href="css/v2.css">\n  <link rel="stylesheet" href="css/v2-pages.css">')
     if preload:
         head = head.rstrip() + '\n  ' + preload
     gtm = s[s.index('<!-- Google Tag Manager (noscript) -->'):s.index('<!-- End Google Tag Manager (noscript) -->') + len('<!-- End Google Tag Manager (noscript) -->')]
@@ -424,6 +433,25 @@ def build(page):
     print('wrote', name, len(html))
 
 
+def page_modules():
+    """Every module in scripts/site/pages/, in name order, each loaded once."""
+    mods = []
+    sys.modules.setdefault('build_v2', sys.modules[__name__])
+    for path in sorted(glob.glob(os.path.join(os.path.dirname(__file__), 'pages', '*.py'))):
+        name = 'lfpage_' + os.path.basename(path)[:-3]
+        spec = importlib.util.spec_from_file_location(name, path)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        mods.append(mod)
+    return mods
+
+
 if __name__ == '__main__':
-    for p in (page_index, page_treehouses):
+    mods = page_modules()
+    css = '/* Built by scripts/site/build_v2.py from scripts/site/pages/*.py. Do not edit by hand. */\n'
+    for m in mods:
+        if getattr(m, 'CSS', '').strip():
+            css += f'\n/* ---- {m.__name__[7:]} ---- */\n' + m.CSS.strip() + '\n'
+    open(os.path.join(ROOT, 'css', 'v2-pages.css'), 'w').write(css)
+    for p in [page_index, page_treehouses] + [fn for m in mods for fn in m.PAGES]:
         build(p)
