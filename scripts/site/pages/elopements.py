@@ -75,7 +75,6 @@ def package(eyebrow, name, price, lead, items, note):
     return f'''          <article class="lf-pkg{' lf-pkg--featured' if featured else ''} lf-rise">
             {badge}<p class="lf-eyebrow">{eyebrow}</p>
             <h3 class="lf-h3 lf-pkg__name">{name}</h3>
-            <p class="lf-pkg__price"><span>Starting at</span> {price}</p>
             {lead_html}<ul class="lf-acorns lf-pkg__list">{lis}</ul>
             {note_html}<a href="#inquiry" class="lf-link lf-pkg__go">Inquire for your date</a>
           </article>
@@ -199,9 +198,9 @@ def page_elopements():
               <label for="el-package">Which package interests you?</label>
               <select id="el-package" name="package">
                 <option value="">Select...</option>
-                <option value="the-vow">The Vow, starting at $4,500</option>
-                <option value="the-crossing">The Crossing, starting at $7,500</option>
-                <option value="the-elevation">The Elevation, starting at $10,500</option>
+                <option value="the-vow">The Vow</option>
+                <option value="the-crossing">The Crossing</option>
+                <option value="the-elevation">The Elevation</option>
                 <option value="not-sure">Not sure yet, help me decide</option>
               </select>
             </div>

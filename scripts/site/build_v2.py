@@ -44,10 +44,17 @@ def pic(name, alt, sizes, eager=False, cls=''):
     return f'<img src="images/v2/{name}-800.webp" srcset="{srcset}" sizes="{sizes}" width="{w}" height="{h}" alt="{alt}"{load}{c}>'
 
 
+# Rating and count claims a page's own <head> still carried (the home page's meta description),
+# taken out on every build: no rating and no count anywhere (Mick, 2026-10-20).
+HEAD_CLAIMS = (' 200+ five-star reviews.',)
+
+
 def head_from(page, preload=''):
     """The page's own <head>, with the redesign's stylesheets in place of its old ones."""
     s = open(os.path.join(ROOT, page)).read()
     head = s[:s.index('</head>')]
+    for claim in HEAD_CLAIMS:
+        head = head.replace(claim, '')
     head = re.sub(r'\s*<link rel="stylesheet" href="css/(?!global\.css)[a-z0-9-]+\.css">', '', head)
     head = re.sub(r'\s*<link rel="preload" as="image"[^>]*>', '', head)
     head = head.replace('<link rel="stylesheet" href="css/global.css">',
@@ -182,18 +189,20 @@ WALK = f'''    <section class="lf-walk" data-crossing aria-label="The crossing: 
     </section>
 '''
 
+# The reviews themselves, and nothing said about them: no rating, no count, no stars, no
+# platform (Mick, 2026-10-20: "I don't like that we say anything about reviews. Just have the
+# reviews there."). The same holds for the schema (no aggregateRating) and llms.txt.
 REVIEWS = '''    <section class="lf-sec lf-parch lf-center lf-reviews" aria-labelledby="rv-h">
       <div class="lf-wrap">
         <p class="lf-eyebrow">Guest stories</p>
         <h2 class="lf-h2" id="rv-h" style="margin-bottom:34px">What they remember most</h2>
         <div class="review-rotator" data-review-rotator>
           <div class="review-rotator__card">
-            <div class="testimonial__stars" aria-hidden="true">★★★★★</div>
             <p class="testimonial__quote">"The only sounds you hear are the birds chirping and the gentle rushing of water below. It feels very private and secluded. The perfect adventure to feel like you are camping in the woods, but with a bed and bathroom."</p>
             <p class="testimonial__author">Kellie · Marietta, GA</p>
           </div>
         </div>
-        <p class="lf-reviews__note">4.98 from 200+ guest reviews, gathered on Airbnb and Google · Tap for another story</p>
+        <p class="lf-reviews__note">Tap for another story</p>
       </div>
     </section>
 '''
@@ -253,12 +262,16 @@ def final_call(book):
 # from the site and loxley-rescue canon/voice.md, "WHAT IS TRUE ABOUT THE PLACE", plus Mick's
 # rulings of 2026-10-19 (dogs only, up to two, no fee; also in the FAQ). No prices (Mick's ruling: prices stay off the website; the live
 # price is at /book and the booking API) and no street address (it goes to booked guests only).
+# No aggregateRating: no rating and no count anywhere (Mick, 2026-10-20).
 # TODO(Architect): sameAs holds only Instagram, the one profile the site links. Add the Airbnb
 # listing and the Google Business Profile once their links are on the site.
 SITE = 'https://loxleyforest.com'
 ADDRESS = {'@type': 'PostalAddress', 'addressLocality': 'Dahlonega', 'addressRegion': 'GA', 'addressCountry': 'US'}
-RATING = {'@type': 'AggregateRating', 'ratingValue': '4.98', 'reviewCount': '200', 'bestRating': '5'}
 SAME_AS = ['https://instagram.com/loxleyforest']
+# Links we hand out carry src, so the visit says where it came from (the page beacon in js/v2.js
+# sends it; the booking engine classifies the referrer host when a link carries none):
+#   the Instagram bio:            https://loxleyforest.com/?src=instagram
+#   llms.txt's booking links:     https://loxleyforest.com/book?...&src=ai
 DOGS = 'Up to two well-behaved dogs are welcome, with no fee. Dogs only.'
 RESERVE = {'@type': 'ReserveAction',
            'target': {'@type': 'EntryPoint', 'urlTemplate': SITE + '/book?checkIn={checkIn}&checkOut={checkOut}',
@@ -291,7 +304,7 @@ def schema_home():
         'address': ADDRESS, 'checkinTime': '15:00', 'checkoutTime': '11:00',
         'petsAllowed': DOGS, 'smokingAllowed': False,
         'amenityFeature': TREEHOUSE_FEATURES,
-        'aggregateRating': RATING, 'sameAs': SAME_AS,
+        'sameAs': SAME_AS,
         'containsPlace': {'@id': SITE + '/treehouses#treehouse'},
         'potentialAction': RESERVE,
     }
@@ -315,7 +328,7 @@ def schema_treehouse():
         'amenityFeature': TREEHOUSE_FEATURES,
         'containedInPlace': {'@type': 'LodgingBusiness', '@id': SITE + '/#lodging', 'name': 'Loxley Forest', 'url': SITE,
                              'address': ADDRESS, 'checkinTime': '15:00', 'checkoutTime': '11:00',
-                             'telephone': '+1-706-502-4823', 'aggregateRating': RATING, 'sameAs': SAME_AS},
+                             'telephone': '+1-706-502-4823', 'sameAs': SAME_AS},
         'potentialAction': RESERVE,
     }
 
@@ -358,7 +371,6 @@ def page_index():
           <a href="/book" class="lf-btn">{ACORN}Book your dates</a>
           <a href="/treehouses" class="lf-link">See the treehouse</a>
         </div>
-        <p class="lf-proof"><span class="lf-proof__stars" aria-hidden="true">★★★★★</span><span>4.98 from 200+ guest reviews</span></p>
       </div>
     </section>
 
@@ -494,7 +506,7 @@ def page_treehouses():
       <div class="lf-wrap">
         <p class="lf-eyebrow lf-rise">The original</p>
         <h2 class="lf-h2 lf-rise" id="or-h">The treehouse that <em>started everything</em></h2>
-        <p class="lf-lead lf-rise">A queen bed framed by panoramic windows that turn every morning into a painting you've never seen before. A private deck suspended above the forest floor. A pizza oven on your sky deck, because even pizza is better in the canopy. This is where 200+ five-star reviews began.</p>
+        <p class="lf-lead lf-rise">A queen bed framed by panoramic windows that turn every morning into a painting you've never seen before. A private deck suspended above the forest floor. A pizza oven on your sky deck, because even pizza is better in the canopy.</p>
         <ul class="lf-chips lf-rise">
           <li>Sleeps 4 comfortably</li><li>Queen bed</li><li>Full bathroom</li><li>60 feet up</li><li>Private deck</li><li>Heated</li><li>Fire pit</li>
         </ul>
@@ -554,6 +566,12 @@ def page_treehouses():
     return 'treehouses.html', set_schema(head, schema_treehouse()), gtm, body, '/book', True
 
 
+def page_path(name):
+    """The page's clean path ('index.html' is '/', 'treehouses.html' is '/treehouses'). The page
+    beacon (js/v2.js) sends this, never the address bar, so no query or fragment can ride it."""
+    return '/' if name == 'index.html' else '/' + name[:-len('.html')]
+
+
 def build(page):
     name, head, gtm, body, book, gatehouse = page()
     if name in KEYS_PAGES:
@@ -561,7 +579,7 @@ def build(page):
     if gatehouse and PRECONNECT not in head:
         head = head.replace('<link rel="preconnect" href="https://fonts.googleapis.com">',
                             PRECONNECT + '\n  <link rel="preconnect" href="https://fonts.googleapis.com">', 1)
-    html = (head + '<body class="v2">\n' + gtm + '\n' + header(book) + '\n  <main id="main">\n' + body + '\n  </main>\n\n'
+    html = (head + f'<body class="v2" data-lf-path="{page_path(name)}" data-lf-api="{API}">\n' + gtm + '\n' + header(book) + '\n  <main id="main">\n' + body + '\n  </main>\n\n'
             + footer(book, gatehouse) + ('  <script src="js/crossing.js" defer></script>\n' if 'data-crossing' in body else '')
             + '</body>\n</html>\n')
     open(os.path.join(ROOT, name), 'w').write(html)

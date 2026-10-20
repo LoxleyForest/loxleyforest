@@ -60,7 +60,7 @@ QA = [
      "Possibly the best place to do it. We've hosted hundreds. Add our Romance Package or Celebration Package, "
      'or ask about custom arrangements. <a href="/experiences">See the experiences</a>.'),
     ('Do you host elopements?',
-     'Yes. Three packages from $4,500 to $10,500, and three ceremony spaces, the rope bridge among them. '
+     'Yes. Three packages and three ceremony spaces, the rope bridge among them. '
      '<a href="/elopements">See the elopements page</a> for details.'),
     ('Why should I book direct?',
      "Best rate guaranteed. You're booking with the family who built this place, not a platform. If you find a "

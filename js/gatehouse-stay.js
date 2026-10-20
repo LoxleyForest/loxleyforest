@@ -78,9 +78,17 @@
       dl.appendChild(el('dt', {}, [el('span', { text: 'Credit applied' }), el('small', { text: 'From your credit' })]));
       dl.appendChild(el('dd', { text: money(stay.credit_applied_cents) }));
     }
+    var on = active(stay);
+    // A live stay that moved to cheaper dates keeps the difference as credit;
+    // show it here too, so what was paid less what is kept equals the total.
+    var kept = on && stay.credit ? Number(stay.credit.cents) || 0 : 0;
+    if (kept > 0) {
+      dl.appendChild(el('dt', {}, [el('span', { text: 'Kept as credit' }),
+        el('small', { text: stay.credit.expires_on ? 'Good until ' + long(stay.credit.expires_on) : 'Toward a future stay' })]));
+      dl.appendChild(el('dd', { text: '-' + money(kept) }));
+    }
     dl.appendChild(el('dt', { 'class': 'gh-total', text: 'Total' }));
     dl.appendChild(el('dd', { 'class': 'gh-total', text: money(stay.total_cents) }));
-    var on = active(stay);
     return el('div', { 'class': 'gh-summary gh-stay' }, [
       el('p', { 'class': 'gh-eyebrow', text: eyebrow }),
       el('p', { 'class': 'gh-dates', text: G.span(stay.check_in, stay.check_out) }),
