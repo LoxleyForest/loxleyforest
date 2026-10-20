@@ -21,6 +21,10 @@ pages, cutover) and your-adventure (questionnaire).
 3. Favicon and phone icon are already the new ones on next-level; confirm live.
 4. Walk the live site on Mick's phone; check the Hostfully widget on /book and the elopement form.
 
+**Cutover to our own checkout (branch `cutover`):** booking-confirmed.html stays while Hostfully
+is the 30-day rollback. When Hostfully is cancelled, redirect `/booking-confirmed` and
+`/booking-confirmed.html` to `/book` in netlify.toml.
+
 **Mick's open questions (none block launch; pages keep what they said):** Experiences add-ons
 still offered (Forest Tableau, Flight Deck, The Landing, Beer Board, Khachapuri, After Dark,
 Romance, Celebration, Provisions Box); s'mores included or an add-on; The Letter still running;

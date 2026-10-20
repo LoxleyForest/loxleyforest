@@ -103,6 +103,39 @@ def footer(book, gatehouse):
 '''
 
 
+# Keys never reach the tag manager, analytics or a server log (the Architect, 2026-10-19). The
+# manage key moves and cancels a stay, a credit key spends one, and a payment session opens the
+# manage key; links this site makes carry them after # (never sent to a server). On /book, /booked
+# and /manage this runs before Tag Manager: it reads token, credit, session_id and hold from the
+# query or the fragment, keeps them for the page (window.__ghKeys; this tab's sessionStorage for a
+# refresh or a back; a credit on /book for any visit in the session, so a guest who wanders off
+# and comes back by any Book button keeps it), and takes them out of the address bar. Placed before the viewport meta, so
+# scripts/ensure_gtm.py, which inserts a missing snippet after the viewport meta, still lands after it.
+# A key arriving as a hash change on the same page (no new load) reloads the page, so it is lifted too.
+# The referrer policy sends only the origin, even on our own requests, so a key in an older
+# query-string link is not copied into a Referer while the page loads.
+KEYS_PAGES = ('book.html', 'booked.html', 'manage.html')
+KEYS_SCRIPT = r"""  <!-- Booking keys: out of the address bar before anything loads -->
+  <meta name="referrer" content="strict-origin">
+  <script>(function(){var N=['token','credit','session_id','hold'],k={},f=!1,st={},p=location.pathname.replace(/\.html$/,'').replace(/(.)\/$/,'$1');
+  try{st=JSON.parse(sessionStorage.getItem('gh_keys')||'{}')||{}}catch(e){}
+  var q=new URLSearchParams(location.search),hp=location.hash.indexOf('=')>0,h=new URLSearchParams(hp?location.hash.slice(1):'');
+  N.forEach(function(n){var v=h.get(n)||q.get(n);if(q.has(n)||h.has(n)){f=!0;q.delete(n);h.delete(n)}if(v)k[n]=v});
+  if(f){st[p]=k;try{sessionStorage.setItem('gh_keys',JSON.stringify(st))}catch(e){}
+  var s=q.toString(),t=hp?h.toString():location.hash.slice(1);history.replaceState(history.state,'',location.pathname+(s?'?'+s:'')+(t?'#'+t:''))}
+  else{var nv=(performance.getEntriesByType&&performance.getEntriesByType('navigation')[0])||{};if(nv.type==='reload'||nv.type==='back_forward')k=st[p]||{};else if(st[p]&&st[p].credit)k={credit:st[p].credit}}
+  window.__ghKeys=k;addEventListener('hashchange',function(){if(/(^#|&)(token|credit|session_id|hold)=/.test(location.hash))location.reload()})})();</script>
+  <!-- End booking keys -->
+"""
+KEYS_RE = re.compile(r'  <!-- Booking keys: out of the address bar before anything loads -->\n.*?<!-- End booking keys -->\n', re.S)
+
+
+def set_keys(head):
+    """The keys script, written fresh on every build, right after <meta charset>."""
+    head = KEYS_RE.sub('', head)
+    return head.replace('<meta charset="UTF-8">\n', '<meta charset="UTF-8">\n' + KEYS_SCRIPT, 1)
+
+
 API = 'https://book.loxleyforest.com'
 UNIT = 'loxley-forest-canopy-treehouse-dahlonega'
 PRECONNECT = f'<link rel="preconnect" href="{API}" crossorigin>'
@@ -218,7 +251,7 @@ def final_call(book):
 
 # schema.org for the home page (the place) and the treehouse page (the stay itself). Facts only
 # from the site and loxley-rescue canon/voice.md, "WHAT IS TRUE ABOUT THE PLACE", plus Mick's
-# rulings of 2026-10-19 (dogs). No prices (Mick's ruling: prices stay off the website; the live
+# rulings of 2026-10-19 (dogs only, up to two, no fee; also in the FAQ). No prices (Mick's ruling: prices stay off the website; the live
 # price is at /book and the booking API) and no street address (it goes to booked guests only).
 # TODO(Architect): sameAs holds only Instagram, the one profile the site links. Add the Airbnb
 # listing and the Google Business Profile once their links are on the site.
@@ -226,7 +259,7 @@ SITE = 'https://loxleyforest.com'
 ADDRESS = {'@type': 'PostalAddress', 'addressLocality': 'Dahlonega', 'addressRegion': 'GA', 'addressCountry': 'US'}
 RATING = {'@type': 'AggregateRating', 'ratingValue': '4.98', 'reviewCount': '200', 'bestRating': '5'}
 SAME_AS = ['https://instagram.com/loxleyforest']
-DOGS = 'Up to two well-behaved dogs are welcome.'
+DOGS = 'Up to two well-behaved dogs are welcome, with no fee. Dogs only.'
 RESERVE = {'@type': 'ReserveAction',
            'target': {'@type': 'EntryPoint', 'urlTemplate': SITE + '/book?checkIn={checkIn}&checkOut={checkOut}',
                       'actionPlatform': ['https://schema.org/DesktopWebPlatform', 'https://schema.org/MobileWebPlatform']},
@@ -523,6 +556,8 @@ def page_treehouses():
 
 def build(page):
     name, head, gtm, body, book, gatehouse = page()
+    if name in KEYS_PAGES:
+        head = set_keys(head)
     if gatehouse and PRECONNECT not in head:
         head = head.replace('<link rel="preconnect" href="https://fonts.googleapis.com">',
                             PRECONNECT + '\n  <link rel="preconnect" href="https://fonts.googleapis.com">', 1)

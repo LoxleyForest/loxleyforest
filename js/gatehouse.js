@@ -394,11 +394,14 @@
   var HANDOFF = root.getAttribute('data-handoff') || '';
   var FALLBACK = root.getAttribute('data-fallback') || '';
   var QS = new URLSearchParams(location.search);
+  // Keys arrive after # and are lifted out of the address bar by the head script on /book
+  // (build_v2.py KEYS_SCRIPT) before Tag Manager loads; they live in window.__ghKeys.
+  var KEYS = window.__ghKeys || {};
   // A guest returning from a Hold my dates link made before it was retired.
   // No new holds exist; the API simply ignores a hold it no longer has.
-  var HOLD = QS.get('hold') || '';
-  // A credit to spend: the manage key of a cancelled stay, from its manage page.
-  var CREDIT = QS.get('credit') || '';
+  var HOLD = KEYS.hold || '';
+  // A credit to spend: the manage key of a cancelled stay, from its manage page (/book#credit=).
+  var CREDIT = KEYS.credit || '';
 
   var state = {
     agreement: null,
@@ -500,7 +503,7 @@
     if (why) {
       cal.set(null, null);
       cal.month = parse(u.checkIn.slice(0, 8) + '01');
-      cal.note = 'Those dates, ' + span(u.checkIn, u.checkOut) + ', are not open now: ' + why.charAt(0).toLowerCase() + why.slice(1) + ' Choose other nights, or call or text ' + PHONE + '.';
+      cal.note = 'The dates in your link, ' + span(u.checkIn, u.checkOut) + ", can't be booked now. " + why + ' Choose other nights, or call or text ' + PHONE + '.';
       writeUrl(false); return;
     }
     cal.set(u.checkIn, u.checkOut);
@@ -529,7 +532,10 @@
     var ci = cal.checkIn, co = cal.checkOut, key = ci + '/' + co;
     if (quoteFor === key && state.quote) { if (thenPay) toCheckout(true); else render(); return; }
     state.busy = true; state.quote = null; quoteFor = key; render();
-    call('/v1/quote?unit=' + encodeURIComponent(UNIT) + '&check_in=' + ci + '&check_out=' + co).then(function (q) {
+    // With a credit held, the engine spends it in the quote: summary comes back net of it, and
+    // credit_cents says how much it actually used on these dates.
+    call('/v1/quote?unit=' + encodeURIComponent(UNIT) + '&check_in=' + ci + '&check_out=' + co +
+      (state.credit ? '&credit=' + encodeURIComponent(CREDIT) : '')).then(function (q) {
       if (quoteFor !== key) return;
       state.quote = q;
       if (!state.payMode || (q.modes || []).indexOf(state.payMode) < 0) state.payMode = (q.modes || [])[0];
@@ -561,15 +567,59 @@
       balance_on: later.length ? later[0].due_on : null, change_until: null };
   }
 
+  // The credit the engine spends on these dates (the quote's credit_cents): never the key's
+  // whole balance, which these dates may not be able to use.
+  function creditUsed(q) { return Math.max(0, Number(q && q.credit_cents) || 0); }
+  // Nothing to pay today: only when a credit covers it.
+  function coveredToday(q, mode) { return creditUsed(q) > 0 && !summaryFor(q, mode).today_cents; }
+
   function planLine(mode, q) {
-    var s = summaryFor(q, mode), pct = (q.promise || {}).retainer_pct;
+    var s = summaryFor(q, mode), pct = (q.promise || {}).retainer_pct, used = creditUsed(q);
+    if (used && !s.today_cents && !s.balance_cents) return { title: 'Covered by your credit', sub: 'Nothing to pay, today or later.' };
     if (mode === 'deposit') {
       return { title: 'Reserve with ' + money(s.today_cents) + ' today',
                sub: (pct ? 'A ' + pct + '% retainer deposit, non-refundable. ' : 'A retainer deposit, non-refundable. ') +
-                    (s.balance_cents ? 'The rest, ' + money(s.balance_cents) + ', will be charged on ' + long(s.balance_on) + '.' : '') };
+                    (s.balance_cents ? (used ? 'After your credit, the rest, ' : 'The rest, ') + money(s.balance_cents) + ', will be charged on ' + long(s.balance_on) + '.'
+                      : used ? 'Your credit covers the rest.' : '') };
     }
     if (mode === 'affirm') return { title: 'Pay monthly with Affirm', sub: 'Choose a plan at checkout. Subject to approval.' };
-    return { title: 'Pay in full, ' + money(q.quote.total_cents), sub: giftLine(q.gift_if_paid_in_full) || 'Nothing more to pay.' };
+    return { title: used ? 'Pay in full: ' + money(s.today_cents) + ' after your credit' : 'Pay in full, ' + money(q.quote.total_cents),
+             sub: giftLine(q.gift_if_paid_in_full) || 'Nothing more to pay.' };
+  }
+
+  // A credit the guest came with, in plain words: what it takes off, or why it cannot be used
+  // here. A guest who expected a credit is never charged full price without being told.
+  function creditNotice(q) {
+    if (!CREDIT) return null;
+    if (!state.credit) {
+      return el('p', { 'class': 'gh-credit gh-credit--off', role: 'status',
+        text: 'We could not find a credit on your link, so these dates are at full price. If you expected one, call or text ' + PHONE + ' before you book.' });
+    }
+    if (!q) {
+      return el('p', { 'class': 'gh-credit', text: 'Your credit, ' + money(state.credit.cents) + ', comes off your new stay' +
+        (state.credit.expires_on ? ' if you arrive by ' + long(state.credit.expires_on) : '') + '.' });
+    }
+    var used = creditUsed(q), exp = state.credit.expires_on;
+    if (used) return el('p', { 'class': 'gh-credit', text: 'Your credit takes ' + money(used) + ' off this stay.' });
+    return el('p', { 'class': 'gh-credit gh-credit--off', role: 'status',
+      text: 'Your credit of ' + money(state.credit.cents) + " can't be used for these dates" +
+        (exp && cal.checkIn > exp ? ': it is good for stays arriving by ' + long(exp) + '.' : '.') +
+        ' Choose other dates, or call or text ' + PHONE + ' before you book.' });
+  }
+
+  function ctaText(q, mode, forDetails) {
+    var s = summaryFor(q, mode);
+    if (coveredToday(q, mode)) return 'Book with your credit';
+    if (forDetails) return 'Continue to payment · ' + money(s.today_cents) + ' today';
+    return mode === 'deposit' ? 'Reserve for ' + money(s.today_cents)
+      : mode === 'affirm' ? 'Continue with Affirm' : 'Book for ' + money(s.today_cents);
+  }
+
+  function forgetCredit() {
+    try {
+      var st = JSON.parse(sessionStorage.getItem('gh_keys') || '{}') || {};
+      if (st['/book']) { delete st['/book'].credit; sessionStorage.setItem('gh_keys', JSON.stringify(st)); }
+    } catch (e) {}
   }
 
   // Pay over time (Mick, 2026-10-19): Affirm or Klarna through Stripe, the house paid in
@@ -610,7 +660,8 @@
     if (!cal.checkIn) {
       return el('div', { 'class': 'gh-summary gh-summary--empty' }, [
         el('p', { 'class': 'gh-eyebrow', text: 'Your stay' }),
-        el('p', { 'class': 'gh-lead', text: 'Choose your nights on the calendar. You see the whole price, taxes included, before we ask for a thing.' })
+        el('p', { 'class': 'gh-lead', text: 'Choose your nights on the calendar. You see the whole price, taxes included, before we ask for a thing.' }),
+        creditNotice(null)
       ]);
     }
     if (!cal.checkOut) {
@@ -650,15 +701,11 @@
     if ((q.modes || []).indexOf('deposit') < 0 && q.promise && q.promise.balance_days) {
       options.appendChild(el('p', { 'class': 'gh-fine', text: 'Stays within ' + q.promise.balance_days + ' days of arrival are paid in full when you book.' }));
     }
-    var s = summaryFor(q, state.payMode);
-    var cta = state.payMode === 'deposit' ? 'Reserve for ' + money(s.today_cents)
-      : state.payMode === 'affirm' ? 'Continue with Affirm' : 'Book for ' + money(q.quote.total_cents);
-
     return el('div', { 'class': 'gh-summary', 'aria-live': 'polite' }, stayHead(q).concat([
       lines(q),
-      state.credit ? el('p', { 'class': 'gh-fine gh-credit', text: 'Your credit of ' + money(state.credit.cents) + ' comes off at payment.' }) : null,
+      creditNotice(q),
       options,
-      el('button', { type: 'button', 'class': 'lf-btn gh-cta', onclick: function () { toCheckout(false); }, text: cta }),
+      el('button', { type: 'button', 'class': 'lf-btn gh-cta', onclick: function () { toCheckout(false); }, text: ctaText(q, state.payMode) }),
       markerBlock(q)
     ]));
   }
@@ -742,9 +789,10 @@
       dl.appendChild(el('dt', { text: 'Balance, will be charged on ' + long(s.balance_on) }));
       dl.appendChild(el('dd', { text: money(s.balance_cents) }));
     }
-    if (state.credit) {
-      dl.appendChild(el('dt', { text: 'Your credit, comes off at payment' }));
-      dl.appendChild(el('dd', { text: money(-state.credit.cents) }));
+    if (creditUsed(q)) {
+      // Total less credit applied is today plus the balance: the engine's summary is already net.
+      dl.insertBefore(el('dd', { text: money(-creditUsed(q)) }), dl.children[2]);
+      dl.insertBefore(el('dt', { text: 'Credit applied' }), dl.children[2]);
     }
     return el('section', { 'class': 'gh-booking', 'aria-labelledby': 'gh-booking-h' }, [
       el('h3', { 'class': 'gh-eyebrow', id: 'gh-booking-h', text: 'Your booking summary' }),
@@ -753,7 +801,8 @@
       dl,
       el('p', { 'class': 'gh-change' }, [el('span', { text: 'Last moment to move or cancel' }),
         el('strong', { text: changeUntil(s.change_until, cal.checkIn) })]),
-      mode === 'full' && q.gift_if_paid_in_full ? el('p', { 'class': 'gh-fine', text: giftLine(q.gift_if_paid_in_full) }) : null
+      mode === 'full' && q.gift_if_paid_in_full ? el('p', { 'class': 'gh-fine', text: giftLine(q.gift_if_paid_in_full) }) : null,
+      CREDIT && !creditUsed(q) ? creditNotice(q) : null
     ]);
   }
 
@@ -774,7 +823,7 @@
       ? el('div', { 'class': 'gh-agreement', tabindex: '0', role: 'region', 'aria-label': 'The stay agreement, in full' }, [markdown(ag.text)])
       : el('p', { 'class': 'gh-agreement gh-agreement--missing', role: 'alert', text: 'The stay agreement could not load, so we cannot take a booking on this page just now. Please refresh, or call or text ' + PHONE + '.' });
     var submitBtn = el('button', { type: 'submit', 'class': 'lf-btn gh-cta', disabled: ag ? null : 'disabled',
-      text: 'Continue to payment · ' + money(s.today_cents) + ' today' });
+      text: ctaText(q, mode, true) });
 
     var form = el('form', { 'class': 'gh-form', novalidate: 'novalidate', onsubmit: submit,
       oninput: function (e) { var t = e.target; if (t.name && t.type !== 'checkbox') state.form[t.name] = t.value; },
@@ -843,22 +892,27 @@
       email: v.email, first_name: v.first_name, last_name: v.last_name, phone: v.phone, occasion: v.occasion,
       guests: +v.guests, dogs: +v.dogs, typed_name: v.typed_name,
       agreement_version: state.agreement && state.agreement.version, attribution: ATTR };
-    if (CREDIT && state.credit) body.credit = CREDIT;
+    if (CREDIT && state.credit && creditUsed(state.quote)) body.credit = CREDIT;
     if (HOLD) body.hold = HOLD;
     // Same details, same dates: reuse the checkout already opened, never a second claim
     // on the guest's own nights (a retry must not lock them out).
     var key = [cal.checkIn, cal.checkOut, state.payMode, v.email.toLowerCase(), v.guests, v.dogs, body.credit || ''].join('|');
     btn.disabled = true;
-    btn.textContent = 'Opening secure payment…';
+    btn.textContent = coveredToday(state.quote, state.payMode) ? 'Booking with your credit…' : 'Opening secure payment…';
     // The booking system keeps a checkout's nights for about 35 minutes; reuse it well inside that.
     var reuse = state.pending && state.pending.key === key && Date.now() - state.pending.at < 25 * 60 * 1000;
     var opened = reuse ? Promise.resolve(state.pending.res)
-      : (STRIPE_KEY ? call('/v1/checkout', body) : Promise.reject(new Error('Online payment opens shortly. To book these dates now, call or text ' + PHONE + ' and we will take it from here. Nothing was charged.')));
+      : (STRIPE_KEY || coveredToday(state.quote, state.payMode) ? call('/v1/checkout', body) : Promise.reject(new Error('Online payment opens shortly. To book these dates now, call or text ' + PHONE + ' and we will take it from here. Nothing was charged.')));
     opened.then(function (res) {
       if (!reuse) state.pending = { key: key, res: res, at: Date.now() };
       if (!res.client_secret) {
         // Nothing to pay today (a credit covered it): the stay is booked.
-        if (res.manage_token) { location.href = '/manage?token=' + encodeURIComponent(res.manage_token); return; }
+        if (res.manage_token) {
+          forgetCredit();
+          step('gh_booked_with_credit', { value: (res.total_cents || 0) / 100, currency: 'USD' });
+          location.href = '/manage#token=' + encodeURIComponent(res.manage_token);
+          return;
+        }
         throw new Error('Your booking went through with nothing to pay today. Your confirmation email is on its way. Questions? Call or text ' + PHONE + '.');
       }
       var due = res.summary && res.summary.today_cents !== undefined ? res.summary.today_cents
@@ -872,7 +926,7 @@
           el('p', { 'class': 'gh-lead', text: money(due) + ' due today, of ' + money(res.total_cents || state.quote.quote.total_cents) + '.' }),
           el('button', { type: 'button', 'class': 'gh-back', text: '‹ Back to your details', onclick: function () {
             form.hidden = false; head.hidden = true; document.getElementById('gh-pay').replaceChildren();
-            btn.disabled = false; btn.textContent = 'Continue to payment · ' + money(summaryFor(state.quote, state.payMode).today_cents) + ' today';
+            btn.disabled = false; btn.textContent = ctaText(state.quote, state.payMode, true);
           } }));
         head.hidden = false;
         if (head.scrollIntoView) head.scrollIntoView({ block: 'start' });
@@ -880,7 +934,7 @@
     }).catch(function (e) {
       err.textContent = e.message;
       btn.disabled = false;
-      btn.textContent = 'Continue to payment · ' + money(summaryFor(state.quote, state.payMode).today_cents) + ' today';
+      btn.textContent = ctaText(state.quote, state.payMode, true);
       if (e.status === 409) { state.pending = null; refreshNights(); }
     });
   }
@@ -923,7 +977,6 @@
     state.agreement = res[1];
     state.credit = res[2];
     cal = Calendar({ nights: res[0], onChange: onCalendar });
-    if (CREDIT && !state.credit) cal.note = 'We could not find a credit on that link. You can still book; questions, call or text ' + PHONE + '.';
     root.classList.remove('gh-loading');
     root.removeAttribute('aria-busy');
     applyUrl();

@@ -25,8 +25,10 @@ QA = [
      "We've never had a guest who regretted coming."),
     ('How many guests can stay?',
      'The treehouse sleeps 4 comfortably, and up to 6 guests in all. Children are welcome. No smoking.'),
+    # Dogs only, up to two well-behaved dogs, no fee (Mick, 2026-10-19).
     ('Can I bring my dog?',
-     'Yes. Well-behaved pets are welcome. Know the way in before you decide: the hundred-foot rope bridge sways, '
+     'Yes. Up to two well-behaved dogs are welcome, and there is no fee. Dogs only, please. '
+     'Know the way in before you decide: the hundred-foot rope bridge sways, '
      "and it sits sixty feet up. If you're not sure how your dog will take it, "
      '<a href="mailto:stay@loxleyforest.com">write to us</a> before you book and we\'ll talk it through. '
      'We want every guest, two-legged and four-legged, to be safe and comfortable at sixty feet.'),

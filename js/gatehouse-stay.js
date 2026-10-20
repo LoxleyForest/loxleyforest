@@ -20,7 +20,10 @@
   var UNIT = root.getAttribute('data-unit') || '';
   var STRIPE_KEY = root.getAttribute('data-stripe-key') || '';
   var PAGE = root.getAttribute('data-page');
-  var qs = new URLSearchParams(location.search);
+  // The manage key and the payment session arrive after # (or, from an older link, in the
+  // query) and are lifted out of the address bar by the head script before Tag Manager loads
+  // (build_v2.py KEYS_SCRIPT). They live in window.__ghKeys, never in a URL a tag can read.
+  var KEYS = window.__ghKeys || {};
   var title = document.getElementById('gh-title');
 
   function call(path, body) { return G.api(API, path, body); }
@@ -33,17 +36,24 @@
     ])]);
   }
   function active(stay) { return stay.status === 'reserved' || stay.status === 'paid'; }
+  // Everything put toward the stay: the engine's paid_cents counts card payments AND credit
+  // spent into it. Worked out from the lines only if an older answer lacks it.
   function paidCents(stay) {
+    if (typeof stay.paid_cents === 'number') return stay.paid_cents;
     return (stay.payments || []).filter(function (p) { return p.status === 'succeeded'; })
-      .reduce(function (a, p) { return a + p.amount_cents; }, 0);
+      .reduce(function (a, p) { return a + p.amount_cents; }, 0) + (Number(stay.credit_applied_cents) || 0);
   }
-  function manageUrl(token) { return location.origin + '/manage?token=' + encodeURIComponent(token); }
+  // Every link this site makes carries the key after #: a fragment is never sent to a server.
+  function manageLink(token) { return '/manage#token=' + encodeURIComponent(token); }
+  function manageUrl(token) { return location.origin + manageLink(token); }
 
   // ---- the stay, as the guest reads it ---------------------------------------
 
-  var NAMES = { deposit: 'Retainer deposit (non-refundable)', balance: 'Balance', difference: 'Difference', full: 'Your stay, in full' };
+  // The engine names each line for the page (display_label: a move's difference reads
+  // "Move difference"); its label otherwise; ours only if both are empty.
+  var NAMES = { deposit: 'Retainer deposit (non-refundable)', balance: 'Balance', difference: 'Move difference', full: 'Your stay, in full' };
   function payRow(p) {
-    var name = p.label || NAMES[p.kind] || 'Payment';
+    var name = p.display_label || p.label || NAMES[p.kind] || 'Payment';
     var when = p.status === 'succeeded' ? 'Paid'
       : p.status === 'failed' ? 'Due now: the card did not go through'
       : p.status === 'pending' ? 'Confirming'
@@ -63,6 +73,11 @@
   function stayCard(stay, eyebrow) {
     var dl = el('dl', { 'class': 'gh-lines gh-lines--pay' });
     (stay.payments || []).forEach(function (p) { payRow(p).forEach(function (n) { dl.appendChild(n); }); });
+    // Credit spent into the stay is part of how it is paid, so the lines add up to the total.
+    if (Number(stay.credit_applied_cents) > 0) {
+      dl.appendChild(el('dt', {}, [el('span', { text: 'Credit applied' }), el('small', { text: 'From your credit' })]));
+      dl.appendChild(el('dd', { text: money(stay.credit_applied_cents) }));
+    }
     dl.appendChild(el('dt', { 'class': 'gh-total', text: 'Total' }));
     dl.appendChild(el('dd', { 'class': 'gh-total', text: money(stay.total_cents) }));
     var on = active(stay);
@@ -87,7 +102,7 @@
   // ---- booked: the welcome ----------------------------------------------------
 
   function booked() {
-    var sid = qs.get('session_id');
+    var sid = KEYS.session_id || '';
     if (!sid) return problem('This page opens from the payment link, and this one is missing its key. Your confirmation email has everything.');
     var tries = 0;
     (function load() {
@@ -103,38 +118,70 @@
           if (title) title.textContent = 'Payment received';
           return problem('Your payment is in, and your confirmation email will follow as soon as your nights are confirmed. Nothing more to do.');
         }
-        purchase(stay, sid);
-        welcome(stay);
+        // What was paid decides the welcome: a move's difference, the balance, or the booking.
+        var kind = stay.kind || '';
+        if (kind === 'difference' || kind === 'balance') G.track('gh_paid', { gh_kind: kind });
+        else purchase(stay, sid);
+        welcome(stay, kind);
       }).catch(function (e) { problem(e.message); });
     })();
   }
 
+  // The purchase for the tag manager. Its id is a one-way hash of the payment session, so
+  // analytics can count a booking once without ever holding a key that opens it.
+  function anonId(s) {
+    if (!(window.crypto && crypto.subtle && window.TextEncoder)) return Promise.resolve('');
+    return crypto.subtle.digest('SHA-256', new TextEncoder().encode('loxley-purchase:' + s)).then(function (b) {
+      return 'lf-' + Array.prototype.map.call(new Uint8Array(b).slice(0, 8), function (x) { return ('0' + x.toString(16)).slice(-2); }).join('');
+    }).catch(function () { return ''; });
+  }
   function purchase(stay, sid) {
-    try { if (sessionStorage.getItem('gh_purchase_' + sid)) return; sessionStorage.setItem('gh_purchase_' + sid, '1'); } catch (e) {}
-    G.track('purchase', { transaction_id: sid, value: stay.total_cents / 100, currency: 'USD', gh_paid_now: paidCents(stay) / 100 });
+    anonId(sid).then(function (id) {
+      var seen = 'gh_purchase_' + (id || 'x');
+      try { if (sessionStorage.getItem(seen)) return; sessionStorage.setItem(seen, '1'); } catch (e) {}
+      var data = { value: stay.total_cents / 100, currency: 'USD', gh_paid_now: paidCents(stay) / 100 };
+      if (id) data.transaction_id = id;
+      G.track('purchase', data);
+    });
   }
 
-  function welcome(stay) {
-    if (title) title.textContent = "You're booked.";
-    document.title = "You're booked | Loxley Forest";
+  var WELCOME = {
+    difference: { h1: 'Your stay has moved.', title: 'Your stay has moved', eyebrow: 'Your new dates',
+                  now: 'A note with your new dates is on its way to your inbox.' },
+    balance: { h1: 'Paid in full.', title: 'Paid in full', eyebrow: 'Your stay',
+               now: 'Your receipt is on its way to your inbox. Nothing more is due.' },
+    booked: { h1: "You're booked.", title: "You're booked", eyebrow: 'Your stay',
+              now: 'Your confirmation is on its way to your inbox, with a link back to this stay.' }
+  };
+
+  function welcome(stay, kind) {
+    var w = WELCOME[kind] || WELCOME.booked;
+    if (title) title.textContent = w.h1;
+    document.title = w.title + ' | Loxley Forest';
+    // A credit carried to /book in this tab has done its work once a stay is booked.
+    try {
+      var st = JSON.parse(sessionStorage.getItem('gh_keys') || '{}') || {};
+      if (st['/book'] && st['/book'].credit) { delete st['/book'].credit; sessionStorage.setItem('gh_keys', JSON.stringify(st)); }
+    } catch (e) {}
     var token = stay.manage_token || '';
     var balance = (stay.payments || []).filter(function (p) { return p.status === 'scheduled' && p.due_on; })[0];
     var daysOut = G.daysBetween(G.today(), stay.check_in);
     var next = el('ol', { 'class': 'gh-next' }, [
-      el('li', {}, [el('b', { text: 'Now. ' }), 'Your confirmation is on its way to your inbox, with a link back to this stay.']),
+      el('li', {}, [el('b', { text: 'Now. ' }), w.now]),
       balance ? el('li', {}, [el('b', { text: long(balance.due_on) + '. ' }),
         'The balance, ' + money(balance.amount_cents) + ', will be charged to the card you booked with. We write three days before.']) : null,
       daysOut > 7 ? el('li', {}, [el('b', { text: 'A week before. ' }), 'Your guide to the forest, and what it is doing that week.']) : null,
       daysOut >= 1 ? el('li', {}, [el('b', { text: 'The day before. ' }), 'The way in: the address, the drive and the walk to the bridge.'])
         : el('li', {}, [el('b', { text: 'Today. ' }), 'The way in is in your inbox: the address, the drive and the walk to the bridge.']),
-      daysOut >= 7 ? el('li', {}, [el('b', { text: 'Plans change. ' }), 'Until ' + G.changeUntil(stay.change_until, stay.check_in) +
-        ', you can move your stay once, free, or keep everything you have paid as credit for 12 months.']) : null
+      daysOut >= 7 && (canMove(stay) || stay.can_cancel) ? el('li', {}, [el('b', { text: 'Plans change. ' }), 'Until ' + G.changeUntil(stay.change_until, stay.check_in) +
+        (canMove(stay) ? ', you can move your stay once, free, or keep everything you have paid as credit for 12 months.'
+          : ', you can cancel and keep everything you have paid as credit for 12 months.')]) : null
     ]);
     show([
-      stayCard(stay, 'Your stay'),
+      stayCard(stay, w.eyebrow),
       el('div', { 'class': 'gh-actions' }, [
         calendarButton(stay, token),
-        token ? el('a', { 'class': 'lf-btn gh-btn--quiet', href: '/manage?token=' + encodeURIComponent(token), text: 'Manage my stay' }) : null
+        token ? el('a', { 'class': 'lf-btn gh-btn--quiet', href: manageLink(token), text: 'Manage my stay' }) : null
       ]),
       el('section', { 'class': 'gh-panel', 'aria-labelledby': 'gh-next-h' }, [
         el('h2', { 'class': 'gh-eyebrow', id: 'gh-next-h', text: 'What happens next' }), next,
@@ -150,7 +197,7 @@
   var confirmCancel = false;
 
   function manage() {
-    token = qs.get('token') || '';
+    token = KEYS.token || '';
     if (!token) return problem('This link is missing its key. Use the link in your confirmation email.');
     reload();
   }
@@ -194,7 +241,7 @@
       el('h2', { 'class': 'gh-eyebrow', id: 'gh-credit-h', text: 'Your credit' }),
       el('p', { 'class': 'gh-big', text: money(credit.cents) }),
       el('p', { 'class': 'gh-body', text: 'Good toward a stay until ' + long(credit.expires_on) + '. Choose your new nights and it comes off at checkout.' }),
-      el('a', { 'class': 'lf-btn gh-cta', href: '/book?credit=' + encodeURIComponent(token), text: 'Choose new dates' })
+      el('a', { 'class': 'lf-btn gh-cta', href: '/book#credit=' + encodeURIComponent(token), text: 'Choose new dates' })
     ]);
   }
 
@@ -216,7 +263,7 @@
   function payPanel(head, words, label, event) {
     var err = el('p', { 'class': 'gh-error', role: 'alert' });
     var box = el('div', { 'class': 'gh-pay' });
-    var btn = el('button', { type: 'button', 'class': 'lf-btn gh-cta', text: label, onclick: function () {
+    var btn = el('button', { type: 'button', 'class': 'lf-btn gh-btn--dark gh-cta', text: label, onclick: function () {
       btn.disabled = true; err.textContent = '';
       G.track(event, {});
       call('/v1/pay', { token: token }).then(function (res) {
@@ -298,12 +345,15 @@
     ]);
     if (q.pay_now_cents > 0) { dl.appendChild(el('dt', { text: 'You pay now, when you move' })); dl.appendChild(el('dd', { text: money(q.pay_now_cents) })); }
     if (q.credit_cents > 0) { dl.appendChild(el('dt', { text: 'You keep as credit, good for 12 months' })); dl.appendChild(el('dd', { text: money(q.credit_cents) })); }
+    // What is left after today, so the lines add up to the new total (the agreement: 30 days before arrival).
+    var rest = q.new_total_cents - q.paid_cents - (q.pay_now_cents || 0);
+    if (rest > 0 && !(q.credit_cents > 0)) { dl.appendChild(el('dt', { text: 'The rest, charged 30 days before you arrive' })); dl.appendChild(el('dd', { text: money(rest) })); }
     box.appendChild(dl);
     if (!(q.pay_now_cents > 0) && !(q.credit_cents > 0)) box.appendChild(el('p', { 'class': 'gh-fine', text: 'Nothing to pay now.' }));
     box.appendChild(el('p', { 'class': 'gh-fine', text: 'This uses your one free move. After it, the stay can still be cancelled to credit until 7 days before the new arrival.' }));
     var err = el('p', { 'class': 'gh-error', role: 'alert' });
     var payBox = el('div', { 'class': 'gh-pay' });
-    var btn = el('button', { type: 'button', 'class': 'lf-btn gh-cta',
+    var btn = el('button', { type: 'button', 'class': 'lf-btn gh-btn--dark gh-cta',
       text: q.pay_now_cents > 0 ? 'Move my stay and pay ' + money(q.pay_now_cents) : 'Move my stay', onclick: function () {
         btn.disabled = true; err.textContent = '';
         call('/v1/reschedule', { token: token, check_in: c.checkIn, check_out: c.checkOut, confirm: true }).then(function (res) {
@@ -337,7 +387,7 @@
       return panel;
     }
     var err = el('p', { 'class': 'gh-error', role: 'alert' });
-    var yes = el('button', { type: 'button', id: 'gh-cancel-yes', 'class': 'lf-btn gh-btn--warn', text: 'Yes, cancel and keep ' + money(paid) + ' as credit',
+    var yes = el('button', { type: 'button', id: 'gh-cancel-yes', 'class': 'lf-btn gh-btn--dark gh-cta', text: 'Yes, cancel and keep ' + money(paid) + ' as credit',
       onclick: function () {
         yes.disabled = true; err.textContent = '';
         call('/v1/cancel', { token: token }).then(function () {
