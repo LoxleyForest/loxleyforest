@@ -701,10 +701,14 @@
     if ((q.modes || []).indexOf('deposit') < 0 && q.promise && q.promise.balance_days) {
       options.appendChild(el('p', { 'class': 'gh-fine', text: 'Stays within ' + q.promise.balance_days + ' days of arrival are paid in full when you book.' }));
     }
+    // A credit that covers every way to pay leaves nothing to choose: one plain line instead.
+    var allCovered = (q.modes || []).length && (q.modes || []).every(function (m) {
+      var sm = summaryFor(q, m); return creditUsed(q) > 0 && !sm.today_cents && !sm.balance_cents;
+    });
     return el('div', { 'class': 'gh-summary', 'aria-live': 'polite' }, stayHead(q).concat([
       lines(q),
       creditNotice(q),
-      options,
+      allCovered ? el('p', { 'class': 'gh-lead gh-covered', text: 'Your credit covers this stay. Nothing to pay, today or later.' }) : options,
       el('button', { type: 'button', 'class': 'lf-btn gh-cta', onclick: function () { toCheckout(false); }, text: ctaText(q, state.payMode) }),
       markerBlock(q)
     ]));
