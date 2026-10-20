@@ -1,3 +1,31 @@
+# START HERE FIRST · 2026-10-19 night (next-level now books on our own engine: launch IS the switchover)
+
+**Mick's ruling 2026-10-19: no Hostfully anywhere.** next-level now carries the cutover
+(merge a246479): /book is our own checkout on book.loxleyforest.com, the Hostfully widget is
+gone, the calendar reads the live engine, the agreement shows in full with one tick, guests and
+dogs are asked, "Not ready? Leave a trail marker." replaces Hold my dates, manage-my-stay moves,
+cancels to credit and pays early, keys never reach a log, /llms.txt and the schema speak to AI
+assistants. The engine it needs is merged on loxley-rescue main (b53104b).
+
+**So next-level must NOT go to main until the switchover is ready.** Pushing it now would take
+bookings away from Hostfully with no way to pay. In order:
+1. The droplet pulls loxley-rescue main and restarts the booking service (agreement live,
+   `/v1/health` reads `"agreement": true`); Caddy reloaded for the log redaction.
+2. Apple Pay: `python3 tools/stripe_domains.py --client loxley loxleyforest.com www.loxleyforest.com`.
+3. Mick approves the twelve letters (the Forge's page) and gives the checkout steps.
+4. The Forge's ten proof bookings pass (docs/gatehouse-proof.md), including one real test-mode
+   session proving `ui_mode=embedded` on API 2024-06-20.
+5. At cutover: the live Stripe key on the droplet with GATEHOUSE_LIVE=true; `data-stripe-key`
+   (publishable, live) on /book and /manage; register the domains again in live mode; then
+   merge main into next-level, rebuild, `python3 scripts/ensure_gtm.py --check`, fast-forward
+   main and push. Hostfully stays 30 days as the rollback (keep booking-confirmed.html until
+   it is cancelled).
+
+Open for Mick: elopement package prices on the site (he ruled no prices on the site); "treehouses"
+in the home title and meta; Klarna on in Stripe; the bell line for disputes.
+
+---
+
 # START HERE FIRST · 2026-10-19 (the site is built; launch waits on Mick's "go")
 
 **Every public page is in the new design on `next-level`** (Home, Treehouse, Experiences,
