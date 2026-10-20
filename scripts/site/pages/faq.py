@@ -2,7 +2,8 @@
 
 One list, QA, feeds both the visible answers and the FAQPage schema in the head, so the two
 can never drift apart. The answers are the old page's, tightened, with the rulings of
-2026-10-13 applied (pets, capacity, TreeMail, no Canopy Club). The contact form is the old
+2026-10-13 applied (pets, capacity, TreeMail, no Canopy Club), and of 2026-10-19 (terms live in the
+booking agreement, so the cancellation answer points there). The contact form is the old
 `faq-contact` Netlify form, field for field.
 """
 import html
@@ -24,8 +25,10 @@ QA = [
      "We've never had a guest who regretted coming."),
     ('How many guests can stay?',
      'The treehouse sleeps 4 comfortably, and up to 6 guests in all. Children are welcome. No smoking.'),
+    # Dogs only, up to two well-behaved dogs, no fee (Mick, 2026-10-19).
     ('Can I bring my dog?',
-     'Yes. Well-behaved pets are welcome. Know the way in before you decide: the hundred-foot rope bridge sways, '
+     'Yes. Up to two well-behaved dogs are welcome, and there is no fee. Dogs only, please. '
+     'Know the way in before you decide: the hundred-foot rope bridge sways, '
      "and it sits sixty feet up. If you're not sure how your dog will take it, "
      '<a href="mailto:stay@loxleyforest.com">write to us</a> before you book and we\'ll talk it through. '
      'We want every guest, two-legged and four-legged, to be safe and comfortable at sixty feet.'),
@@ -50,11 +53,9 @@ QA = [
     ('How do I get there?',
      "We're just over an hour north of Atlanta, in the foothills above Dahlonega. Detailed directions come with "
      "your booking confirmation. The last mile is a mountain road. That's how you know you're close."),
+    # The terms live in the booking agreement, not on the site's pages (Mick, 2026-10-19).
     ('What is your cancellation policy?',
-     'Half of your stay is paid at booking and the balance 30 days before check-in. We don\'t offer cash refunds '
-     'for cancellations. Instead we give you a credit for a future stay, redeemable within 6 months of your '
-     "original booking date. If we rebook your dates, we'll be more flexible. The full policy is on "
-     '<a href="/cancellation">our cancellation page</a>.'),
+     'Your booking agreement, shown in full before you pay, covers changes and cancellations.'),
     ('Can I celebrate an anniversary or birthday here?',
      "Possibly the best place to do it. We've hosted hundreds. Add our Romance Package or Celebration Package, "
      'or ask about custom arrangements. <a href="/experiences">See the experiences</a>.'),

@@ -22,3 +22,27 @@
   from = "/canopy-club.html"
   to = "/"
   status = 301
+
+# Our own checkout replaces Hostfully (Mick, 2026-10-19). The old preview checkout and the
+# cancellation page land on /book; Netlify carries the query string along, so a link that
+# held dates (?checkIn=...&checkOut=...) still opens checkout on them.
+[[redirects]]
+  from = "/stay"
+  to = "/book"
+  status = 301
+
+[[redirects]]
+  from = "/stay.html"
+  to = "/book"
+  status = 301
+
+# The terms live in the booking agreement, shown in full at checkout (Mick, 2026-10-19).
+[[redirects]]
+  from = "/cancellation"
+  to = "/book"
+  status = 301
+
+[[redirects]]
+  from = "/cancellation.html"
+  to = "/book"
+  status = 301

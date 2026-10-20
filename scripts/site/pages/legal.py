@@ -1,8 +1,12 @@
-"""The legal pages: /terms, /privacy, /cancellation.
+"""The legal pages: /terms, /privacy.
+
+/cancellation is gone (Mick, 2026-10-19: the terms live in the booking agreement, shown in full at
+checkout); netlify.toml sends its old links to /book.
 
 The words are legal content and are carried exactly as they stood on the old pages, em dashes
 included (the one place the no-dash rule does not reach). Only the markup changed: the old
-h3 headings are h2, the classes and inline styles are gone. Restyle here, never reword."""
+h3 headings are h2, the classes and inline styles are gone. Restyle here, never reword. One ruled
+exception: on /terms, "pets" became "dogs" to match the stay agreement (Mick, 2026-10-19: dogs only)."""
 import re
 
 import build_v2 as B
@@ -23,8 +27,8 @@ TERMS = ('Terms &amp; Conditions', 'The Ground Rules', 'Written like a conversat
       <h2>Children</h2>
       <p>Absolutely welcome. We have two of our own. The rope bridge and elevated platforms require supervision of young children — the forest is an adventure, and we want everyone safe to enjoy it.</p>
 
-      <h2>Pets</h2>
-      <p>Well-behaved pets are welcome. We ask that you let us know at booking so we can prepare. Please keep pets off the furniture and bedding, and clean up after them on the trails. If your pet has an accident, we get it — just let us know.</p>
+      <h2>Dogs</h2>
+      <p>Well-behaved dogs are welcome. We ask that you let us know at booking so we can prepare. Please keep dogs off the furniture and bedding, and clean up after them on the trails. If your dog has an accident, we get it — just let us know.</p>
 
       <h2>Smoking</h2>
       <p>No smoking in or near the treehouses. The structures are canvas and wood, suspended in a forest. We think you understand why. If you'd like to smoke, we ask that you do so at the fire pit area on the ground level, away from the structures.</p>
@@ -62,30 +66,6 @@ PRIVACY = ('Privacy', 'Your Privacy at Loxley', 'Simple, plain-spoken, and perso
       <p class="lf-legal-sign">— Mick &amp; Livy</p>
 ''')
 
-CANCELLATION = ('Cancellation', 'Cancellation &amp; Changes', 'The Forest Holds Your Spot', '''
-      <p>We get it: life happens. Cars break down, kids catch colds, and occasionally a cousin decides to get married on the exact weekend of your forest retreat. Here is exactly how it works.</p>
-
-      <h2>Payment</h2>
-      <p>Half of your stay is paid at booking. The balance is charged 30 days before check-in. Stays booked within 30 days of check-in are paid in full at booking.</p>
-
-      <h2>If you need to cancel</h2>
-      <p>We don't offer cash refunds for cancellations (though we make rare exceptions for genuinely extraordinary circumstances we can verify). Instead, we'll happily provide a credit for a future stay, redeemable within 6 months of your original booking date. Think of it as the forest saving your spot among the leaves for when the timing is better.</p>
-
-      <h2>If we rebook your dates</h2>
-      <p>If we're able to rebook your dates after a cancellation, we'll be more flexible about refund options. After all, if another guest gets to enjoy your spot, the forest is appeased.</p>
-
-      <h2>Weather</h2>
-      <p>The forest is beautiful in all conditions: rain brings mist, snow transforms the trees, and sunshine dapples through the canopy. We don't offer cancellations due to weather unless Mother Nature gets truly dramatic (hurricane-level dramatic).</p>
-
-      <h2>How to cancel or change</h2>
-      <p>Email <a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a> or call <a href="tel:+17065024823">706-502-4823</a>. We respond within 2 hours. Cancellation is confirmed when you receive written confirmation from us.</p>
-
-      <h2>Our philosophy</h2>
-      <p>We'd always rather have you here than issue a refund. If your plans change, talk to us before assuming the worst. We're a family, not a corporation — and we'll always try to find a way to make it work.</p>
-
-      <p class="lf-legal-sign">— Mick &amp; Livy</p>
-''')
-
 def legal(page, text):
     eyebrow, h1, sub, words = text
     head, gtm = B.head_from(page)
@@ -115,11 +95,8 @@ def page_privacy():
     return legal('privacy.html', PRIVACY)
 
 
-def page_cancellation():
-    return legal('cancellation.html', CANCELLATION)
 
-
-PAGES = [page_terms, page_privacy, page_cancellation]
+PAGES = [page_terms, page_privacy]
 
 CSS = '''
 .lf-legal-top { padding-top: calc(var(--hdr-h) + clamp(44px, 8vw, 96px)); padding-bottom: clamp(48px, 7vw, 80px); }

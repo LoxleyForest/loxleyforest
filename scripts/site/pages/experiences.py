@@ -33,8 +33,10 @@ def ritual(img, alt, title, words, note):
 
 # EDIT: the add-ons. The old page's list, then the ones your-adventure.html offers that it lacked.
 # Names and words only; never a price here unless it is in docs/pricing.md and Mick says to show it.
+# The sunrise brunch on offer is the season's current one, the Dawn Table. Morning Moments is kept
+# only by guests who booked it before (Mick, 2026-10-19), so it is not offered here. This list is
+# also the one /booked shows (scripts/site/pages/guest.py).
 ADDONS = [
-    ('Morning Moments', 'Champagne brunch at sunrise, crafted by Livy.'),
     ('The Dawn Table', 'Breakfast carried across the bridge to your door, with a late checkout to go with it.'),
     ('Forest Tableau', 'Our signature evening on a white oak slab from our forest.'),
     ('The Flight Deck', 'Sommelier-curated wines. Four pours. No two ever the same.'),
@@ -98,7 +100,7 @@ def page_experiences():
         <p class="lf-eyebrow">The Loxley experience</p>
         <h1 class="lf-h1">We don't offer amenities. <em>We offer chapters.</em></h1>
         <p class="lf-lead">Your stay is a story with a beginning, a middle, and a moment you'll still be talking about five years from now.</p>
-        <div class="lf-actions"><a href="#book" class="lf-btn">{ACORN}Book your dates</a><a href="#more" class="lf-link">What you can add</a></div>
+        <div class="lf-actions"><a href="/book" class="lf-btn">{ACORN}Book your dates</a><a href="#more" class="lf-link">What you can add</a></div>
       </div>
     </section>
 
@@ -143,8 +145,8 @@ def page_experiences():
     <!-- ========== YOUR DATES ========== -->
 {B.BOOK}
 {B.REVIEWS}
-{B.final_call('#book')}'''
-    return 'experiences.html', head, gtm, body, '#book', True
+{B.final_call('/book')}'''
+    return 'experiences.html', head, gtm, body, '/book', True
 
 
 PAGES = [page_experiences]
