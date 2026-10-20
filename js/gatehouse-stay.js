@@ -36,9 +36,12 @@
     ])]);
   }
   function active(stay) { return stay.status === 'reserved' || stay.status === 'paid'; }
+  // Everything put toward the stay: the engine's paid_cents counts card payments AND credit
+  // spent into it. Worked out from the lines only if an older answer lacks it.
   function paidCents(stay) {
+    if (typeof stay.paid_cents === 'number') return stay.paid_cents;
     return (stay.payments || []).filter(function (p) { return p.status === 'succeeded'; })
-      .reduce(function (a, p) { return a + p.amount_cents; }, 0);
+      .reduce(function (a, p) { return a + p.amount_cents; }, 0) + (Number(stay.credit_applied_cents) || 0);
   }
   // Every link this site makes carries the key after #: a fragment is never sent to a server.
   function manageLink(token) { return '/manage#token=' + encodeURIComponent(token); }
@@ -46,9 +49,11 @@
 
   // ---- the stay, as the guest reads it ---------------------------------------
 
-  var NAMES = { deposit: 'Retainer deposit (non-refundable)', balance: 'Balance', difference: 'Difference', full: 'Your stay, in full' };
+  // The engine names each line for the page (display_label: a move's difference reads
+  // "Move difference"); its label otherwise; ours only if both are empty.
+  var NAMES = { deposit: 'Retainer deposit (non-refundable)', balance: 'Balance', difference: 'Move difference', full: 'Your stay, in full' };
   function payRow(p) {
-    var name = p.label || NAMES[p.kind] || 'Payment';
+    var name = p.display_label || p.label || NAMES[p.kind] || 'Payment';
     var when = p.status === 'succeeded' ? 'Paid'
       : p.status === 'failed' ? 'Due now: the card did not go through'
       : p.status === 'pending' ? 'Confirming'
@@ -68,6 +73,11 @@
   function stayCard(stay, eyebrow) {
     var dl = el('dl', { 'class': 'gh-lines gh-lines--pay' });
     (stay.payments || []).forEach(function (p) { payRow(p).forEach(function (n) { dl.appendChild(n); }); });
+    // Credit spent into the stay is part of how it is paid, so the lines add up to the total.
+    if (Number(stay.credit_applied_cents) > 0) {
+      dl.appendChild(el('dt', {}, [el('span', { text: 'Credit applied' }), el('small', { text: 'From your credit' })]));
+      dl.appendChild(el('dd', { text: money(stay.credit_applied_cents) }));
+    }
     dl.appendChild(el('dt', { 'class': 'gh-total', text: 'Total' }));
     dl.appendChild(el('dd', { 'class': 'gh-total', text: money(stay.total_cents) }));
     var on = active(stay);
@@ -108,8 +118,11 @@
           if (title) title.textContent = 'Payment received';
           return problem('Your payment is in, and your confirmation email will follow as soon as your nights are confirmed. Nothing more to do.');
         }
-        purchase(stay, sid);
-        welcome(stay);
+        // What was paid decides the welcome: a move's difference, the balance, or the booking.
+        var kind = stay.kind || '';
+        if (kind === 'difference' || kind === 'balance') G.track('gh_paid', { gh_kind: kind });
+        else purchase(stay, sid);
+        welcome(stay, kind);
       }).catch(function (e) { problem(e.message); });
     })();
   }
@@ -132,24 +145,40 @@
     });
   }
 
-  function welcome(stay) {
-    if (title) title.textContent = "You're booked.";
-    document.title = "You're booked | Loxley Forest";
+  var WELCOME = {
+    difference: { h1: 'Your stay has moved.', title: 'Your stay has moved', eyebrow: 'Your new dates',
+                  now: 'A note with your new dates is on its way to your inbox.' },
+    balance: { h1: 'Paid in full.', title: 'Paid in full', eyebrow: 'Your stay',
+               now: 'Your receipt is on its way to your inbox. Nothing more is due.' },
+    booked: { h1: "You're booked.", title: "You're booked", eyebrow: 'Your stay',
+              now: 'Your confirmation is on its way to your inbox, with a link back to this stay.' }
+  };
+
+  function welcome(stay, kind) {
+    var w = WELCOME[kind] || WELCOME.booked;
+    if (title) title.textContent = w.h1;
+    document.title = w.title + ' | Loxley Forest';
+    // A credit carried to /book in this tab has done its work once a stay is booked.
+    try {
+      var st = JSON.parse(sessionStorage.getItem('gh_keys') || '{}') || {};
+      if (st['/book'] && st['/book'].credit) { delete st['/book'].credit; sessionStorage.setItem('gh_keys', JSON.stringify(st)); }
+    } catch (e) {}
     var token = stay.manage_token || '';
     var balance = (stay.payments || []).filter(function (p) { return p.status === 'scheduled' && p.due_on; })[0];
     var daysOut = G.daysBetween(G.today(), stay.check_in);
     var next = el('ol', { 'class': 'gh-next' }, [
-      el('li', {}, [el('b', { text: 'Now. ' }), 'Your confirmation is on its way to your inbox, with a link back to this stay.']),
+      el('li', {}, [el('b', { text: 'Now. ' }), w.now]),
       balance ? el('li', {}, [el('b', { text: long(balance.due_on) + '. ' }),
         'The balance, ' + money(balance.amount_cents) + ', will be charged to the card you booked with. We write three days before.']) : null,
       daysOut > 7 ? el('li', {}, [el('b', { text: 'A week before. ' }), 'Your guide to the forest, and what it is doing that week.']) : null,
       daysOut >= 1 ? el('li', {}, [el('b', { text: 'The day before. ' }), 'The way in: the address, the drive and the walk to the bridge.'])
         : el('li', {}, [el('b', { text: 'Today. ' }), 'The way in is in your inbox: the address, the drive and the walk to the bridge.']),
-      daysOut >= 7 ? el('li', {}, [el('b', { text: 'Plans change. ' }), 'Until ' + G.changeUntil(stay.change_until, stay.check_in) +
-        ', you can move your stay once, free, or keep everything you have paid as credit for 12 months.']) : null
+      daysOut >= 7 && (canMove(stay) || stay.can_cancel) ? el('li', {}, [el('b', { text: 'Plans change. ' }), 'Until ' + G.changeUntil(stay.change_until, stay.check_in) +
+        (canMove(stay) ? ', you can move your stay once, free, or keep everything you have paid as credit for 12 months.'
+          : ', you can cancel and keep everything you have paid as credit for 12 months.')]) : null
     ]);
     show([
-      stayCard(stay, 'Your stay'),
+      stayCard(stay, w.eyebrow),
       el('div', { 'class': 'gh-actions' }, [
         calendarButton(stay, token),
         token ? el('a', { 'class': 'lf-btn gh-btn--quiet', href: manageLink(token), text: 'Manage my stay' }) : null

@@ -142,7 +142,12 @@
 .gh-fine { font-size: 15px; color: var(--stone); margin: 8px 0 0; }
 .gh-fine a, .gh-panel a, .gh-when a { color: var(--forest-deep); text-decoration: underline; text-underline-offset: 3px; }
 .gh-center { text-align: center; }
-.gh-credit { color: var(--forest-deep); }
+/* a credit: what it takes off, or, boxed, why these dates cannot use it */
+.gh-credit { margin: 0 0 16px; font-size: 16px; line-height: 1.5; color: var(--forest-deep); }
+.gh-credit--off { padding: 12px 14px; border: 1px solid #c7a27b; border-left-width: 4px; background: #fbf4ea; color: #5c3418; }
+.gh-booking .gh-credit--off { margin: 14px 0 0; }
+.gh-summary--empty .gh-credit { margin-top: 14px; }
+.gh-covered { margin: 0 0 18px; color: var(--forest-deep); }
 
 /* ---- the trail marker ---------------------------------------------- */
 .gh-marker { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--parchment); }

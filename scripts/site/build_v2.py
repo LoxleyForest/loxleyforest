@@ -108,7 +108,8 @@ def footer(book, gatehouse):
 # manage key; links this site makes carry them after # (never sent to a server). On /book, /booked
 # and /manage this runs before Tag Manager: it reads token, credit, session_id and hold from the
 # query or the fragment, keeps them for the page (window.__ghKeys; this tab's sessionStorage for a
-# refresh or a back), and takes them out of the address bar. Placed before the viewport meta, so
+# refresh or a back; a credit on /book for any visit in the session, so a guest who wanders off
+# and comes back by any Book button keeps it), and takes them out of the address bar. Placed before the viewport meta, so
 # scripts/ensure_gtm.py, which inserts a missing snippet after the viewport meta, still lands after it.
 # A key arriving as a hash change on the same page (no new load) reloads the page, so it is lifted too.
 # The referrer policy sends only the origin, even on our own requests, so a key in an older
@@ -116,13 +117,13 @@ def footer(book, gatehouse):
 KEYS_PAGES = ('book.html', 'booked.html', 'manage.html')
 KEYS_SCRIPT = r"""  <!-- Booking keys: out of the address bar before anything loads -->
   <meta name="referrer" content="strict-origin">
-  <script>(function(){var N=['token','credit','session_id','hold'],k={},f=!1,st={},p=location.pathname.replace(/\.html$/,'');
+  <script>(function(){var N=['token','credit','session_id','hold'],k={},f=!1,st={},p=location.pathname.replace(/\.html$/,'').replace(/(.)\/$/,'$1');
   try{st=JSON.parse(sessionStorage.getItem('gh_keys')||'{}')||{}}catch(e){}
   var q=new URLSearchParams(location.search),hp=location.hash.indexOf('=')>0,h=new URLSearchParams(hp?location.hash.slice(1):'');
   N.forEach(function(n){var v=h.get(n)||q.get(n);if(q.has(n)||h.has(n)){f=!0;q.delete(n);h.delete(n)}if(v)k[n]=v});
   if(f){st[p]=k;try{sessionStorage.setItem('gh_keys',JSON.stringify(st))}catch(e){}
   var s=q.toString(),t=hp?h.toString():location.hash.slice(1);history.replaceState(history.state,'',location.pathname+(s?'?'+s:'')+(t?'#'+t:''))}
-  else{var nv=(performance.getEntriesByType&&performance.getEntriesByType('navigation')[0])||{};if(nv.type==='reload'||nv.type==='back_forward')k=st[p]||{}}
+  else{var nv=(performance.getEntriesByType&&performance.getEntriesByType('navigation')[0])||{};if(nv.type==='reload'||nv.type==='back_forward')k=st[p]||{};else if(st[p]&&st[p].credit)k={credit:st[p].credit}}
   window.__ghKeys=k;addEventListener('hashchange',function(){if(/(^#|&)(token|credit|session_id|hold)=/.test(location.hash))location.reload()})})();</script>
   <!-- End booking keys -->
 """
