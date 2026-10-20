@@ -146,3 +146,6 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# the published copy, built by scripts/publish.py
+_site/

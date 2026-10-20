@@ -9,5 +9,7 @@
 # place before Netlify publishes the repo root.
 
 [build]
-  command = "python3 scripts/ensure_gtm.py"
-  publish = "."
+  # ensure_gtm.py heals the pages; publish.py copies only the site into _site/
+  # (working notes, documents and scripts are never published: 2026-10-20).
+  command = "python3 scripts/ensure_gtm.py && python3 scripts/publish.py"
+  publish = "_site"
