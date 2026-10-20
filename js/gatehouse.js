@@ -217,7 +217,8 @@
       if (!first) return short(ci) + ' is not open.';
       var n = daysBetween(ci, co);
       if (n < 1) return 'Your check-out day comes after ' + short(ci) + '.';
-      if (first.min_stay && n < first.min_stay) return 'A stay starting ' + short(ci) + ' is at least ' + nightsWord(first.min_stay) + '.';
+      // A single open night between two stays sells alone, whatever the minimum (the engine's gap).
+      if (first.min_stay && n < first.min_stay && !(n === 1 && first.gap)) return 'A stay starting ' + short(ci) + ' is at least ' + nightsWord(first.min_stay) + '.';
       if (first.max_stay && n > first.max_stay) return 'A stay starting ' + short(ci) + ' is at most ' + nightsWord(first.max_stay) + '.';
       for (var d = ci; d < co; d = addDays(d, 1)) {
         if (!c.nights[d]) return short(d) + ' is already taken. Try nights before it, or other dates.';
@@ -417,7 +418,8 @@
   var cal = null, quoteFor = '';
 
   // ---- measurement: the tag manager AND our own server ----
-  var VISIT = (function () {
+  // The visit id is the page beacon's (js/funnel.js), so a visit's pages and booking steps join.
+  var VISIT = window.lfFunnel ? window.lfFunnel.visit : (function () {
     try {
       var v = sessionStorage.getItem('gh_visit');
       if (!v) { v = Math.random().toString(36).slice(2) + Date.now().toString(36); sessionStorage.setItem('gh_visit', v); }
@@ -444,17 +446,19 @@
     return a;
   })();
 
+  // Every beacon goes through the page beacon's scrub (js/funnel.js, loaded on every page before
+  // this file): known fields only, plain short values, nothing shaped like a key. Without it,
+  // nothing is sent rather than something unscrubbed.
   function beacon(step, extra) {
-    if (!API) return;
+    if (!API || !window.lfFunnel) return;
     var body = { visit: VISIT, step: step, unit: UNIT, src: ATTR.src || '' };
     Object.keys(extra || {}).forEach(function (k) { body[k] = extra[k]; });
-    var data = JSON.stringify(body);
-    try {
-      // text/plain keeps the beacon a "simple" request: no preflight.
-      if (navigator.sendBeacon && navigator.sendBeacon(API + '/v1/funnel', new Blob([data], { type: 'text/plain' }))) return;
-    } catch (e) {}
-    fetch(API + '/v1/funnel', { method: 'POST', body: data, keepalive: true }).catch(function () {});
+    window.lfFunnel.send(API, body);
   }
+
+  // The check-in date rides on these three (the flywheel contract, 2026-10-20), so weekends and
+  // weeknights can be told apart.
+  var WITH_CHECK_IN = { dates_chosen: 1, begin_checkout: 1, add_payment_info: 1 };
 
   function step(event, data) {
     data = data || {};
@@ -463,7 +467,8 @@
     track(event, payload);
     if (STEP_FOR[event]) {
       beacon(STEP_FOR[event], { mode: data.gh_mode || '', nights: data.gh_nights || '',
-        value_cents: data.value ? Math.round(data.value * 100) : '' });
+        value_cents: data.value ? Math.round(data.value * 100) : '',
+        check_in: WITH_CHECK_IN[STEP_FOR[event]] ? data.gh_check_in || '' : '' });
     }
   }
 
@@ -647,6 +652,31 @@
     return dl;
   }
 
+  // Two nights by default, the third pushed (Mick, 2026-10-20): the quote's `extend` offers the
+  // next night, one tap. Its price is the engine's, never worked out here: extend.add_cents, what
+  // the all-in total grows by, rate and tax (loxley-rescue gatehouse/desk.py extend_offer).
+  // No price, no offer.
+  var EXTEND_WORDS = { 1: 'Make it two nights', 2: 'Add a third night' };
+  function extendCents(x) { return Number(x.add_cents) > 0 ? Math.round(Number(x.add_cents)) : 0; }
+  function plus(cents) {
+    return '+' + (cents % 100 ? money(cents) : '$' + (cents / 100).toLocaleString('en-US'));
+  }
+  function extendOffer(q) {
+    var x = q && q.extend, n = q && q.quote && q.quote.nights, words = EXTEND_WORDS[n];
+    if (!x || typeof x !== 'object' || !words || !cal.checkIn || !cal.checkOut) return null;
+    var add = extendCents(x), co = addDays(cal.checkOut, 1);
+    // The calendar must agree the next night is open, or the tap would only meet a refusal.
+    if (!add || cal.stayOk(cal.checkIn, co)) return null;
+    return el('button', { type: 'button', 'class': 'gh-extend', text: words + ': ' + plus(add),
+      onclick: function () {
+        track('gh_extend', { gh_unit: UNIT, gh_nights_from: n, gh_nights: n + 1 });
+        state.pending = null;
+        cal.set(cal.checkIn, co);
+        writeUrl(false);
+        getQuote(false);
+      } });
+  }
+
   function stayHead(q) {
     return [
       el('p', { 'class': 'gh-eyebrow', text: 'Your stay' }),
@@ -681,6 +711,7 @@
       var href = HANDOFF + (HANDOFF.indexOf('?') < 0 ? '?' : '&') + 'checkIn=' + cal.checkIn + '&checkOut=' + cal.checkOut;
       return el('div', { 'class': 'gh-summary', 'aria-live': 'polite' }, stayHead(q).concat([
         lines(q),
+        extendOffer(q),
         el('a', { 'class': 'lf-btn gh-cta', href: href, text: 'Book these nights',
           onclick: function () { step('gh_handoff', { gh_nights: q.quote.nights, value: q.quote.total_cents / 100, currency: 'USD' }); } })
       ]));
@@ -707,6 +738,7 @@
     });
     return el('div', { 'class': 'gh-summary', 'aria-live': 'polite' }, stayHead(q).concat([
       lines(q),
+      extendOffer(q),
       creditNotice(q),
       allCovered ? el('p', { 'class': 'gh-lead gh-covered', text: 'Your credit covers this stay. Nothing to pay, today or later.' }) : options,
       el('button', { type: 'button', 'class': 'lf-btn gh-cta', onclick: function () { toCheckout(false); }, text: ctaText(q, state.payMode) }),
@@ -782,6 +814,34 @@
     return el('div', { 'class': 'gh-field' }, [el('label', { 'for': 'gh-' + name, text: label }), sel]);
   }
 
+  // The two things checkout asks beyond the booking, and no more (Mick, 2026-10-20: simple and
+  // warm, never burdensome, "not a game"): where they heard of us, one optional tap (tap again to
+  // clear), and first word of open dates and Treehouse 2, unticked unless they tick it.
+  var HEARD = [['google', 'Google'], ['instagram', 'Instagram'], ['facebook', 'Facebook'], ['friend', 'A friend'],
+    ['ai_assistant', 'An AI assistant'], ['stayed_before', "I've stayed before"], ['other', 'Something else']];
+  function heardRow() {
+    var row = el('fieldset', { 'class': 'gh-heard' }, [el('legend', {}, ['How did you find us? ', el('span', { text: '(optional)' })])]);
+    var chips = el('div', { 'class': 'gh-chips' });
+    HEARD.forEach(function (h) {
+      chips.appendChild(el('button', { type: 'button', 'class': 'gh-chip', 'data-heard': h[0], text: h[1],
+        'aria-pressed': state.form.heard_from === h[0] ? 'true' : 'false',
+        onclick: function () {
+          state.form.heard_from = state.form.heard_from === h[0] ? '' : h[0];
+          chips.querySelectorAll('.gh-chip').forEach(function (b) {
+            b.setAttribute('aria-pressed', b.getAttribute('data-heard') === state.form.heard_from ? 'true' : 'false');
+          });
+        } }));
+    });
+    row.appendChild(chips);
+    return row;
+  }
+  function listOptIn() {
+    return el('label', { 'class': 'gh-optin', 'for': 'gh-list' }, [
+      el('input', { type: 'checkbox', id: 'gh-list', name: 'list_opt_in', checked: state.form.list_opt_in ? 'checked' : null,
+        onchange: function (e) { state.form.list_opt_in = e.target.checked; } }),
+      el('span', { text: 'Send me first word when dates open up, and when Treehouse 2 does.' })]);
+  }
+
   // The booking summary, above the agreement: the agreement makes it part of the deal.
   function bookingSummary(q, mode) {
     var s = summaryFor(q, mode);
@@ -845,6 +905,7 @@
         ]),
         field('occasion', 'Celebrating something?', 'text', { auto: 'off', optional: true })
       ]),
+      el('div', { 'class': 'gh-light' }, [heardRow(), listOptIn()]),
       el('section', { 'class': 'gh-terms', 'aria-labelledby': 'gh-terms-h' }, [
         el('h3', { 'class': 'gh-eyebrow', id: 'gh-terms-h', text: 'Your stay agreement' }),
         el('p', { 'class': 'gh-fine', text: 'Shown in full. It covers payment, changes, cancellations and the risks of the forest.' }),
@@ -891,16 +952,21 @@
       return;
     }
     err.textContent = '';
-    step('add_payment_info', { gh_mode: state.payMode });
+    step('add_payment_info', { gh_mode: state.payMode, gh_check_in: cal.checkIn, gh_check_out: cal.checkOut });
     var body = { unit: UNIT, check_in: cal.checkIn, check_out: cal.checkOut, mode: state.payMode,
       email: v.email, first_name: v.first_name, last_name: v.last_name, phone: v.phone, occasion: v.occasion,
       guests: +v.guests, dogs: +v.dogs, typed_name: v.typed_name,
-      agreement_version: state.agreement && state.agreement.version, attribution: ATTR };
+      agreement_version: state.agreement && state.agreement.version, attribution: ATTR,
+      list_opt_in: !!(form.elements.list_opt_in && form.elements.list_opt_in.checked) };
+    // Optional: sent only when they tapped one of the seven.
+    if (HEARD.some(function (h) { return h[0] === state.form.heard_from; })) body.heard_from = state.form.heard_from;
     if (CREDIT && state.credit && creditUsed(state.quote)) body.credit = CREDIT;
     if (HOLD) body.hold = HOLD;
     // Same details, same dates: reuse the checkout already opened, never a second claim
-    // on the guest's own nights (a retry must not lock them out).
-    var key = [cal.checkIn, cal.checkOut, state.payMode, v.email.toLowerCase(), v.guests, v.dogs, body.credit || ''].join('|');
+    // on the guest's own nights (a retry must not lock them out). heard_from and list_opt_in are
+    // left out of the key on purpose: changing either after payment opened reuses the first
+    // checkout, which keeps what was sent the first time.
+    var key =[cal.checkIn, cal.checkOut, state.payMode, v.email.toLowerCase(), v.guests, v.dogs, body.credit || ''].join('|');
     btn.disabled = true;
     btn.textContent = coveredToday(state.quote, state.payMode) ? 'Booking with your credit…' : 'Opening secure payment…';
     // The booking system keeps a checkout's nights for about 35 minutes; reuse it well inside that.

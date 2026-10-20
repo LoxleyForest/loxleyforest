@@ -52,7 +52,6 @@ def page_book():
         <p class="lf-eyebrow">Dahlonega, Georgia</p>
         <h1 class="lf-h1" id="bk-h">Book your stay</h1>
         <p class="lf-lead">Book direct. No platform fees, no middleman. Just you, the forest, and the family who built it.</p>
-        <p class="lf-proof"><span class="lf-proof__stars" aria-hidden="true">★★★★★</span><span>4.98 from 200+ guest reviews</span></p>
       </div>
     </section>
 
@@ -216,7 +215,6 @@ CSS = '''
 .lf-bk-top { padding-top: calc(var(--hdr-h) + clamp(44px, 8vw, 96px)); padding-bottom: clamp(56px, 8vw, 96px); }
 .lf-bk-top .lf-h1 { font-size: clamp(2.6rem, 9vw, 4.8rem); }
 .lf-bk-top .lf-lead { margin-left: auto; margin-right: auto; }
-.lf-bk-top .lf-proof { justify-content: center; }
 .lf-bk-book { scroll-margin-top: var(--hdr-h); padding-top: clamp(56px, 8vw, 96px); padding-bottom: clamp(56px, 8vw, 96px); }
 .lf-bk-head { max-width: 36rem; margin: 0 auto 32px; text-align: center; }
 .lf-bk-head .lf-h3 { color: var(--forest-deep); font-size: clamp(1.75rem, 5vw, 2.3rem); }
