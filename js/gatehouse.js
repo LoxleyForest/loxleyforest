@@ -217,7 +217,8 @@
       if (!first) return short(ci) + ' is not open.';
       var n = daysBetween(ci, co);
       if (n < 1) return 'Your check-out day comes after ' + short(ci) + '.';
-      if (first.min_stay && n < first.min_stay) return 'A stay starting ' + short(ci) + ' is at least ' + nightsWord(first.min_stay) + '.';
+      // A single open night between two stays sells alone, whatever the minimum (the engine's gap).
+      if (first.min_stay && n < first.min_stay && !(n === 1 && first.gap)) return 'A stay starting ' + short(ci) + ' is at least ' + nightsWord(first.min_stay) + '.';
       if (first.max_stay && n > first.max_stay) return 'A stay starting ' + short(ci) + ' is at most ' + nightsWord(first.max_stay) + '.';
       for (var d = ci; d < co; d = addDays(d, 1)) {
         if (!c.nights[d]) return short(d) + ' is already taken. Try nights before it, or other dates.';
