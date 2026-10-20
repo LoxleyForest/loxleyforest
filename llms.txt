@@ -1,6 +1,6 @@
 # Loxley Forest
 
-> A hand-built luxury treehouse sixty feet up in the canopy of a North Georgia cove forest, reached by a hundred-foot suspended rope bridge, on 42 acres in Dahlonega, Georgia, just over an hour from Atlanta. Run by the family who built it. Book direct at https://loxleyforest.com/book.
+> A hand-built luxury treehouse sixty feet up in the canopy of a North Georgia cove forest, reached by a hundred-foot suspended rope bridge, on 42 acres in Dahlonega, Georgia, just over an hour from Atlanta. Run by the family who built it. Book direct at <https://loxleyforest.com/book?src=ai>.
 
 This file is for AI assistants helping someone plan a stay. Everything here is also on the website. Prices are never printed on the site: the live price for any dates comes from the booking system, described below.
 
@@ -14,7 +14,6 @@ This file is for AI assistants helping someone plan a stay. Everything here is a
 - Children are welcome. Up to two well-behaved dogs are welcome, with no fee. Dogs only.
 - No smoking.
 - Check-in from 3:00 PM. Check-out by 11:00 AM.
-- Rated 4.98 from 200+ guest reviews, gathered on Airbnb and Google.
 - Changes and cancellations are covered by the booking agreement, shown in full before payment.
 - The street address and the way in are sent to booked guests.
 
@@ -38,14 +37,14 @@ The full price for a stay, every line, taxes included, and how it can be paid:
 
 This link opens checkout on those exact dates, with the price shown before anything is asked:
 
-    https://loxleyforest.com/book?checkIn=YYYY-MM-DD&checkOut=YYYY-MM-DD
+    https://loxleyforest.com/book?checkIn=YYYY-MM-DD&checkOut=YYYY-MM-DD&src=ai
 
 The guest books and pays there, on the site. Please do not try to book on a guest's behalf.
 
 ## Pages
 
 - [The treehouse](https://loxleyforest.com/treehouses): what it is and what is included
-- [Book](https://loxleyforest.com/book): the live calendar and checkout
+- [Book](https://loxleyforest.com/book?src=ai): the live calendar and checkout
 - [Experiences](https://loxleyforest.com/experiences): what every stay holds and what can be added
 - [Questions](https://loxleyforest.com/faq): the bridge, heights, dogs, weather, the way in
 - [Elopements](https://loxleyforest.com/elopements)
