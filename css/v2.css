@@ -234,7 +234,6 @@ html:not(.js) .lf-rv__nav { visibility: hidden; }
 @media (min-width: 1080px) {
   /* inside the page's measure on desktop: three stories and the edge of a fourth */
   .lf-rv__track { margin: 0; padding: 4px 0 8px; scroll-padding-inline: 0; grid-auto-columns: calc((100% - 3 * 22px) / 3.25); gap: 22px; }
-  .lf-rv__nav { justify-content: flex-end; }
 }
 @media (prefers-reduced-motion: reduce) { .lf-rv__pause { display: none; } }
 
