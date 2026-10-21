@@ -1,0 +1,1762 @@
+[
+ {
+  "page": "/",
+  "width": 390,
+  "steps": [
+   [
+    "start",
+    {
+     "at": "1",
+     "scrollLeft": 0,
+     "snapped": true,
+     "prevDisabled": true,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Stop the stories turning",
+     "live": ""
+    }
+   ],
+   [
+    "swipe left",
+    {
+     "at": "1",
+     "scrollLeft": 0,
+     "snapped": true,
+     "prevDisabled": true,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Stop the stories turning",
+     "live": ""
+    }
+   ],
+   [
+    "key Home",
+    {
+     "at": "1",
+     "scrollLeft": 0,
+     "snapped": true,
+     "prevDisabled": true,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 1 of 10"
+    }
+   ],
+   [
+    "key ArrowRight",
+    {
+     "at": "2",
+     "scrollLeft": 301,
+     "snapped": true,
+     "prevDisabled": false,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 2 of 10"
+    }
+   ],
+   [
+    "key End",
+    {
+     "at": "10",
+     "scrollLeft": 2657,
+     "snapped": true,
+     "prevDisabled": false,
+     "nextDisabled": true,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 10 of 10"
+    }
+   ]
+  ],
+  "overflowTop": {
+   "docW": 390,
+   "winW": 390,
+   "sideways": false
+  },
+  "overflowAfter": {
+   "docW": 390,
+   "winW": 390,
+   "sideways": false
+  },
+  "shifts": [
+   {
+    "value": 0.00001429141368895923,
+    "inReviews": false
+   }
+  ],
+  "log": {
+   "blocked": [
+    "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,",
+    "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K",
+    "https://book.loxleyforest.com/v1/funnel",
+    "https://book.loxleyforest.com/v1/availability?unit=loxley-forest-canopy-treehouse-dahloneg",
+    "https://book.loxleyforest.com/v1/funnel"
+   ],
+   "sent": [],
+   "console": [
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://book.loxleyforest.com/v1/funnel"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://book.loxleyforest.com/v1/availability?unit=loxley-forest-canopy-treehouse-dahlonega&from=2026-10-21&to=2027-10-21"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://book.loxleyforest.com/v1/funnel"
+    }
+   ],
+   "pageerrors": []
+  }
+ },
+ {
+  "page": "/treehouses",
+  "width": 390,
+  "steps": [
+   [
+    "start",
+    {
+     "at": "1",
+     "scrollLeft": 0,
+     "snapped": true,
+     "prevDisabled": true,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Stop the stories turning",
+     "live": ""
+    }
+   ],
+   [
+    "swipe left",
+    {
+     "at": "1",
+     "scrollLeft": 0,
+     "snapped": true,
+     "prevDisabled": true,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Stop the stories turning",
+     "live": ""
+    }
+   ],
+   [
+    "key Home",
+    {
+     "at": "1",
+     "scrollLeft": 0,
+     "snapped": true,
+     "prevDisabled": true,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 1 of 10"
+    }
+   ],
+   [
+    "key ArrowRight",
+    {
+     "at": "2",
+     "scrollLeft": 301,
+     "snapped": true,
+     "prevDisabled": false,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 2 of 10"
+    }
+   ],
+   [
+    "key End",
+    {
+     "at": "10",
+     "scrollLeft": 2657,
+     "snapped": true,
+     "prevDisabled": false,
+     "nextDisabled": true,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 10 of 10"
+    }
+   ]
+  ],
+  "overflowTop": {
+   "docW": 390,
+   "winW": 390,
+   "sideways": false
+  },
+  "overflowAfter": {
+   "docW": 390,
+   "winW": 390,
+   "sideways": false
+  },
+  "shifts": [
+   {
+    "value": 0.00001429141368895923,
+    "inReviews": false
+   }
+  ],
+  "log": {
+   "blocked": [
+    "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,",
+    "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K",
+    "https://book.loxleyforest.com/v1/funnel",
+    "https://book.loxleyforest.com/v1/availability?unit=loxley-forest-canopy-treehouse-dahloneg",
+    "https://book.loxleyforest.com/v1/funnel"
+   ],
+   "sent": [],
+   "console": [
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://book.loxleyforest.com/v1/funnel"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://book.loxleyforest.com/v1/availability?unit=loxley-forest-canopy-treehouse-dahlonega&from=2026-10-21&to=2027-10-21"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://book.loxleyforest.com/v1/funnel"
+    }
+   ],
+   "pageerrors": []
+  }
+ },
+ {
+  "page": "/book",
+  "width": 390,
+  "steps": [
+   [
+    "start",
+    {
+     "at": "1",
+     "scrollLeft": 0,
+     "snapped": true,
+     "prevDisabled": true,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Stop the stories turning",
+     "live": ""
+    }
+   ],
+   [
+    "swipe left",
+    {
+     "at": "1",
+     "scrollLeft": 0,
+     "snapped": true,
+     "prevDisabled": true,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Stop the stories turning",
+     "live": ""
+    }
+   ],
+   [
+    "key Home",
+    {
+     "at": "1",
+     "scrollLeft": 0,
+     "snapped": true,
+     "prevDisabled": true,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 1 of 10"
+    }
+   ],
+   [
+    "key ArrowRight",
+    {
+     "at": "2",
+     "scrollLeft": 301,
+     "snapped": true,
+     "prevDisabled": false,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 2 of 10"
+    }
+   ],
+   [
+    "key End",
+    {
+     "at": "10",
+     "scrollLeft": 2657,
+     "snapped": true,
+     "prevDisabled": false,
+     "nextDisabled": true,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 10 of 10"
+    }
+   ]
+  ],
+  "overflowTop": {
+   "docW": 390,
+   "winW": 390,
+   "sideways": false
+  },
+  "overflowAfter": {
+   "docW": 390,
+   "winW": 390,
+   "sideways": false
+  },
+  "shifts": [
+   {
+    "value": 0.00001429141368895923,
+    "inReviews": false
+   }
+  ],
+  "log": {
+   "blocked": [
+    "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,",
+    "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K",
+    "https://book.loxleyforest.com/v1/funnel",
+    "https://book.loxleyforest.com/v1/agreement",
+    "https://book.loxleyforest.com/v1/availability?unit=loxley-forest-canopy-treehouse-dahloneg",
+    "https://book.loxleyforest.com/v1/funnel"
+   ],
+   "sent": [],
+   "console": [
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://book.loxleyforest.com/v1/funnel"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://book.loxleyforest.com/v1/agreement"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://book.loxleyforest.com/v1/availability?unit=loxley-forest-canopy-treehouse-dahlonega&from=2026-10-21&to=2027-10-21"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://book.loxleyforest.com/v1/funnel"
+    }
+   ],
+   "pageerrors": []
+  }
+ },
+ {
+  "page": "/experiences",
+  "width": 390,
+  "steps": [
+   [
+    "start",
+    {
+     "at": "1",
+     "scrollLeft": 0,
+     "snapped": true,
+     "prevDisabled": true,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Stop the stories turning",
+     "live": ""
+    }
+   ],
+   [
+    "swipe left",
+    {
+     "at": "1",
+     "scrollLeft": 0,
+     "snapped": true,
+     "prevDisabled": true,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Stop the stories turning",
+     "live": ""
+    }
+   ],
+   [
+    "key Home",
+    {
+     "at": "1",
+     "scrollLeft": 0,
+     "snapped": true,
+     "prevDisabled": true,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 1 of 10"
+    }
+   ],
+   [
+    "key ArrowRight",
+    {
+     "at": "2",
+     "scrollLeft": 301,
+     "snapped": true,
+     "prevDisabled": false,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 2 of 10"
+    }
+   ],
+   [
+    "key End",
+    {
+     "at": "10",
+     "scrollLeft": 2657,
+     "snapped": true,
+     "prevDisabled": false,
+     "nextDisabled": true,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 10 of 10"
+    }
+   ]
+  ],
+  "overflowTop": {
+   "docW": 390,
+   "winW": 390,
+   "sideways": false
+  },
+  "overflowAfter": {
+   "docW": 390,
+   "winW": 390,
+   "sideways": false
+  },
+  "shifts": [
+   {
+    "value": 0.00001429141368895923,
+    "inReviews": false
+   }
+  ],
+  "log": {
+   "blocked": [
+    "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,",
+    "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K",
+    "https://book.loxleyforest.com/v1/funnel",
+    "https://book.loxleyforest.com/v1/availability?unit=loxley-forest-canopy-treehouse-dahloneg",
+    "https://book.loxleyforest.com/v1/funnel"
+   ],
+   "sent": [],
+   "console": [
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://book.loxleyforest.com/v1/funnel"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://book.loxleyforest.com/v1/availability?unit=loxley-forest-canopy-treehouse-dahlonega&from=2026-10-21&to=2027-10-21"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://book.loxleyforest.com/v1/funnel"
+    }
+   ],
+   "pageerrors": []
+  }
+ },
+ {
+  "page": "/elopements",
+  "width": 390,
+  "steps": [
+   [
+    "start",
+    {
+     "at": "1",
+     "scrollLeft": 0,
+     "snapped": true,
+     "prevDisabled": true,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Stop the stories turning",
+     "live": ""
+    }
+   ],
+   [
+    "swipe left",
+    {
+     "at": "1",
+     "scrollLeft": 0,
+     "snapped": true,
+     "prevDisabled": true,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Stop the stories turning",
+     "live": ""
+    }
+   ],
+   [
+    "key Home",
+    {
+     "at": "1",
+     "scrollLeft": 0,
+     "snapped": true,
+     "prevDisabled": true,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 1 of 10"
+    }
+   ],
+   [
+    "key ArrowRight",
+    {
+     "at": "2",
+     "scrollLeft": 301,
+     "snapped": true,
+     "prevDisabled": false,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 2 of 10"
+    }
+   ],
+   [
+    "key End",
+    {
+     "at": "10",
+     "scrollLeft": 2657,
+     "snapped": true,
+     "prevDisabled": false,
+     "nextDisabled": true,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 10 of 10"
+    }
+   ]
+  ],
+  "overflowTop": {
+   "docW": 390,
+   "winW": 390,
+   "sideways": false
+  },
+  "overflowAfter": {
+   "docW": 390,
+   "winW": 390,
+   "sideways": false
+  },
+  "shifts": [
+   {
+    "value": 0.00001429141368895923,
+    "inReviews": false
+   }
+  ],
+  "log": {
+   "blocked": [
+    "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,",
+    "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K",
+    "https://book.loxleyforest.com/v1/funnel"
+   ],
+   "sent": [],
+   "console": [
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://book.loxleyforest.com/v1/funnel"
+    }
+   ],
+   "pageerrors": []
+  }
+ },
+ {
+  "page": "/",
+  "width": 1280,
+  "steps": [
+   [
+    "start",
+    {
+     "at": "1",
+     "scrollLeft": 0,
+     "snapped": true,
+     "prevDisabled": true,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Stop the stories turning",
+     "live": ""
+    }
+   ],
+   [
+    "next arrow",
+    {
+     "at": "2",
+     "scrollLeft": 361,
+     "snapped": true,
+     "prevDisabled": false,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 2 of 10"
+    }
+   ],
+   [
+    "sideways wheel",
+    {
+     "at": "2",
+     "scrollLeft": 361,
+     "snapped": true,
+     "prevDisabled": false,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 2 of 10"
+    }
+   ],
+   [
+    "prev arrow",
+    {
+     "at": "1",
+     "scrollLeft": 0,
+     "snapped": true,
+     "prevDisabled": true,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 1 of 10"
+    }
+   ],
+   [
+    "key Home",
+    {
+     "at": "1",
+     "scrollLeft": 0,
+     "snapped": true,
+     "prevDisabled": true,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 1 of 10"
+    }
+   ],
+   [
+    "key ArrowRight",
+    {
+     "at": "2",
+     "scrollLeft": 361,
+     "snapped": true,
+     "prevDisabled": false,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 2 of 10"
+    }
+   ],
+   [
+    "key End",
+    {
+     "at": "10",
+     "scrollLeft": 2421,
+     "snapped": true,
+     "prevDisabled": false,
+     "nextDisabled": true,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 10 of 10"
+    }
+   ]
+  ],
+  "overflowTop": {
+   "docW": 1280,
+   "winW": 1280,
+   "sideways": false
+  },
+  "overflowAfter": {
+   "docW": 1280,
+   "winW": 1280,
+   "sideways": false
+  },
+  "shifts": [
+   {
+    "value": 0.00000281777492789335,
+    "inReviews": false
+   }
+  ],
+  "log": {
+   "blocked": [
+    "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,",
+    "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K",
+    "https://book.loxleyforest.com/v1/funnel",
+    "https://book.loxleyforest.com/v1/availability?unit=loxley-forest-canopy-treehouse-dahloneg",
+    "https://book.loxleyforest.com/v1/funnel"
+   ],
+   "sent": [],
+   "console": [
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://book.loxleyforest.com/v1/funnel"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://book.loxleyforest.com/v1/availability?unit=loxley-forest-canopy-treehouse-dahlonega&from=2026-10-21&to=2027-10-21"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://book.loxleyforest.com/v1/funnel"
+    }
+   ],
+   "pageerrors": []
+  }
+ },
+ {
+  "page": "/treehouses",
+  "width": 1280,
+  "steps": [
+   [
+    "start",
+    {
+     "at": "1",
+     "scrollLeft": 0,
+     "snapped": true,
+     "prevDisabled": true,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Stop the stories turning",
+     "live": ""
+    }
+   ],
+   [
+    "next arrow",
+    {
+     "at": "2",
+     "scrollLeft": 361,
+     "snapped": true,
+     "prevDisabled": false,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 2 of 10"
+    }
+   ],
+   [
+    "sideways wheel",
+    {
+     "at": "2",
+     "scrollLeft": 361,
+     "snapped": true,
+     "prevDisabled": false,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 2 of 10"
+    }
+   ],
+   [
+    "prev arrow",
+    {
+     "at": "1",
+     "scrollLeft": 0,
+     "snapped": true,
+     "prevDisabled": true,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 1 of 10"
+    }
+   ],
+   [
+    "key Home",
+    {
+     "at": "1",
+     "scrollLeft": 0,
+     "snapped": true,
+     "prevDisabled": true,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 1 of 10"
+    }
+   ],
+   [
+    "key ArrowRight",
+    {
+     "at": "2",
+     "scrollLeft": 361,
+     "snapped": true,
+     "prevDisabled": false,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 2 of 10"
+    }
+   ],
+   [
+    "key End",
+    {
+     "at": "10",
+     "scrollLeft": 2421,
+     "snapped": true,
+     "prevDisabled": false,
+     "nextDisabled": true,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 10 of 10"
+    }
+   ]
+  ],
+  "overflowTop": {
+   "docW": 1280,
+   "winW": 1280,
+   "sideways": false
+  },
+  "overflowAfter": {
+   "docW": 1280,
+   "winW": 1280,
+   "sideways": false
+  },
+  "shifts": [
+   {
+    "value": 0.00000281777492789335,
+    "inReviews": false
+   }
+  ],
+  "log": {
+   "blocked": [
+    "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,",
+    "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K",
+    "https://book.loxleyforest.com/v1/funnel",
+    "https://book.loxleyforest.com/v1/availability?unit=loxley-forest-canopy-treehouse-dahloneg",
+    "https://book.loxleyforest.com/v1/funnel"
+   ],
+   "sent": [],
+   "console": [
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://book.loxleyforest.com/v1/funnel"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://book.loxleyforest.com/v1/availability?unit=loxley-forest-canopy-treehouse-dahlonega&from=2026-10-21&to=2027-10-21"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://book.loxleyforest.com/v1/funnel"
+    }
+   ],
+   "pageerrors": []
+  }
+ },
+ {
+  "page": "/book",
+  "width": 1280,
+  "steps": [
+   [
+    "start",
+    {
+     "at": "1",
+     "scrollLeft": 0,
+     "snapped": true,
+     "prevDisabled": true,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Stop the stories turning",
+     "live": ""
+    }
+   ],
+   [
+    "next arrow",
+    {
+     "at": "2",
+     "scrollLeft": 361,
+     "snapped": true,
+     "prevDisabled": false,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 2 of 10"
+    }
+   ],
+   [
+    "sideways wheel",
+    {
+     "at": "2",
+     "scrollLeft": 361,
+     "snapped": true,
+     "prevDisabled": false,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 2 of 10"
+    }
+   ],
+   [
+    "prev arrow",
+    {
+     "at": "1",
+     "scrollLeft": 0,
+     "snapped": true,
+     "prevDisabled": true,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 1 of 10"
+    }
+   ],
+   [
+    "key Home",
+    {
+     "at": "1",
+     "scrollLeft": 0,
+     "snapped": true,
+     "prevDisabled": true,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 1 of 10"
+    }
+   ],
+   [
+    "key ArrowRight",
+    {
+     "at": "2",
+     "scrollLeft": 361,
+     "snapped": true,
+     "prevDisabled": false,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 2 of 10"
+    }
+   ],
+   [
+    "key End",
+    {
+     "at": "10",
+     "scrollLeft": 2421,
+     "snapped": true,
+     "prevDisabled": false,
+     "nextDisabled": true,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 10 of 10"
+    }
+   ]
+  ],
+  "overflowTop": {
+   "docW": 1280,
+   "winW": 1280,
+   "sideways": false
+  },
+  "overflowAfter": {
+   "docW": 1280,
+   "winW": 1280,
+   "sideways": false
+  },
+  "shifts": [
+   {
+    "value": 0.004624567076217296,
+    "inReviews": false
+   },
+   {
+    "value": 0.00000281777492789335,
+    "inReviews": false
+   }
+  ],
+  "log": {
+   "blocked": [
+    "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,",
+    "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K",
+    "https://book.loxleyforest.com/v1/funnel",
+    "https://book.loxleyforest.com/v1/agreement",
+    "https://book.loxleyforest.com/v1/availability?unit=loxley-forest-canopy-treehouse-dahloneg",
+    "https://book.loxleyforest.com/v1/funnel"
+   ],
+   "sent": [],
+   "console": [
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://book.loxleyforest.com/v1/funnel"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://book.loxleyforest.com/v1/agreement"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://book.loxleyforest.com/v1/availability?unit=loxley-forest-canopy-treehouse-dahlonega&from=2026-10-21&to=2027-10-21"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://book.loxleyforest.com/v1/funnel"
+    }
+   ],
+   "pageerrors": []
+  }
+ },
+ {
+  "page": "/experiences",
+  "width": 1280,
+  "steps": [
+   [
+    "start",
+    {
+     "at": "1",
+     "scrollLeft": 0,
+     "snapped": true,
+     "prevDisabled": true,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Stop the stories turning",
+     "live": ""
+    }
+   ],
+   [
+    "next arrow",
+    {
+     "at": "2",
+     "scrollLeft": 361,
+     "snapped": true,
+     "prevDisabled": false,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 2 of 10"
+    }
+   ],
+   [
+    "sideways wheel",
+    {
+     "at": "2",
+     "scrollLeft": 361,
+     "snapped": true,
+     "prevDisabled": false,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 2 of 10"
+    }
+   ],
+   [
+    "prev arrow",
+    {
+     "at": "1",
+     "scrollLeft": 0,
+     "snapped": true,
+     "prevDisabled": true,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 1 of 10"
+    }
+   ],
+   [
+    "key Home",
+    {
+     "at": "1",
+     "scrollLeft": 0,
+     "snapped": true,
+     "prevDisabled": true,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 1 of 10"
+    }
+   ],
+   [
+    "key ArrowRight",
+    {
+     "at": "2",
+     "scrollLeft": 361,
+     "snapped": true,
+     "prevDisabled": false,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 2 of 10"
+    }
+   ],
+   [
+    "key End",
+    {
+     "at": "10",
+     "scrollLeft": 2421,
+     "snapped": true,
+     "prevDisabled": false,
+     "nextDisabled": true,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 10 of 10"
+    }
+   ]
+  ],
+  "overflowTop": {
+   "docW": 1280,
+   "winW": 1280,
+   "sideways": false
+  },
+  "overflowAfter": {
+   "docW": 1280,
+   "winW": 1280,
+   "sideways": false
+  },
+  "shifts": [
+   {
+    "value": 0.00000281777492789335,
+    "inReviews": false
+   }
+  ],
+  "log": {
+   "blocked": [
+    "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,",
+    "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K",
+    "https://book.loxleyforest.com/v1/funnel",
+    "https://book.loxleyforest.com/v1/availability?unit=loxley-forest-canopy-treehouse-dahloneg",
+    "https://book.loxleyforest.com/v1/funnel"
+   ],
+   "sent": [],
+   "console": [
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://book.loxleyforest.com/v1/funnel"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://book.loxleyforest.com/v1/availability?unit=loxley-forest-canopy-treehouse-dahlonega&from=2026-10-21&to=2027-10-21"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://book.loxleyforest.com/v1/funnel"
+    }
+   ],
+   "pageerrors": []
+  }
+ },
+ {
+  "page": "/elopements",
+  "width": 1280,
+  "steps": [
+   [
+    "start",
+    {
+     "at": "1",
+     "scrollLeft": 0,
+     "snapped": true,
+     "prevDisabled": true,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Stop the stories turning",
+     "live": ""
+    }
+   ],
+   [
+    "next arrow",
+    {
+     "at": "2",
+     "scrollLeft": 361,
+     "snapped": true,
+     "prevDisabled": false,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 2 of 10"
+    }
+   ],
+   [
+    "sideways wheel",
+    {
+     "at": "2",
+     "scrollLeft": 361,
+     "snapped": true,
+     "prevDisabled": false,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 2 of 10"
+    }
+   ],
+   [
+    "prev arrow",
+    {
+     "at": "1",
+     "scrollLeft": 0,
+     "snapped": true,
+     "prevDisabled": true,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 1 of 10"
+    }
+   ],
+   [
+    "key Home",
+    {
+     "at": "1",
+     "scrollLeft": 0,
+     "snapped": true,
+     "prevDisabled": true,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 1 of 10"
+    }
+   ],
+   [
+    "key ArrowRight",
+    {
+     "at": "2",
+     "scrollLeft": 361,
+     "snapped": true,
+     "prevDisabled": false,
+     "nextDisabled": false,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 2 of 10"
+    }
+   ],
+   [
+    "key End",
+    {
+     "at": "10",
+     "scrollLeft": 2421,
+     "snapped": true,
+     "prevDisabled": false,
+     "nextDisabled": true,
+     "pauseHidden": false,
+     "pauseLabel": "Turn the stories",
+     "live": "Story 10 of 10"
+    }
+   ]
+  ],
+  "overflowTop": {
+   "docW": 1280,
+   "winW": 1280,
+   "sideways": false
+  },
+  "overflowAfter": {
+   "docW": 1280,
+   "winW": 1280,
+   "sideways": false
+  },
+  "shifts": [
+   {
+    "value": 0.00000281777492789335,
+    "inReviews": false
+   }
+  ],
+  "log": {
+   "blocked": [
+    "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,",
+    "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K",
+    "https://book.loxleyforest.com/v1/funnel"
+   ],
+   "sent": [],
+   "console": [
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K"
+    },
+    {
+     "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+     "url": "https://book.loxleyforest.com/v1/funnel"
+    }
+   ],
+   "pageerrors": []
+  }
+ },
+ {
+  "plain": true,
+  "page": "/our-story",
+  "width": 390,
+  "overflow": {
+   "docW": 390,
+   "winW": 390,
+   "sideways": false
+  },
+  "console": [
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://book.loxleyforest.com/v1/funnel"
+   }
+  ],
+  "pageerrors": [],
+  "sent": [],
+  "blocked": 3
+ },
+ {
+  "plain": true,
+  "page": "/gallery",
+  "width": 390,
+  "overflow": {
+   "docW": 390,
+   "winW": 390,
+   "sideways": false
+  },
+  "console": [
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://book.loxleyforest.com/v1/funnel"
+   }
+  ],
+  "pageerrors": [],
+  "sent": [],
+  "blocked": 3
+ },
+ {
+  "plain": true,
+  "page": "/faq",
+  "width": 390,
+  "overflow": {
+   "docW": 390,
+   "winW": 390,
+   "sideways": false
+  },
+  "console": [
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://book.loxleyforest.com/v1/funnel"
+   }
+  ],
+  "pageerrors": [],
+  "sent": [],
+  "blocked": 3
+ },
+ {
+  "plain": true,
+  "page": "/local-guide",
+  "width": 390,
+  "overflow": {
+   "docW": 390,
+   "winW": 390,
+   "sideways": false
+  },
+  "console": [
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://book.loxleyforest.com/v1/funnel"
+   }
+  ],
+  "pageerrors": [],
+  "sent": [],
+  "blocked": 3
+ },
+ {
+  "plain": true,
+  "page": "/terms",
+  "width": 390,
+  "overflow": {
+   "docW": 390,
+   "winW": 390,
+   "sideways": false
+  },
+  "console": [
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://book.loxleyforest.com/v1/funnel"
+   }
+  ],
+  "pageerrors": [],
+  "sent": [],
+  "blocked": 3
+ },
+ {
+  "plain": true,
+  "page": "/privacy",
+  "width": 390,
+  "overflow": {
+   "docW": 390,
+   "winW": 390,
+   "sideways": false
+  },
+  "console": [
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://book.loxleyforest.com/v1/funnel"
+   }
+  ],
+  "pageerrors": [],
+  "sent": [],
+  "blocked": 3
+ },
+ {
+  "plain": true,
+  "page": "/success",
+  "width": 390,
+  "overflow": {
+   "docW": 390,
+   "winW": 390,
+   "sideways": false
+  },
+  "console": [
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://book.loxleyforest.com/v1/funnel"
+   }
+  ],
+  "pageerrors": [],
+  "sent": [],
+  "blocked": 3
+ },
+ {
+  "plain": true,
+  "page": "/404",
+  "width": 390,
+  "overflow": {
+   "docW": 390,
+   "winW": 390,
+   "sideways": false
+  },
+  "console": [
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://book.loxleyforest.com/v1/funnel"
+   }
+  ],
+  "pageerrors": [],
+  "sent": [],
+  "blocked": 3
+ },
+ {
+  "auto": true,
+  "width": 390,
+  "reduced": false,
+  "before": {
+   "at": "1",
+   "scrollLeft": 0,
+   "snapped": true,
+   "prevDisabled": true,
+   "nextDisabled": false,
+   "pauseHidden": false,
+   "pauseLabel": "Stop the stories turning",
+   "live": ""
+  },
+  "after": {
+   "at": "2",
+   "scrollLeft": 301,
+   "snapped": true,
+   "prevDisabled": false,
+   "nextDisabled": false,
+   "pauseHidden": false,
+   "pauseLabel": "Stop the stories turning",
+   "live": ""
+  },
+  "paused": {
+   "at": "2",
+   "scrollLeft": 301,
+   "snapped": true,
+   "prevDisabled": false,
+   "nextDisabled": false,
+   "pauseHidden": false,
+   "pauseLabel": "Turn the stories",
+   "live": "",
+   "after8600ms": "2"
+  },
+  "console": [
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://book.loxleyforest.com/v1/funnel"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://book.loxleyforest.com/v1/availability?unit=loxley-forest-canopy-treehouse-dahlonega&from=2026-10-21&to=2027-10-21"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://book.loxleyforest.com/v1/funnel"
+   }
+  ],
+  "pageerrors": [],
+  "sent": []
+ },
+ {
+  "auto": true,
+  "width": 390,
+  "reduced": true,
+  "before": {
+   "at": "1",
+   "scrollLeft": 0,
+   "snapped": true,
+   "prevDisabled": true,
+   "nextDisabled": false,
+   "pauseHidden": true,
+   "pauseLabel": "Stop the stories turning",
+   "live": ""
+  },
+  "after": {
+   "at": "1",
+   "scrollLeft": 0,
+   "snapped": true,
+   "prevDisabled": true,
+   "nextDisabled": false,
+   "pauseHidden": true,
+   "pauseLabel": "Stop the stories turning",
+   "live": ""
+  },
+  "paused": null,
+  "console": [
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://book.loxleyforest.com/v1/funnel"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://book.loxleyforest.com/v1/availability?unit=loxley-forest-canopy-treehouse-dahlonega&from=2026-10-21&to=2027-10-21"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://book.loxleyforest.com/v1/funnel"
+   }
+  ],
+  "pageerrors": [],
+  "sent": []
+ },
+ {
+  "auto": true,
+  "width": 1280,
+  "reduced": false,
+  "before": {
+   "at": "1",
+   "scrollLeft": 0,
+   "snapped": true,
+   "prevDisabled": true,
+   "nextDisabled": false,
+   "pauseHidden": false,
+   "pauseLabel": "Stop the stories turning",
+   "live": ""
+  },
+  "after": {
+   "at": "2",
+   "scrollLeft": 361,
+   "snapped": true,
+   "prevDisabled": false,
+   "nextDisabled": false,
+   "pauseHidden": false,
+   "pauseLabel": "Stop the stories turning",
+   "live": ""
+  },
+  "paused": {
+   "at": "2",
+   "scrollLeft": 361,
+   "snapped": true,
+   "prevDisabled": false,
+   "nextDisabled": false,
+   "pauseHidden": false,
+   "pauseLabel": "Turn the stories",
+   "live": "",
+   "after8600ms": "2"
+  },
+  "console": [
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://book.loxleyforest.com/v1/funnel"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://book.loxleyforest.com/v1/availability?unit=loxley-forest-canopy-treehouse-dahlonega&from=2026-10-21&to=2027-10-21"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://book.loxleyforest.com/v1/funnel"
+   }
+  ],
+  "pageerrors": [],
+  "sent": []
+ },
+ {
+  "auto": true,
+  "width": 1280,
+  "reduced": true,
+  "before": {
+   "at": "1",
+   "scrollLeft": 0,
+   "snapped": true,
+   "prevDisabled": true,
+   "nextDisabled": false,
+   "pauseHidden": true,
+   "pauseLabel": "Stop the stories turning",
+   "live": ""
+  },
+  "after": {
+   "at": "1",
+   "scrollLeft": 0,
+   "snapped": true,
+   "prevDisabled": true,
+   "nextDisabled": false,
+   "pauseHidden": true,
+   "pauseLabel": "Stop the stories turning",
+   "live": ""
+  },
+  "paused": null,
+  "console": [
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://www.googletagmanager.com/gtm.js?id=GTM-5N4BX66K"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://book.loxleyforest.com/v1/funnel"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://book.loxleyforest.com/v1/availability?unit=loxley-forest-canopy-treehouse-dahlonega&from=2026-10-21&to=2027-10-21"
+   },
+   {
+    "text": "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector",
+    "url": "https://book.loxleyforest.com/v1/funnel"
+   }
+  ],
+  "pageerrors": [],
+  "sent": []
+ }
+]
