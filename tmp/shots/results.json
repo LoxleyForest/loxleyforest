@@ -19,13 +19,13 @@
    [
     "swipe left",
     {
-     "at": "1",
-     "scrollLeft": 0,
+     "at": "2",
+     "scrollLeft": 301,
      "snapped": true,
-     "prevDisabled": true,
+     "prevDisabled": false,
      "nextDisabled": false,
      "pauseHidden": false,
-     "pauseLabel": "Stop the stories turning",
+     "pauseLabel": "Turn the stories",
      "live": ""
     }
    ],
@@ -74,6 +74,7 @@
    "winW": 390,
    "sideways": false
   },
+  "swipeHit": true,
   "overflowAfter": {
    "docW": 390,
    "winW": 390,
@@ -139,13 +140,13 @@
    [
     "swipe left",
     {
-     "at": "1",
-     "scrollLeft": 0,
+     "at": "2",
+     "scrollLeft": 301,
      "snapped": true,
-     "prevDisabled": true,
+     "prevDisabled": false,
      "nextDisabled": false,
      "pauseHidden": false,
-     "pauseLabel": "Stop the stories turning",
+     "pauseLabel": "Turn the stories",
      "live": ""
     }
    ],
@@ -194,6 +195,7 @@
    "winW": 390,
    "sideways": false
   },
+  "swipeHit": true,
   "overflowAfter": {
    "docW": 390,
    "winW": 390,
@@ -259,13 +261,13 @@
    [
     "swipe left",
     {
-     "at": "1",
-     "scrollLeft": 0,
+     "at": "2",
+     "scrollLeft": 301,
      "snapped": true,
-     "prevDisabled": true,
+     "prevDisabled": false,
      "nextDisabled": false,
      "pauseHidden": false,
-     "pauseLabel": "Stop the stories turning",
+     "pauseLabel": "Turn the stories",
      "live": ""
     }
    ],
@@ -314,6 +316,7 @@
    "winW": 390,
    "sideways": false
   },
+  "swipeHit": true,
   "overflowAfter": {
    "docW": 390,
    "winW": 390,
@@ -384,13 +387,13 @@
    [
     "swipe left",
     {
-     "at": "1",
-     "scrollLeft": 0,
+     "at": "2",
+     "scrollLeft": 301,
      "snapped": true,
-     "prevDisabled": true,
+     "prevDisabled": false,
      "nextDisabled": false,
      "pauseHidden": false,
-     "pauseLabel": "Stop the stories turning",
+     "pauseLabel": "Turn the stories",
      "live": ""
     }
    ],
@@ -439,6 +442,7 @@
    "winW": 390,
    "sideways": false
   },
+  "swipeHit": true,
   "overflowAfter": {
    "docW": 390,
    "winW": 390,
@@ -504,13 +508,13 @@
    [
     "swipe left",
     {
-     "at": "1",
-     "scrollLeft": 0,
+     "at": "2",
+     "scrollLeft": 301,
      "snapped": true,
-     "prevDisabled": true,
+     "prevDisabled": false,
      "nextDisabled": false,
      "pauseHidden": false,
-     "pauseLabel": "Stop the stories turning",
+     "pauseLabel": "Turn the stories",
      "live": ""
     }
    ],
@@ -559,6 +563,7 @@
    "winW": 390,
    "sideways": false
   },
+  "swipeHit": true,
   "overflowAfter": {
    "docW": 390,
    "winW": 390,
@@ -627,8 +632,8 @@
    [
     "sideways wheel",
     {
-     "at": "2",
-     "scrollLeft": 361,
+     "at": "3",
+     "scrollLeft": 722,
      "snapped": true,
      "prevDisabled": false,
      "nextDisabled": false,
@@ -640,14 +645,14 @@
    [
     "prev arrow",
     {
-     "at": "1",
-     "scrollLeft": 0,
+     "at": "2",
+     "scrollLeft": 361,
      "snapped": true,
-     "prevDisabled": true,
+     "prevDisabled": false,
      "nextDisabled": false,
      "pauseHidden": false,
      "pauseLabel": "Turn the stories",
-     "live": "Story 1 of 10"
+     "live": "Story 2 of 10"
     }
    ],
    [
@@ -695,17 +700,13 @@
    "winW": 1280,
    "sideways": false
   },
+  "wheelHit": true,
   "overflowAfter": {
    "docW": 1280,
    "winW": 1280,
    "sideways": false
   },
-  "shifts": [
-   {
-    "value": 0.00000281777492789335,
-    "inReviews": false
-   }
-  ],
+  "shifts": [],
   "log": {
    "blocked": [
     "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,",
@@ -773,8 +774,8 @@
    [
     "sideways wheel",
     {
-     "at": "2",
-     "scrollLeft": 361,
+     "at": "3",
+     "scrollLeft": 722,
      "snapped": true,
      "prevDisabled": false,
      "nextDisabled": false,
@@ -786,14 +787,14 @@
    [
     "prev arrow",
     {
-     "at": "1",
-     "scrollLeft": 0,
+     "at": "2",
+     "scrollLeft": 361,
      "snapped": true,
-     "prevDisabled": true,
+     "prevDisabled": false,
      "nextDisabled": false,
      "pauseHidden": false,
      "pauseLabel": "Turn the stories",
-     "live": "Story 1 of 10"
+     "live": "Story 2 of 10"
     }
    ],
    [
@@ -841,17 +842,13 @@
    "winW": 1280,
    "sideways": false
   },
+  "wheelHit": true,
   "overflowAfter": {
    "docW": 1280,
    "winW": 1280,
    "sideways": false
   },
-  "shifts": [
-   {
-    "value": 0.00000281777492789335,
-    "inReviews": false
-   }
-  ],
+  "shifts": [],
   "log": {
    "blocked": [
     "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,",
@@ -919,8 +916,8 @@
    [
     "sideways wheel",
     {
-     "at": "2",
-     "scrollLeft": 361,
+     "at": "3",
+     "scrollLeft": 722,
      "snapped": true,
      "prevDisabled": false,
      "nextDisabled": false,
@@ -932,14 +929,14 @@
    [
     "prev arrow",
     {
-     "at": "1",
-     "scrollLeft": 0,
+     "at": "2",
+     "scrollLeft": 361,
      "snapped": true,
-     "prevDisabled": true,
+     "prevDisabled": false,
      "nextDisabled": false,
      "pauseHidden": false,
      "pauseLabel": "Turn the stories",
-     "live": "Story 1 of 10"
+     "live": "Story 2 of 10"
     }
    ],
    [
@@ -987,6 +984,7 @@
    "winW": 1280,
    "sideways": false
   },
+  "wheelHit": true,
   "overflowAfter": {
    "docW": 1280,
    "winW": 1280,
@@ -995,10 +993,6 @@
   "shifts": [
    {
     "value": 0.004624567076217296,
-    "inReviews": false
-   },
-   {
-    "value": 0.00000281777492789335,
     "inReviews": false
    }
   ],
@@ -1074,8 +1068,8 @@
    [
     "sideways wheel",
     {
-     "at": "2",
-     "scrollLeft": 361,
+     "at": "3",
+     "scrollLeft": 722,
      "snapped": true,
      "prevDisabled": false,
      "nextDisabled": false,
@@ -1087,14 +1081,14 @@
    [
     "prev arrow",
     {
-     "at": "1",
-     "scrollLeft": 0,
+     "at": "2",
+     "scrollLeft": 361,
      "snapped": true,
-     "prevDisabled": true,
+     "prevDisabled": false,
      "nextDisabled": false,
      "pauseHidden": false,
      "pauseLabel": "Turn the stories",
-     "live": "Story 1 of 10"
+     "live": "Story 2 of 10"
     }
    ],
    [
@@ -1142,17 +1136,13 @@
    "winW": 1280,
    "sideways": false
   },
+  "wheelHit": true,
   "overflowAfter": {
    "docW": 1280,
    "winW": 1280,
    "sideways": false
   },
-  "shifts": [
-   {
-    "value": 0.00000281777492789335,
-    "inReviews": false
-   }
-  ],
+  "shifts": [],
   "log": {
    "blocked": [
     "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,",
@@ -1220,8 +1210,8 @@
    [
     "sideways wheel",
     {
-     "at": "2",
-     "scrollLeft": 361,
+     "at": "3",
+     "scrollLeft": 722,
      "snapped": true,
      "prevDisabled": false,
      "nextDisabled": false,
@@ -1233,14 +1223,14 @@
    [
     "prev arrow",
     {
-     "at": "1",
-     "scrollLeft": 0,
+     "at": "2",
+     "scrollLeft": 361,
      "snapped": true,
-     "prevDisabled": true,
+     "prevDisabled": false,
      "nextDisabled": false,
      "pauseHidden": false,
      "pauseLabel": "Turn the stories",
-     "live": "Story 1 of 10"
+     "live": "Story 2 of 10"
     }
    ],
    [
@@ -1288,17 +1278,13 @@
    "winW": 1280,
    "sideways": false
   },
+  "wheelHit": true,
   "overflowAfter": {
    "docW": 1280,
    "winW": 1280,
    "sideways": false
   },
-  "shifts": [
-   {
-    "value": 0.00000281777492789335,
-    "inReviews": false
-   }
-  ],
+  "shifts": [],
   "log": {
    "blocked": [
     "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,",
