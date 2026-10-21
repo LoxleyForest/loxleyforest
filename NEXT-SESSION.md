@@ -225,8 +225,7 @@ contradicted.
   desktop, posted for Mick to pick. The chosen one gets a Runway grade, then
   lands in `images/` (or `video/`) with a poster `.webp`.
 - **Calendar:** Romantic Atlanta shoots Christmas in the Forest on 2026-11-03
-  or 04 (peak leaf colour). Mick is away 2026-11-12 or 13 to 11-23, then
-  Thanksgiving. The reel is held until he is back; the Christmas site and ads
+  or 04 (peak leaf colour). Mick's travel dates are in loxley-rescue's log, not here. The reel is held until he is back; the Christmas site and ads
   launch right after Thanksgiving. The new frame must be finished before the
   November shoot lands.
 - **Tools:** a standalone ffmpeg lives in `~/bin` on the workshop (no admin
@@ -407,7 +406,7 @@ The Forge's recommendation, for the Architect to rule on:
 
 ## Do not disturb
 
-`private/always-tea-time-4f9c21/` is Monica's tea invitation, sent 2026-09-19.
+`private/always-tea-time-4f9c21/` is a guest's tea invitation, sent 2026-09-19.
 It carries `noindex, nofollow, noarchive`, `/private/` is disallowed in
 `robots.txt`, and it is absent from the sitemap. **Do not link it from any page
 and do not delete it without asking.** Three of the four guests are not
@@ -425,10 +424,10 @@ and the source has drifted. Worth fixing properly, not urgent.
 
 These belong to `~/loxley-rescue` (the Innkeeper) and are parked, not dropped:
 
-- **Kira Lawrence's real email.** Her content release is drawn and ready. The
+- **A guest's real email.** The content release is drawn and ready. The
   Hostfully lead carries an `@mgail.com` address, which is a live typosquat of
   gmail.com. Nothing goes to it until Mick confirms the real one.
-- **Spencer Job's gallery release**, to be sent in December once the elopement
+- **A guest's gallery release**, to be sent in December once the elopement
   photographs land. He answered "no" to marketing in September, before the
   photographs existed. The agreement itself promises a second ask.
 - **Olivia's written authorisation** to execute agreements for Loxley Forest

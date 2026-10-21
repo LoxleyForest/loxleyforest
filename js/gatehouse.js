@@ -217,7 +217,8 @@
       if (!first) return short(ci) + ' is not open.';
       var n = daysBetween(ci, co);
       if (n < 1) return 'Your check-out day comes after ' + short(ci) + '.';
-      if (first.min_stay && n < first.min_stay) return 'A stay starting ' + short(ci) + ' is at least ' + nightsWord(first.min_stay) + '.';
+      // A single open night between two stays sells alone, whatever the minimum (the engine's gap).
+      if (first.min_stay && n < first.min_stay && !(n === 1 && first.gap)) return 'A stay starting ' + short(ci) + ' is at least ' + nightsWord(first.min_stay) + '.';
       if (first.max_stay && n > first.max_stay) return 'A stay starting ' + short(ci) + ' is at most ' + nightsWord(first.max_stay) + '.';
       for (var d = ci; d < co; d = addDays(d, 1)) {
         if (!c.nights[d]) return short(d) + ' is already taken. Try nights before it, or other dates.';
@@ -417,7 +418,7 @@
   var cal = null, quoteFor = '';
 
   // ---- measurement: the tag manager AND our own server ----
-  // The visit id is the page beacon's (js/v2.js), so a visit's pages and booking steps join.
+  // The visit id is the page beacon's (js/funnel.js), so a visit's pages and booking steps join.
   var VISIT = window.lfFunnel ? window.lfFunnel.visit : (function () {
     try {
       var v = sessionStorage.getItem('gh_visit');
@@ -445,7 +446,7 @@
     return a;
   })();
 
-  // Every beacon goes through the page beacon's scrub (js/v2.js, loaded on every page before
+  // Every beacon goes through the page beacon's scrub (js/funnel.js, loaded on every page before
   // this file): known fields only, plain short values, nothing shaped like a key. Without it,
   // nothing is sent rather than something unscrubbed.
   function beacon(step, extra) {
@@ -652,13 +653,11 @@
   }
 
   // Two nights by default, the third pushed (Mick, 2026-10-20): the quote's `extend` offers the
-  // next night, one tap. Its price is the engine's, never worked out here: what the stay goes up
-  // by (add_cents), or the next night's price as the engine names it. No price, no offer.
+  // next night, one tap. Its price is the engine's, never worked out here: extend.add_cents, what
+  // the all-in total grows by, rate and tax (loxley-rescue gatehouse/desk.py extend_offer).
+  // No price, no offer.
   var EXTEND_WORDS = { 1: 'Make it two nights', 2: 'Add a third night' };
-  function extendCents(x) {
-    var k = ['add_cents', 'price_cents', 'night_cents', 'rate_cents'].filter(function (f) { return Number(x[f]) > 0; })[0];
-    return k ? Math.round(Number(x[k])) : 0;
-  }
+  function extendCents(x) { return Number(x.add_cents) > 0 ? Math.round(Number(x.add_cents)) : 0; }
   function plus(cents) {
     return '+' + (cents % 100 ? money(cents) : '$' + (cents / 100).toLocaleString('en-US'));
   }

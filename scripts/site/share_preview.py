@@ -19,7 +19,7 @@ PAGES = ['index.html', 'treehouses.html', 'experiences.html', 'elopements.html',
          'faq.html', 'local-guide.html', 'book.html', 'booking-confirmed.html', 'success.html', '404.html',
          'terms.html', 'privacy.html']
 CLEAN = [p[:-5] for p in PAGES if p != 'index.html']
-ASSETS = ['css/global.css', 'css/gatehouse.css', 'css/v2.css', 'css/v2-pages.css', 'js/vendor/lenis.min.js', 'js/global.js', 'js/v2.js',
+ASSETS = ['css/global.css', 'css/gatehouse.css', 'css/v2.css', 'css/v2-pages.css', 'js/vendor/lenis.min.js', 'js/funnel.js', 'js/global.js', 'js/v2.js',
           'js/reviews.js', 'js/gatehouse.js', 'js/crossing.js', 'images/crossing/crossing-still-phone.webp',
           'images/crossing/crossing-still-desk.webp', 'images/brand/logo/loxley-wordmark-on-dark.svg',
           'favicon.svg', 'apple-touch-icon.png']
@@ -30,6 +30,8 @@ def strip(s):
     s = re.sub(r'<!-- Google Tag Manager \(noscript\) -->.*?<!-- End Google Tag Manager \(noscript\) -->', '', s, flags=re.S)
     s = re.sub(r'\s*<link rel="canonical"[^>]*>', '', s)
     s = re.sub(r'\s*<link rel="icon" type="image/png"[^>]*>', '', s)
+    # No page beacon from the preview: its pages carry real paths and would count as visits.
+    s = re.sub(r' data-lf-api="[^"]*"', '', s)
     s = s.replace('href="/favicon.svg"', 'href="favicon.svg"').replace('href="/apple-touch-icon.png"', 'href="apple-touch-icon.png"')
     s = s.replace('<meta charset="UTF-8">', '<meta charset="UTF-8">\n  ' + ROBOTS, 1)
     # clean paths point at the preview's own copies, so the whole new site can be walked
