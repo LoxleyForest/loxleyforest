@@ -101,9 +101,17 @@
 .lf-menu-btn span { display: block; width: 26px; height: 1.5px; background: currentColor; box-shadow: 0 7px 0 currentColor; transform: translateY(-3.5px); transition: transform .3s, box-shadow .3s; }
 .lf-menu-open .lf-menu-btn span { box-shadow: none; transform: rotate(45deg); }
 .lf-menu-open .lf-menu-btn span::after { content: ''; display: block; width: 26px; height: 1.5px; background: currentColor; transform: rotate(-90deg); }
+/* The six links need about 730 px on one line with real fonts (measured 2026-10-21), so they
+   show from 1280 px; from 1080 to 1279 the header carries the Book button and the menu. No
+   link ever wraps to two lines. */
 @media (min-width: 1080px) {
-  .lf-hdr__nav { display: flex; gap: 30px; margin-left: auto; }
-  .lf-hdr__book { display: inline-flex; min-height: 44px; padding: 0 20px; }
+  .lf-hdr__book { display: inline-flex; min-height: 44px; padding: 0 20px; margin-left: auto; white-space: nowrap; }
+}
+@media (min-width: 1280px) {
+  .lf-hdr__mark img { width: min(236px, 15.5vw); }
+  .lf-hdr__nav { display: flex; gap: clamp(22px, 2.1vw, 30px); margin-left: auto; }
+  .lf-hdr__nav a { white-space: nowrap; }
+  .lf-hdr__book { margin-left: 0; }
   .lf-menu-btn { display: none; }
 }
 
@@ -123,7 +131,7 @@
 .lf-menu nav a::before { content: ''; position: absolute; left: 0; top: 50%; width: 13px; height: 16px; margin-top: -8px; background: var(--acorn) center / contain no-repeat; opacity: 0.55; }
 .lf-menu .lf-btn { align-self: flex-start; }
 .lf-menu__foot { margin-top: auto; color: var(--on-dark-muted); font-size: 1.05rem; }
-@media (min-width: 1080px) { .lf-menu { display: none; } }
+@media (min-width: 1280px) { .lf-menu { display: none; } }
 
 /* ---- hero ------------------------------------------------------------ */
 .lf-hero { position: relative; min-height: 100svh; display: flex; align-items: flex-end; color: var(--on-dark); overflow: hidden; background: var(--ink); }
@@ -181,7 +189,7 @@
    arrows or the arrow keys anywhere. js/reviews.js only adds the arrows' work, the count and a
    slow turn that stops for good at a touch, and never runs for reduced motion. */
 .lf-reviews { overflow: hidden; }
-.lf-reviews__head { text-align: center; margin: 0 auto 44px; }
+.lf-reviews__head { text-align: center; margin: 0 auto 28px; }
 /* the rating: the number beside five acorns shaded to it; gold here is the acorns' own */
 .lf-rating { display: inline-flex; align-items: center; gap: 14px; margin: 22px 0 0; }
 .lf-rating__n { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 400; font-size: 2.1rem; line-height: 1; color: var(--forest-deep); font-variant-numeric: lining-nums; }
@@ -191,16 +199,20 @@
   background: linear-gradient(90deg, var(--gold) var(--f), rgba(107, 99, 87, 0.3) var(--f));
   -webkit-mask: var(--acorn) center / contain no-repeat; mask: var(--acorn) center / contain no-repeat;
 }
-/* the track bleeds to the screen's edge on phones, so the next story peeks in */
+/* phones: the controls sit above the cards, right under the rating, where the fixed Book button
+   (phones only, bottom right) never covers them; from 768 px they move below the cards */
+.lf-rv { display: flex; flex-direction: column; }
+/* the track bleeds to the screen's edge on phones, so the next story peeks in. Each card is as
+   tall as its own story, top-aligned; all are in the page from the start, so nothing shifts. */
 .lf-rv__track {
-  display: grid; grid-auto-flow: column; grid-auto-columns: min(84%, 26rem); gap: 14px;
+  display: grid; grid-auto-flow: column; grid-auto-columns: min(84%, 26rem); gap: 14px; align-items: start;
   overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-padding-inline: var(--pad-x);
   margin: 0 calc(var(--pad-x) * -1); padding: 4px var(--pad-x) 8px; scrollbar-width: none;
 }
 .lf-rv__track::-webkit-scrollbar { display: none; }
 .lf-rv__track:focus-visible { outline: 2px solid var(--forest-deep); outline-offset: -2px; }
 .lf-rv__card {
-  scroll-snap-align: start; margin: 0; display: flex; flex-direction: column; justify-content: space-between; gap: 28px;
+  scroll-snap-align: start; margin: 0; display: flex; flex-direction: column; gap: 28px;
   background: var(--cream); padding: clamp(28px, 6vw, 44px) clamp(24px, 5vw, 40px); box-shadow: 0 14px 40px rgba(26, 46, 26, 0.06);
 }
 .lf-rv__quote { margin: 0; }
@@ -210,7 +222,7 @@
 }
 .lf-rv__by { font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 0.6875rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--stone); border-top: 1px solid rgba(107, 99, 87, 0.22); padding-top: 18px; }
 /* the controls take their room from the start; without script they are kept but unseen */
-.lf-rv__nav { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 30px; min-height: 48px; }
+.lf-rv__nav { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0 0 22px; min-height: 48px; }
 html:not(.js) .lf-rv__nav { visibility: hidden; }
 .lf-rv__btn {
   width: 48px; height: 48px; flex: none; border-radius: 50%; border: 1px solid rgba(44, 34, 25, 0.32); background: transparent;
@@ -229,6 +241,8 @@ html:not(.js) .lf-rv__nav { visibility: hidden; }
 .lf-rv__pause[hidden] { display: none; }
 .lf-rv__live { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 @media (min-width: 768px) {
+  .lf-reviews__head { margin-bottom: 44px; }
+  .lf-rv__nav { order: 1; margin: 30px 0 0; }
   .lf-rv__track { grid-auto-columns: min(46%, 28rem); gap: 20px; }
 }
 @media (min-width: 1080px) {
