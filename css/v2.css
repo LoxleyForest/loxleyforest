@@ -102,9 +102,9 @@
 .lf-menu-open .lf-menu-btn span { box-shadow: none; transform: rotate(45deg); }
 .lf-menu-open .lf-menu-btn span::after { content: ''; display: block; width: 26px; height: 1.5px; background: currentColor; transform: rotate(-90deg); }
 /* The six links need about 730 px on one line with real fonts (measured 2026-10-21), so they
-   show from 1280 px; from 1080 to 1279 the header carries the Book button and the menu. No
-   link ever wraps to two lines. */
-@media (min-width: 1080px) {
+   show from 1280 px; from 768 to 1279 the header carries the Book button and the menu (the
+   floating Book button is phones only, so tablets need this one). No link ever wraps to two lines. */
+@media (min-width: 768px) {
   .lf-hdr__book { display: inline-flex; min-height: 44px; padding: 0 20px; margin-left: auto; white-space: nowrap; }
 }
 @media (min-width: 1280px) {
