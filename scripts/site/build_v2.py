@@ -49,12 +49,23 @@ def pic(name, alt, sizes, eager=False, cls=''):
 HEAD_CLAIMS = (' 200+ five-star reviews.',)
 
 
+# Mick writes without em dashes: in the title, the meta description and the og: and twitter:
+# tags of every page, " — " reads as a comma (the Forge, 2026-10-22). The body text is the
+# page modules' own; the legal pages' wording is untouched.
+HEAD_TAG = re.compile(r'<title>[^<]*</title>|<meta (?:name|property)="(?:description|og:[a-z:_]+|twitter:[a-z:_]+)"\s+content="[^"]*"')
+
+
+def no_dashes(head):
+    return HEAD_TAG.sub(lambda m: m.group(0).replace(' — ', ', '), head)
+
+
 def head_from(page, preload=''):
     """The page's own <head>, with the redesign's stylesheets in place of its old ones."""
     s = open(os.path.join(ROOT, page)).read()
     head = s[:s.index('</head>')]
     for claim in HEAD_CLAIMS:
         head = head.replace(claim, '')
+    head = no_dashes(head)
     head = re.sub(r'\s*<link rel="stylesheet" href="css/(?!global\.css)[a-z0-9-]+\.css">', '', head)
     head = re.sub(r'\s*<link rel="preload" as="image"[^>]*>', '', head)
     head = head.replace('<link rel="stylesheet" href="css/global.css">',
