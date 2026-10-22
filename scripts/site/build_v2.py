@@ -259,6 +259,8 @@ def _reviews():
         f'<figcaption class="lf-rv__by">{escape(a, quote=False)}</figcaption></figure>'
         for i, (q, a) in enumerate(REVIEW_LIST, 1))
     chev = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>'
+    # The controls come before the track in the page: above the cards on phones (clear of the fixed
+    # Book button), moved below them from 768 px by CSS order.
     return f'''    <section class="lf-sec lf-parch lf-reviews" aria-labelledby="rv-h">
       <div class="lf-wrap">
         <div class="lf-reviews__head">
@@ -267,13 +269,13 @@ def _reviews():
           {_rating()}
         </div>
         <div class="lf-rv" data-reviews role="region" aria-roledescription="carousel" aria-label="Guest stories">
-          <div class="lf-rv__track" id="rv-track" tabindex="0" aria-label="Guest stories, {n} in all. Use the arrow keys or swipe for the next.">{cards}
-          </div>
           <div class="lf-rv__nav">
             <button type="button" class="lf-rv__btn lf-rv__btn--prev" data-rv-prev aria-controls="rv-track" aria-label="Previous story">{chev}</button>
             <p class="lf-rv__count" aria-hidden="true"><b data-rv-at>1</b> / {n}</p>
             <button type="button" class="lf-rv__btn" data-rv-next aria-controls="rv-track" aria-label="Next story">{chev}</button>
             <button type="button" class="lf-rv__btn lf-rv__pause" data-rv-pause aria-controls="rv-track" aria-label="Stop the stories turning"><span></span></button>
+          </div>
+          <div class="lf-rv__track" id="rv-track" tabindex="0" aria-label="Guest stories, {n} in all. Use the arrow keys or swipe for the next.">{cards}
           </div>
           <p class="lf-rv__live" data-rv-live aria-live="polite"></p>
         </div>
