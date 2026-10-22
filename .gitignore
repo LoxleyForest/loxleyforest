@@ -154,3 +154,6 @@ scripts/logo/venv/
 __pycache__/
 # the published copy, built by scripts/publish.py
 _site/
+
+# Test renders and screenshots (never committed)
+tmp/
