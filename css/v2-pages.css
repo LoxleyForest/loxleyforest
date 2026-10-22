@@ -1,5 +1,24 @@
 /* Built by scripts/site/build_v2.py from scripts/site/pages/*.py. Do not edit by hand. */
 
+/* ---- answers ---- */
+/* links inside the answer pages' words: underlined, in the ink of their ground */
+.lf-ans a { color: var(--forest-deep); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+.lf-dark .lf-ans a { color: var(--on-dark); }
+
+/* getting here: the words, then the places near the treehouse with their drive */
+.lf-ans-near.lf-split { align-items: start; }
+.lf-ans-near__h { margin: 0; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--on-dark-muted); }
+.lf-ans-near .lf-drive { margin-top: 18px; max-width: none; }
+@media (min-width: 900px) { .lf-ans-near__h { margin-top: 8px; } }
+
+/* questions, every answer open: a page of answers reads in full, with or without script */
+.lf-ans-faq { max-width: 46rem; }
+.lf-ans-faq__list { margin-top: 36px; }
+.lf-ans-faq__item { padding: 24px 0; border-top: 1px solid rgba(26, 46, 26, 0.16); }
+.lf-ans-faq__item:last-child { border-bottom: 1px solid rgba(26, 46, 26, 0.16); }
+.lf-ans-faq__item h3 { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 400; font-size: clamp(1.45rem, 4.6vw, 1.8rem); line-height: 1.2; color: var(--forest-deep); }
+.lf-ans-faq__item p { margin: 10px 0 0; max-width: 40rem; font-size: 1.15rem; line-height: 1.7; color: var(--stone); }
+
 /* ---- book ---- */
 .lf-bk-top { padding-top: calc(var(--hdr-h) + clamp(44px, 8vw, 96px)); padding-bottom: clamp(56px, 8vw, 96px); }
 .lf-bk-top .lf-h1 { font-size: clamp(2.6rem, 9vw, 4.8rem); }

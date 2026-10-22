@@ -61,7 +61,8 @@ QA = [
      'or ask about custom arrangements. <a href="/experiences">See the experiences</a>.'),
     ('Do you host elopements?',
      'Yes. Three packages and three ceremony spaces, the rope bridge among them. '
-     '<a href="/elopements">See the elopements page</a> for details.'),
+     '<a href="/elopements">See the elopements page</a> for details. '
+     'Planning a proposal first? <a href="/where-to-propose-north-georgia">Where to propose in North Georgia</a>.'),
     ('Why should I book direct?',
      "Best rate guaranteed. You're booking with the family who built this place, not a platform. If you find a "
      "lower price anywhere, we'll match it and add a complimentary experience to your stay."),

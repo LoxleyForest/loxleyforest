@@ -201,6 +201,7 @@ def page_local_guide():
       <div class="lf-wrap lf-over">
         <div class="lf-rise" style="margin-bottom:44px">{B.ARROW}</div>
         <h2 class="lf-h2 lf-rise" id="fc-h">The mountains are waiting. <em>So is your treehouse.</em></h2>
+        <p class="lf-lead lf-ans lf-rise">Coming up from Atlanta? Read about <a href="/romantic-getaways-near-atlanta">a romantic getaway near Atlanta</a>.</p>
         <div class="lf-actions lf-rise" style="justify-content:center"><a href="/book" class="lf-btn">{B.ACORN}Book your dates</a></div>
       </div>
     </section>
