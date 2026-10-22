@@ -60,7 +60,6 @@ def page_book():
       <div class="lf-bk-head">
         <h2 class="lf-h3" id="bk-w">Choose your nights</h2>
         <p>Every open night shows its rate. Pick your dates and the whole price appears, taxes included. Then book right here.</p>
-        <p class="lf-bk-trust">Book direct and deal straight with the family who built it.</p>
       </div>
       {GATEHOUSE}
       <p class="lf-bk-contact">Questions? Call or text <a href="tel:+17065024823">706-502-4823</a>, or write to <a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a>.</p>
@@ -219,7 +218,6 @@ CSS = '''
 .lf-bk-head { max-width: 36rem; margin: 0 auto 32px; text-align: center; }
 .lf-bk-head .lf-h3 { color: var(--forest-deep); font-size: clamp(1.75rem, 5vw, 2.3rem); }
 .lf-bk-head p { margin: 10px 0 0; font-size: 1.2rem; line-height: 1.5; color: var(--stone); }
-.lf-bk-head .lf-bk-trust { margin-top: 14px; font-family: 'Montserrat', sans-serif; font-size: 0.8125rem; letter-spacing: 0.04em; color: var(--bark); }
 .lf-bk-contact { max-width: 36rem; margin: 26px auto 0; text-align: center; font-size: 1.15rem; line-height: 1.6; color: var(--stone); }
 .lf-bk-contact a, .lf-bk-done a { color: var(--forest-deep); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; white-space: nowrap; }
 

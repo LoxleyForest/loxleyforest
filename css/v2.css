@@ -424,3 +424,6 @@ html, body.v2 { overflow-x: clip; }
 /* without script: the opening view as a still engraving (loaded only then) */
 html:not(.js) .lf-walk__stage { background: #1a2e1a url("../images/crossing/crossing-still-phone.webp") center / cover no-repeat; }
 @media (min-width: 768px) { html:not(.js) .lf-walk__stage { background-image: url("../images/crossing/crossing-still-desk.webp"); } }
+
+/* A phone number never breaks across lines (2026-10-22). */
+a[href^="tel:"] { white-space: nowrap; }
