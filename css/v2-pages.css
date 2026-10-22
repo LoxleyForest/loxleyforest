@@ -57,8 +57,6 @@
 
 /* ---- elopements ---- */
 .lf-el-coda { margin: 34px auto 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 300; font-size: clamp(1.6rem, 5vw, 2.2rem); line-height: 1.3; color: var(--forest-deep); }
-.lf-el-ask { margin: 26px auto 0; font-size: 1.15rem; color: var(--stone); }
-.lf-el-ask a { color: var(--forest-deep); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
 
 .lf-spaces { display: grid; gap: 48px; margin-top: 44px; }
 .lf-space { margin: 0; }
@@ -316,21 +314,3 @@
 .st-values li::before { content: counter(v, upper-roman); display: block; margin-bottom: 12px; font-family: 'Montserrat', sans-serif; font-size: 0.6875rem; letter-spacing: 0.28em; color: var(--on-dark-muted); }
 .st-values p { margin: 12px 0 0; color: var(--on-dark-muted); font-size: 1.15rem; line-height: 1.65; }
 @media (min-width: 900px) { .st-values { grid-template-columns: repeat(3, 1fr); gap: 48px; } }
-
-/* ---- proposals ---- */
-/* how it works: three short steps, each under a gold acorn */
-.lf-pr-steps { list-style: none; margin: 44px 0 0; padding: 0; display: grid; gap: 36px; }
-.lf-pr-step { border-top: 1px solid rgba(61, 50, 40, 0.18); padding-top: 26px; }
-.lf-pr-step > svg { display: block; width: 14px; height: 18px; margin-bottom: 18px; color: var(--gold); }
-.lf-pr-step .lf-chapter__n { color: var(--stone); }
-.lf-pr-step .lf-h3 { color: var(--forest-deep); }
-.lf-pr-step p { margin: 10px 0 0; max-width: 30rem; font-size: 1.15rem; line-height: 1.65; color: var(--stone); }
-@media (min-width: 900px) { .lf-pr-steps { grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 60px; } }
-
-/* The inquiry form on a light ground. faq.py's rules for its dark-ground form share the .lf-form
-   selectors and come later in this file than elopements.py's, so they win there; this modifier
-   puts the light form back (labels in forest green, dark words on linen). */
-.lf-form.lf-form--light { gap: 22px; max-width: none; }
-.lf-form.lf-form--light label { margin-top: 0; color: var(--forest-deep); }
-.lf-form.lf-form--light input, .lf-form.lf-form--light textarea { border-color: rgba(61, 50, 40, 0.3); background: var(--linen); color: var(--bark); }
-.lf-form.lf-form--light input:focus-visible, .lf-form.lf-form--light textarea:focus-visible { outline-color: var(--forest-deep); }

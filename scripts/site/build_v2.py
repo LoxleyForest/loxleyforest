@@ -86,10 +86,7 @@ def header(book):
 def footer(book, gatehouse):
     """gatehouse: False, True (the booking calendar) or 'stay' (the calendar's helpers and the
     after-booking pages, /booked and /manage)."""
-    # The footer lists every page in NAV, with Proposals beside Elopements (2026-10-21); the header
-    # nav stays as it is.
-    links = ''.join(f'<a href="{h}">{t}</a>' + ('<a href="/proposals">Proposals</a>' if h == '/elopements' else '')
-                    for h, t in NAV)
+    links = ''.join(f'<a href="{h}">{t}</a>' for h, t in NAV)
     gh = '\n  <script src="js/gatehouse.js" defer></script>' if gatehouse else ''
     if gatehouse == 'stay':
         gh += '\n  <script src="js/gatehouse-stay.js" defer></script>'
@@ -193,23 +190,99 @@ WALK = f'''    <section class="lf-walk" data-crossing aria-label="The crossing: 
     </section>
 '''
 
-# The reviews themselves, and nothing said about them: no rating, no count, no stars, no
-# platform (Mick, 2026-10-20: "I don't like that we say anything about reviews. Just have the
-# reviews there."). The same holds for the schema (no aggregateRating) and llms.txt.
-REVIEWS = '''    <section class="lf-sec lf-parch lf-center lf-reviews" aria-labelledby="rv-h">
+# ------------------------------------------------- the reviews
+# The reviews themselves, the number beside the acorns, and nothing said about them: no count,
+# no stars, no platform, no "reviews" (Mick, 2026-10-20: "I don't like that we say anything about
+# reviews. Just have the reviews there."; amended 2026-10-21: "the average shown as 4.9 with
+# acorns shaded in, no words about it"). The schema and llms.txt carry no rating and no count
+# (no aggregateRating): that is Mick's call, not the builder's.
+#
+# Every word below is a guest's own, verbatim, never written, trimmed or paraphrased here. All ten
+# are the real reviews the site has carried since 2026-03-17 (commit d5ac59f put them in index.html
+# in place of the first build's placeholder quotes; js/reviews.js held them from 2026-07-02,
+# commit e61df3e, until this list replaced it). The copy deck ("Loxley Forest Website Copy V3
+# FINAL.docx", Testimonials) names exactly these ten as the real ones. First names and towns only,
+# as they have always appeared. Strongest and most specific first. To add one, add a line here
+# with its source; nothing else to touch.
+REVIEW_LIST = [
+    ("It made our stay feel like we were entering a magical storybook. Campfire already going, homemade pizza dough, "
+     "s'mores kits, champagne for toasting, fresh pastries in the morning... Our entire crew agreed this won't be the "
+     "last stay at Loxley Forest!", 'Kim · Chattanooga, TN'),
+    ("If you are on the fence about this place, don't be. Worth it again and again. We had a rainy weekend here but "
+     "something about hearing the rain hit the treehouse tent while sipping wine has its perks. Hosts were hands down "
+     "the best we've ever had.", 'Preston · Peachtree Corners, GA'),
+    ("I'll start this by saying it is pricey, but well worth the cost. If you love the pictures you will be in awe when "
+     "you arrive. The place is a lot bigger than what you see in the photos. Very secluded, so privacy is not an issue.",
+     'Ti · Atlanta, GA'),
+    ("The only sounds you hear are the birds chirping and the gentle rushing of water below. It feels very private and "
+     "secluded. The perfect adventure to feel like you are camping in the woods, but with a bed and bathroom.",
+     'Kellie · Marietta, GA'),
+    ("This is my second time staying in this magical place in 1 week. I just can't get enough!! Livy and Mick go above "
+     "and beyond to make this an experience you'll never forget!!", 'James · Atlanta, GA'),
+    ("Fresh made pizza dough for the pizza oven, outdoor movie, secluded in a private forest, fresh pastries in the "
+     "morning, the sound of a rippling creek... highly recommend this adventure!", 'Jerome · Cumming, GA'),
+    ("Words cannot do it justice — you need to experience it. I won't spoil the surprises that the hosts offer you, "
+     "but believe me you will be very pleased with their thoughtfulness. They truly go above and beyond.",
+     'Megan · Mobile, AL'),
+    ("It's rare to come across a place and a host so special. I left feeling rested, grateful, and already looking "
+     "forward to coming back. Highly, highly recommend!!", 'Evgeny · Hollywood, FL'),
+    ("We felt like we were in a story book. Fresh pizza dough, tree mail, fresh pastries — Downtown Dahlonega was a "
+     "dream! I guarantee you'll have just as beautiful a stay.", 'Lyndsay · Peachtree City, GA'),
+    ("We opted for the Forest Tableau, Stargazing, and Morning Moments. All the food was very good, a lot of it "
+     "homemade, and abundant! It was worth it and a once in a lifetime experience.", 'Nancy · Mount Pleasant, SC'),
+]
+
+# The average, as Mick gave it (2026-10-21). Shown as the number and five acorns shaded to it.
+RATING = 4.9
+# The acorn's body spans x 1.9 to 14.1 of its 16-wide box, so a part acorn is shaded across that
+# span, not the box: 0.9 of an acorn is 80.5% of the box, not 90%.
+ACORN_X0, ACORN_X1 = 1.9 / 16, 14.1 / 16
+
+
+def _rating():
+    cells = ''
+    for i in range(5):
+        part = max(0.0, min(1.0, RATING - i))
+        fill = 0 if part == 0 else 100 if part == 1 else round((ACORN_X0 + part * (ACORN_X1 - ACORN_X0)) * 100, 1)
+        cells += f'<i style="--f:{fill:g}%"></i>'
+    return (f'<p class="lf-rating" role="img" aria-label="Rated {RATING:g} out of 5">'
+            f'<span class="lf-rating__n" aria-hidden="true">{RATING:g}</span>'
+            f'<span class="lf-rating__acorns" aria-hidden="true">{cells}</span></p>')
+
+
+def _reviews():
+    from html import escape
+    n = len(REVIEW_LIST)
+    cards = ''.join(
+        f'\n            <figure class="lf-rv__card" role="group" aria-roledescription="review" aria-label="{i} of {n}">'
+        f'<blockquote class="lf-rv__quote"><p>“{escape(q, quote=False)}”</p></blockquote>'
+        f'<figcaption class="lf-rv__by">{escape(a, quote=False)}</figcaption></figure>'
+        for i, (q, a) in enumerate(REVIEW_LIST, 1))
+    chev = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>'
+    return f'''    <section class="lf-sec lf-parch lf-reviews" aria-labelledby="rv-h">
       <div class="lf-wrap">
-        <p class="lf-eyebrow">Guest stories</p>
-        <h2 class="lf-h2" id="rv-h" style="margin-bottom:34px">What they remember most</h2>
-        <div class="review-rotator" data-review-rotator>
-          <div class="review-rotator__card">
-            <p class="testimonial__quote">"The only sounds you hear are the birds chirping and the gentle rushing of water below. It feels very private and secluded. The perfect adventure to feel like you are camping in the woods, but with a bed and bathroom."</p>
-            <p class="testimonial__author">Kellie · Marietta, GA</p>
-          </div>
+        <div class="lf-reviews__head">
+          <p class="lf-eyebrow">Guest stories</p>
+          <h2 class="lf-h2" id="rv-h">What they remember most</h2>
+          {_rating()}
         </div>
-        <p class="lf-reviews__note">Tap for another story</p>
+        <div class="lf-rv" data-reviews role="region" aria-roledescription="carousel" aria-label="Guest stories">
+          <div class="lf-rv__track" id="rv-track" tabindex="0" aria-label="Guest stories, {n} in all. Use the arrow keys or swipe for the next.">{cards}
+          </div>
+          <div class="lf-rv__nav">
+            <button type="button" class="lf-rv__btn lf-rv__btn--prev" data-rv-prev aria-controls="rv-track" aria-label="Previous story">{chev}</button>
+            <p class="lf-rv__count" aria-hidden="true"><b data-rv-at>1</b> / {n}</p>
+            <button type="button" class="lf-rv__btn" data-rv-next aria-controls="rv-track" aria-label="Next story">{chev}</button>
+            <button type="button" class="lf-rv__btn lf-rv__pause" data-rv-pause aria-controls="rv-track" aria-label="Stop the stories turning"><span></span></button>
+          </div>
+          <p class="lf-rv__live" data-rv-live aria-live="polite"></p>
+        </div>
       </div>
     </section>
 '''
+
+
+REVIEWS = _reviews()
 
 
 def treehouse_two():
