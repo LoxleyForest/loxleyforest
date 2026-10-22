@@ -146,6 +146,11 @@ def set_keys(head):
 
 API = 'https://book.loxleyforest.com'
 UNIT = 'loxley-forest-canopy-treehouse-dahlonega'
+# The Stripe PUBLISHABLE key (pk_live_..., not a secret) for /book and /manage, the one place it
+# is set. Empty until cutover: the checkout then runs to the agreement and says plainly that
+# payment opens shortly. Set it here, run the builder, commit book.html and manage.html.
+STRIPE_KEY = ''
+assert STRIPE_KEY == '' or STRIPE_KEY.startswith('pk_'), 'only a publishable key (pk_...) goes on a page'
 PRECONNECT = f'<link rel="preconnect" href="{API}" crossorigin>'
 
 # What the booking calendar shows until the open nights arrive: the shape of a month and a

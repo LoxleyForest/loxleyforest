@@ -90,11 +90,11 @@ def page_booked():
 
 def page_manage():
     head, gtm = head_for('manage.html', 'Your stay | Loxley Forest')
-    # TODO(cutover, Architect): data-stripe-key takes the live publishable key (pk_live_...), as on /book.
+    # data-stripe-key is B.STRIPE_KEY (scripts/site/build_v2.py), the same key as /book.
     body = top('Your stay') + f'''
     <section class="lf-sec lf-light lf-stay" aria-label="Your stay">
       <div class="lf-stay__in">
-        <div id="gatehouse-stay" data-api="{B.API}" data-unit="{B.UNIT}" data-stripe-key="" data-page="manage" aria-busy="true">
+        <div id="gatehouse-stay" data-api="{B.API}" data-unit="{B.UNIT}" data-stripe-key="{B.STRIPE_KEY}" data-page="manage" aria-busy="true">
           <div class="gh-summary"><p class="gh-lead gh-pulse">Opening your stay…</p></div>
           {NOSCRIPT}
         </div>

@@ -17,13 +17,13 @@ def tidy(head):
     return re.sub(r'\s*</head>\n$', '\n</head>\n', head)
 
 
-# TODO(cutover, Architect): data-stripe-key takes the live publishable key (pk_live_...) at cutover.
+# data-stripe-key is B.STRIPE_KEY (scripts/site/build_v2.py), the live publishable key at cutover.
 # Until it is set, the checkout runs to the agreement and then says plainly that payment opens
 # shortly, with the phone number; it never claims nights it cannot take payment for.
 GATEHOUSE = f'''<div id="gatehouse"
            data-api="{B.API}"
            data-unit="{B.UNIT}"
-           data-stripe-key=""
+           data-stripe-key="{B.STRIPE_KEY}"
            data-fallback="#gh-down">{B.GH_WAIT}</div>
       <div id="gh-down" class="lf-book__alt" hidden>
         <p>Our booking calendar isn't answering just now. Nothing is lost: <a href="#inquiry">send us your dates</a> and we'll write back within two hours, or call or text <a href="tel:+17065024823">706-502-4823</a>.</p>
