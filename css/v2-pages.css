@@ -334,3 +334,9 @@
 .lf-form.lf-form--light label { margin-top: 0; color: var(--forest-deep); }
 .lf-form.lf-form--light input, .lf-form.lf-form--light textarea { border-color: rgba(61, 50, 40, 0.3); background: var(--linen); color: var(--bark); }
 .lf-form.lf-form--light input:focus-visible, .lf-form.lf-form--light textarea:focus-visible { outline-color: var(--forest-deep); }
+
+/* Proposals: the places set up on request (Mick, 2026-10-22); text only until there are photos. */
+.lf-spaces-more { margin-top: 64px; padding-top: 40px; border-top: 1px solid rgba(247, 243, 237, 0.18); }
+.lf-spaces-more .lf-spaces { margin-top: 8px; }
+.lf-spaces-more .lf-space figcaption { padding-top: 0; }
+@media (min-width: 900px) { .lf-spaces-more .lf-spaces { grid-template-columns: repeat(2, 1fr); margin-top: 16px; } }
