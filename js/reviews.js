@@ -1,126 +1,126 @@
 /* ============================================================
-   LOXLEY FOREST · the guest stories carousel
-   The stories themselves are written into the page by the builder
-   (REVIEW_LIST in scripts/site/build_v2.py, the one place they
-   live). The track scrolls sideways on its own, with snap; this
-   adds the arrows, the count, the arrow keys, and a slow turn.
+   LOXLEY FOREST — GUEST REVIEWS ENGINE
+   Single source of truth for every guest review on the site.
+   To add a future review: add one object to LOXLEY_REVIEWS below.
+   Nothing else to touch.
 
-   The turn: one story every 8 seconds, only while the carousel is
-   on screen and the tab is visible; paused while a pointer rests on
-   it or focus is inside it; stopped for good by any touch, drag,
-   arrow or key, and by the stop button. It ends at the last story.
-   With reduced motion it never starts, and the stop button hides.
+   Rendered by the rotator into any element marked with
+   [data-review-rotator] (index, treehouses, book). The first
+   review is also hard-coded in the HTML so the section renders
+   without JavaScript.
    ============================================================ */
+
+const LOXLEY_REVIEWS = [
+  {
+    quote: "The only sounds you hear are the birds chirping and the gentle rushing of water below. It feels very private and secluded. The perfect adventure to feel like you are camping in the woods, but with a bed and bathroom.",
+    author: "Kellie · Marietta, GA"
+  },
+  {
+    quote: "If you are on the fence about this place, don't be. Worth it again and again. We had a rainy weekend here but something about hearing the rain hit the treehouse tent while sipping wine has its perks. Hosts were hands down the best we've ever had.",
+    author: "Preston · Peachtree Corners, GA"
+  },
+  {
+    quote: "Words cannot do it justice — you need to experience it. I won't spoil the surprises that the hosts offer you, but believe me you will be very pleased with their thoughtfulness. They truly go above and beyond.",
+    author: "Megan · Mobile, AL"
+  },
+  {
+    quote: "This is my second time staying in this magical place in 1 week. I just can't get enough!! Livy and Mick go above and beyond to make this an experience you'll never forget!!",
+    author: "James · Atlanta, GA"
+  },
+  {
+    quote: "I'll start this by saying it is pricey, but well worth the cost. If you love the pictures you will be in awe when you arrive. The place is a lot bigger than what you see in the photos. Very secluded, so privacy is not an issue.",
+    author: "Ti · Atlanta, GA"
+  },
+  {
+    quote: "It made our stay feel like we were entering a magical storybook. Campfire already going, homemade pizza dough, s'mores kits, champagne for toasting, fresh pastries in the morning... Our entire crew agreed this won't be the last stay at Loxley Forest!",
+    author: "Kim · Chattanooga, TN"
+  },
+  {
+    quote: "Fresh made pizza dough for the pizza oven, outdoor movie, secluded in a private forest, fresh pastries in the morning, the sound of a rippling creek... highly recommend this adventure!",
+    author: "Jerome · Cumming, GA"
+  },
+  {
+    quote: "It's rare to come across a place and a host so special. I left feeling rested, grateful, and already looking forward to coming back. Highly, highly recommend!!",
+    author: "Evgeny · Hollywood, FL"
+  },
+  {
+    quote: "We opted for the Forest Tableau, Stargazing, and Morning Moments. All the food was very good, a lot of it homemade, and abundant! It was worth it and a once in a lifetime experience.",
+    author: "Nancy · Mount Pleasant, SC"
+  },
+  {
+    quote: "We felt like we were in a story book. Fresh pizza dough, tree mail, fresh pastries — Downtown Dahlonega was a dream! I guarantee you'll have just as beautiful a stay.",
+    author: "Lyndsay · Peachtree City, GA"
+  }
+];
+
+/* --- Rotator: one card at a time, ~7s auto-advance, swipe/tap on touch --- */
 (function () {
-  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  function init(root) {
-    var track = root.querySelector('.lf-rv__track');
-    var cards = track ? track.querySelectorAll('.lf-rv__card') : [];
-    if (!cards.length) return;
-    var prev = root.querySelector('[data-rv-prev]');
-    var next = root.querySelector('[data-rv-next]');
-    var at = root.querySelector('[data-rv-at]');
-    var live = root.querySelector('[data-rv-live]');
-    var pause = root.querySelector('[data-rv-pause]');
-    var index = 0, timer = null, stopped = reduce, held = false, seen = false, frame = 0;
+  function initRotator(root) {
+    var card = root.querySelector('.review-rotator__card');
+    if (!card || !LOXLEY_REVIEWS.length) return;
+    var quoteEl = card.querySelector('.testimonial__quote');
+    var authorEl = card.querySelector('.testimonial__author');
+    if (!quoteEl || !authorEl) return;
 
-    /* the card nearest the track's start edge is the current one */
-    function current() {
-      var edge = track.getBoundingClientRect().left + parseFloat(getComputedStyle(track).scrollPaddingLeft || 0);
-      var best = 0, dist = Infinity;
-      for (var i = 0; i < cards.length; i++) {
-        var d = Math.abs(cards[i].getBoundingClientRect().left - edge);
-        if (d < dist) { dist = d; best = i; }
+    var index = 0;
+    var timer;
+    var swiped = false;
+
+    function render(i) {
+      var r = LOXLEY_REVIEWS[i];
+      quoteEl.textContent = '"' + r.quote + '"';
+      authorEl.textContent = r.author;
+    }
+
+    function goTo(i) {
+      index = (i + LOXLEY_REVIEWS.length) % LOXLEY_REVIEWS.length;
+      card.classList.add('review-rotator__card--fading');
+      setTimeout(function () {
+        render(index);
+        card.classList.remove('review-rotator__card--fading');
+      }, 280);
+    }
+
+    function next() { goTo(index + 1); }
+    function prev() { goTo(index - 1); }
+
+    function restart() {
+      clearInterval(timer);
+      timer = setInterval(next, 7000);
+    }
+
+    /* Tap advances (suppressed right after a swipe so it doesn't double-fire) */
+    card.addEventListener('click', function () {
+      if (swiped) { swiped = false; return; }
+      next();
+      restart();
+    });
+
+    /* Swipe advances on touch: left = next, right = previous */
+    var touchStartX = 0;
+    card.addEventListener('touchstart', function (e) {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    card.addEventListener('touchend', function (e) {
+      var diff = touchStartX - e.changedTouches[0].screenX;
+      if (Math.abs(diff) > 50) {
+        swiped = true;
+        if (diff > 0) { next(); } else { prev(); }
+        restart();
       }
-      /* scrolled to the end: the last card counts, even if it cannot reach the start edge */
-      if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 2) best = cards.length - 1;
-      return best;
-    }
+    }, { passive: true });
 
-    function paint() {
-      frame = 0;
-      index = current();
-      if (at) at.textContent = index + 1;
-      if (prev) prev.disabled = track.scrollLeft <= 2;
-      if (next) next.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 2;
-    }
-
-    function go(i, announce) {
-      i = Math.max(0, Math.min(cards.length - 1, i));
-      var edge = track.getBoundingClientRect().left + parseFloat(getComputedStyle(track).scrollPaddingLeft || 0);
-      track.scrollBy({ left: cards[i].getBoundingClientRect().left - edge, behavior: reduce ? 'auto' : 'smooth' });
-      if (announce && live) live.textContent = 'Story ' + (i + 1) + ' of ' + cards.length;
-    }
-
-    function stop() {
-      stopped = true;
-      clearInterval(timer); timer = null;
-      if (pause) { pause.classList.add('is-paused'); pause.setAttribute('aria-label', 'Turn the stories'); }
-    }
-
-    function tick() {
-      if (held || document.hidden) return;
-      if (index >= cards.length - 1 || (next && next.disabled)) { stop(); return; }
-      go(index + 1, false);
-    }
-
-    function run() {
-      clearInterval(timer); timer = null;
-      if (!stopped && seen) timer = setInterval(tick, 8000);
-    }
-
-    track.addEventListener('scroll', function () { if (!frame) frame = requestAnimationFrame(paint); }, { passive: true });
-    window.addEventListener('resize', function () { if (!frame) frame = requestAnimationFrame(paint); });
-
-    if (prev) prev.addEventListener('click', function () { stop(); go(index - 1, true); });
-    if (next) next.addEventListener('click', function () { stop(); go(index + 1, true); });
-
-    track.addEventListener('keydown', function (e) {
-      var k = e.key, to = null;
-      if (k === 'ArrowRight') to = index + 1;
-      else if (k === 'ArrowLeft') to = index - 1;
-      else if (k === 'Home') to = 0;
-      else if (k === 'End') to = cards.length - 1;
-      if (to === null) return;
-      e.preventDefault(); stop(); go(to, true);
-    });
-
-    /* a hand on it is the guest reading: stop turning */
-    ['pointerdown', 'touchstart', 'wheel'].forEach(function (t) {
-      track.addEventListener(t, function (e) {
-        if (t === 'wheel' && Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
-        stop();
-      }, { passive: true });
-    });
-    root.addEventListener('mouseenter', function () { held = true; });
-    root.addEventListener('mouseleave', function () { held = false; });
-    root.addEventListener('focusin', function () { held = true; });
-    root.addEventListener('focusout', function (e) { if (!root.contains(e.relatedTarget)) held = false; });
-
-    if (pause) {
-      if (reduce) pause.hidden = true;
-      pause.addEventListener('click', function () {
-        if (stopped) {
-          stopped = false; pause.classList.remove('is-paused'); pause.setAttribute('aria-label', 'Stop the stories turning');
-          if (index >= cards.length - 1) go(0, true);
-          run();
-        } else {
-          stop();
-        }
-      });
-    }
-
-    if (!reduce && 'IntersectionObserver' in window) {
-      new IntersectionObserver(function (entries) {
-        seen = entries[0].isIntersecting;
-        run();
-      }, { threshold: 0.5 }).observe(root);
-    }
-    paint();
+    restart();
   }
 
-  function start() { document.querySelectorAll('[data-reviews]').forEach(init); }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
-  else start();
+  function init() {
+    document.querySelectorAll('[data-review-rotator]').forEach(initRotator);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 })();

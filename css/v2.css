@@ -176,67 +176,12 @@
 .lf-over { position: relative; z-index: 1; }
 
 /* ---- reviews ----------------------------------------------------------- */
-/* Every story is in the page from the first byte (the builder writes them all), so nothing
-   swaps in and nothing shifts. The track scrolls sideways with snap: a swipe on a phone, the
-   arrows or the arrow keys anywhere. js/reviews.js only adds the arrows' work, the count and a
-   slow turn that stops for good at a touch, and never runs for reduced motion. */
-.lf-reviews { overflow: hidden; }
-.lf-reviews__head { text-align: center; margin: 0 auto 44px; }
-/* the rating: the number beside five acorns shaded to it; gold here is the acorns' own */
-.lf-rating { display: inline-flex; align-items: center; gap: 14px; margin: 22px 0 0; }
-.lf-rating__n { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 400; font-size: 2.1rem; line-height: 1; color: var(--forest-deep); font-variant-numeric: lining-nums; }
-.lf-rating__acorns { display: inline-flex; gap: 6px; }
-.lf-rating__acorns i {
-  display: block; width: 18px; height: 22px;
-  background: linear-gradient(90deg, var(--gold) var(--f), rgba(107, 99, 87, 0.3) var(--f));
-  -webkit-mask: var(--acorn) center / contain no-repeat; mask: var(--acorn) center / contain no-repeat;
-}
-/* the track bleeds to the screen's edge on phones, so the next story peeks in */
-.lf-rv__track {
-  display: grid; grid-auto-flow: column; grid-auto-columns: min(84%, 26rem); gap: 14px;
-  overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-padding-inline: var(--pad-x);
-  margin: 0 calc(var(--pad-x) * -1); padding: 4px var(--pad-x) 8px; scrollbar-width: none;
-}
-.lf-rv__track::-webkit-scrollbar { display: none; }
-.lf-rv__track:focus-visible { outline: 2px solid var(--forest-deep); outline-offset: -2px; }
-.lf-rv__card {
-  scroll-snap-align: start; margin: 0; display: flex; flex-direction: column; justify-content: space-between; gap: 28px;
-  background: var(--cream); padding: clamp(28px, 6vw, 44px) clamp(24px, 5vw, 40px); box-shadow: 0 14px 40px rgba(26, 46, 26, 0.06);
-}
-.lf-rv__quote { margin: 0; }
-.lf-rv__quote p {
-  margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 300; font-style: italic;
-  font-size: clamp(1.4rem, 4.6vw, 1.65rem); line-height: 1.38; color: var(--forest-deep); text-wrap: pretty;
-}
-.lf-rv__by { font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 0.6875rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--stone); border-top: 1px solid rgba(107, 99, 87, 0.22); padding-top: 18px; }
-/* the controls take their room from the start; without script they are kept but unseen */
-.lf-rv__nav { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 30px; min-height: 48px; }
-html:not(.js) .lf-rv__nav { visibility: hidden; }
-.lf-rv__btn {
-  width: 48px; height: 48px; flex: none; border-radius: 50%; border: 1px solid rgba(44, 34, 25, 0.32); background: transparent;
-  color: var(--forest-deep); display: grid; place-items: center; cursor: pointer; transition: background 0.25s, border-color 0.25s, opacity 0.25s;
-}
-.lf-rv__btn svg { width: 18px; height: 18px; }
-.lf-rv__btn--prev svg { transform: scaleX(-1); }
-.lf-rv__btn:hover { background: rgba(44, 34, 25, 0.06); border-color: rgba(44, 34, 25, 0.55); }
-.lf-rv__btn:focus-visible { outline: 2px solid var(--forest-deep); outline-offset: 3px; }
-.lf-rv__btn:disabled { opacity: 0.32; cursor: default; background: transparent; }
-.lf-rv__count { margin: 0; min-width: 5.5em; text-align: center; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; letter-spacing: 0.16em; color: var(--stone); font-variant-numeric: tabular-nums; }
-.lf-rv__count b { font-weight: 500; color: var(--forest-deep); }
-.lf-rv__pause { margin-left: 8px; width: 40px; height: 40px; border-color: rgba(44, 34, 25, 0.2); }
-.lf-rv__pause span { width: 8px; height: 10px; border-left: 2px solid currentColor; border-right: 2px solid currentColor; }
-.lf-rv__pause.is-paused span { width: 0; height: 0; border: 0; border-left: 9px solid currentColor; border-top: 6px solid transparent; border-bottom: 6px solid transparent; margin-left: 3px; }
-.lf-rv__pause[hidden] { display: none; }
-.lf-rv__live { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-@media (min-width: 768px) {
-  .lf-rv__track { grid-auto-columns: min(46%, 28rem); gap: 20px; }
-}
-@media (min-width: 1080px) {
-  /* inside the page's measure on desktop: three stories and the edge of a fourth */
-  .lf-rv__track { margin: 0; padding: 4px 0 8px; scroll-padding-inline: 0; grid-auto-columns: calc((100% - 3 * 22px) / 3.25); gap: 22px; }
-  .lf-rv__quote p { font-size: 1.5rem; }
-}
-@media (prefers-reduced-motion: reduce) { .lf-rv__pause { display: none; } }
+.lf-reviews .review-rotator__card { max-width: 46rem; margin: 0 auto; text-align: center; cursor: pointer; transition: opacity 0.28s ease; }
+.lf-reviews .review-rotator__card--fading { opacity: 0; }
+.lf-reviews .testimonial__stars { color: var(--gold); letter-spacing: 0.2em; font-size: 1rem; }
+.lf-reviews .testimonial__quote { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 300; font-style: italic; font-size: clamp(1.6rem, 5vw, 2.3rem); line-height: 1.35; color: var(--forest-deep); margin: 20px 0 0; }
+.lf-reviews .testimonial__author { margin-top: 22px; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--stone); }
+.lf-reviews__note { margin-top: 30px; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; letter-spacing: 0.08em; color: var(--stone); }
 
 /* ---- list signup -------------------------------------------------------- */
 .lf-signup { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; max-width: 30rem; }

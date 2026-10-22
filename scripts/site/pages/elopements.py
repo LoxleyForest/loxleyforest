@@ -112,6 +112,7 @@ def page_elopements():
           <p>Say your vows on the deck of a treehouse a family built with their own hands. Exchange rings beside a fire pit set at the four compass points. Let the forest witness it. Let the silence hold it.</p>
         </div>
         <p class="lf-el-coda lf-rise">Then stay the night. <em>Wake up married in the sky.</em></p>
+        <p class="lf-el-ask lf-rise">Planning a proposal first? <a href="/proposals">Ask the question sixty feet up</a></p>
       </div>
     </section>
 
@@ -259,6 +260,8 @@ PAGES = [page_elopements]
 
 CSS = '''
 .lf-el-coda { margin: 34px auto 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 300; font-size: clamp(1.6rem, 5vw, 2.2rem); line-height: 1.3; color: var(--forest-deep); }
+.lf-el-ask { margin: 26px auto 0; font-size: 1.15rem; color: var(--stone); }
+.lf-el-ask a { color: var(--forest-deep); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
 
 .lf-spaces { display: grid; gap: 48px; margin-top: 44px; }
 .lf-space { margin: 0; }

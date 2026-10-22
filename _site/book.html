@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Booking keys: out of the address bar before anything loads -->
+  <meta name="referrer" content="strict-origin">
+  <script>(function(){var N=['token','credit','session_id','hold'],k={},f=!1,st={},p=location.pathname.replace(/\.html$/,'').replace(/(.)\/$/,'$1');
+  try{st=JSON.parse(sessionStorage.getItem('gh_keys')||'{}')||{}}catch(e){}
+  var q=new URLSearchParams(location.search),hp=location.hash.indexOf('=')>0,h=new URLSearchParams(hp?location.hash.slice(1):'');
+  N.forEach(function(n){var v=h.get(n)||q.get(n);if(q.has(n)||h.has(n)){f=!0;q.delete(n);h.delete(n)}if(v)k[n]=v});
+  if(f){st[p]=k;try{sessionStorage.setItem('gh_keys',JSON.stringify(st))}catch(e){}
+  var s=q.toString(),t=hp?h.toString():location.hash.slice(1);history.replaceState(history.state,'',location.pathname+(s?'?'+s:'')+(t?'#'+t:''))}
+  else{var nv=(performance.getEntriesByType&&performance.getEntriesByType('navigation')[0])||{};if(nv.type==='reload'||nv.type==='back_forward')k=st[p]||{};else if(st[p]&&st[p].credit)k={credit:st[p].credit}}
+  window.__ghKeys=k;addEventListener('hashchange',function(){if(/(^#|&)(token|credit|session_id|hold)=/.test(location.hash))location.reload()})})();</script>
+  <!-- End booking keys -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5N4BX66K');</script>
+  <!-- End Google Tag Manager -->
+  <title>Book Your Stay | Loxley Forest — Dahlonega, GA</title>
+  <meta name="description" content="Book your luxury treehouse at Loxley Forest. Direct booking guarantees the best rate. 60 feet in the canopy. 42 acres. North Georgia.">
+  <meta property="og:title" content="Book Your Stay | Loxley Forest — Dahlonega, GA">
+  <meta property="og:description" content="Book your luxury treehouse at Loxley Forest. Direct booking guarantees the best rate. 60 feet in the canopy. 42 acres. North Georgia.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://loxleyforest.com/book">
+  <meta property="og:image" content="https://loxleyforest.com/images/EQ3A0906.webp">
+  <meta property="og:image:width" content="1620">
+  <meta property="og:image:height" content="1080">
+  <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/brand/logo/kit/favicon-32.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="canonical" href="https://loxleyforest.com/book">
+
+  <link rel="preconnect" href="https://book.loxleyforest.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/gatehouse.css">
+  <link rel="stylesheet" href="css/v2.css">
+  <link rel="stylesheet" href="css/v2-pages.css">
+</head>
+<body class="v2" data-lf-path="/book" data-lf-api="https://book.loxleyforest.com">
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5N4BX66K"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <header class="lf-hdr">
+    <a href="/" class="lf-hdr__mark" aria-label="Loxley Forest, home"><img src="images/brand/logo/loxley-wordmark-on-dark.svg" alt="Loxley Forest" width="236" height="32"></a>
+    <nav class="lf-hdr__nav" aria-label="Main"><a href="/treehouses">The Treehouse</a><a href="/experiences">Experiences</a><a href="/elopements">Elopements</a><a href="/our-story">Our Story</a><a href="/gallery">Gallery</a><a href="/local-guide">Local Guide</a></nav>
+    <a href="#book" class="lf-btn lf-hdr__book">Book your dates</a>
+    <button class="lf-menu-btn" type="button" aria-expanded="false" aria-controls="lf-menu" aria-label="Open menu"><span></span></button>
+  </header>
+  <div class="lf-menu" id="lf-menu" aria-hidden="true">
+    <nav aria-label="Menu"><a href="/treehouses">The Treehouse</a><a href="/experiences">Experiences</a><a href="/elopements">Elopements</a><a href="/our-story">Our Story</a><a href="/gallery">Gallery</a><a href="/local-guide">Local Guide</a><a href="/faq">Questions</a></nav>
+    <a href="#book" class="lf-btn"><svg viewBox="0 0 16 20" aria-hidden="true"><path fill="currentColor" d="M8 2.2C4.6 2.2 1.9 4.6 1.9 8H14.1C14.1 4.6 11.4 2.2 8 2.2ZM2.8 8.9H13.2C13.2 13.4 10.8 17.2 8 19.2C5.2 17.2 2.8 13.4 2.8 8.9ZM7.6 2.4C7.7 1.2 8.4 .4 9.6 .1L9.9 .7C9 1 8.5 1.6 8.5 2.4Z"/></svg>Book your dates</a>
+    <p class="lf-menu__foot">Dahlonega, Georgia<br>Just over an hour from Atlanta</p>
+  </div>
+
+  <main id="main">
+
+    <!-- ========== BOOK DIRECT ========== -->
+    <section class="lf-sec lf-dark lf-center lf-bk-top" aria-labelledby="bk-h">
+      <div class="lf-wrap">
+        <p class="lf-eyebrow">Dahlonega, Georgia</p>
+        <h1 class="lf-h1" id="bk-h">Book your stay</h1>
+        <p class="lf-lead">Book direct. No platform fees, no middleman. Just you, the forest, and the family who built it.</p>
+      </div>
+    </section>
+
+    <!-- ========== THE CHECKOUT: our calendar, our agreement, Stripe ========== -->
+    <section class="lf-sec lf-parch lf-book lf-bk-book" id="book" aria-labelledby="bk-w">
+      <div class="lf-bk-head">
+        <h2 class="lf-h3" id="bk-w">Choose your nights</h2>
+        <p>Every open night shows its rate. Pick your dates and the whole price appears, taxes included. Then book right here.</p>
+        <p class="lf-bk-trust">Book direct and deal straight with the family who built it.</p>
+      </div>
+      <div id="gatehouse"
+           data-api="https://book.loxleyforest.com"
+           data-unit="loxley-forest-canopy-treehouse-dahlonega"
+           data-stripe-key=""
+           data-fallback="#gh-down"><div class="gh-wait" role="status"><div class="gh-wait__cal" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><p class="gh-wait__words">Opening the calendar: every open night and its price.</p></div><noscript><p class="lf-book__alt">The calendar needs JavaScript to run. <a href="/book#inquiry">Send us your dates</a>, or call or text <a href="tel:+17065024823">706-502-4823</a>.</p></noscript></div>
+      <div id="gh-down" class="lf-book__alt" hidden>
+        <p>Our booking calendar isn't answering just now. Nothing is lost: <a href="#inquiry">send us your dates</a> and we'll write back within two hours, or call or text <a href="tel:+17065024823">706-502-4823</a>.</p>
+      </div>
+      <p class="lf-bk-contact">Questions? Call or text <a href="tel:+17065024823">706-502-4823</a>, or write to <a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a>.</p>
+    </section>
+
+    <!-- ========== INQUIRY (Netlify form booking-inquiry) ========== -->
+    <section id="inquiry" class="lf-sec lf-light lf-bk-ask" aria-labelledby="bk-q">
+      <div class="lf-bk-ask__in">
+        <p class="lf-bk-or"><span>or</span></p>
+        <h2 class="lf-h2" id="bk-q">Prefer a personal response?</h2>
+        <p class="lf-lead">Tell us what you're looking for and we'll respond within 2 hours.</p>
+
+        <form class="lf-bk-form" name="booking-inquiry" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" action="/success.html">
+          <input type="hidden" name="form-name" value="booking-inquiry">
+
+          <!-- Ad attribution. Filled by the script below the form; empty
+               for visitors who arrived without an ad click, which is fine
+               and expected. Carries the click through to the inquiry so a
+               booking can be reported back to Google with real revenue. -->
+          <input type="hidden" name="gclid" id="attr-gclid">
+          <input type="hidden" name="fbclid" id="attr-fbclid">
+          <input type="hidden" name="utm_source" id="attr-utm_source">
+          <input type="hidden" name="utm_medium" id="attr-utm_medium">
+          <input type="hidden" name="utm_campaign" id="attr-utm_campaign">
+          <input type="hidden" name="landing_page" id="attr-landing">
+          <input type="hidden" name="referrer" id="attr-referrer">
+          <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
+
+          <div class="lf-bk-field">
+            <label for="name">Your name</label>
+            <input type="text" id="name" name="name" required autocomplete="name">
+          </div>
+          <div class="lf-bk-field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required autocomplete="email">
+          </div>
+          <div class="lf-bk-field">
+            <label for="phone">Phone</label>
+            <input type="tel" id="phone" name="phone" autocomplete="tel">
+          </div>
+          <div class="lf-bk-row">
+            <div class="lf-bk-field">
+              <label for="checkin">Preferred check-in</label>
+              <input type="date" id="checkin" name="checkin">
+            </div>
+            <div class="lf-bk-field">
+              <label for="checkout">Preferred check-out</label>
+              <input type="date" id="checkout" name="checkout">
+            </div>
+          </div>
+          <div class="lf-bk-field">
+            <label for="treehouse">Which treehouse?</label>
+            <select id="treehouse" name="treehouse">
+              <option value="">Select...</option>
+              <option value="treehouse-1">Treehouse 1</option>
+              <option value="treehouse-2">Treehouse 2 (Coming Soon)</option>
+              <option value="no-preference">No Preference</option>
+            </select>
+          </div>
+          <div class="lf-bk-field">
+            <label for="occasion">What brings you to Loxley?</label>
+            <select id="occasion" name="occasion">
+              <option value="">Select...</option>
+              <option value="getaway">Time Away</option>
+              <option value="anniversary">Anniversary</option>
+              <option value="birthday">Birthday</option>
+              <option value="elopement">Elopement</option>
+              <option value="proposal">Proposal</option>
+              <option value="honeymoon">Honeymoon</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="lf-bk-field">
+            <label for="referral">How did you hear about us?</label>
+            <select id="referral" name="referral">
+              <option value="">Select...</option>
+              <option value="instagram">Instagram</option>
+              <option value="facebook">Facebook</option>
+              <option value="pinterest">Pinterest</option>
+              <option value="google">Google</option>
+              <option value="airbnb">Airbnb</option>
+              <option value="friend">Friend / Word of Mouth</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="lf-bk-field">
+            <label for="message">Anything else?</label>
+            <textarea id="message" name="message" rows="4"></textarea>
+          </div>
+          <button type="submit" class="lf-bk-send">Send your request</button>
+        </form>
+
+        <script>
+        /* Fill the attribution fields from the URL or the stored click. */
+        (function () {
+          function put(id, value) {
+            var el = document.getElementById(id);
+            if (el && value) el.value = value;
+          }
+          var saved = {};
+          try {
+            saved = JSON.parse(window.localStorage.getItem('loxley_attribution') || '{}') || {};
+          } catch (e) {}
+          var p;
+          try { p = new URLSearchParams(window.location.search); } catch (e) { p = null; }
+          function pick(name) {
+            return (p && p.get(name)) || saved[name] || '';
+          }
+          put('attr-gclid', pick('gclid') || pick('gbraid') || pick('wbraid'));
+          put('attr-fbclid', pick('fbclid'));
+          put('attr-utm_source', pick('utm_source'));
+          put('attr-utm_medium', pick('utm_medium'));
+          put('attr-utm_campaign', pick('utm_campaign'));
+          put('attr-landing', saved.landing || window.location.pathname);
+          put('attr-referrer', saved.referrer || document.referrer || '');
+        })();
+        </script>
+        <div id="booking-success" class="lf-bk-done" hidden><p>The forest knows you're coming. We'll be in touch soon.</p><p class="lf-bk-sign">Mick &amp; Livy</p></div>
+        <script>
+          (function(){
+            if (location.search.indexOf('submitted=1') !== -1) {
+              var form = document.querySelector('form[name="booking-inquiry"]');
+              var success = document.getElementById('booking-success');
+              if (form) form.style.display = 'none';
+              if (success) success.hidden = false;
+            }
+          })();
+        </script>
+      </div>
+    </section>
+
+    <section class="lf-sec lf-parch lf-center lf-reviews" aria-labelledby="rv-h">
+      <div class="lf-wrap">
+        <p class="lf-eyebrow">Guest stories</p>
+        <h2 class="lf-h2" id="rv-h" style="margin-bottom:34px">What they remember most</h2>
+        <div class="review-rotator" data-review-rotator>
+          <div class="review-rotator__card">
+            <p class="testimonial__quote">"The only sounds you hear are the birds chirping and the gentle rushing of water below. It feels very private and secluded. The perfect adventure to feel like you are camping in the woods, but with a bed and bathroom."</p>
+            <p class="testimonial__author">Kellie · Marietta, GA</p>
+          </div>
+        </div>
+        <p class="lf-reviews__note">Tap for another story</p>
+      </div>
+    </section>
+
+    <!-- ========== A DAY IN THE CANOPY ========== -->
+    <section class="lf-sec lf-dark" aria-labelledby="bk-d">
+      <div class="lf-wrap lf-bk-day">
+        <p class="lf-eyebrow lf-rise">Your stay</p>
+        <h2 class="lf-h2 lf-rise" id="bk-d">A day in the canopy</h2>
+        <ol class="lf-bk-times lf-rise">
+          <li><span>3:00 PM</span><p>Turn off the paved road onto a gravel path through the forest. The world gets quieter with every turn.</p></li>
+          <li><span>3:30 PM</span><p>Park at the trailhead. Walk four hundred feet through mountain laurel and fern. Hear the creek before you see it.</p></li>
+          <li><span>3:45 PM</span><p>Cross the rope bridge for the first time. Your heart beats faster. Then the treehouse door opens.</p></li>
+          <li><span>4:00 PM</span><p>Unpack. Step onto the deck. Realize you're sixty feet in the air and there isn't a single sound except wind through leaves.</p></li>
+          <li><span>5:30 PM</span><p>Fire up the pizza oven on the sky deck. Open the bottle you brought. Burn the first pizza. Laugh about it. Nail the second one.</p></li>
+          <li><span>7:00 PM</span><p>Watch the sun drop behind the ridgeline from your private deck. The forest turns gold, then amber, then blue.</p></li>
+          <li><span>8:30 PM</span><p>Build a fire. Roast marshmallows. Look up. The Milky Way is right there.</p></li>
+          <li><span>10:00 PM</span><p>Fall asleep to absolute silence, sixty feet above the forest floor.</p></li>
+          <li><span>8:30 AM</span><p>Wake up to birdsong. Check the TreeMail box at the entrance to your bridge. Something is waiting inside.</p></li>
+        </ol>
+        <p class="lf-lead lf-rise">That's just one version. Every stay writes its own story.</p>
+        <p class="lf-body lf-rise" style="margin-top:18px">Every direct booking supports a family-owned property and keeps Loxley independent. Thank you for booking with us.</p>
+        <div class="lf-actions lf-rise"><a href="#book" class="lf-btn"><svg viewBox="0 0 16 20" aria-hidden="true"><path fill="currentColor" d="M8 2.2C4.6 2.2 1.9 4.6 1.9 8H14.1C14.1 4.6 11.4 2.2 8 2.2ZM2.8 8.9H13.2C13.2 13.4 10.8 17.2 8 19.2C5.2 17.2 2.8 13.4 2.8 8.9ZM7.6 2.4C7.7 1.2 8.4 .4 9.6 .1L9.9 .7C9 1 8.5 1.6 8.5 2.4Z"/></svg>Book your dates</a></div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="lf-foot">
+    <div class="lf-foot__grid">
+      <div>
+        <img src="images/brand/logo/loxley-wordmark-on-dark.svg" alt="Loxley Forest" width="220" height="30" loading="lazy">
+        <p style="margin-top:18px;font-size:1.1rem">Dahlonega, Georgia. Just over an hour from Atlanta.<br>42 acres of hardwood cove forest at 1,470 feet.</p>
+      </div>
+      <nav aria-label="Footer"><a href="/treehouses">The Treehouse</a><a href="/experiences">Experiences</a><a href="/elopements">Elopements</a><a href="/proposals">Proposals</a><a href="/our-story">Our Story</a><a href="/gallery">Gallery</a><a href="/local-guide">Local Guide</a><a href="/faq">Questions</a></nav>
+      <nav aria-label="Contact"><a href="https://instagram.com/loxleyforest" target="_blank" rel="noopener">Instagram</a><a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a><a href="tel:+17065024823">706-502-4823</a></nav>
+      <div class="lf-foot__small"><span>&copy; 2026 Loxley Forest</span><a href="/privacy">Privacy</a><a href="/terms">Terms</a></div>
+    </div>
+  </footer>
+
+  <a href="#book" class="book-fab"><svg viewBox="0 0 16 20" aria-hidden="true"><path fill="currentColor" d="M8 2.2C4.6 2.2 1.9 4.6 1.9 8H14.1C14.1 4.6 11.4 2.2 8 2.2ZM2.8 8.9H13.2C13.2 13.4 10.8 17.2 8 19.2C5.2 17.2 2.8 13.4 2.8 8.9ZM7.6 2.4C7.7 1.2 8.4 .4 9.6 .1L9.9 .7C9 1 8.5 1.6 8.5 2.4Z"/></svg>Book your dates</a>
+  <script src="js/funnel.js"></script>
+  <script src="js/vendor/lenis.min.js"></script>
+  <script src="js/global.js"></script>
+  <script src="js/v2.js"></script>
+  <script src="js/reviews.js" defer></script>
+  <script src="js/gatehouse.js" defer></script>
+</body>
+</html>
