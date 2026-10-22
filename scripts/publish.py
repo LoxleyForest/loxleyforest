@@ -21,7 +21,10 @@ OUT = os.path.join(ROOT, "_site")
 
 # Never published, at any depth.
 NEVER = (".git", ".gitignore", "_site", "scripts", "__pycache__", "node_modules",
-         "*.md", "*.docx", "*.pdf", "*.py", "netlify.toml", ".DS_Store")
+         "*.md", "*.docx", "*.pdf", "*.py", "netlify.toml", ".DS_Store",
+         # local and tool folders: test renders (tmp/, ignored by git), Netlify's and
+         # Claude's working folders, and any env file, should one ever sit in the tree
+         "tmp", ".netlify", ".claude", ".github", ".vscode", ".env", ".env.*")
 
 
 def ignore(folder, names):
