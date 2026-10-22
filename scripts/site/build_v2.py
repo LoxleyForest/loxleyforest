@@ -677,8 +677,21 @@ def build(page):
     html = (head + f'<body class="v2" data-lf-path="{page_path(name)}" data-lf-api="{API}">\n' + gtm + '\n' + header(book) + '\n  <main id="main">\n' + body + '\n  </main>\n\n'
             + footer(book, gatehouse) + ('  <script src="js/crossing.js" defer></script>\n' if 'data-crossing' in body else '')
             + '</body>\n</html>\n')
+    if name in ROOTED_PAGES:
+        html = rooted(html)
     open(os.path.join(ROOT, name), 'w').write(html)
     print('wrote', name, len(html))
+
+
+# Netlify serves 404.html at whatever path was missed, so a miss one folder deep (/a/b) would
+# resolve the shared header's and footer's relative paths (images/, css/, js/) under /a/ and
+# lose the logo and every script. These pages get root paths throughout.
+ROOTED_PAGES = ('404.html',)
+
+
+def rooted(html):
+    html = re.sub(r'((?:src|href|poster)=")(?=(?:images|css|js)/)', r'\1/', html)
+    return re.sub(r'srcset="[^"]*"', lambda m: re.sub(r'(srcset="|,\s*)(?=(?:images|css|js)/)', r'\1/', m.group(0)), html)
 
 
 def page_modules():
