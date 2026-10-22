@@ -86,7 +86,10 @@ def header(book):
 def footer(book, gatehouse):
     """gatehouse: False, True (the booking calendar) or 'stay' (the calendar's helpers and the
     after-booking pages, /booked and /manage)."""
-    links = ''.join(f'<a href="{h}">{t}</a>' for h, t in NAV)
+    # The footer lists every page in NAV, with Proposals beside Elopements (2026-10-21); the header
+    # nav stays as it is.
+    links = ''.join(f'<a href="{h}">{t}</a>' + ('<a href="/proposals">Proposals</a>' if h == '/elopements' else '')
+                    for h, t in NAV)
     gh = '\n  <script src="js/gatehouse.js" defer></script>' if gatehouse else ''
     if gatehouse == 'stay':
         gh += '\n  <script src="js/gatehouse-stay.js" defer></script>'

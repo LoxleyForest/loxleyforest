@@ -1,3 +1,17 @@
+# 2026-10-21 · branch `proposals` (off next-level): the proposals page, waiting on Mick's yes
+
+Mick: elopements and proposals are the bread and butter; proposal searches had nowhere to land.
+`proposals.html` is built by `scripts/site/pages/proposals.py` (hero, where to ask, how it works,
+after the yes, questions, the Netlify form `proposal-inquiry` with gclid, gbraid, wbraid and src).
+Linked from the elopements page and every footer; in sitemap.xml. No prices. Not pushed, not merged.
+Before it ships: Mick approves every sentence (the Foreman's report quotes them); the questions for
+him are in that report (weather, Dawn Table champagne, secret logistics, ask without staying).
+Found on next-level, not fixed here: the elopement form's typed words are near-invisible (faq.py's
+dark `.lf-form` rules win over elopements.py's). Fix: add `lf-form--light` (in proposals.py's CSS)
+to the elopement form's class.
+
+---
+
 # START HERE FIRST · 2026-10-19 night (next-level now books on our own engine: launch IS the switchover)
 
 **Mick's ruling 2026-10-19: no Hostfully anywhere.** next-level now carries the cutover
