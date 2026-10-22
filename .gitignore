@@ -152,3 +152,5 @@ scripts/logo/fonts/
 scripts/logo/venv/
 .netlify/
 __pycache__/
+# the published copy, built by scripts/publish.py
+_site/
