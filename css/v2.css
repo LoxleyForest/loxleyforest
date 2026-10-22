@@ -187,8 +187,8 @@
 .lf-rating__n { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 400; font-size: 2.1rem; line-height: 1; color: var(--forest-deep); font-variant-numeric: lining-nums; }
 .lf-rating__acorns { display: inline-flex; gap: 6px; }
 .lf-rating__acorns i {
-  display: block; width: 16px; height: 20px;
-  background: linear-gradient(90deg, var(--gold) var(--f), rgba(107, 99, 87, 0.26) var(--f));
+  display: block; width: 18px; height: 22px;
+  background: linear-gradient(90deg, var(--gold) var(--f), rgba(107, 99, 87, 0.3) var(--f));
   -webkit-mask: var(--acorn) center / contain no-repeat; mask: var(--acorn) center / contain no-repeat;
 }
 /* the track bleeds to the screen's edge on phones, so the next story peeks in */
@@ -234,6 +234,7 @@ html:not(.js) .lf-rv__nav { visibility: hidden; }
 @media (min-width: 1080px) {
   /* inside the page's measure on desktop: three stories and the edge of a fourth */
   .lf-rv__track { margin: 0; padding: 4px 0 8px; scroll-padding-inline: 0; grid-auto-columns: calc((100% - 3 * 22px) / 3.25); gap: 22px; }
+  .lf-rv__quote p { font-size: 1.5rem; }
 }
 @media (prefers-reduced-motion: reduce) { .lf-rv__pause { display: none; } }
 
