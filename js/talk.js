@@ -33,11 +33,16 @@
   var PATH = body.getAttribute('data-lf-path') || '';
   var API = body.getAttribute('data-lf-api') || '';
 
-  // THE ONE PLACE to set the "Book a 30-minute call" link (an https:// scheduling page).
+  // THE ONE PLACE to set the "Book a 30-minute call" links (Google Calendar booking pages,
+  // built 2026-10-23): elopements get Mick's elopement page, the rest his stay page.
   // Empty: the button is not shown, and the phone line stays.
-  var CALL_LINK = '';
+  var CALL_LINKS = {
+    '/elopements': 'https://calendar.google.com/calendar/appointments/schedules/AcZssZ09-JeAUO0U36--uUgaokdw-x5Rt0tl8V_1PQIEbCxDrqbinwF9xkIa_bojj6Vui9ZVDAYgJmDX',
+    '/book': 'https://calendar.google.com/calendar/appointments/schedules/AcZssZ14V7SMtghWX_kk-0u24C47dElxr7ki9EdtjJsotoQnYOWOtHqb06wtvrMRmS6kHcOBQ655VAC3',
+    '/proposals': 'https://calendar.google.com/calendar/appointments/schedules/AcZssZ14V7SMtghWX_kk-0u24C47dElxr7ki9EdtjJsotoQnYOWOtHqb06wtvrMRmS6kHcOBQ655VAC3'
+  };
 
-  // PLACEHOLDER WORDS: for Mick's approval by ear before this goes live (2026-10-23).
+  // The words, approved by Mick 2026-10-23.
   var WORDS = {
     heading: 'Rather talk it through?',
     line: 'Mick built the treehouse with his family. Ask him anything. No pressure.',
@@ -207,7 +212,7 @@
     c.appendChild(p);
     c.appendChild(ph);
 
-    var href = link(CALL_LINK);
+    var href = link(CALL_LINKS[PATH] || '');
     if (href) {
       var b = document.createElement('a');
       b.className = 'lf-btn lf-btn--ghost lf-talk__call';

@@ -72,8 +72,12 @@ async function main() {
     await ctx.route('**/*', (route) => {
       const u = new URL(route.request().url());
       if (u.hostname === '127.0.0.1') {
-        if (opts.callLink && u.pathname === '/js/talk.js') {
-          return route.fulfill({ contentType: 'text/javascript', body: talkSrc.replace("var CALL_LINK = '';", "var CALL_LINK = '" + opts.callLink + "';") });
+        if (u.pathname === '/js/talk.js') {
+          // The real file carries Mick's booking links; most checks run with none, the
+          // call-link check with a stand-in, so both shapes of the card are proven.
+          const src = talkSrc.replace("var href = link(CALL_LINKS[PATH] || '');", "var href = link('" + (opts.callLink || '') + "');");
+          if (src === talkSrc) throw new Error('check_talk: the call-link line in js/talk.js moved');
+          return route.fulfill({ contentType: 'text/javascript', body: src });
         }
         return route.continue();
       }
