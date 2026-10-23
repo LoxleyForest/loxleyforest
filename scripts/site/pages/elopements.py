@@ -14,7 +14,7 @@ SPACES = [
     ('eq3a0154', 'The rope bridge from the side, an oak trunk in the foreground', 'The Rope Bridge', 'The crossing',
      'One hundred feet of suspended pathway between two ancient white oaks. The bridge becomes the aisle. The canopy becomes the cathedral. There is no other wedding aisle like this in the Southeast.',
      'With The Crossing and The Elevation.'),
-    ('img_1717', 'The stone fire pit on the forest floor, ringed with ferns', 'The Compass Fire Pit', 'Fire as witness',
+    ('img_1717', 'The stone fire pit on the forest floor, ringed with ferns', 'The Fire Circle', 'Fire as witness',
      'A boulder fire pit that looks like it emerged from the earth centuries ago, set at the four compass points. It echoes traditions that have existed for thousands of years.',
      'With every package.'),
     ('img_2546', 'The treehouse deck with chairs, above the forest', 'The Canopy Deck', 'Privacy measured in altitude',
@@ -25,7 +25,7 @@ SPACES = [
 PACKAGES = [
     ('Intimate', 'The Vow', '$4,500', None, [
         '2-night treehouse stay',
-        'Choice of ceremony site: the Compass Fire Pit or the treehouse deck',
+        'Choice of ceremony site: the Fire Circle or the treehouse deck',
         'Vetted officiant',
         'Seasonal bouquet and boutonniere',
         'Champagne toast',
@@ -37,12 +37,12 @@ PACKAGES = [
         'Golden hour timing',
         'Photography coordination',
         'Curated dinner',
-        'Morning Moments',
+        'The Morning After',
         'Celebration cake'],
      None),
     ('Ultimate', 'The Elevation', '$10,500', 'Everything in The Crossing, plus', [
         'Private chef dinner',
-        'All-day photography coordination',
+        'Photography planned through the whole day',
         'Floral ceremony arch',
         'Premium welcome hamper',
         'Celebration brunch',
