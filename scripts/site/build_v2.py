@@ -667,6 +667,12 @@ def page_path(name):
     return '/' if name == 'index.html' else '/' + name[:-len('.html')]
 
 
+# The talk-to-Mick card (js/talk.js, styles at the end of css/v2.css): offered to a visitor who is
+# hesitating, so Mick can close by phone (Mick, 2026-10-23). Only these pages load it; the script
+# also refuses /booked and /manage on its own. proposals.html picks it up when its page lands.
+TALK_PAGES = ('book.html', 'elopements.html', 'proposals.html')
+
+
 def build(page):
     name, head, gtm, body, book, gatehouse = page()
     if name in KEYS_PAGES:
@@ -676,6 +682,7 @@ def build(page):
                             PRECONNECT + '\n  <link rel="preconnect" href="https://fonts.googleapis.com">', 1)
     html = (head + f'<body class="v2" data-lf-path="{page_path(name)}" data-lf-api="{API}">\n' + gtm + '\n' + header(book) + '\n  <main id="main">\n' + body + '\n  </main>\n\n'
             + footer(book, gatehouse) + ('  <script src="js/crossing.js" defer></script>\n' if 'data-crossing' in body else '')
+            + ('  <script src="js/talk.js" defer></script>\n' if name in TALK_PAGES else '')
             + '</body>\n</html>\n')
     if name in ROOTED_PAGES:
         html = rooted(html)
