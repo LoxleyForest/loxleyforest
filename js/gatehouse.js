@@ -217,8 +217,8 @@
       if (!first) return short(ci) + ' is not open.';
       var n = daysBetween(ci, co);
       if (n < 1) return 'Your check-out day comes after ' + short(ci) + '.';
-      // A single open night between two stays sells alone, whatever the minimum (the engine's gap).
-      if (first.min_stay && n < first.min_stay && !(n === 1 && first.gap)) return 'A stay starting ' + short(ci) + ' is at least ' + nightsWord(first.min_stay) + '.';
+      // A single open night between two stays sells alone (the engine's gap), never under a minimum of three.
+      if (first.min_stay && n < first.min_stay && !(n === 1 && first.gap && first.min_stay <= 2)) return 'A stay starting ' + short(ci) + ' is at least ' + nightsWord(first.min_stay) + '.';
       if (first.max_stay && n > first.max_stay) return 'A stay starting ' + short(ci) + ' is at most ' + nightsWord(first.max_stay) + '.';
       for (var d = ci; d < co; d = addDays(d, 1)) {
         if (!c.nights[d]) return short(d) + ' is already taken. Try nights before it, or other dates.';
@@ -229,6 +229,11 @@
     c.pick = function (day) {
       if (!c.checkIn || c.checkOut || day <= c.checkIn) {
         if (!c.nights[day]) return;
+        // A night nobody may arrive on (the holidays): say so at the tap, not at the price.
+        if (c.nights[day].no_arrival && (!c.checkIn || c.checkOut || day <= c.checkIn)) {
+          c.note = 'No check-in on ' + short(day) + '. Arrive an earlier day and stay through.';
+          opts.onChange(c); return;
+        }
         c.checkIn = day; c.checkOut = null;
         c.note = 'Arriving ' + short(day) + '. Now choose your check-out day.';
       } else {
