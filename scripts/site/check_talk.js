@@ -59,7 +59,8 @@ async function main() {
   const srv = await serve();
   const BASE = 'http://127.0.0.1:' + srv.address().port;
   const browser = await chromium.launch({ executablePath: EXE, args: ['--no-sandbox'] });
-  const consoleErrors = [];
+  const consoleErrors = [];   // script errors and anything else the page logs as an error
+  const refusals = [];       // the browser's own network line for a refused card_* beacon
   const talkSrc = fs.readFileSync(path.join(ROOT, 'js/talk.js'), 'utf8');
 
   async function open(opts) {
@@ -82,7 +83,7 @@ async function main() {
         if (u.pathname === '/v1/funnel') {
           let b = {}; try { b = JSON.parse(route.request().postData() || '{}'); } catch (e) {}
           beacons.push(b);
-          return /^card_/.test(b.step) ? json({ error: 'unknown step' }, 400) : json({ ok: true });
+          return /^card_/.test(b.step) && !opts.engineLanded ? json({ error: 'unknown step' }, 400) : json({ ok: true });
         }
         if (u.pathname === '/v1/availability') return json(NIGHTS);
         if (u.pathname === '/v1/quote') return json(QUOTE);
@@ -93,7 +94,15 @@ async function main() {
       return route.fulfill({ status: 200, contentType: /\.js|gtm|gtag/.test(u.pathname) ? 'text/javascript' : 'text/plain', body: '' });
     });
     const page = await ctx.newPage();
-    page.on('console', (m) => { if (m.type() === 'error') consoleErrors.push(opts.name + ': ' + m.text()); });
+    // A 4xx answer to a beacon is written to the console by Chrome itself ("Failed to load
+    // resource"), whatever the page does; nothing in the page sees it or can quiet it. Those lines,
+    // from /v1/funnel only, are counted apart: they end when the engine accepts card_* steps.
+    page.on('console', (m) => {
+      if (m.type() !== 'error') return;
+      const from = (m.location() && m.location().url) || '';
+      if (/^https:\/\/book\.loxleyforest\.com\/v1\/funnel$/.test(from) && /status of 400/.test(m.text())) refusals.push(opts.name);
+      else consoleErrors.push(opts.name + ': ' + m.text() + (from ? ' (' + from + ')' : ''));
+    });
     page.on('pageerror', (e) => consoleErrors.push(opts.name + ': ' + e.message));
     await page.clock.install();
     return { ctx, page, beacons };
@@ -167,7 +176,7 @@ async function main() {
     // Once a visit: a reload and another page do not bring it back.
     await page.reload();
     await page.clock.runFor(50000);
-    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight * 0.7));
+    await page.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight * 0.7, behavior: 'instant' }));
     await page.clock.runFor(2000);
     check(!(await card(page)), 'not again on reload (once per visit)');
     await bookReady(page, `/book?checkIn=${CI}&checkOut=${CO}`);
@@ -183,16 +192,16 @@ async function main() {
     const { ctx, page } = await open({ name: 'elopements-desk' });
     await page.goto(BASE + '/elopements');
     await page.clock.runFor(3000);
-    await page.evaluate(() => window.scrollTo(0, (document.documentElement.scrollHeight - window.innerHeight) * 0.3));
+    await page.evaluate(() => window.scrollTo({ top: (document.documentElement.scrollHeight - window.innerHeight) * 0.3, behavior: 'instant' }));
     await page.clock.runFor(1500);
     check(!(await card(page)), 'no card at 30% down');
-    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight * 0.62 - window.innerHeight + 10));
+    await page.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight * 0.62 - window.innerHeight + 10, behavior: 'instant' }));
     await page.clock.runFor(1500); await settle(page);
     check(await shown(page), 'card shown at 60% scroll');
     check((await page.evaluate(() => { const r = document.getElementById('lf-talk').getBoundingClientRect(); return [Math.round(r.width), Math.round(innerWidth - r.right), Math.round(innerHeight - r.bottom)]; })).join() === '360,24,24', 'desktop card: 360 px, bottom right');
     // Seen over a light section, then a dark one (the card stays while the page scrolls).
     for (const [sel, name] of [['main .lf-light, main .lf-parch', 'light'], ['main .lf-dark', 'dark']]) {
-      await page.evaluate((sel) => { const s = [...document.querySelectorAll(sel)].find((x) => x.offsetHeight > 500) || document.querySelector(sel); window.scrollTo(0, s.getBoundingClientRect().top + scrollY); }, sel);
+      await page.evaluate((sel) => { const s = [...document.querySelectorAll(sel)].find((x) => x.offsetHeight > 500) || document.querySelector(sel); window.scrollTo({ top: s.getBoundingClientRect().top + scrollY, behavior: 'instant' }); }, sel);
       await page.clock.runFor(100); await page.waitForTimeout(200);
       check(await shown(page), 'card stays over a ' + name + ' section');
       await shot(page, 'desktop-elopements-' + name + '.png');
@@ -261,7 +270,7 @@ async function main() {
     check(!(await overlapsAny(page, '#gatehouse .gh-cta')), 'card is clear of the checkout button');
     await shot(page, 'phone-book-dates.png');
     // Bring the checkout button to the card's place: the card moves up out of its way.
-    await page.evaluate(() => { const b = document.querySelector('#gatehouse .gh-cta'); const r = b.getBoundingClientRect(); window.scrollBy(0, r.bottom - (innerHeight - 110)); });
+    await page.evaluate(() => { const b = document.querySelector('#gatehouse .gh-cta'); const r = b.getBoundingClientRect(); window.scrollBy({ top: r.bottom - (innerHeight - 110), behavior: 'instant' }); });
     await page.clock.runFor(100); await page.waitForTimeout(100);
     check(!(await overlapsAny(page, '#gatehouse .gh-cta')), 'checkout button scrolled under it: still clear');
     check(await page.evaluate(() => document.getElementById('lf-talk').classList.contains('is-top')), 'the card moved under the header');
@@ -296,7 +305,7 @@ async function main() {
     // A Stripe form in place (an empty frame here): the card keeps off its foot.
     await page.evaluate(() => { const f = document.createElement('iframe'); f.style.cssText = 'display:block;width:100%;height:900px;border:0'; document.getElementById('gh-pay').appendChild(f); });
     for (const at of [0.95, 0.75, 0.5]) {
-      await page.evaluate((at) => { const f = document.querySelector('#gh-pay iframe').getBoundingClientRect(); window.scrollBy(0, f.bottom - innerHeight * at); }, at);
+      await page.evaluate((at) => { const f = document.querySelector('#gh-pay iframe').getBoundingClientRect(); window.scrollBy({ top: f.bottom - innerHeight * at, behavior: 'instant' }); }, at);
       await page.clock.runFor(100); await page.waitForTimeout(80);
       const clear = await page.evaluate(() => {
         const c = document.getElementById('lf-talk'); const r = c.getBoundingClientRect(); const f = document.querySelector('#gh-pay iframe').getBoundingClientRect();
@@ -319,7 +328,7 @@ async function main() {
     check(!(await overlapsAny(page, '#gatehouse button[type="submit"], #gatehouse .gh-cta')), 'phone: card is clear of the pay button');
     check((await overflow(page)) <= 0, 'phone: no horizontal overflow');
     await shot(page, 'phone-book-pay.png');
-    await page.evaluate(() => { const b = document.querySelector('#gatehouse button[type="submit"]'); const r = b.getBoundingClientRect(); window.scrollBy(0, r.bottom - (innerHeight - 100)); });
+    await page.evaluate(() => { const b = document.querySelector('#gatehouse button[type="submit"]'); const r = b.getBoundingClientRect(); window.scrollBy({ top: r.bottom - (innerHeight - 100), behavior: 'instant' }); });
     await page.clock.runFor(100); await page.waitForTimeout(100);
     check(!(await overlapsAny(page, '#gatehouse button[type="submit"]')), 'phone: pay button scrolled to the bottom: card clear of it');
     await shot(page, 'phone-book-pay-button-low.png');
@@ -371,7 +380,7 @@ async function main() {
 
   // 10. Reduced motion: no movement.
   {
-    const { ctx, page } = await open({ name: 'reduced', phone: true, reduced: true });
+    const { ctx, page } = await open({ name: 'reduced', phone: true, reduced: true, engineLanded: true });
     await page.goto(BASE + '/elopements');
     await page.clock.runFor(46000); await settle(page);
     const t = await page.evaluate(() => { const s = getComputedStyle(document.getElementById('lf-talk')); return [s.transitionDuration, s.transform]; });
@@ -381,7 +390,9 @@ async function main() {
 
   console.log('console errors and page errors: ' + consoleErrors.length);
   consoleErrors.forEach((e) => console.log('  ' + e));
-  check(consoleErrors.length === 0, 'no console errors on any page (the card_* refusals were silent)');
+  check(consoleErrors.length === 0, 'no script errors and no console errors from the page, on any page');
+  console.log('browser network lines for refused card_* beacons (engine not yet landed): ' + refusals.length);
+  check(!refusals.includes('reduced'), 'once the engine accepts card_* (the reduced-motion run): not one console line');
 
   await browser.close();
   srv.close();
