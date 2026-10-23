@@ -158,7 +158,7 @@ def page_elopements():
         </div>
 
         <div class="lf-inq__wrap lf-rise">
-          <form class="lf-form lf-form--light" name="elopement-inquiry" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" action="/elopements?submitted=1#elopement-success">
+          <form class="lf-form lf-form--light" name="elopement-inquiry" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" action="/success.html">
             <input type="hidden" name="form-name" value="elopement-inquiry">
             <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
 
