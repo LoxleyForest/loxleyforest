@@ -283,6 +283,8 @@ def _reviews():
     chev = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>'
     # The controls come before the track in the page: above the cards on phones (clear of the fixed
     # Book button), moved below them from 768 px by CSS order.
+    # Under it, a quiet link to the rest of the five-star reviews (/reviews, pages/reviews.py;
+    # Mick, 2026-10-23). Its words say "more", never "all" (FTC 16 CFR 465.7(b)), and no count.
     return f'''    <section class="lf-sec lf-parch lf-reviews" aria-labelledby="rv-h">
       <div class="lf-wrap">
         <div class="lf-reviews__head">
@@ -301,6 +303,7 @@ def _reviews():
           </div>
           <p class="lf-rv__live" data-rv-live aria-live="polite"></p>
         </div>
+        <p class="lf-reviews__more"><a href="/reviews" class="lf-link">More guest reviews →</a></p>
       </div>
     </section>
 '''

@@ -251,6 +251,11 @@ html:not(.js) .lf-rv__nav { visibility: hidden; }
   .lf-rv__quote p { font-size: 1.5rem; }
 }
 @media (prefers-reduced-motion: reduce) { .lf-rv__pause { display: none; } }
+/* the quiet link to /reviews under the carousel */
+.lf-reviews__more { margin: 26px 0 0; text-align: center; }
+.lf-reviews__more .lf-link { color: var(--forest-deep); }
+.lf-reviews__more .lf-link:focus-visible { outline-color: var(--forest-deep); }
+@media (min-width: 768px) { .lf-reviews__more { margin-top: 18px; } }
 
 /* ---- list signup -------------------------------------------------------- */
 .lf-signup { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; max-width: 30rem; }
