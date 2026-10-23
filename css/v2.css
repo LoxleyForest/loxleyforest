@@ -445,8 +445,7 @@ a[href^="tel:"] { white-space: nowrap; }
 .lf-talk.is-in { opacity: 1; transform: none; pointer-events: auto; }
 .lf-talk.is-top { top: calc(var(--hdr-h) + env(safe-area-inset-top, 0px) + 12px); bottom: auto; }
 .lf-talk.is-away { visibility: hidden; }
-.lf-talk:focus { outline: none; }
-.lf-talk:focus-visible { outline: 2px solid var(--on-dark); outline-offset: 3px; }
+.lf-talk:focus, .lf-talk:focus-visible { outline: none; }   /* the card takes focus for screen readers; its buttons show the ring */
 .lf-talk__x {
   position: absolute; top: 4px; right: 4px; width: 44px; height: 44px; display: grid; place-items: center;
   padding: 0; border: 0; background: none; color: var(--on-dark-muted); cursor: pointer;

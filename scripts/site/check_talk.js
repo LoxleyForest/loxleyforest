@@ -112,7 +112,9 @@ async function main() {
   const shown = async (page) => !!(await page.$('#lf-talk.is-in'));
   async function settle(page) { await page.clock.runFor(50); await page.waitForTimeout(400); }
   async function overflow(page) { return page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth); }
-  async function shot(page, name) { if (SHOTS) { fs.mkdirSync(SHOTS, { recursive: true }); await page.screenshot({ path: path.join(SHOTS, name) }); } }
+  // A beacon reaches the mock a moment after the click: wait for it, up to 3 s.
+  async function until(fn) { for (let i = 0; i < 30 && !fn(); i++) await new Promise((r) => setTimeout(r, 100)); return fn(); }
+  async function shot(page, name) { if (SHOTS) { await page.waitForTimeout(900); fs.mkdirSync(SHOTS, { recursive: true }); await page.screenshot({ path: path.join(SHOTS, name) }); } }
   async function overlapsAny(page, sel) {
     return page.evaluate((sel) => {
       const c = document.getElementById('lf-talk'); if (!c) return false;
@@ -151,6 +153,7 @@ async function main() {
     check(a11y.tel === 'tel:+17065024823' && /Call or text Mick at 706-502-4823/.test(a11y.phoneText), 'phone line carries the site number');
     check(!a11y.callBtn, 'no call button while the link is empty');
     check(a11y.r.left >= 16 && a11y.r.right <= 374, 'card sits inside the 16 px gutters');
+    await until(() => beacons.some((x) => x.step === 'card_shown'));
     const b = beacons.filter((x) => x.step === 'card_shown');
     check(b.length === 1 && b[0].path === '/elopements' && Object.keys(b[0]).sort().join() === 'path,step,visit', 'card_shown beacon: visit, step, path only');
     await shot(page, 'phone-elopements.png');
@@ -162,7 +165,7 @@ async function main() {
     // The phone link counts a click (the test stops the tel: hand-off, which a headless browser cannot take).
     await page.evaluate(() => document.addEventListener('click', (e) => { if (e.target.closest('a[href^="tel:"]')) e.preventDefault(); }, true));
     await page.tap('#lf-talk .lf-talk__phone a');
-    check(beacons.filter((x) => x.step === 'card_click').length === 1, 'phone link sends card_click');
+    check(await until(() => beacons.filter((x) => x.step === 'card_click').length === 1), 'phone link sends card_click');
     // Tap outside dismisses.
     const spot = await page.evaluate(() => {
       const c = document.getElementById('lf-talk').getBoundingClientRect();
@@ -265,7 +268,7 @@ async function main() {
     check(!(await card(page)), 'no card at 58 s with dates chosen');
     await page.clock.runFor(3000); await settle(page);
     check(await shown(page), 'card shown 60 s after dates, checkout not begun');
-    check(beacons.some((x) => x.step === 'card_shown' && x.path === '/book'), 'card_shown beacon with /book');
+    check(await until(() => beacons.some((x) => x.step === 'card_shown' && x.path === '/book')), 'card_shown beacon with /book');
     check((await overflow(page)) <= 0, 'no horizontal overflow at 390');
     check(!(await overlapsAny(page, '#gatehouse .gh-cta')), 'card is clear of the checkout button');
     await shot(page, 'phone-book-dates.png');
@@ -374,7 +377,7 @@ async function main() {
     const pop = ctx.waitForEvent('page');
     await btn.tap();
     await (await pop).close();
-    check(beacons.filter((x) => x.step === 'card_click').length === 1 && beacons.find((x) => x.step === 'card_click').path === '/elopements', 'button sends card_click with the path');
+    check(await until(() => beacons.filter((x) => x.step === 'card_click').length === 1) && beacons.find((x) => x.step === 'card_click').path === '/elopements', 'button sends card_click with the path');
     await ctx.close();
   }
 
