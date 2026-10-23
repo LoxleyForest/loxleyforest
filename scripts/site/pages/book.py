@@ -17,13 +17,13 @@ def tidy(head):
     return re.sub(r'\s*</head>\n$', '\n</head>\n', head)
 
 
-# TODO(cutover, Architect): data-stripe-key takes the live publishable key (pk_live_...) at cutover.
+# data-stripe-key is B.STRIPE_KEY (scripts/site/build_v2.py), the live publishable key at cutover.
 # Until it is set, the checkout runs to the agreement and then says plainly that payment opens
 # shortly, with the phone number; it never claims nights it cannot take payment for.
 GATEHOUSE = f'''<div id="gatehouse"
            data-api="{B.API}"
            data-unit="{B.UNIT}"
-           data-stripe-key=""
+           data-stripe-key="{B.STRIPE_KEY}"
            data-fallback="#gh-down">{B.GH_WAIT}</div>
       <div id="gh-down" class="lf-book__alt" hidden>
         <p>Our booking calendar isn't answering just now. Nothing is lost: <a href="#inquiry">send us your dates</a> and we'll write back within two hours, or call or text <a href="tel:+17065024823">706-502-4823</a>.</p>
@@ -60,7 +60,6 @@ def page_book():
       <div class="lf-bk-head">
         <h2 class="lf-h3" id="bk-w">Choose your nights</h2>
         <p>Every open night shows its rate. Pick your dates and the whole price appears, taxes included. Then book right here.</p>
-        <p class="lf-bk-trust">Book direct and deal straight with the family who built it.</p>
       </div>
       {GATEHOUSE}
       <p class="lf-bk-contact">Questions? Call or text <a href="tel:+17065024823">706-502-4823</a>, or write to <a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a>.</p>
@@ -219,7 +218,6 @@ CSS = '''
 .lf-bk-head { max-width: 36rem; margin: 0 auto 32px; text-align: center; }
 .lf-bk-head .lf-h3 { color: var(--forest-deep); font-size: clamp(1.75rem, 5vw, 2.3rem); }
 .lf-bk-head p { margin: 10px 0 0; font-size: 1.2rem; line-height: 1.5; color: var(--stone); }
-.lf-bk-head .lf-bk-trust { margin-top: 14px; font-family: 'Montserrat', sans-serif; font-size: 0.8125rem; letter-spacing: 0.04em; color: var(--bark); }
 .lf-bk-contact { max-width: 36rem; margin: 26px auto 0; text-align: center; font-size: 1.15rem; line-height: 1.6; color: var(--stone); }
 .lf-bk-contact a, .lf-bk-done a { color: var(--forest-deep); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; white-space: nowrap; }
 

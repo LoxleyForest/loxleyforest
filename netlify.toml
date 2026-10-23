@@ -1,16 +1,16 @@
 # Netlify configuration for loxleyforest.com (static multi-page site).
 #
-# The build step runs scripts/ensure-gtm.js, which guarantees the Google Tag
-# Manager container snippet is present on every HTML page of the DEPLOYED site
-# — even if a future content edit accidentally strips it from a page's source.
-# The snippet itself is defined in ONE place: scripts/ensure-gtm.js.
-#
-# No bundler/framework is involved; the script edits the static .html files in
-# place before Netlify publishes the repo root.
+# The build step runs scripts/ensure_gtm.py, which guarantees the Google Tag
+# Manager container snippet is present on every HTML page of the DEPLOYED site,
+# even if a future content edit accidentally strips it from a page's source.
+# The snippet itself is defined in ONE place: scripts/ensure_gtm.py.
+# Then scripts/publish.py copies only the site into _site/, which Netlify publishes.
 
 [build]
-  command = "python3 scripts/ensure_gtm.py"
-  publish = "."
+  # ensure_gtm.py heals the pages; publish.py copies only the site into _site/
+  # (working notes, documents and scripts are never published: 2026-10-20).
+  command = "python3 scripts/ensure_gtm.py && python3 scripts/publish.py"
+  publish = "_site"
 
 # The Canopy Club is retired (Mick, 2026-10-13); old links land on the home page.
 [[redirects]]

@@ -8,7 +8,6 @@
 .lf-bk-head { max-width: 36rem; margin: 0 auto 32px; text-align: center; }
 .lf-bk-head .lf-h3 { color: var(--forest-deep); font-size: clamp(1.75rem, 5vw, 2.3rem); }
 .lf-bk-head p { margin: 10px 0 0; font-size: 1.2rem; line-height: 1.5; color: var(--stone); }
-.lf-bk-head .lf-bk-trust { margin-top: 14px; font-family: 'Montserrat', sans-serif; font-size: 0.8125rem; letter-spacing: 0.04em; color: var(--bark); }
 .lf-bk-contact { max-width: 36rem; margin: 26px auto 0; text-align: center; font-size: 1.15rem; line-height: 1.6; color: var(--stone); }
 .lf-bk-contact a, .lf-bk-done a { color: var(--forest-deep); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; white-space: nowrap; }
 
@@ -108,6 +107,12 @@
 .lf-form textarea { min-height: 140px; resize: vertical; }
 .lf-form input::placeholder, .lf-form textarea::placeholder { color: var(--stone); opacity: 0.8; }
 .lf-form input:focus-visible, .lf-form select:focus-visible, .lf-form textarea:focus-visible { outline: 2px solid var(--forest-deep); outline-offset: 2px; }
+/* The inquiry form sits on a light ground. faq.py's dark-ground form shares the .lf-form selectors
+   and comes later in v2-pages.css, so it won there and the typed words went pale; the modifier puts
+   the light form back (dark words on linen). The same rules ride on branch proposals (8feb5c7). */
+.lf-form.lf-form--light label { margin-top: 0; color: var(--forest-deep); }
+.lf-form.lf-form--light input[type], .lf-form.lf-form--light select[name], .lf-form.lf-form--light textarea[name] { border-color: rgba(61, 50, 40, 0.3); background: var(--linen); color: var(--bark); }
+.lf-form.lf-form--light input[type]:focus-visible, .lf-form.lf-form--light select[name]:focus-visible, .lf-form.lf-form--light textarea[name]:focus-visible { outline-color: var(--forest-deep); }
 .lf-form__help { margin: 4px 0 0; font-size: 1rem; font-style: italic; line-height: 1.55; color: var(--stone); }
 .lf-btn--forest { background: var(--forest-deep); border-color: var(--forest-deep); color: var(--linen); width: 100%; cursor: pointer; }
 .lf-btn--forest:hover { background: var(--forest-deep); opacity: 0.92; }

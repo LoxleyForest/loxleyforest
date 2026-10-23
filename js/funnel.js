@@ -75,6 +75,9 @@
   if (!API || !path) return;
   var linkSrc = '';
   try { linkSrc = cleanSrc(new URLSearchParams(location.search).get('src')); } catch (e) {}
+  // An ad click carries Google's click id, not a src: count it as Google Ads, apart
+  // from people who found us on Google by search (2026-10-22, the morning line).
+  if (!linkSrc && /[?&](gclid|gbraid|wbraid)=/.test(location.search)) linkSrc = 'google-ads';
   var entry = null;
   try { entry = JSON.parse(sessionStorage.getItem('gh_entry') || 'null'); } catch (e) {}
   if (!entry || typeof entry !== 'object') entry = { referrer: outsideHost(document.referrer), src: linkSrc };

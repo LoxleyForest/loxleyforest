@@ -49,12 +49,23 @@ def pic(name, alt, sizes, eager=False, cls=''):
 HEAD_CLAIMS = (' 200+ five-star reviews.',)
 
 
+# Mick writes without em dashes: in the title, the meta description and the og: and twitter:
+# tags of every page, " — " reads as a comma (the Forge, 2026-10-22). The body text is the
+# page modules' own; the legal pages' wording is untouched.
+HEAD_TAG = re.compile(r'<title>[^<]*</title>|<meta (?:name|property)="(?:description|og:[a-z:_]+|twitter:[a-z:_]+)"\s+content="[^"]*"')
+
+
+def no_dashes(head):
+    return HEAD_TAG.sub(lambda m: m.group(0).replace(' — ', ', '), head)
+
+
 def head_from(page, preload=''):
     """The page's own <head>, with the redesign's stylesheets in place of its old ones."""
     s = open(os.path.join(ROOT, page)).read()
     head = s[:s.index('</head>')]
     for claim in HEAD_CLAIMS:
         head = head.replace(claim, '')
+    head = no_dashes(head)
     head = re.sub(r'\s*<link rel="stylesheet" href="css/(?!global\.css)[a-z0-9-]+\.css">', '', head)
     head = re.sub(r'\s*<link rel="preload" as="image"[^>]*>', '', head)
     head = head.replace('<link rel="stylesheet" href="css/global.css">',
@@ -146,6 +157,11 @@ def set_keys(head):
 
 API = 'https://book.loxleyforest.com'
 UNIT = 'loxley-forest-canopy-treehouse-dahlonega'
+# The Stripe PUBLISHABLE key (pk_live_..., not a secret) for /book and /manage, the one place it
+# is set. Empty until cutover: the checkout then runs to the agreement and says plainly that
+# payment opens shortly. Set it here, run the builder, commit book.html and manage.html.
+STRIPE_KEY = 'pk_live_51RH1eh1A4HPU5uCq4EyPTq3QCk4GI5skATfj7Vy9R1irx769gSJDEuVKYFIGHkJBATGJe8xW5qomi5wqeXRWR1lz00PvCZlnNi'
+assert STRIPE_KEY == '' or STRIPE_KEY.startswith('pk_'), 'only a publishable key (pk_...) goes on a page'
 PRECONNECT = f'<link rel="preconnect" href="{API}" crossorigin>'
 
 # What the booking calendar shows until the open nights arrive: the shape of a month and a
@@ -651,6 +667,12 @@ def page_path(name):
     return '/' if name == 'index.html' else '/' + name[:-len('.html')]
 
 
+# The talk-to-Mick card (js/talk.js, styles at the end of css/v2.css): offered to a visitor who is
+# hesitating, so Mick can close by phone (Mick, 2026-10-23). Only these pages load it; the script
+# also refuses /booked and /manage on its own. proposals.html picks it up when its page lands.
+TALK_PAGES = ('book.html', 'elopements.html', 'proposals.html')
+
+
 def build(page):
     name, head, gtm, body, book, gatehouse = page()
     if name in KEYS_PAGES:
@@ -660,9 +682,23 @@ def build(page):
                             PRECONNECT + '\n  <link rel="preconnect" href="https://fonts.googleapis.com">', 1)
     html = (head + f'<body class="v2" data-lf-path="{page_path(name)}" data-lf-api="{API}">\n' + gtm + '\n' + header(book) + '\n  <main id="main">\n' + body + '\n  </main>\n\n'
             + footer(book, gatehouse) + ('  <script src="js/crossing.js" defer></script>\n' if 'data-crossing' in body else '')
+            + ('  <script src="js/talk.js" defer></script>\n' if name in TALK_PAGES else '')
             + '</body>\n</html>\n')
+    if name in ROOTED_PAGES:
+        html = rooted(html)
     open(os.path.join(ROOT, name), 'w').write(html)
     print('wrote', name, len(html))
+
+
+# Netlify serves 404.html at whatever path was missed, so a miss one folder deep (/a/b) would
+# resolve the shared header's and footer's relative paths (images/, css/, js/) under /a/ and
+# lose the logo and every script. These pages get root paths throughout.
+ROOTED_PAGES = ('404.html',)
+
+
+def rooted(html):
+    html = re.sub(r'((?:src|href|poster)=")(?=(?:images|css|js)/)', r'\1/', html)
+    return re.sub(r'srcset="[^"]*"', lambda m: re.sub(r'(srcset="|,\s*)(?=(?:images|css|js)/)', r'\1/', m.group(0)), html)
 
 
 def page_modules():

@@ -1,8 +1,8 @@
 """404: off the trail, and the ways back.
 
-Netlify serves this page at whatever path was missed, so the parts this module writes use
-root paths (/css, /images). The shared header and footer still use relative paths; on a missed
-path one folder deep (/a/b) their logo and scripts miss. Reported to the Forge, not fixed here."""
+Netlify serves this page at whatever path was missed, so every path on it is a root path
+(/css, /images, /js): this module writes its own that way, and the builder roots the shared
+header and footer for 404.html (ROOTED_PAGES in build_v2.py)."""
 import re
 
 import build_v2 as B
