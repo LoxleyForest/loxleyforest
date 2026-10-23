@@ -221,6 +221,10 @@ async function main() {
     const { ctx, page } = await open({ name: 'exit-desk' });
     await page.goto(BASE + '/elopements');
     await page.clock.runFor(6000);
+    await page.mouse.move(640, 400);
+    await page.mouse.move(-10, 400, { steps: 4 });
+    await page.clock.runFor(1500);
+    check(!(await card(page)), 'desktop: pointer leaving by the side does not count');
     await page.mouse.move(640, 300);
     await page.mouse.move(640, 120, { steps: 4 });
     await page.mouse.move(640, -10, { steps: 4 });

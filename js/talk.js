@@ -146,7 +146,8 @@
 
   if (cfg.exit && window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches) {
     document.addEventListener('mouseout', function (e) {
-      if (done || e.relatedTarget || e.clientY > 0 || secs < EXIT_ARM || wroteInForm) return;
+      // Out of the page (no element to go to) through its top 10 px: the tab bar or the address bar.
+      if (done || e.relatedTarget || e.clientY > 10 || secs < EXIT_ARM || wroteInForm) return;
       due = true;
       maybeShow();
     });
@@ -270,6 +271,7 @@
     place();
     // The next frame, so the rise plays (none under reduced motion).
     requestAnimationFrame(function () { if (card) card.classList.add('is-in'); });
+    card.addEventListener('transitionend', queuePlace);   // measured again where the rise ends
     // Focus moves to the card (nothing is being typed: maybeShow waited for that) and goes back on close.
     try { card.focus({ preventScroll: true }); } catch (e) { card.focus(); }
     document.addEventListener('keydown', onKey);
