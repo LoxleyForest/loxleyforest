@@ -42,7 +42,7 @@ PACKAGES = [
      None),
     ('Ultimate', 'The Elevation', '$10,500', 'Everything in The Crossing, plus', [
         'Private chef dinner',
-        'Photography planned through the whole day',
+        "Photography timed to the day's best moments",
         'Floral ceremony arch',
         'Premium welcome hamper',
         'Celebration brunch',
