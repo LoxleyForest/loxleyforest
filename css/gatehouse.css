@@ -254,6 +254,21 @@
 .gh-agreement li { margin-bottom: 0.45em; }
 .gh-agreement strong { color: var(--forest-deep); }
 .gh-agreement--missing { max-height: none; padding: 14px 18px; color: #8c3a2a; }
+/* On the pay step (2026-10-24): the agreement's own short version first, the full text one tap
+   away. Opened, the full text keeps its own scrolling box above. */
+.gh-agreement-short {
+  margin-top: 12px; padding: 14px 18px; background: var(--cream); border: 1px solid var(--parchment);
+  font-size: 16px; line-height: 1.6; color: var(--bark); text-wrap: pretty;
+}
+.gh-agreement-short p { margin: 0 0 0.8em; }
+.gh-agreement-short p:last-child { margin-bottom: 0; }
+.gh-agreement-full { margin-top: 6px; }
+.gh-agreement-full > summary {
+  padding: 10px 0; cursor: pointer; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 19px;
+  color: var(--forest-deep); text-decoration: underline; text-underline-offset: 3px;
+}
+.gh-agreement-full > summary:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.gh-agreement-full > .gh-agreement { margin-top: 2px; }
 
 /* Read by screen readers, not shown: the full date inside each day button,
    so the button's name contains its visible text (WCAG 2.5.3). */

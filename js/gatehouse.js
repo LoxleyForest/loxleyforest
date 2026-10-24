@@ -15,8 +15,10 @@
           data-fallback="#id"></div>      (shown when the API cannot be reached)
 
    /book is the checkout: pick nights, see the all-in total, choose how
-   to pay; then details, guests and dogs, the booking summary, the stay
-   agreement in full, one tick and a typed name; then Stripe.
+   to pay; then the email first (kept with the dates as a checkout lead),
+   details, guests and dogs, the booking summary, the stay agreement in
+   its own short version with the full text one tap away, one tick and a
+   typed name; then Stripe.
    Dates live in the link (?checkIn=YYYY-MM-DD&checkOut=YYYY-MM-DD), so
    back and refresh keep them. If the API cannot be reached, the
    request-dates form takes over; there is no preview mode.
@@ -193,6 +195,19 @@
   function releaseText(text) {
     var m = String(text || '').match(/^\s*\*\*([^*\n]*\brelease[^*\n]*)\*\*\s*$/im);
     return m ? m[1] : '';
+  }
+  // The agreement's own short version: the text under its "In short" heading, word for word,
+  // shown first on the pay step with the full text one tap away (2026-10-24). Not a word of it
+  // is written here: an agreement with no such heading shows in full, as before.
+  function shortVersion(text) {
+    var out = [], on = false;
+    String(text || '').replace(/<!--[\s\S]*?-->/g, '').replace(/\r\n?/g, '\n').split('\n').some(function (line) {
+      var h = /^#{1,6}\s+(.*)$/.exec(line);
+      if (h) { if (on) return true; on = /^in short$/i.test(h[1].trim()); return false; }
+      if (on) out.push(line);
+      return false;
+    });
+    return out.join('\n').trim();
   }
 
   // ------------------------------------------------------------ calendar
@@ -478,6 +493,24 @@
   }
 
   function call(path, body) { return api(API, path, body); }
+
+  // ---- the checkout lead (2026-10-24): the email, kept with these dates ----
+  // When a guest types a working email at the top of the pay step and moves on, or opens the
+  // pay step with one already typed, our own booking server keeps it with the visit and these
+  // dates, so a guest who leaves is not lost. Never a beacon and never the tag manager: it goes
+  // to book.loxleyforest.com alone, once per dates and address. The server sends nothing from
+  // it. A failure is silent and tried again on the next change: it must never stand in the way.
+  var EMAIL_OK = /^\S+@\S+\.\S+$/;
+  var leadsSent = {};
+  function sendLead(email) {
+    email = String(email || '').trim();
+    if (!API || HANDOFF || !state.quote || !cal || !cal.checkIn || !cal.checkOut || !EMAIL_OK.test(email)) return;
+    var key = [cal.checkIn, cal.checkOut, email.toLowerCase()].join('|');
+    if (leadsSent[key]) return;
+    leadsSent[key] = true;
+    call('/v1/lead', { visit: VISIT, unit: UNIT, email: email, check_in: cal.checkIn, check_out: cal.checkOut,
+      nights: state.quote.quote.nights, total_cents: state.quote.quote.total_cents }).catch(function () { delete leadsSent[key]; });
+  }
 
   // ---------------------------------------------------- the link holds the dates
 
@@ -793,6 +826,7 @@
     writeUrl(!fromUrl);
     if (!fromUrl) step('begin_checkout', { value: state.quote.quote.total_cents / 100, currency: 'USD',
       gh_mode: state.payMode, gh_check_in: cal.checkIn, gh_check_out: cal.checkOut });
+    sendLead(state.form.email);
     render();
     var sec = root.closest('section') || root;
     if (!fromUrl && sec.scrollIntoView) sec.scrollIntoView({ block: 'start' });
@@ -888,9 +922,18 @@
     typed.querySelector('input').addEventListener('focus', function () {
       setTimeout(function () { if (window.innerWidth < 760 && agreeLine.scrollIntoView) agreeLine.scrollIntoView({ block: 'start' }); }, 320);
     });
-    var agreement = ag
-      ? el('div', { 'class': 'gh-agreement', tabindex: '0', role: 'region', 'aria-label': 'The stay agreement, in full' }, [markdown(ag.text)])
-      : el('p', { 'class': 'gh-agreement gh-agreement--missing', role: 'alert', text: 'The stay agreement could not load, so we cannot take a booking on this page just now. Please refresh, or call or text ' + PHONE + '.' });
+    var full = ag ? el('div', { 'class': 'gh-agreement', tabindex: '0', role: 'region', 'aria-label': 'The stay agreement, in full' }, [markdown(ag.text)]) : null;
+    var brief = ag ? shortVersion(ag.text) : '';
+    // On a phone the full text was a long box to scroll before the tick (2026-10-24): the
+    // agreement's own short version first, the whole agreement one tap away, in the page.
+    var agreement = !ag
+      ? el('p', { 'class': 'gh-agreement gh-agreement--missing', role: 'alert', text: 'The stay agreement could not load, so we cannot take a booking on this page just now. Please refresh, or call or text ' + PHONE + '.' })
+      : !brief ? full
+      : el('div', { 'class': 'gh-agreement-both' }, [
+        el('div', { 'class': 'gh-agreement-short', role: 'region', 'aria-label': 'The stay agreement, in short' }, [markdown(brief)]),
+        el('details', { 'class': 'gh-agreement-full' }, [el('summary', { text: 'Read the full agreement' }), full])]);
+    var email = field('email', 'Email', 'email', { auto: 'email', mode: 'email' });
+    email.querySelector('input').addEventListener('change', function (e) { sendLead(e.target.value); });
     var submitBtn = el('button', { type: 'submit', 'class': 'lf-btn gh-cta', disabled: ag ? null : 'disabled',
       text: ctaText(q, mode, true) });
 
@@ -901,8 +944,8 @@
       bookingSummary(q, mode),
       el('fieldset', { 'class': 'gh-fields' }, [
         el('legend', { 'class': 'gh-eyebrow', text: 'Who is coming' }),
+        email,
         el('div', { 'class': 'gh-row' }, [field('first_name', 'First name', 'text', { auto: 'given-name' }), field('last_name', 'Last name', 'text', { auto: 'family-name' })]),
-        field('email', 'Email', 'email', { auto: 'email', mode: 'email' }),
         field('phone', 'Mobile', 'tel', { auto: 'tel', mode: 'tel' }),
         el('div', { 'class': 'gh-row' }, [
           choice('guests', 'Guests, up to 6', [['', 'Choose'], [1, '1 guest'], [2, '2 guests'], [3, '3 guests'], [4, '4 guests'], [5, '5 guests'], [6, '6 guests']]),
@@ -913,7 +956,7 @@
       el('div', { 'class': 'gh-light' }, [heardRow(), listOptIn()]),
       el('section', { 'class': 'gh-terms', 'aria-labelledby': 'gh-terms-h' }, [
         el('h3', { 'class': 'gh-eyebrow', id: 'gh-terms-h', text: 'Your stay agreement' }),
-        el('p', { 'class': 'gh-fine', text: 'Shown in full. It covers payment, changes, cancellations and the risks of the forest.' }),
+        el('p', { 'class': 'gh-fine', text: brief ? "In short, in the agreement's own words. The full text covers payment, changes, cancellations and the risks of the forest." : 'Shown in full. It covers payment, changes, cancellations and the risks of the forest.' }),
         agreement
       ]),
       el('div', { 'class': 'gh-sign' }, [
