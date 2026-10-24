@@ -15,8 +15,10 @@
           data-fallback="#id"></div>      (shown when the API cannot be reached)
 
    /book is the checkout: pick nights, see the all-in total, choose how
-   to pay; then details, guests and dogs, the booking summary, the stay
-   agreement in full, one tick and a typed name; then Stripe.
+   to pay; then the email first (kept with the dates as a checkout lead),
+   details, guests and dogs, the booking summary, the stay agreement in
+   its own short version with the full text one tap away, one tick and a
+   typed name; then Stripe.
    Dates live in the link (?checkIn=YYYY-MM-DD&checkOut=YYYY-MM-DD), so
    back and refresh keep them. If the API cannot be reached, the
    request-dates form takes over; there is no preview mode.
@@ -194,6 +196,19 @@
     var m = String(text || '').match(/^\s*\*\*([^*\n]*\brelease[^*\n]*)\*\*\s*$/im);
     return m ? m[1] : '';
   }
+  // The agreement's own short version: the text under its "In short" heading, word for word,
+  // shown first on the pay step with the full text one tap away (2026-10-24). Not a word of it
+  // is written here: an agreement with no such heading shows in full, as before.
+  function shortVersion(text) {
+    var out = [], on = false;
+    String(text || '').replace(/<!--[\s\S]*?-->/g, '').replace(/\r\n?/g, '\n').split('\n').some(function (line) {
+      var h = /^#{1,6}\s+(.*)$/.exec(line);
+      if (h) { if (on) return true; on = /^in short$/i.test(h[1].trim()); return false; }
+      if (on) out.push(line);
+      return false;
+    });
+    return out.join('\n').trim();
+  }
 
   // ------------------------------------------------------------ calendar
 
@@ -217,8 +232,8 @@
       if (!first) return short(ci) + ' is not open.';
       var n = daysBetween(ci, co);
       if (n < 1) return 'Your check-out day comes after ' + short(ci) + '.';
-      // A single open night between two stays sells alone, whatever the minimum (the engine's gap).
-      if (first.min_stay && n < first.min_stay && !(n === 1 && first.gap)) return 'A stay starting ' + short(ci) + ' is at least ' + nightsWord(first.min_stay) + '.';
+      // A single open night between two stays sells alone (the engine's gap), never under a minimum of three.
+      if (first.min_stay && n < first.min_stay && !(n === 1 && first.gap && first.min_stay <= 2)) return 'A stay starting ' + short(ci) + ' is at least ' + nightsWord(first.min_stay) + '.';
       if (first.max_stay && n > first.max_stay) return 'A stay starting ' + short(ci) + ' is at most ' + nightsWord(first.max_stay) + '.';
       for (var d = ci; d < co; d = addDays(d, 1)) {
         if (!c.nights[d]) return short(d) + ' is already taken. Try nights before it, or other dates.';
@@ -229,6 +244,11 @@
     c.pick = function (day) {
       if (!c.checkIn || c.checkOut || day <= c.checkIn) {
         if (!c.nights[day]) return;
+        // A night nobody may arrive on (the holidays): say so at the tap, not at the price.
+        if (c.nights[day].no_arrival && (!c.checkIn || c.checkOut || day <= c.checkIn)) {
+          c.note = 'No check-in on ' + short(day) + '. Arrive an earlier day and stay through.';
+          opts.onChange(c); return;
+        }
         c.checkIn = day; c.checkOut = null;
         c.note = 'Arriving ' + short(day) + '. Now choose your check-out day.';
       } else {
@@ -398,8 +418,11 @@
   // Keys arrive after # and are lifted out of the address bar by the head script on /book
   // (build_v2.py KEYS_SCRIPT) before Tag Manager loads; they live in window.__ghKeys.
   var KEYS = window.__ghKeys || {};
-  // A guest returning from a Hold my dates link made before it was retired.
-  // No new holds exist; the API simply ignores a hold it no longer has.
+  // A hold's key (the 24-hour date hold, 2026-10-24): from the link in its email (#hold= or
+  // ?hold=, lifted out of the address bar by the head script like every key), or from a hold
+  // made on this page through the talk card (Gatehouse.useHold below). It rides the calendar
+  // call and the checkout request, so the held nights are open to their holder at payment.
+  // The API ignores a hold it no longer has. Never a beacon, never the tag manager.
   var HOLD = KEYS.hold || '';
   // A credit to spend: the manage key of a cancelled stay, from its manage page (/book#credit=).
   var CREDIT = KEYS.credit || '';
@@ -473,6 +496,47 @@
   }
 
   function call(path, body) { return api(API, path, body); }
+
+  // ---- for the talk card's date hold (js/talk.js, 2026-10-24) ----
+  // booking(): the stay whose all-in total is on screen, before checkout begins, in the same
+  // fields the checkout lead sends; null at any other moment. useHold(key): a hold the card
+  // made, kept for this tab (a refresh keeps it, as the head script keeps every key).
+  window.Gatehouse.booking = function () {
+    if (!API || HANDOFF || !cal || state.step !== 'dates' || !state.quote || !cal.checkIn || !cal.checkOut) return null;
+    return { api: API, visit: VISIT, unit: UNIT, check_in: cal.checkIn, check_out: cal.checkOut,
+      nights: state.quote.quote.nights, total_cents: state.quote.quote.total_cents };
+  };
+  window.Gatehouse.useHold = function (key) {
+    key = String(key || '');
+    if (!key) return;
+    HOLD = key;
+    KEYS.hold = key;
+    try {
+      var p = location.pathname.replace(/\.html$/, '').replace(/(.)\/$/, '$1');
+      var st = JSON.parse(sessionStorage.getItem('gh_keys') || '{}') || {};
+      st[p] = st[p] || {};
+      st[p].hold = key;
+      sessionStorage.setItem('gh_keys', JSON.stringify(st));
+    } catch (e) {}
+  };
+
+  // ---- the checkout lead (2026-10-24): the email, kept with these dates ----
+  // When a guest types a working email at the top of the pay step and moves on, or opens the
+  // pay step with one already typed, our own booking server keeps it with the visit and these
+  // dates, so a guest who leaves is not lost. Never a beacon and never the tag manager: it goes
+  // to book.loxleyforest.com alone, once per dates and address. The server sends nothing from
+  // it. A failure is silent and tried again on the next change: it must never stand in the way.
+  var EMAIL_OK = /^\S+@\S+\.\S+$/;
+  var leadsSent = {};
+  function sendLead(email) {
+    email = String(email || '').trim();
+    if (!API || HANDOFF || !state.quote || !cal || !cal.checkIn || !cal.checkOut || !EMAIL_OK.test(email)) return;
+    var key = [cal.checkIn, cal.checkOut, email.toLowerCase()].join('|');
+    if (leadsSent[key]) return;
+    leadsSent[key] = true;
+    call('/v1/lead', { visit: VISIT, unit: UNIT, email: email, check_in: cal.checkIn, check_out: cal.checkOut,
+      nights: state.quote.quote.nights, total_cents: state.quote.quote.total_cents }).catch(function () { delete leadsSent[key]; });
+  }
 
   // ---------------------------------------------------- the link holds the dates
 
@@ -788,6 +852,7 @@
     writeUrl(!fromUrl);
     if (!fromUrl) step('begin_checkout', { value: state.quote.quote.total_cents / 100, currency: 'USD',
       gh_mode: state.payMode, gh_check_in: cal.checkIn, gh_check_out: cal.checkOut });
+    sendLead(state.form.email);
     render();
     var sec = root.closest('section') || root;
     if (!fromUrl && sec.scrollIntoView) sec.scrollIntoView({ block: 'start' });
@@ -883,9 +948,18 @@
     typed.querySelector('input').addEventListener('focus', function () {
       setTimeout(function () { if (window.innerWidth < 760 && agreeLine.scrollIntoView) agreeLine.scrollIntoView({ block: 'start' }); }, 320);
     });
-    var agreement = ag
-      ? el('div', { 'class': 'gh-agreement', tabindex: '0', role: 'region', 'aria-label': 'The stay agreement, in full' }, [markdown(ag.text)])
-      : el('p', { 'class': 'gh-agreement gh-agreement--missing', role: 'alert', text: 'The stay agreement could not load, so we cannot take a booking on this page just now. Please refresh, or call or text ' + PHONE + '.' });
+    var full = ag ? el('div', { 'class': 'gh-agreement', tabindex: '0', role: 'region', 'aria-label': 'The stay agreement, in full' }, [markdown(ag.text)]) : null;
+    var brief = ag ? shortVersion(ag.text) : '';
+    // On a phone the full text was a long box to scroll before the tick (2026-10-24): the
+    // agreement's own short version first, the whole agreement one tap away, in the page.
+    var agreement = !ag
+      ? el('p', { 'class': 'gh-agreement gh-agreement--missing', role: 'alert', text: 'The stay agreement could not load, so we cannot take a booking on this page just now. Please refresh, or call or text ' + PHONE + '.' })
+      : !brief ? full
+      : el('div', { 'class': 'gh-agreement-both' }, [
+        el('div', { 'class': 'gh-agreement-short', role: 'region', 'aria-label': 'The stay agreement, in short' }, [markdown(brief)]),
+        el('details', { 'class': 'gh-agreement-full' }, [el('summary', { text: 'Read the full agreement' }), full])]);
+    var email = field('email', 'Email', 'email', { auto: 'email', mode: 'email' });
+    email.querySelector('input').addEventListener('change', function (e) { sendLead(e.target.value); });
     var submitBtn = el('button', { type: 'submit', 'class': 'lf-btn gh-cta', disabled: ag ? null : 'disabled',
       text: ctaText(q, mode, true) });
 
@@ -896,8 +970,8 @@
       bookingSummary(q, mode),
       el('fieldset', { 'class': 'gh-fields' }, [
         el('legend', { 'class': 'gh-eyebrow', text: 'Who is coming' }),
+        email,
         el('div', { 'class': 'gh-row' }, [field('first_name', 'First name', 'text', { auto: 'given-name' }), field('last_name', 'Last name', 'text', { auto: 'family-name' })]),
-        field('email', 'Email', 'email', { auto: 'email', mode: 'email' }),
         field('phone', 'Mobile', 'tel', { auto: 'tel', mode: 'tel' }),
         el('div', { 'class': 'gh-row' }, [
           choice('guests', 'Guests, up to 6', [['', 'Choose'], [1, '1 guest'], [2, '2 guests'], [3, '3 guests'], [4, '4 guests'], [5, '5 guests'], [6, '6 guests']]),
@@ -908,7 +982,7 @@
       el('div', { 'class': 'gh-light' }, [heardRow(), listOptIn()]),
       el('section', { 'class': 'gh-terms', 'aria-labelledby': 'gh-terms-h' }, [
         el('h3', { 'class': 'gh-eyebrow', id: 'gh-terms-h', text: 'Your stay agreement' }),
-        el('p', { 'class': 'gh-fine', text: 'Shown in full. It covers payment, changes, cancellations and the risks of the forest.' }),
+        el('p', { 'class': 'gh-fine', text: brief ? "In short, in the agreement's own words. The full text covers payment, changes, cancellations and the risks of the forest." : 'Shown in full. It covers payment, changes, cancellations and the risks of the forest.' }),
         agreement
       ]),
       el('div', { 'class': 'gh-sign' }, [

@@ -220,32 +220,38 @@ WALK = f'''    <section class="lf-walk" data-crossing aria-label="The crossing: 
 # FINAL.docx", Testimonials) names exactly these ten as the real ones. First names and towns only,
 # as they have always appeared. Strongest and most specific first. To add one, add a line here
 # with its source; nothing else to touch.
+# The carousel: 14 guests' own words, chosen 2026-10-23 (the staff's grading, Mick's yes by ear).
+# Copied character for character from loxley-rescue docs/reviews/all.md; " ... " marks a trim.
+# scripts/site/check_reviews.py proves every one is verbatim. Never edit a quote by hand.
 REVIEW_LIST = [
-    ("It made our stay feel like we were entering a magical storybook. Campfire already going, homemade pizza dough, "
-     "s'mores kits, champagne for toasting, fresh pastries in the morning... Our entire crew agreed this won't be the "
-     "last stay at Loxley Forest!", 'Kim · Chattanooga, TN'),
-    ("If you are on the fence about this place, don't be. Worth it again and again. We had a rainy weekend here but "
-     "something about hearing the rain hit the treehouse tent while sipping wine has its perks. Hosts were hands down "
-     "the best we've ever had.", 'Preston · Peachtree Corners, GA'),
-    ("I'll start this by saying it is pricey, but well worth the cost. If you love the pictures you will be in awe when "
-     "you arrive. The place is a lot bigger than what you see in the photos. Very secluded, so privacy is not an issue.",
-     'Ti · Atlanta, GA'),
-    ("The only sounds you hear are the birds chirping and the gentle rushing of water below. It feels very private and "
-     "secluded. The perfect adventure to feel like you are camping in the woods, but with a bed and bathroom.",
-     'Kellie · Marietta, GA'),
-    ("This is my second time staying in this magical place in 1 week. I just can't get enough!! Livy and Mick go above "
-     "and beyond to make this an experience you'll never forget!!", 'James · Atlanta, GA'),
-    ("Fresh made pizza dough for the pizza oven, outdoor movie, secluded in a private forest, fresh pastries in the "
-     "morning, the sound of a rippling creek... highly recommend this adventure!", 'Jerome · Cumming, GA'),
-    ("Words cannot do it justice — you need to experience it. I won't spoil the surprises that the hosts offer you, "
-     "but believe me you will be very pleased with their thoughtfulness. They truly go above and beyond.",
-     'Megan · Mobile, AL'),
-    ("It's rare to come across a place and a host so special. I left feeling rested, grateful, and already looking "
-     "forward to coming back. Highly, highly recommend!!", 'Evgeny · Hollywood, FL'),
-    ("We felt like we were in a story book. Fresh pizza dough, tree mail, fresh pastries — Downtown Dahlonega was a "
-     "dream! I guarantee you'll have just as beautiful a stay.", 'Lyndsay · Peachtree City, GA'),
-    ("We opted for the Forest Tableau, Stargazing, and Morning Moments. All the food was very good, a lot of it "
-     "homemade, and abundant! It was worth it and a once in a lifetime experience.", 'Nancy · Mount Pleasant, SC'),
+    ('You park your car and walk through the woods to your destination - an exquisite canopy treehouse nestled up in the trees and accessed by a swinging bridge. ... We highly recommend the breakfast experience cooked by Livy. It was amazing!',
+     'Maynette'),  # G5
+    ('I don’t think I can completely put into words exactly how much my wife and I enjoyed our stay here to celebrate our 10th anniversary. If you are looking for a calm, peaceful getaway, this is the place to go.',
+     'Brandon · Atlanta, GA'),  # A41
+    ("Livy's treats were wonderful and fresh. We had rain during our stay and we loved it. The wind, swaying of the tree house, and sound of drops on the canopy really added to the experience for us.",
+     'Roger'),  # G3
+    ('Super unique and adventurous getaway. ... Even though I’m scared of heights, the treehouse felt very safe and sturdy! The added touches like the movie screen, homemade pizza dough, and breakfast pastries were icing on the cake.',
+     'Ty & Cortney · Cleveland, TN'),  # A92
+    ('The evening calls of the coyotes and the owls ("Who, who, who cooks for you?") felt like enchanting goodnight wishes. ... Loxley Forest is one of those rare places that leaves you with memories rather than just photos, and we\'re very grateful for the experience.',
+     'Cheryl'),  # G6
+    ('My husband and I went with our doggie for our honeymoon, and we really had a magical experience. The harmony of the place made the experience unforgettable. The sounds of the river, the birds, and the psithurism was like being in paradise.',
+     'Claudia · Marietta, GA'),  # A40
+    ('This was easily one of our most memorable stays! This is a custom treehouse personally designed, built, and meticulously cared for by the hosts. Their experience add-ons were amazing--far exceeding expectations! Their food was incredible.',
+     'James · Atlanta, GA'),  # A9
+    ('From the moment we arrived, we loved the uniqueness of staying high up in the trees, surrounded by nature. ... The weather turned out to be much colder than expected; however, the owners were very responsive and made a world of difference!',
+     'Kathryne'),  # G1
+    ('My husband and I enjoyed a much-needed kid-free weekend, and even though it rained almost the entire time, it somehow made the experience even more perfect. ... One of our favorite memories was seeing the bridge lights glowing through the rain at night.',
+     'Ashley · White, GA'),  # A3
+    ('I wanted a quiet place to relax and enjoy the natural surroundings. It was a unique space in the treetops and the hosts made sure I got there safely and had everything I needed. The homemade pizza dough and pastries was a nice touch.',
+     'Alora · Decatur, GA'),  # A31
+    ('It’s beautiful. It’s adventurous. From the twisted tree trunk-lined path to the gorgeous treehouse, you felt like you’ve stepped into a place they write stories about. The bubbling creek below was the sound track to the laid back resting place.',
+     'Amy · Sidney, OH'),  # A116
+    ('The entire structure is more peaceful and beautiful in person than can be captured in photos. ... The bridge is so cool and whimsical. ... It was a great compromise between my husband wanting to camp and myself not wanting to LOL!',
+     'Caela · Savannah, GA'),  # A55
+    ("I wanted to take my boys (3 and 5) on a special camping (glamping) trip and this tree house did not disappoint. ... I can't recommend this stay enough, but if you talk yourself out of it, good. It leaves more room for our next camping trip.",
+     'Warren'),  # A2
+    ("The treehouse is absolutely unreal, but what makes this place truly special is the incredible family behind it. Rain or shine, cold or warm, it's the perfect escape. ... Do yourself a favor and book the stay. It's one you won't forget!",
+     'Chris'),  # G2
 ]
 
 # The average, as Mick gave it (2026-10-21). Shown as the number and five acorns shaded to it.
@@ -277,6 +283,8 @@ def _reviews():
     chev = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>'
     # The controls come before the track in the page: above the cards on phones (clear of the fixed
     # Book button), moved below them from 768 px by CSS order.
+    # Under it, a quiet link to the rest of the five-star reviews (/reviews, pages/reviews.py;
+    # Mick, 2026-10-23). Its words say "more", never "all" (FTC 16 CFR 465.7(b)), and no count.
     return f'''    <section class="lf-sec lf-parch lf-reviews" aria-labelledby="rv-h">
       <div class="lf-wrap">
         <div class="lf-reviews__head">
@@ -295,6 +303,7 @@ def _reviews():
           </div>
           <p class="lf-rv__live" data-rv-live aria-live="polite"></p>
         </div>
+        <p class="lf-reviews__more"><a href="/reviews" class="lf-link">More guest reviews →</a></p>
       </div>
     </section>
 '''

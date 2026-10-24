@@ -9,7 +9,8 @@
 [build]
   # ensure_gtm.py heals the pages; publish.py copies only the site into _site/
   # (working notes, documents and scripts are never published: 2026-10-20).
-  command = "python3 scripts/ensure_gtm.py && python3 scripts/publish.py"
+  # check_forms.py fails the deploy if an inquiry form would not count in Google Ads (2026-10-23).
+  command = "python3 scripts/ensure_gtm.py && python3 scripts/site/check_forms.py && python3 scripts/publish.py"
   publish = "_site"
 
 # The Canopy Club is retired (Mick, 2026-10-13); old links land on the home page.
