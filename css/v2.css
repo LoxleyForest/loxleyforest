@@ -475,7 +475,7 @@ a[href^="tel:"] { white-space: nowrap; }
   background: var(--cream); color: var(--bark); font-family: 'Montserrat', Arial, sans-serif;
   font-size: 16px; /* 16px stops iOS zooming into the field */
 }
-.lf-talk__email::placeholder { color: #6b6357; opacity: 1; }
+.lf-talk__email::placeholder { color: var(--stone); opacity: 1; }
 .lf-talk__email:focus { outline: 2px solid var(--on-dark); outline-offset: 2px; }
 .lf-talk__email[aria-invalid="true"] { outline: 2px solid var(--on-dark); outline-offset: 2px; }
 .lf-btn.lf-talk__go {
@@ -483,7 +483,7 @@ a[href^="tel:"] { white-space: nowrap; }
   background: var(--on-dark); border-color: var(--on-dark); color: var(--forest-deep);
 }
 .lf-btn.lf-talk__go:hover { background: #ffffff; }
-.lf-btn.lf-talk__go:disabled { opacity: 0.6; cursor: default; transform: none; }
+.lf-btn.lf-talk__go[aria-disabled="true"] { opacity: 0.6; cursor: default; transform: none; }
 .lf-talk__done { color: var(--on-dark); }
 .lf-talk__done:focus { outline: none; }
 .lf-talk.has-hold .lf-talk__talk .lf-talk__h { padding-right: 0; font-size: 1.3rem; }

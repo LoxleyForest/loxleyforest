@@ -346,7 +346,8 @@
     var s = stay();
     if (!s) { holdLeaves(); return; }
     holdBusy = true;
-    btn.disabled = true;
+    // Busy, but never disabled: a disabled button drops the focus it holds.
+    btn.setAttribute('aria-disabled', 'true');
     // The fields the checkout lead sends to /v1/lead, and no more.
     post(s.api, '/v1/hold', { visit: s.visit, unit: s.unit, email: email, check_in: s.check_in, check_out: s.check_out,
       nights: s.nights, total_cents: s.total_cents }).then(function (r) {
@@ -355,7 +356,8 @@
       try { if (window.Gatehouse && window.Gatehouse.useHold) window.Gatehouse.useHold(r.hold); } catch (e) {}
       tell('hold_made');
       held(when);
-    }, holdLeaves).then(function () { holdBusy = false; }, function () { holdBusy = false; });
+    }, holdLeaves).then(function () { holdBusy = false; btn.removeAttribute('aria-disabled'); },
+      function () { holdBusy = false; btn.removeAttribute('aria-disabled'); });
   }
 
   // Held: the line and the field give way to the done line, read out where focus was.
