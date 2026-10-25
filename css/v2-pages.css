@@ -376,6 +376,10 @@
 .ga-saved:empty { display: none; }
 .ga-manage .lf-btn:focus-visible, .ga-manage .ga-pick:focus-visible { outline: 2px solid var(--forest-deep); outline-offset: 3px; }
 
+/* The floating Book button stays off the gift's pages: on a phone it sat over the purchase panel's
+   fields (2026-10-25), and every one of these pages carries its own way on. */
+body:has(#ga-buy, #ga-card-page, #ga-manage, #ga-thanks) .book-fab { display: none !important; }
+
 /* Keyboard focus, seen on the light panels too (the site's button ring is linen, for dark ground). */
 .ga-give .lf-btn:focus-visible, .ga-cardpage .lf-btn:focus-visible, .ga-buy .gh-back:focus-visible,
 .ga-pick:focus-visible, .ga-choice:has(input:focus-visible), .ga-buy .gh-optin:has(input:focus-visible) { outline: 2px solid var(--forest-deep); outline-offset: 3px; }

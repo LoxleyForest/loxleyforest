@@ -46,7 +46,7 @@ CARD = {
     'for': 'For',
     'from': 'With love from',
     'giftno': 'Gift no.',
-    'gift': 'Three nights in the treehouse, and the Dawn Table: Livy’s breakfast, carried across the bridge to your door.',
+    'gift': 'Three nights in the treehouse, and the Dawn Table: breakfast carried across the bridge to your door.',
     'nights': ('Good for any three nights, weekends included, January 4 to May 31, 2027, Valentine’s weekend aside. '
                'It never expires; for later dates, we ask only the difference if rates have risen.'),
     'call': 'To choose your dates, call or text Mick at',
@@ -58,7 +58,7 @@ CARD = {
 # Drafted 2026-10-25 by the Foreman from canon/voice.md and the card's ratified words; three
 # lines are the CEO's own (marked). None is ratified yet. No price in any of them. Facts used:
 # the treehouse (canvas peak, sixty feet up, the hundred-foot bridge with small warm lights,
-# Dahlonega), the Dawn Table (Livy makes it, Mick carries it across the bridge), the card's own
+# Dahlonega), the Dawn Table (the house's breakfast, carried across the bridge; never "Livy's breakfast", Mick 2026-10-25), the card's own
 # terms and phone line, and the engine's behaviour (loxley-rescue ceo/golden-arrow, cdb68bc).
 # Lines marked ENGINE are true only once the engine's gift doors are on; LETTER, only once Mick
 # approves the engine's gift_issued letter (a skeleton today, so it cannot send).
@@ -68,7 +68,7 @@ WORDS = {
     'title': 'The Golden Arrow | Loxley Forest',
     'description': 'A gift of three nights in the treehouse at Loxley Forest, and the Dawn Table.',
     'eyebrow': 'A gift from Loxley Forest',
-    'lead': 'Three nights in the treehouse, and the Dawn Table: Livy’s breakfast, carried across the bridge to their door.',
+    'lead': 'Three nights in the treehouse, and the Dawn Table: breakfast carried across the bridge to their door.',
     'to_give': 'Give it',
     'sample_names': 'Sarah & Tom',          # the sample card's names, plainly an example
     'sample_giver': 'Mom & Dad',
@@ -78,7 +78,7 @@ WORDS = {
     'what': [
         'A hand-built treehouse with a canvas peak, sixty feet up in the forest above Dahlonega, Georgia. '
         'The way in is a hundred-foot bridge strung with small warm lights.',
-        'And the Dawn Table. Livy makes breakfast, and Mick carries it across the bridge to their door.',
+        'And the Dawn Table: champagne and fresh-squeezed orange juice first, then a table made from scratch in our kitchen, carried across the bridge to their door.',
     ],
     'when_h': 'When',
     'choose_h': 'Choosing their nights',
