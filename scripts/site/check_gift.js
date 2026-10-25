@@ -18,8 +18,8 @@
    they will be live.
 
    It proves:
-     - /gift: no price in the page's prose; the panel says to call or text Mick while the sales door
-       is off or the engine unreachable; with it on, the checks before anything is sent (the state as
+     - /gift: no price in the page's prose; the panel reads GET /v1/health's gift_sales and says to
+       call or text Mick while it is false, missing, or the engine unreachable; with it on, the checks before anything is sent (the state as
        two letters, the ZIP as five digits), the body sent (the contract's fields only), the all-in
        amount shown only in the purchase step, the payment page reused for the same details, Stripe
        reached by script, a non-Stripe answer refused, the engine's refusal shown as it wrote it;
@@ -31,7 +31,8 @@
        void one, the lookup door off;
      - /book#gift=: the code rides the quote and the checkout; the total panel says "The Golden Arrow
        covers these nights" with what remains due, fully covered and in part; the third night offered
-       as covered; a stay it covers whole goes straight to /booked with no card; the engine's refusal
+       as covered; a stay it covers whole hides the trail marker and goes straight to /booked with
+       no card; the engine's refusal
        for these dates, a code it cannot find, a used gift, a void one and the redeem door off each
        said plainly, at full price;
      - /booked and /manage for a gift stay: the gift's line in the stay, and "To move or change a
@@ -186,7 +187,7 @@ async function main() {
       window.__printed = 0;
       window.print = () => { window.__printed++; };
     });
-    const rec = { beacons: [], lookups: [], probes: 0, sales: [], quotes: [], checkouts: [], stays: [], outside: [], stripePages: [] };
+    const rec = { beacons: [], health: 0, lookups: [], probes: 0, sales: [], quotes: [], checkouts: [], stays: [], outside: [], stripePages: [] };
     await ctx.route('**/*', (route) => {
       const req = route.request(), u = new URL(req.url());
       if (u.hostname === '127.0.0.1') return route.continue();
@@ -197,6 +198,14 @@ async function main() {
         if (engine.down && /^\/v1\/gift/.test(u.pathname)) return route.abort('failed');
         let b = {}; try { b = JSON.parse(req.postData() || '{}'); } catch (e) {}
         if (u.pathname === '/v1/funnel') { rec.beacons.push(req.postData() || ''); return json({ ok: true }); }
+        // The engine says whether it may sell (main 002ab6c): gift_sales on /v1/health.
+        if (u.pathname === '/v1/health') {
+          rec.health++;
+          if (engine.down) return route.abort('failed');
+          const h = { ok: true, units: 1, agreement: true, stripe: true, live: false, payments: true };
+          if (engine.sales !== 'nofield') h.gift_sales = engine.sales === 'on';
+          return json(h);
+        }
         if (u.pathname === '/v1/gift') {
           if (engine.lookup === 'off') return json({ error: 'not found' }, 404);
           const code = u.searchParams.get('code') || '';
@@ -206,7 +215,7 @@ async function main() {
         }
         if (u.pathname === '/v1/gift/checkout') {
           if (engine.sales === 'off') return json({ error: 'not found' }, 404);
-          if (!b.product) { rec.probes++; return json({ error: 'That is not a gift we sell.' }, 400); }
+          if (!b.product) { rec.probes++; return json({ error: 'A product is needed.' }, 400); }
           rec.sales.push(b);
           if (engine.sale503) return json({ error: PAY_503 }, 503);
           return json({ url: engine.checkoutUrl, total_cents: 254580 });
@@ -296,7 +305,14 @@ async function main() {
     const { ctx, page } = await open('gift-down', { down: true });
     await page.goto(BASE + '/gift');
     await page.waitForSelector('#ga-buy .ga-panel', { timeout: 10000 });
-    check(await text(page, '#ga-buy .ga-panel__lead') === PANEL.down, 'the engine unreachable: nothing was charged, Mick\'s number');
+    check(await text(page, '#ga-buy .ga-panel__lead') === PANEL.down, 'the engine unreachable: closed, nothing was charged, Mick\'s number');
+    await ctx.close();
+  }
+  {
+    const { ctx, page, rec } = await open('gift-nofield', { sales: 'nofield' });
+    await page.goto(BASE + '/gift');
+    await page.waitForSelector('#ga-buy .ga-panel', { timeout: 10000 });
+    check(await text(page, '#ga-buy .ga-panel__lead') === PANEL.off && rec.sales.length === 0, '/v1/health without gift_sales: closed, the call-or-text panel');
     await ctx.close();
   }
 
@@ -305,7 +321,7 @@ async function main() {
     const { ctx, page, rec } = await open('gift-on', {});
     await page.goto(BASE + '/gift');
     await page.waitForSelector('#ga-buy form', { timeout: 10000 });
-    check(rec.probes === 1, 'the door asked once, with an empty order the engine refuses');
+    check(rec.health === 1 && rec.probes === 0, 'whether to sell read once from GET /v1/health (gift_sales), no empty order sent');
     const ids = await page.evaluate(() => [...document.querySelectorAll('#ga-buy input')].map((i) => i.id));
     check(['ga-for', 'ga-from', 'ga-email', 'ga-mail'].every((i) => ids.indexOf(i) >= 0), 'their names, the giver\'s name, the email and "mail me the printed card"');
     check(await page.evaluate(() => document.querySelector('.ga-ship').hidden), 'the address stays hidden until the box is ticked');
@@ -539,6 +555,7 @@ async function main() {
     check(has(ls, 'Total | $1,933.17 | ' + BOOK_W.book_name + ' | -$1,933.17 | ' + BOOK_W.book_left + ' | $0.00'), 'the total panel: Total, The Golden Arrow, Left to pay (' + ls + ')');
     check(await text(page, '#gatehouse .gh-gift') === BOOK_W.book_covers + ' The Dawn Table comes with it. ' + BOOK_W.book_nothing_left, '"The Golden Arrow covers these nights." the Dawn Table, nothing left');
     check(await label(page, '#gatehouse button.gh-cta') === BOOK_W.book_cta && !(await page.$('#gatehouse .gh-options')), 'one button, "' + BOOK_W.book_cta + '", no way-to-pay choice');
+    check(!(await page.$('#gatehouse .gh-marker')) && await page.evaluate(() => window.Gatehouse.booking().marker_done === true), 'covered in full: no trail marker, and the talk card asks for none');
     check(await overflow(page) <= 0, 'no sideways scroll at 390');
     await page.locator('#gatehouse .gh-summary').scrollIntoViewIfNeeded();
     await shot(page, 'book-gift-covered.png', false);
@@ -571,6 +588,7 @@ async function main() {
     check(await text(page, '#gatehouse .gh-gift') === 'The Golden Arrow covers three of these nights. The Dawn Table comes with it.', '"The Golden Arrow covers three of these nights."');
     const opts = await page.evaluate(() => [...document.querySelectorAll('#gatehouse .gh-option')].map((n) => n.innerText.replace(/\s+/g, ' ').trim()));
     check(opts.some((o) => has(o, 'Pay in full: $644.39 after ' + BOOK_W.book_name)) && opts.some((o) => has(o, 'After ' + BOOK_W.book_name + ', the rest')), 'the ways to pay are for what is left');
+    check(!!(await page.$('#gatehouse .gh-marker')), 'something left to pay: the trail marker stays');
     await page.locator('#gatehouse .gh-summary').scrollIntoViewIfNeeded();
     await shot(page, 'book-gift-partial.png', false);
     await page.click('#gatehouse .gh-option:last-of-type input');

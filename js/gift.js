@@ -8,6 +8,7 @@
 
    The engine (book.loxleyforest.com, loxley-rescue ceo/golden-arrow,
    cdb68bc):
+     GET  /v1/health -> {..., gift_sales: true|false}, whether to sell.
      POST /v1/gift/checkout {product, email, giver_name,
           recipient_names, ship_to?{name, line1, line2, city, state
           (two letters), zip (five digits)}} -> {url, total_cents};
@@ -219,15 +220,11 @@
       try { head.focus({ preventScroll: true }); } catch (e) {}
     }
 
-    // Is the sales door open? Asked once, with an empty order: an open door refuses it with a
-    // sentence (400, nothing kept; the engine's product check comes before anything is written);
-    // a closed one answers {"error": "not found"}. It costs one of the engine's 20 writes per
-    // address per ten minutes; a door flag on /v1/health would let this be a read.
-    G.api(API, '/v1/gift/checkout', {}, 8000).then(function () { show([form()]); }, function (e) {
-      if (routeOff(e)) return off('off');
-      if (unreachable(e)) return off('down');
-      show([form()]);
-    });
+    // Is the sales door open? GET /v1/health says so, gift_sales true or false (the engine, main
+    // 002ab6c). A missing field or a failed read counts as closed: the call-or-text panel.
+    G.api(API, '/v1/health', null, 8000).then(function (h) {
+      if (h && h.gift_sales === true) show([form()]); else off('off');
+    }, function (e) { off(unreachable(e) ? 'down' : 'off'); });
   }
 
   // =================================================== /gift/card: the card
