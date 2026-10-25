@@ -527,7 +527,8 @@
     return { api: API, visit: VISIT, unit: UNIT, check_in: cal.checkIn, check_out: cal.checkOut,
       nights: state.quote.quote.nights, total_cents: state.quote.quote.total_cents,
       guests: /^[1-6]$/.test(String(state.form.guests || '')) ? +state.form.guests : 0,
-      marker_done: !!state.marker.done, held: !!HOLD };
+      // A stay the Golden Arrow covers in full has nothing to hold: the card asks for no marker either.
+      marker_done: !!state.marker.done || (giftUsed(state.quote) > 0 && !leftToPay(state.quote)), held: !!HOLD };
   };
   window.Gatehouse.leaveMarker = function (email) {
     if (!window.Gatehouse.booking()) return Promise.reject(new Error('no stay on screen'));
@@ -896,7 +897,8 @@
       // The gift's own line above already says nothing is left; a credit says it here.
       allCovered ? (giftUsed(q) ? null : el('p', { 'class': 'gh-lead gh-covered', text: 'Your credit covers this stay. Nothing to pay, today or later.' })) : options,
       el('button', { type: 'button', 'class': 'lf-btn gh-cta', onclick: function () { toCheckout(false); }, text: ctaText(q, state.payMode) }),
-      markerBlock(q)
+      // A stay the gift covers in full has nothing to hold: no trail marker.
+      giftUsed(q) && !leftToPay(q) ? null : markerBlock(q)
     ]));
   }
 
