@@ -97,7 +97,7 @@ const wordsOf = (n) => JSON.parse(/<script type="application\/json" id="lf-gift-
 const PANEL = wordsOf('gift.html'), CARD_W = wordsOf('gift-card.html'), BOOK_W = wordsOf('book.html'), STAY_W = wordsOf('manage.html');
 // The card's ratified words (loxley-rescue docs/gift-card/golden-arrow/card.html).
 const RATIFIED = 'Good for any three nights, weekends included, January 4 to May 31, 2027, Valentine’s weekend aside. It never expires; for later dates, we ask only the difference if rates have risen.';
-const RATIFIED_GIFT = 'Three nights in the treehouse, and the Dawn Table: Livy’s breakfast, carried across the bridge to your door.';
+const RATIFIED_GIFT = 'Three nights in the treehouse, and the Dawn Table: breakfast carried across the bridge to your door.';
 // The engine's own sentences (gatehouse/gifts.py, gatehouse/api.py at cdb68bc).
 const NOT_FOUND = 'We could not find that gift. Please check the code on the card.';
 const BLACKOUT = 'The Golden Arrow covers any nights but Valentine\'s weekend, the nights of February 12, 13 and 14, 2027. Please choose other dates.';
@@ -109,7 +109,7 @@ const NIGHTS = { nights: Array.from({ length: 150 }, (_, i) => ({ night: day(i +
 const CI = day(20), CO2 = day(22), CO3 = day(23), CO4 = day(24), CI_NO = day(40), CO_NO = day(43);
 const NIGHT_ALL_IN = 64439;
 const CODE = 'LF-TEST-7Q2X', CODE_USED = 'LF-TEST-USED', CODE_VOID = 'LF-TEST-VOID', CODE_LONG = 'LF-TEST-LONG', CODE_BOOKED = 'LF-TEST-BOOK';
-const NOTE = 'For the anniversary you keep talking about.\nGo slow, sleep late, and let Livy feed you.';
+const NOTE = 'For the anniversary you keep talking about.\nGo slow, sleep late, and stay in the trees.';
 const RESEND = 'If that email bought a Golden Arrow, its card is on its way.';
 const DELIVERY_OFF = 'Emailing the card on a day you pick is not open yet.';
 const NO_DELIVERY = 'We could not find that gift\'s delivery.';
