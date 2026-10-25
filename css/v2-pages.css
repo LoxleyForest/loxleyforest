@@ -212,6 +212,122 @@
   .gl-tile figcaption { font-size: 1.15rem; }
 }
 
+/* ---- gift ---- */
+.ga-head { padding-top: calc(var(--hdr-h) + clamp(44px, 8vw, 96px)); padding-bottom: clamp(48px, 7vw, 80px); }
+.ga-head .lf-h1 { font-size: clamp(2.6rem, 9vw, 4.8rem); font-style: italic; }
+.ga-head .lf-lead { margin-left: auto; margin-right: auto; }
+
+.ga-show { padding-top: clamp(48px, 7vw, 88px); padding-bottom: clamp(48px, 7vw, 88px); }
+/* width 100%: the stage has size containment, so a shrink-to-fit parent (a grid item with auto
+   margins) would give it no width at all */
+.ga-figure { margin: 0 auto; width: 100%; max-width: 540px; }
+.ga-figure[hidden] { display: none; }
+.ga-figure figcaption { margin-top: 18px; text-align: center; font-size: 1.1rem; line-height: 1.5; color: var(--stone); }
+
+.ga-what .lf-h2 { color: var(--forest-deep); }
+.ga-what__body { margin-top: 22px; }
+.ga-cols { display: grid; gap: 44px; }
+@media (min-width: 900px) { .ga-cols { grid-template-columns: 1.1fr 1fr; gap: 72px; align-items: start; } }
+.ga-terms { margin: 0; display: grid; gap: 0; }
+.ga-terms > div { padding: 20px 0; border-top: 1px solid rgba(44, 34, 25, 0.14); }
+.ga-terms > div:last-child { border-bottom: 1px solid rgba(44, 34, 25, 0.14); }
+.ga-terms dt { font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 0.6875rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--stone); }
+.ga-terms dd { margin: 8px 0 0; font-size: 1.2rem; line-height: 1.6; color: var(--bark); }
+
+.ga-give { scroll-margin-top: var(--hdr-h); padding-top: clamp(56px, 8vw, 96px); padding-bottom: clamp(56px, 8vw, 96px); }
+.ga-give__in { max-width: 34rem; margin: 0 auto; }
+.ga-give .lf-h3 { color: var(--forest-deep); font-size: clamp(1.75rem, 5vw, 2.3rem); text-align: center; }
+.ga-give__lead { margin: 10px 0 28px; text-align: center; font-size: 1.2rem; line-height: 1.5; color: var(--stone); }
+.ga-buy { background: var(--linen); border: 1px solid rgba(44, 34, 25, 0.12); padding: clamp(20px, 5vw, 32px); }
+.ga-wait { margin: 0; font-size: 1.15rem; color: var(--stone); text-align: center; }
+.ga-form { display: grid; gap: 16px; }
+.ga-form .gh-field small { display: block; margin-top: 6px; font-size: 15px; line-height: 1.4; color: var(--stone); }
+.ga-ship { border: 0; margin: 0; padding: 0; display: grid; gap: 14px; min-width: 0; }
+.ga-ship[hidden] { display: none; }
+.ga-ship legend { padding: 0; margin-bottom: 4px; }
+.ga-row2 { display: grid; gap: 14px; grid-template-columns: 1fr 1fr; }
+.ga-panel__lead { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.35rem; line-height: 1.45; color: var(--forest-deep); }
+.ga-calls { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+.ga-calls .lf-btn { padding: 0 12px; }
+.ga-panel__lead a, .ga-note a { color: var(--forest-deep); text-decoration: underline; text-underline-offset: 3px; }
+.ga-tel { white-space: nowrap; font-variant-numeric: lining-nums; }
+.ga-confirm { display: grid; gap: 14px; }
+.ga-confirm .gh-eyebrow { margin: 0; }
+.ga-confirm__names { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.45rem; line-height: 1.3; color: var(--forest-deep); overflow-wrap: anywhere; }
+.ga-confirm__names span { display: block; font-style: italic; font-size: 1.2rem; color: var(--stone); }
+.ga-confirm .gh-lines { margin: 4px 0 0; }
+.ga-confirm .gh-fine { margin: 0; overflow-wrap: anywhere; }
+.ga-confirm .lf-btn { width: 100%; }
+.ga-terms-line { margin: 22px 0 0; text-align: center; font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 1.15rem; line-height: 1.5; color: var(--stone); }
+
+.ga-cardpage { padding-top: clamp(40px, 7vw, 80px); }
+.ga-cardpage__in { max-width: 540px; margin: 0 auto; display: grid; gap: 22px; }
+.ga-note { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.35rem; line-height: 1.45; color: var(--forest-deep); text-align: center; }
+.ga-note[hidden], .ga-actions[hidden], .ga-keep[hidden], .ga-share[hidden], .ga-actions [hidden] { display: none; }
+.ga-actions { display: grid; gap: 12px; }
+.ga-actions .lf-btn { width: 100%; }
+.ga-keep { margin: 0; text-align: center; font-size: 1.05rem; line-height: 1.5; color: var(--stone); }
+.ga-share { display: grid; gap: 8px; }
+.ga-share p { margin: 0; font-size: 1.05rem; color: var(--stone); text-align: center; }
+.ga-share input { width: 100%; min-height: 48px; padding: 10px 12px; border: 1px solid var(--driftwood); background: var(--cream); font: 15px/1.3 'Montserrat', sans-serif; color: var(--bark); }
+
+/* ---- the card ---- */
+.ga-stage { container-type: inline-size; width: 100%; max-width: 540px; margin: 0 auto; }
+.ga-card {
+  --u: calc(100cqw / 1080); position: relative; overflow: hidden; width: 100%; aspect-ratio: 1080 / 1350;
+  background: var(--linen); color: var(--bark); box-shadow: 0 18px 50px rgba(20, 36, 24, 0.18);
+  -webkit-font-smoothing: antialiased; font-kerning: normal; -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.ga-card p { margin: 0; }
+.ga-card img { display: block; max-width: none; }
+.ga-card .ga-frame { position: absolute; inset: calc(34 * var(--u)); border: max(1px, calc(1.5 * var(--u))) solid rgba(196, 162, 101, 0.75); pointer-events: none; }
+.ga-card .ga-top { position: absolute; left: calc(96 * var(--u)); right: calc(96 * var(--u)); top: calc(116 * var(--u)); display: flex; gap: calc(64 * var(--u)); align-items: stretch; }
+.ga-card .ga-plate { --w: calc(384 * var(--u)); position: relative; flex: none; width: var(--w); align-self: flex-start; }
+.ga-card .ga-arch { width: var(--w); height: calc(var(--w) * 10 / 7); border-radius: calc(var(--w) / 2) calc(var(--w) / 2) 0 0; overflow: hidden; background: var(--ink); }
+.ga-card .ga-arch img { width: 100%; height: 100%; object-fit: cover; object-position: 35% 50%; }
+.ga-card .ga-plate::before {
+  content: ''; position: absolute; left: calc(var(--w) * -0.034); top: calc(var(--w) * -0.034);
+  width: calc(var(--w) * 1.068); height: calc(var(--w) * 10 / 7 + var(--w) * 0.068);
+  border: max(0.75px, calc(1.6 * var(--u))) solid var(--gold); border-radius: calc(var(--w) * 0.534) calc(var(--w) * 0.534) 0 0; pointer-events: none;
+}
+.ga-card .ga-finial { position: absolute; z-index: 1; left: 50%; top: calc(var(--w) * -0.106); width: calc(var(--w) * 0.058); height: calc(var(--w) * 0.0725); transform: translateX(-50%); color: var(--gold); }
+.ga-card .ga-finial svg { display: block; width: 100%; height: 100%; }
+.ga-card .ga-side { flex: 1; min-width: 0; display: flex; flex-direction: column; padding-top: calc(14 * var(--u)); }
+.ga-card .ga-wordmark { width: 100%; height: auto; margin-left: -1%; }
+.ga-card .ga-title { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 400; font-size: calc(68 * var(--u)); line-height: 1.04; color: var(--forest-deep); margin-top: calc(44 * var(--u)); text-wrap: balance; letter-spacing: -0.005em; }
+.ga-card .ga-subtitle { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 500; font-size: calc(36 * var(--u)); line-height: 1.2; color: var(--stone); margin-top: calc(14 * var(--u)); }
+.ga-card .ga-sig { margin-top: auto; padding-top: calc(24 * var(--u)); }
+.ga-card .ga-rule { width: calc(72 * var(--u)); height: 0; border-top: max(1px, calc(1.5 * var(--u))) solid var(--gold); margin: 0 0 calc(34 * var(--u)); }
+.ga-card .ga-for { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: calc(47 * var(--u)); line-height: 1.1; color: var(--forest-deep); overflow-wrap: break-word; text-wrap: balance; }
+.ga-card .ga-from { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 500; font-size: calc(37 * var(--u)); line-height: 1.2; color: var(--stone); margin-top: calc(12 * var(--u)); overflow-wrap: break-word; text-wrap: balance; }
+.ga-card .ga-label { font-family: 'Montserrat', sans-serif; font-weight: 500; text-transform: uppercase; letter-spacing: 0.28em; }
+.ga-card .ga-giftno { font-size: calc(22 * var(--u)); letter-spacing: 0.24em; color: var(--gold-text); margin-top: calc(34 * var(--u)); }
+.ga-card .ga-giftno[hidden] { display: none; }
+.ga-card.is-long .ga-for { font-size: calc(39 * var(--u)); }
+.ga-card.is-long .ga-from { font-size: calc(31 * var(--u)); }
+.ga-card.is-longer .ga-for { font-size: calc(32 * var(--u)); }
+.ga-card.is-longer .ga-from { font-size: calc(26 * var(--u)); }
+.ga-card .ga-body { position: absolute; left: calc(96 * var(--u)); right: calc(96 * var(--u)); top: calc(728 * var(--u)); }
+.ga-card .ga-arrow { display: block; width: calc(440 * var(--u)); height: calc(23.5 * var(--u)); margin: 0; color: var(--gold); opacity: 1; }
+.ga-card .ga-gift { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: calc(43 * var(--u)); line-height: 1.32; color: var(--bark); margin-top: calc(38 * var(--u)); text-wrap: pretty; }
+.ga-card .ga-nights { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 500; font-size: calc(35 * var(--u)); line-height: 1.3; color: var(--stone); margin-top: calc(28 * var(--u)); }
+.ga-card .ga-call { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: calc(37 * var(--u)); line-height: 1.3; color: var(--bark); margin-top: calc(20 * var(--u)); }
+.ga-card .ga-tel { font-variant-numeric: lining-nums; white-space: nowrap; }
+.ga-card .ga-foot { position: absolute; left: calc(96 * var(--u)); right: calc(96 * var(--u)); bottom: calc(84 * var(--u)); text-align: center; border-top: max(1px, calc(1 * var(--u))) solid rgba(196, 162, 101, 0.6); padding-top: calc(26 * var(--u)); }
+.ga-card .ga-foot .ga-label { font-size: calc(23 * var(--u)); letter-spacing: 0.24em; color: var(--stone); }
+
+/* Printed from the browser: the card alone, centred, 7 inches wide (fits Letter and A4). */
+@media print {
+  body:has(#ga-card-page) .lf-hdr, body:has(#ga-card-page) .lf-menu, body:has(#ga-card-page) .lf-foot,
+  body:has(#ga-card-page) .book-fab, body:has(#ga-card-page) .skip-link, body:has(#ga-card-page) .ga-head,
+  body:has(#ga-card-page) .ga-wait, body:has(#ga-card-page) .ga-note, body:has(#ga-card-page) .ga-actions,
+  body:has(#ga-card-page) .ga-share, body:has(#ga-card-page) .ga-keep { display: none !important; }
+  body:has(#ga-card-page), body:has(#ga-card-page) main, .ga-cardpage { background: #fff !important; }
+  .ga-cardpage { padding: 0 !important; }
+  .ga-cardpage__in, .ga-cardpage .ga-figure, .ga-cardpage .ga-stage { max-width: 7in; }
+  .ga-cardpage .ga-card { box-shadow: none; break-inside: avoid; }
+}
+
 /* ---- guest ---- */
 .lf-stay-top { padding-top: calc(var(--hdr-h) + clamp(40px, 7vw, 80px)); padding-bottom: clamp(36px, 6vw, 64px); }
 .lf-stay-top .lf-h1 { font-size: clamp(2.6rem, 9vw, 4.4rem); }

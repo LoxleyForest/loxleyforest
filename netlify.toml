@@ -47,3 +47,10 @@
   from = "/cancellation.html"
   to = "/book"
   status = 301
+
+# The Golden Arrow's card (2026-10-25): /gift/card#code=... is gift-card.html, kept at the root
+# so ensure_gtm.py and the root checks see it. A rewrite (200), so the address stays /gift/card.
+[[redirects]]
+  from = "/gift/card"
+  to = "/gift-card.html"
+  status = 200
