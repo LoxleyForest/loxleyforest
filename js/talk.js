@@ -10,30 +10,32 @@
    (scripts/site/build_v2.py, TALK_PAGES). Styles at the end of
    css/v2.css. When it shows, in seconds the page is in view:
      /book         10 s after the all-in total is on screen with
-                   checkout not begun, and then it offers to hold the
-                   nights for 24 hours for an email (2026-10-24); or
-                   90 s with no touch, key, scroll or pointer on the
-                   payment step (?step=pay), without the hold (the
-                   email is taken first there); it never covers a
-                   checkout button or the bottom of Stripe's form
+                   checkout not begun, and then it asks for an email
+                   (2026-10-24, CARD_EMAIL below); or 90 s with no
+                   touch, key, scroll or pointer on the payment step
+                   (?step=pay), without the email (it is taken first
+                   there); it never covers a checkout button or the
+                   bottom of Stripe's form
      /elopements   45 s on the page, or 60% of the way down; on a
      /proposals    desktop, also when the pointer leaves the top of
                    the window (after the first 5 s). Stands down
                    once the visitor starts writing in the page's form.
 
-   The hold posts the email, with the stay on screen, to our own
-   booking server alone (POST /v1/hold, the fields the checkout
-   lead sends). Any refusal, a missing route or no network: the
-   hold part leaves quietly and the call line stays. A hold made
-   here rides this tab's checkout (Gatehouse.useHold).
+   The email on /book goes to our own booking server alone, through
+   js/gatehouse.js. 'marker' (on): a trail marker, the very call the
+   page's own "Not ready? Leave a trail marker." makes (POST
+   /v1/marker), nothing held; Mick cut Hold my dates on 2026-10-19.
+   'hold' (off): the nights held 24 hours (POST /v1/hold), built for
+   the day he reverses that. Any refusal, a missing route or no
+   network: the email part leaves quietly and the call line stays.
 
    It tells our own booking server card_shown and card_click, and
-   on /book hold_shown and hold_made, through the page beacon
-   (window.lfFunnel, js/funnel.js): the visit's random id (the
-   engine needs it), the step and the page's path. Nothing else,
-   nothing about the person. Until the engine knows these steps
-   it refuses them, and the beacon never looks at the answer, so
-   the refusal is silent.
+   on /book marker_shown and marker_card (or hold_shown and
+   hold_made), through the page beacon (window.lfFunnel,
+   js/funnel.js): the visit's random id (the engine needs it), the
+   step and the page's path. Nothing else, nothing about the
+   person. Until the engine knows these steps it refuses them, and
+   the beacon never looks at the answer, so the refusal is silent.
    ============================================================ */
 (function () {
   'use strict';
@@ -59,13 +61,27 @@
     phone: 'Call or text Mick at',
     call: 'Book a 30-minute call',
     close: 'Close',
-    // The date hold on /book (2026-10-24): above the words above, which stay as they are.
+    // The email on /book (2026-10-24), above the words above, which stay as they are.
+    email: 'Your email',   // the field's label and placeholder: the trail marker's own label
+    // CARD_EMAIL 'marker' (on). Done: the trail marker's own line, from js/gatehouse.js.
+    markerHeading: 'Want a day to think it over?',   // awaiting Mick
+    markerLine: "Leave your email and we'll send you these dates and the all-in price, with a link straight back to them.",   // awaiting Mick
+    markerButton: 'Leave a trail marker',   // awaiting Mick
+    // CARD_EMAIL 'hold' (off).
     holdHeading: 'Want a day to think it over?',   // awaiting Mick
     holdLine: "Leave your email and we'll hold these nights for you for 24 hours. No card, no charge.",   // awaiting Mick
-    holdEmail: 'Your email',   // awaiting Mick (the field's label and placeholder; the trail marker's words)
     holdButton: 'Hold my nights',   // awaiting Mick
     holdDone: 'Held until {when}. The link to book them is in your email.'   // awaiting Mick; {when} like "Sunday 8:10 PM", Eastern
   };
+
+  // What the card's email does on /book. 'marker' (the default): a trail marker, nothing held.
+  // 'hold': the 24-hour date hold; off while Mick's 2026-10-19 ruling stands ("Hold my dates is
+  // cut") and until the engine's /v1/hold takes holds. Anything else: 'marker'.
+  var CARD_EMAIL = 'marker';
+  var MODE = CARD_EMAIL === 'hold' ? 'hold' : 'marker';
+  var ASK = MODE === 'hold'
+    ? { heading: WORDS.holdHeading, line: WORDS.holdLine, button: WORDS.holdButton, shown: 'hold_shown', made: 'hold_made' }
+    : { heading: WORDS.markerHeading, line: WORDS.markerLine, button: WORDS.markerButton, shown: 'marker_shown', made: 'marker_card' };
   // The site's number, as on every page and in js/gatehouse.js.
   var PHONE = '706-502-4823';
   var TEL = 'tel:+17065024823';
@@ -76,7 +92,7 @@
     '/elopements': { after: 45, depth: 0.6, exit: true },
     '/proposals': { after: 45, depth: 0.6, exit: true }
   };
-  var HOLD_WAIT = 10;      // s with the all-in total on screen and checkout not begun (Mick, 2026-10-24)
+  var TOTAL_WAIT = 10;     // s with the all-in total on screen and checkout not begun (Mick, 2026-10-24)
   var PAY_IDLE = 90;       // s idle on the payment step
   var EXIT_ARM = 5;        // s on the page before exit intent counts
   var KEY_QUIET = 2000;    // ms since the last key before "not typing"
@@ -102,6 +118,12 @@
   function stay() {
     try { var g = window.Gatehouse; return g && g.booking ? g.booking() : null; } catch (e) { return null; }
   }
+  // Whether the card asks for an email for this stay: not when one was already left for it.
+  function asks(s) {
+    if (!s || !s.api) return false;
+    var g = window.Gatehouse;
+    return MODE === 'hold' ? !s.held : !s.marker_done && !!(g && g.leaveMarker);
+  }
   function totalShown() {
     var t = document.querySelector('#gatehouse .gh-summary dd.gh-total');
     return !!(t && t.getClientRects().length);
@@ -125,7 +147,7 @@
     if (tag === 'TEXTAREA' || tag === 'SELECT' || tag === 'IFRAME' || a.isContentEditable) return true;
     return tag === 'INPUT' && TEXTY.test(a.type || 'text');
   }
-  var lastKey = 0, idle = 0, secs = 0, due = false, holdDue = false, done = false, wroteInForm = false;
+  var lastKey = 0, idle = 0, secs = 0, due = false, totalDue = false, done = false, wroteInForm = false;
   function typing() { return inField() || Date.now() - lastKey < KEY_QUIET; }
   function menuOpen() { return document.documentElement.classList.contains('lf-menu-open'); }
 
@@ -155,8 +177,8 @@
     if (window.scrollY > 0 && h && (window.scrollY + window.innerHeight) / h >= cfg.depth) due = true;
   }
 
-  // The hold's wait counts only the seconds the total is on screen, and is read afresh each
-  // second: once checkout begins (or the dates change) it no longer stands.
+  // The wait counts only the seconds the total is on screen, and is read afresh each second:
+  // once checkout begins (or the dates change) it no longer stands.
   var totalFor = 0;
   function tick() {
     if (done) return;
@@ -165,14 +187,14 @@
     if (cfg.book) {
       var s = bookState();
       totalFor = s === 'dates' && totalShown() && stay() ? totalFor + 1 : 0;
-      holdDue = totalFor >= HOLD_WAIT;
+      totalDue = totalFor >= TOTAL_WAIT;
       if (s === 'pay' && idle >= PAY_IDLE) due = true;
     } else {
       if (wroteInForm) { stop(); return; }
       if (cfg.after && secs >= cfg.after) due = true;
       if (cfg.depth) checkDepth();
     }
-    if (due || holdDue) maybeShow();
+    if (due || totalDue) maybeShow();
   }
   var timer = setInterval(tick, 1000);
   function stop() { done = true; clearInterval(timer); }
@@ -191,7 +213,8 @@
     if (seen()) { stop(); return; }
     if (typing() || menuOpen() || document.visibilityState !== 'visible') return;   // wait for the next second
     stop();
-    show(holdDue && bookState() === 'dates' ? stay() : null);
+    var s = totalDue && bookState() === 'dates' ? stay() : null;
+    show(asks(s));
   }
 
   // ---- the card
@@ -199,7 +222,7 @@
 
   function link(href) { return /^https:\/\/[^\s"'<>]+$/i.test(href) ? href : ''; }
 
-  function build(withHold) {
+  function build(withAsk) {
     var c = document.createElement('aside');
     c.className = 'lf-talk';
     c.id = 'lf-talk';
@@ -255,33 +278,33 @@
     }
 
     c.appendChild(x);
-    if (withHold) {
-      c.appendChild(buildHold());
-      c.classList.add('has-hold');
-      c.setAttribute('aria-labelledby', 'lf-talk-hh');
-      c.setAttribute('aria-describedby', 'lf-talk-hp');
+    if (withAsk) {
+      c.appendChild(buildAsk());
+      c.classList.add('has-ask');
+      c.setAttribute('aria-labelledby', 'lf-talk-ah');
+      c.setAttribute('aria-describedby', 'lf-talk-ap');
     }
     c.appendChild(talk);
     return c;
   }
 
-  // ---- the date hold (/book only, 2026-10-24): one email field and one button, above the call line
+  // ---- the email (/book only, 2026-10-24): one field and one button, above the call line
   var EMAIL_OK = /^\S+@\S+\.\S+$/;
-  var holdBox = null, holdBusy = false;
+  var askBox = null, askBusy = false;
 
-  function buildHold() {
+  function buildAsk() {
     var w = document.createElement('div');
-    w.className = 'lf-talk__hold';
+    w.className = 'lf-talk__ask';
 
     var h = document.createElement('h2');
     h.className = 'lf-talk__h';
-    h.id = 'lf-talk-hh';
-    h.textContent = WORDS.holdHeading;
+    h.id = 'lf-talk-ah';
+    h.textContent = ASK.heading;
 
     var p = document.createElement('p');
     p.className = 'lf-talk__p';
-    p.id = 'lf-talk-hp';
-    p.textContent = WORDS.holdLine;
+    p.id = 'lf-talk-ap';
+    p.textContent = ASK.line;
 
     var f = document.createElement('form');
     f.className = 'lf-talk__form';
@@ -289,7 +312,7 @@
     var l = document.createElement('label');
     l.className = 'lf-talk__sr';
     l.htmlFor = 'lf-talk-email';
-    l.textContent = WORDS.holdEmail;
+    l.textContent = WORDS.email;
     var i = document.createElement('input');
     i.id = 'lf-talk-email';
     i.className = 'lf-talk__email';
@@ -300,26 +323,26 @@
     i.setAttribute('autocapitalize', 'off');
     i.spellcheck = false;
     i.required = true;
-    i.placeholder = WORDS.holdEmail;
+    i.placeholder = WORDS.email;
     i.addEventListener('input', function () { i.removeAttribute('aria-invalid'); });
     var b = document.createElement('button');
     b.type = 'submit';
     b.className = 'lf-btn lf-talk__go';
-    b.textContent = WORDS.holdButton;
+    b.textContent = ASK.button;
     f.appendChild(l);
     f.appendChild(i);
     f.appendChild(b);
-    f.addEventListener('submit', function (e) { e.preventDefault(); hold(i, b); });
+    f.addEventListener('submit', function (e) { e.preventDefault(); send(i, b); });
 
     w.appendChild(h);
     w.appendChild(p);
     w.appendChild(f);
-    holdBox = w;
+    askBox = w;
     return w;
   }
 
-  // "Sunday 8:10 PM": held_until in Eastern time, put together from its parts so no locale's
-  // spacing rides along. '' when it cannot be read.
+  // 'hold' only. "Sunday 8:10 PM": held_until in Eastern time, put together from its parts so
+  // no locale's spacing rides along. '' when it cannot be read.
   function eastern(t) {
     var d = new Date(t || '');
     if (!t || isNaN(d)) return '';
@@ -332,58 +355,64 @@
     } catch (e) { return ''; }
   }
 
-  function post(api, path, body) {
+  // 'marker': the page's own trail marker call (Gatehouse.leaveMarker), resolving to its done line.
+  // 'hold': POST /v1/hold in the engine's shape, resolving to the done line with the time.
+  function ask(s, email) {
     var g = window.Gatehouse;
-    if (g && g.api) return g.api(api, path, body);
-    return fetch(api + path, { method: 'POST', cache: 'no-store', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
-      .then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.json(); });
+    if (MODE !== 'hold') return g.leaveMarker(email);
+    var hb = { visit: s.visit, unit: s.unit, check_in: s.check_in, check_out: s.check_out, email: email };
+    if (s.guests) hb.guests = s.guests;
+    return g.api(s.api, '/v1/hold', hb).then(function (r) {
+      var when = r && r.held === true && typeof r.hold === 'string' && r.hold ? eastern(r.held_until) : '';
+      if (!when) throw new Error('not held');
+      if (g.useHold) g.useHold(r.hold);
+      return WORDS.holdDone.replace('{when}', when);
+    });
   }
 
-  function hold(input, btn) {
-    if (holdBusy || !holdBox) return;
+  function send(input, btn) {
+    if (askBusy || !askBox) return;
     var email = String(input.value || '').trim();
     if (!EMAIL_OK.test(email)) { input.setAttribute('aria-invalid', 'true'); input.focus(); return; }
     var s = stay();
-    if (!s) { holdLeaves(); return; }
-    holdBusy = true;
+    if (!asks(s)) { askLeaves(); return; }
+    askBusy = true;
     // Busy, but never disabled: a disabled button drops the focus it holds.
     btn.setAttribute('aria-disabled', 'true');
-    // The fields the checkout lead sends to /v1/lead, and no more.
-    post(s.api, '/v1/hold', { visit: s.visit, unit: s.unit, email: email, check_in: s.check_in, check_out: s.check_out,
-      nights: s.nights, total_cents: s.total_cents }).then(function (r) {
-      var when = r && r.held === true && typeof r.hold === 'string' && r.hold ? eastern(r.held_until) : '';
-      if (!when) { holdLeaves(); return; }
-      try { if (window.Gatehouse && window.Gatehouse.useHold) window.Gatehouse.useHold(r.hold); } catch (e) {}
-      tell('hold_made');
-      held(when);
-    }, holdLeaves).then(function () { holdBusy = false; btn.removeAttribute('aria-disabled'); },
-      function () { holdBusy = false; btn.removeAttribute('aria-disabled'); });
+    var sent;
+    try { sent = ask(s, email); } catch (e) { sent = Promise.reject(e); }
+    function free() { askBusy = false; btn.removeAttribute('aria-disabled'); }
+    Promise.resolve(sent).then(function (line) {
+      if (!line) { askLeaves(); return; }
+      tell(ASK.made);
+      asked(line);
+    }, askLeaves).then(free, free);
   }
 
-  // Held: the line and the field give way to the done line, read out where focus was.
-  function held(when) {
-    if (!card || !holdBox || !card.contains(holdBox)) return;
-    var had = holdBox.contains(document.activeElement);
+  // Done: the line and the field give way to the done line, read out where focus was.
+  function asked(line) {
+    if (!card || !askBox || !card.contains(askBox)) return;
+    var had = askBox.contains(document.activeElement);
     var d = document.createElement('p');
     d.className = 'lf-talk__p lf-talk__done';
-    d.id = 'lf-talk-hd';
+    d.id = 'lf-talk-ad';
     d.setAttribute('role', 'status');
     d.tabIndex = -1;
-    d.textContent = WORDS.holdDone.replace('{when}', when);
-    holdBox.querySelectorAll('.lf-talk__p, .lf-talk__form').forEach(function (n) { n.remove(); });
-    holdBox.appendChild(d);
-    card.setAttribute('aria-describedby', 'lf-talk-hd');
+    d.textContent = line;
+    askBox.querySelectorAll('.lf-talk__p, .lf-talk__form').forEach(function (n) { n.remove(); });
+    askBox.appendChild(d);
+    card.setAttribute('aria-describedby', 'lf-talk-ad');
     if (had) { try { d.focus({ preventScroll: true }); } catch (e) { d.focus(); } }
     queuePlace();
   }
 
-  // Refused, not there, or no network: the hold part leaves without a word and the call line stays.
-  function holdLeaves() {
-    if (!card || !holdBox || !card.contains(holdBox)) { holdBox = null; return; }
-    var had = holdBox.contains(document.activeElement);
-    holdBox.remove();
-    holdBox = null;
-    card.classList.remove('has-hold');
+  // Refused, not there, or no network: the email part leaves without a word and the call line stays.
+  function askLeaves() {
+    if (!card || !askBox || !card.contains(askBox)) { askBox = null; return; }
+    var had = askBox.contains(document.activeElement);
+    askBox.remove();
+    askBox = null;
+    card.classList.remove('has-ask');
     card.setAttribute('aria-labelledby', 'lf-talk-h');
     card.setAttribute('aria-describedby', 'lf-talk-p');
     if (had) { try { card.focus({ preventScroll: true }); } catch (e) { card.focus(); } }
@@ -436,11 +465,11 @@
     if (card && !card.contains(e.target)) dismiss();
   }
 
-  function show(withHold) {
+  function show(withAsk) {
     if (card) return;
     markSeen();
     back = document.activeElement;
-    card = build(!!(withHold && withHold.api));
+    card = build(!!withAsk);
     body.appendChild(card);
     place();
     // The next frame, so the rise plays (none under reduced motion).
@@ -454,7 +483,7 @@
     window.addEventListener('resize', queuePlace);
     card.addEventListener('focusout', queuePlace);   // out of the card's field: measured again
     tell('card_shown');
-    if (holdBox) tell('hold_shown');
+    if (askBox) tell(ASK.shown);
   }
 
   function dismiss() {

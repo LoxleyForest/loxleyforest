@@ -7,10 +7,14 @@
 
    Nothing leaves this machine: the booking API (book.loxleyforest.com) is answered here with
    made-up nights and a made-up quote, the beacon is recorded and refused for card_* and hold_*
-   as the engine does today ("unknown step"), POST /v1/hold is answered as each check needs
-   (held, refused, missing, unreachable) and recorded, as is POST /v1/checkout (then refused),
-   and every other outside request gets an empty answer. Google Fonts load, so text measures as
-   it does live. Time runs on Playwright's clock. The email typed is made up (example.test). */
+   as the engine does today ("unknown step"), POST /v1/marker and POST /v1/hold are answered as
+   each check needs (taken, refused, missing, unreachable) and recorded, as is POST /v1/checkout
+   (then refused), and every other outside request gets an empty answer. Google Fonts load, so
+   text measures as it does live. Time runs on Playwright's clock. The email typed is made up
+   (example.test).
+
+   The card's email on /book runs in the mode js/talk.js ships with (CARD_EMAIL 'marker'); the
+   'hold' checks serve the same file with CARD_EMAIL set to 'hold', and say so. */
 'use strict';
 const http = require('http');
 const fs = require('fs');
@@ -57,8 +61,10 @@ const AGREEMENT = { version: 'check', text: '# The stay agreement\n\nA made-up a
 const HELD_UNTIL = '2026-11-02T01:10:00Z';
 const HELD_LINE = 'Held until Sunday 8:10 PM. The link to book them is in your email.';
 const TEST_EMAIL = 'guest@example.test';
-// The fields js/gatehouse.js sends to /v1/lead (sendLead), which the hold must match exactly.
-const LEAD_FIELDS = 'check_in,check_out,email,nights,total_cents,unit,visit';
+// The engine's hold (loxley-rescue, 2026-10-24): POST /v1/hold {visit, unit, check_in, check_out,
+// guests, email}; guests only once chosen, and on the dates step they are not.
+const HOLD_FIELDS = 'check_in,check_out,email,unit,visit';
+const MARKER_START = 'Your trail marker is on its way. Check your inbox for ', MARKER_END = ' and the link straight back to them.';
 
 let failures = 0, passes = 0;
 function check(ok, what) { if (ok) { passes++; console.log('  ok   ' + what); } else { failures++; console.log('  FAIL ' + what); } }
@@ -77,7 +83,7 @@ async function main() {
     const ctx = await browser.newContext(phone
       ? { viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: opts.reduced ? 'reduce' : 'no-preference' }
       : { viewport: { width: 1280, height: 800 }, reducedMotion: opts.reduced ? 'reduce' : 'no-preference' });
-    const beacons = [], holds = [], checkouts = [], avail = [];
+    const beacons = [], holds = [], markers = [], checkouts = [], avail = [], quotes = [];
     if (opts.cardSeen) await ctx.addInitScript(() => { try { sessionStorage.setItem('lf_talk', 'shown'); } catch (e) {} });
     await ctx.route('**/*', async (route) => {
       const u = new URL(route.request().url());
@@ -91,8 +97,10 @@ async function main() {
         if (u.pathname === '/js/talk.js') {
           // The real file carries Mick's booking links; most checks run with none, the
           // call-link check with a stand-in, so both shapes of the card are proven.
-          const src = talkSrc.replace("var href = link(CALL_LINKS[PATH] || '');", "var href = link('" + (opts.callLink || '') + "');");
+          let src = talkSrc.replace("var href = link(CALL_LINKS[PATH] || '');", "var href = link('" + (opts.callLink || '') + "');");
           if (src === talkSrc) throw new Error('check_talk: the call-link line in js/talk.js moved');
+          if (!src.includes("var CARD_EMAIL = 'marker';")) throw new Error("check_talk: js/talk.js no longer ships CARD_EMAIL = 'marker'");
+          if (opts.mode === 'hold') src = src.replace("var CARD_EMAIL = 'marker';", "var CARD_EMAIL = 'hold';");
           return route.fulfill({ contentType: 'text/javascript', body: src });
         }
         return route.continue();
@@ -103,10 +111,18 @@ async function main() {
         if (u.pathname === '/v1/funnel') {
           let b = {}; try { b = JSON.parse(route.request().postData() || '{}'); } catch (e) {}
           beacons.push(b);
-          return /^(card|hold)_/.test(b.step) && !opts.engineLanded ? json({ error: 'unknown step' }, 400) : json({ ok: true });
+          return /^(card|hold|marker)_/.test(b.step) && !opts.engineLanded ? json({ error: 'unknown step' }, 400) : json({ ok: true });
         }
         if (u.pathname === '/v1/availability') { avail.push(u.search); return json(NIGHTS); }
-        if (u.pathname === '/v1/quote') { if (opts.quoteGate) await opts.quoteGate; return json(QUOTE); }
+        if (u.pathname === '/v1/quote') { quotes.push(u.search); if (opts.quoteGate) await opts.quoteGate; return json(QUOTE); }
+        if (u.pathname === '/v1/marker' && route.request().method() === 'POST') {
+          let b = {}; try { b = JSON.parse(route.request().postData() || '{}'); } catch (e) {}
+          markers.push(b);
+          const m = opts.marker || 'ok';
+          if (m === 'ok') return json({ ok: true, check_in: b.check_in, check_out: b.check_out, total_cents: 98765 });
+          if (m === 'net') return route.abort('failed');
+          return json({ error: 'refused in this check' }, m);
+        }
         if (u.pathname === '/v1/hold' && route.request().method() === 'POST') {
           let b = {}; try { b = JSON.parse(route.request().postData() || '{}'); } catch (e) {}
           holds.push(b);
@@ -138,12 +154,12 @@ async function main() {
       if (m.type() !== 'error') return;
       const from = (m.location() && m.location().url) || '';
       if (/^https:\/\/book\.loxleyforest\.com\/v1\/funnel$/.test(from) && /status of 400/.test(m.text())) refusals.push(opts.name);
-      else if (/^https:\/\/book\.loxleyforest\.com\/v1\/(hold|checkout)$/.test(from) && /Failed to load resource/.test(m.text())) mockedLines.push(opts.name);
+      else if (/^https:\/\/book\.loxleyforest\.com\/v1\/(hold|marker|checkout)$/.test(from) && /Failed to load resource/.test(m.text())) mockedLines.push(opts.name);
       else consoleErrors.push(opts.name + ': ' + m.text() + (from ? ' (' + from + ')' : ''));
     });
     page.on('pageerror', (e) => consoleErrors.push(opts.name + ': ' + e.message));
     await page.clock.install();
-    return { ctx, page, beacons, holds, checkouts, avail };
+    return { ctx, page, beacons, holds, markers, checkouts, avail, quotes };
   }
 
   const card = (page) => page.$('#lf-talk');
@@ -185,10 +201,10 @@ async function main() {
         close: c.querySelector('.lf-talk__x').getAttribute('aria-label'), focused: document.activeElement === c,
         tel: c.querySelector('a[href^="tel:"]').getAttribute('href'), phoneText: c.querySelector('.lf-talk__phone').textContent,
         callBtn: !!c.querySelector('.lf-talk__call'), r: c.getBoundingClientRect().toJSON(),
-        hold: !!c.querySelector('.lf-talk__hold, input, form') };
+        hold: !!c.querySelector('.lf-talk__ask, input, form') };
     });
     check(a11y.role === 'dialog' && a11y.label && a11y.desc && a11y.close === 'Close', 'dialog role, heading label, description, labelled close button');
-    check(!a11y.hold && a11y.label === 'Rather talk it through?', '/elopements: the card as before, no hold, no field');
+    check(!a11y.hold && a11y.label === 'Rather talk it through?', '/elopements: the card as before, no email, no field');
     check(a11y.focused, 'focus moved to the card');
     check(a11y.tel === 'tel:+17065024823' && /Call or text Mick at 706-502-4823/.test(a11y.phoneText), 'phone line carries the site number');
     check(!a11y.callBtn, 'no call button while the link is empty');
@@ -313,7 +329,7 @@ async function main() {
     check(!(await card(page)), 'no card at 8.5 s with the total on screen');
     await page.clock.runFor(2500); await settle(page);
     check(await shown(page), 'card shown 10 s after the total, checkout not begun');
-    check(!!(await page.$('#lf-talk .lf-talk__hold #lf-talk-email')), 'it carries the hold: one email field');
+    check(!!(await page.$('#lf-talk .lf-talk__ask #lf-talk-email')), 'it asks for an email (marker mode): one field');
     check(await until(() => beacons.some((x) => x.step === 'card_shown' && x.path === '/book')), 'card_shown beacon with /book');
     check((await overflow(page)) <= 0, 'no horizontal overflow at 390');
     check(!(await overlapsAny(page, '#gatehouse .gh-cta')), 'card is clear of the checkout button');
@@ -374,7 +390,7 @@ async function main() {
     await page.waitForSelector('#gatehouse .gh-form');
     await page.clock.runFor(92000); await settle(page);
     check(await shown(page), 'phone: card shown after 90 s idle on the payment step');
-    check(!(await page.$('#lf-talk .lf-talk__hold, #lf-talk input')), 'phone: the pay step card has no hold (the email is taken first there)');
+    check(!(await page.$('#lf-talk .lf-talk__ask, #lf-talk input')), 'phone: the pay step card asks no email (it is taken first there)');
     check(!(await overlapsAny(page, '#gatehouse button[type="submit"], #gatehouse .gh-cta')), 'phone: card is clear of the pay button');
     check((await overflow(page)) <= 0, 'phone: no horizontal overflow');
     await shot(page, 'phone-book-pay.png');
@@ -438,12 +454,17 @@ async function main() {
     await ctx.close();
   }
 
-  // 11. The date hold on /book (2026-10-24).
+  // 11. The email on /book (2026-10-24): marker mode, as js/talk.js ships; then hold mode.
   const TALK_ONLY = 'Rather talk it through?' + 'Mick built the treehouse with his family. Ask him anything. No pressure.' + 'Call or text Mick at 706-502-4823';
   const cardText = (page) => page.evaluate(() => { const c = document.getElementById('lf-talk'); return c ? c.textContent.replace(/\s+/g, ' ').replace(/\s*(?=Mick built|Call or text)/g, '').trim() : ''; });
-  async function holdCard(page, url) {
+  async function askCard(page, url) {
     await bookReady(page, url || `/book?checkIn=${CI}&checkOut=${CO}`);
     await page.clock.runFor(11000); await settle(page);
+  }
+  async function tapAsk(page) {
+    await page.tap('#lf-talk-email');
+    await page.keyboard.type(TEST_EMAIL);
+    await page.tap('#lf-talk .lf-talk__go');
   }
   async function fillCheckout(page) {
     await page.click('#gatehouse .gh-cta');
@@ -458,11 +479,42 @@ async function main() {
     await page.fill('#gh-typed_name', 'Test Guest');
     await page.click('#gatehouse .gh-form button[type="submit"]');
   }
+  async function cardLook(page) {
+    return page.evaluate(() => {
+      const c = document.getElementById('lf-talk'), ab = c.querySelector('.lf-talk__ask'), tk = c.querySelector('.lf-talk__talk');
+      const i = c.querySelector('#lf-talk-email'), lab = c.querySelector('label[for="lf-talk-email"]'), b = c.querySelector('.lf-talk__go');
+      return { label: document.getElementById(c.getAttribute('aria-labelledby')).textContent, desc: document.getElementById(c.getAttribute('aria-describedby')).textContent,
+        h: ab.querySelector('h2').textContent, p: ab.querySelector('p').textContent, type: i.type, auto: i.autocomplete, lab: lab && lab.textContent, btn: b.textContent,
+        fields: c.querySelectorAll('input').length, buttons: c.querySelectorAll('form button').length,
+        order: !!(ab.compareDocumentPosition(tk) & Node.DOCUMENT_POSITION_FOLLOWING), talk: tk.textContent,
+        font: parseFloat(getComputedStyle(i).fontSize), r: c.getBoundingClientRect().toJSON(), bg: getComputedStyle(b).backgroundColor,
+        bh: b.getBoundingClientRect().height, ih: i.getBoundingClientRect().height };
+    });
+  }
+  async function refusedOnly(page, what, sentOk, beacons, made) {
+    await page.waitForSelector('#lf-talk .lf-talk__ask', { state: 'detached', timeout: 5000 }).catch(() => {});
+    const after = await page.evaluate(() => { const c = document.getElementById('lf-talk');
+      return c ? { label: document.getElementById(c.getAttribute('aria-labelledby')).textContent, alert: !!c.querySelector('[role="alert"], .gh-error'), inCard: c.contains(document.activeElement), shown: c.classList.contains('is-in') } : null; });
+    const text = await cardText(page);
+    check(sentOk && !!after && after.shown && text === TALK_ONLY && !after.alert && after.label === 'Rather talk it through?' && after.inCard && !beacons.some((x) => x.step === made),
+      what + ': the email part leaves, only the call line stays, no error, focus kept in the card');
+  }
+  async function clearOfPay(page, tag) {
+    for (const at of [110, 420, 160]) {
+      await page.evaluate((at) => { const b = document.querySelector('#gatehouse .gh-cta'); const r = b.getBoundingClientRect(); window.scrollBy({ top: r.bottom - (innerHeight - at), behavior: 'instant' }); }, at);
+      await page.clock.runFor(100); await page.waitForTimeout(120);
+      const clear = await page.evaluate(() => getComputedStyle(document.getElementById('lf-talk')).visibility === 'hidden') || !(await overlapsAny(page, '#gatehouse .gh-cta'));
+      check(clear, `${tag}: pay button ${at} px above the foot of the screen, the card is clear of it`);
+      if (at === 110) await shot(page, 'phone-book-' + tag + '-cta-low.png');
+    }
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+    await page.clock.runFor(100); await page.waitForTimeout(120);
+  }
 
-  console.log('/book, the hold: not before the total exists');
+  console.log('/book, the email (marker mode): not before the total exists');
   {
     let release; const gate = new Promise((r) => { release = r; });
-    const { ctx, page } = await open({ name: 'hold-late-total', phone: true, quoteGate: gate });
+    const { ctx, page } = await open({ name: 'ask-late-total', phone: true, quoteGate: gate });
     await page.goto(BASE + `/book?checkIn=${CI}&checkOut=${CO}`);
     await page.waitForSelector('#gatehouse .gh-pulse');
     await page.clock.runFor(12000);
@@ -472,126 +524,101 @@ async function main() {
     await page.clock.runFor(8500);
     check(!(await card(page)), 'total on screen 8.5 s: no card yet');
     await page.clock.runFor(2500); await settle(page);
-    check(await shown(page) && !!(await page.$('#lf-talk #lf-talk-email')), 'total on screen 10 s: the card with the hold');
+    check(await shown(page) && !!(await page.$('#lf-talk #lf-talk-email')), 'total on screen 10 s: the card, asking for an email');
     await ctx.close();
   }
 
-  console.log('/book, the hold: shown at 390, and held');
+  // What the page's own "Leave a trail marker" sends, to hold the card's call against.
+  let pageMarker = null;
   {
-    const { ctx, page, beacons, holds, checkouts, avail } = await open({ name: 'hold-ok', phone: true, hold: 'ok' });
-    await holdCard(page);
-    const look = await page.evaluate(() => {
-      const c = document.getElementById('lf-talk'), hb = c.querySelector('.lf-talk__hold'), tk = c.querySelector('.lf-talk__talk');
-      const i = c.querySelector('#lf-talk-email'), lab = c.querySelector('label[for="lf-talk-email"]'), b = c.querySelector('.lf-talk__go');
-      return { label: document.getElementById(c.getAttribute('aria-labelledby')).textContent, desc: document.getElementById(c.getAttribute('aria-describedby')).textContent,
-        h: hb.querySelector('h2').textContent, p: hb.querySelector('p').textContent, type: i.type, auto: i.autocomplete, lab: lab && lab.textContent, btn: b.textContent,
-        fields: c.querySelectorAll('input').length, buttons: c.querySelectorAll('form button').length,
-        order: !!(hb.compareDocumentPosition(tk) & Node.DOCUMENT_POSITION_FOLLOWING), talk: tk.textContent,
-        font: parseFloat(getComputedStyle(i).fontSize), r: c.getBoundingClientRect().toJSON(), gold: getComputedStyle(b).backgroundColor };
-    });
-    check(look.h === 'Want a day to think it over?' && look.p === "Leave your email and we'll hold these nights for you for 24 hours. No card, no charge." && look.btn === 'Hold my nights', 'the hold in the drafted words, exactly');
-    check(look.fields === 1 && look.buttons === 1 && look.type === 'email' && look.auto === 'email' && look.lab === 'Your email', 'one email field (labelled) and one button');
-    check(look.order && /Rather talk it through\?/.test(look.talk) && /Call or text Mick at 706-502-4823/.test(look.talk), 'the call line stays below it, its words as they are');
-    check(look.label === 'Want a day to think it over?' && /hold these nights/.test(look.desc), 'the dialog is named by the hold heading');
-    check(look.font >= 16, 'the field is 16 px or more (no zoom on a phone)');
-    check(look.r.left >= 16 && look.r.right <= 374 && look.r.top >= 68, 'card inside the gutters and below the header, ' + Math.round(look.r.height) + ' px tall');
-    check(look.gold !== 'rgb(196, 162, 101)', 'the hold button is not gold (gold is the Book button\'s)');
-    check((await overflow(page)) <= 0, 'no horizontal overflow at 390 with the hold');
-    check(!(await overlapsAny(page, '#gatehouse .gh-cta')), 'hold card clear of the pay button');
-    await until(() => beacons.some((x) => x.step === 'hold_shown'));
-    const hs = beacons.filter((x) => x.step === 'hold_shown');
-    check(hs.length === 1 && hs[0].path === '/book' && Object.keys(hs[0]).sort().join() === 'path,step,visit' && beacons.some((x) => x.step === 'card_shown' && x.path === '/book'), 'hold_shown beacon (with card_shown): visit, step, path only');
-    await shot(page, 'phone-book-hold.png');
-    // The pay button brought low, to the middle and to the top: never under the card.
-    for (const at of [110, 420, 160]) {
-      await page.evaluate((at) => { const b = document.querySelector('#gatehouse .gh-cta'); const r = b.getBoundingClientRect(); window.scrollBy({ top: r.bottom - (innerHeight - at), behavior: 'instant' }); }, at);
-      await page.clock.runFor(100); await page.waitForTimeout(120);
-      const clear = await page.evaluate(() => { const c = document.getElementById('lf-talk'); return getComputedStyle(c).visibility === 'hidden'; }) || !(await overlapsAny(page, '#gatehouse .gh-cta'));
-      check(clear, `pay button ${at} px above the foot of the screen: the hold card is clear of it`);
-      if (at === 110) await shot(page, 'phone-book-hold-cta-low.png');
-    }
-    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
-    await page.clock.runFor(100); await page.waitForTimeout(120);
+    const { ctx, page, markers } = await open({ name: 'marker-block', phone: true, cardSeen: true });
+    await bookReady(page, `/book?checkIn=${CI}&checkOut=${CO}`);
+    await page.click('#gatehouse .gh-marker .gh-link');
+    await page.fill('#gh-marker-email', TEST_EMAIL);
+    await page.click('#gh-marker-form button[type="submit"]');
+    await until(() => markers.length === 1);
+    pageMarker = markers[0] || null;
+    await ctx.close();
+  }
+
+  console.log('/book, the email (marker mode): shown at 390, and left');
+  {
+    const { ctx, page, beacons, holds, markers, checkouts, avail, quotes } = await open({ name: 'marker-ok', phone: true });
+    await askCard(page);
+    const look = await cardLook(page);
+    check(look.h === 'Want a day to think it over?' && look.p === "Leave your email and we'll send you these dates and the all-in price, with a link straight back to them." && look.btn === 'Leave a trail marker', 'marker: the drafted words, exactly');
+    check(look.fields === 1 && look.buttons === 1 && look.type === 'email' && look.auto === 'email' && look.lab === 'Your email', 'marker: one email field (labelled "Your email") and one button');
+    check(look.order && /Rather talk it through\?/.test(look.talk) && /Call or text Mick at 706-502-4823/.test(look.talk), 'marker: the call line stays below it, its words as they are');
+    check(look.label === 'Want a day to think it over?' && /these dates and the all-in price/.test(look.desc), 'marker: the dialog is named by its heading');
+    check(look.font >= 16 && look.ih >= 44 && look.bh >= 44, 'marker: field 16 px type, field and button 44 px or taller');
+    check(look.r.left >= 16 && look.r.right <= 374 && look.r.top >= 68, 'marker: card inside the gutters and below the header, ' + Math.round(look.r.height) + ' px tall');
+    check(look.bg !== 'rgb(196, 162, 101)', "marker: the button is not gold (gold is the Book button's)");
+    check((await overflow(page)) <= 0, 'marker: no horizontal overflow at 390');
+    check(!(await overlapsAny(page, '#gatehouse .gh-cta')), 'marker: card clear of the pay button');
+    await until(() => beacons.some((x) => x.step === 'marker_shown'));
+    const ms = beacons.filter((x) => x.step === 'marker_shown');
+    check(ms.length === 1 && ms[0].path === '/book' && Object.keys(ms[0]).sort().join() === 'path,step,visit' && beacons.some((x) => x.step === 'card_shown' && x.path === '/book'), 'marker_shown beacon (with card_shown): visit, step, path only');
+    await shot(page, 'phone-book-marker.png');
+    await clearOfPay(page, 'marker');
     // Not an email: nothing sent, the field asks again, no words that blame.
     await page.tap('#lf-talk-email');
     await page.keyboard.type('not-an-email');
     await page.tap('#lf-talk .lf-talk__go');
     await page.waitForTimeout(300);
-    check(holds.length === 0 && (await page.evaluate(() => document.activeElement.id === 'lf-talk-email' && document.activeElement.getAttribute('aria-invalid') === 'true'))
-      && !(await page.$('#lf-talk [role="alert"]')), 'not an email: nothing sent, focus stays in the field, no error line');
+    check(markers.length === 0 && (await page.evaluate(() => document.activeElement.id === 'lf-talk-email' && document.activeElement.getAttribute('aria-invalid') === 'true'))
+      && !(await page.$('#lf-talk [role="alert"]')), 'marker: not an email, nothing sent, focus stays in the field, no error line');
     await page.fill('#lf-talk-email', '');
     await page.keyboard.type(TEST_EMAIL);
     await page.tap('#lf-talk .lf-talk__go');
-    check(await until(() => holds.length === 1), 'POST /v1/hold sent once');
-    const b = holds[0] || {};
-    check(Object.keys(b).sort().join() === LEAD_FIELDS, 'the hold sends the checkout lead\'s fields and nothing new: ' + Object.keys(b).sort().join());
-    check(b.email === TEST_EMAIL && b.check_in === CI && b.check_out === CO && b.nights === 2 && b.total_cents === 98765 && b.unit === 'loxley-forest-canopy-treehouse-dahlonega' && b.visit && b.visit === (beacons[0] || {}).visit, 'its values: the email, the dates, nights, the all-in total, the unit, this visit');
+    check(await until(() => markers.length === 1), 'marker: POST /v1/marker sent once');
+    check(!!pageMarker && JSON.stringify(markers[0]) === JSON.stringify(pageMarker), 'marker: the very body the page\'s own trail marker sends: ' + JSON.stringify(markers[0]));
     await page.waitForSelector('#lf-talk .lf-talk__done', { timeout: 5000 }).catch(() => {});
-    const done = await page.evaluate(() => { const c = document.getElementById('lf-talk'); const d = c && c.querySelector('.lf-talk__done');
-      return d ? { text: d.textContent, role: d.getAttribute('role'), field: !!c.querySelector('input'), focus: document.activeElement === d, talk: !!c.querySelector('.lf-talk__phone a[href^="tel:"]') } : null; });
-    check(!!done && done.text === HELD_LINE, 'held: "' + (done && done.text) + '"');
-    check(!!done && done.role === 'status' && done.focus && !done.field && done.talk, 'the done line is read out where focus was; the field is gone; the call line stays');
-    check(await until(() => beacons.some((x) => x.step === 'hold_made')) && Object.keys(beacons.find((x) => x.step === 'hold_made')).sort().join() === 'path,step,visit', 'hold_made beacon: visit, step, path only');
+    const done = await page.evaluate(() => { const c = document.getElementById('lf-talk'); const d = c && c.querySelector('.lf-talk__done'); const pg = document.querySelector('#gatehouse .gh-marker__done');
+      return d ? { text: d.textContent, page: pg && pg.textContent, role: d.getAttribute('role'), field: !!c.querySelector('input'), focus: document.activeElement === d, talk: !!c.querySelector('.lf-talk__phone a[href^="tel:"]') } : null; });
+    check(!!done && done.text.startsWith(MARKER_START) && done.text.endsWith(MARKER_END) && done.text === done.page, 'marker done: the trail marker\'s own line, as the page shows it: "' + (done && done.text) + '"');
+    check(!!done && done.role === 'status' && done.focus && !done.field && done.talk, 'marker done: read out where focus was; the field is gone; the call line stays');
+    check(await until(() => beacons.some((x) => x.step === 'marker_card')) && Object.keys(beacons.find((x) => x.step === 'marker_card')).sort().join() === 'path,step,visit', 'marker_card beacon: visit, step, path only');
     const dl = await page.evaluate(() => JSON.stringify(window.dataLayer || []));
-    check(!JSON.stringify(beacons).includes(TEST_EMAIL) && !dl.includes(TEST_EMAIL) && !JSON.stringify(beacons).includes('tok-held-1') && !dl.includes('tok-held-1'), 'the email and the hold key are in no beacon and no tag-manager entry');
-    await shot(page, 'phone-book-held.png');
-    // The hold rides this tab's checkout.
+    check(!JSON.stringify(beacons).includes(TEST_EMAIL) && !dl.includes(TEST_EMAIL) && /"gh_marker_left"/.test(dl), 'marker: the email in no beacon and no tag-manager entry; gh_marker_left counted as for the page\'s marker');
+    await shot(page, 'phone-book-marker-done.png');
+    // Nothing of the hold runs in marker mode.
     await page.click('#lf-talk .lf-talk__x');
     await page.clock.runFor(500); await page.waitForTimeout(450);
     await fillCheckout(page);
-    check(await until(() => checkouts.length === 1) && checkouts[0].hold === 'tok-held-1', 'a hold made on the card reaches this tab\'s checkout request (hold: ' + (checkouts[0] || {}).hold + ')');
-    // A refresh keeps it, as it keeps every key.
-    console.log('DEBUG before', await page.evaluate(() => sessionStorage.getItem('gh_keys')), page.url());
-    await page.reload();
-    await page.waitForSelector('#gatehouse .gh-form, #gatehouse .gh-cta');
-    console.log('DEBUG after', avail, await page.evaluate(() => [JSON.stringify(window.__ghKeys), performance.getEntriesByType('navigation')[0].type, sessionStorage.getItem('gh_keys')]));
-    check(avail.length >= 2 && /[?&]hold=tok-held-1(&|$)/.test(avail[avail.length - 1]), 'after a refresh the calendar asks with the hold');
+    check(await until(() => checkouts.length === 1) && holds.length === 0 && !('hold' in checkouts[0]) && !('visit' in checkouts[0])
+      && !avail.concat(quotes).some((q) => /hold=/.test(q)), 'marker: no /v1/hold call, no hold anywhere in the calendar, quote or checkout');
     await ctx.close();
   }
 
-  console.log('/book, the hold refused, missing or unreachable: only the call line stays');
-  for (const kind of [404, 409, 'already_held', 429, 400, 410, 'net', 'not-held']) {
-    const name = 'hold-' + kind;
-    const { ctx, page, beacons, holds } = await open({ name, phone: true, hold: kind === 409 ? 'taken' : kind });
-    await holdCard(page);
-    await page.tap('#lf-talk-email');
-    await page.keyboard.type(TEST_EMAIL);
-    await page.tap('#lf-talk .lf-talk__go');
-    await until(() => holds.length === 1);
-    await page.waitForSelector('#lf-talk .lf-talk__hold', { state: 'detached', timeout: 5000 }).catch(() => {});
-    const after = await page.evaluate(() => { const c = document.getElementById('lf-talk');
-      return c ? { label: document.getElementById(c.getAttribute('aria-labelledby')).textContent, alert: !!c.querySelector('[role="alert"], .gh-error'), inCard: c.contains(document.activeElement), shown: c.classList.contains('is-in') } : null; });
-    const text = await cardText(page);
-    const what = kind === 409 ? '409 taken' : kind === 'already_held' ? '409 already_held' : kind === 'net' ? 'no network' : kind === 'not-held' ? '200 without held: true' : kind === 410 ? '410 (the engine today)' : String(kind);
-    check(holds.length === 1 && !!after && after.shown && text === TALK_ONLY && !after.alert && after.label === 'Rather talk it through?' && after.inCard && !beacons.some((x) => x.step === 'hold_made'),
-      what + ': the hold leaves, only the call line stays, no error, focus kept in the card');
-    if (kind === 409) await shot(page, 'phone-book-hold-refused.png');
+  console.log('/book, the email (marker mode) refused, missing or unreachable');
+  for (const kind of [409, 422, 429, 400, 404, 500, 'net']) {
+    const { ctx, page, beacons, markers } = await open({ name: 'marker-' + kind, phone: true, marker: kind });
+    await askCard(page);
+    await tapAsk(page);
+    const sent = await until(() => markers.length === 1);
+    await refusedOnly(page, 'marker ' + (kind === 'net' ? 'no network' : kind), sent, beacons, 'marker_card');
+    check(!(await page.$('#gatehouse .gh-marker .gh-error:not(:empty)')), 'marker ' + kind + ': the page\'s own trail marker shows no error either');
+    if (kind === 409) await shot(page, 'phone-book-marker-refused.png');
     await ctx.close();
   }
 
-  console.log('/book, a hold link (?hold=)');
+  console.log('/book, the email (marker mode): a marker already left on the page');
   {
-    const { ctx, page, beacons, checkouts, avail } = await open({ name: 'hold-link', phone: true, cardSeen: true });
-    await bookReady(page, `/book?checkIn=${CI}&checkOut=${CO}&hold=tok-from-link`);
-    check(!/hold=/.test(page.url()) && /checkIn=/.test(page.url()), 'the key is lifted out of the address bar, the dates kept');
-    check(/[?&]hold=tok-from-link(&|$)/.test(avail[0] || ''), 'the calendar asks with the hold');
-    await fillCheckout(page);
-    check(await until(() => checkouts.length === 1) && checkouts[0].hold === 'tok-from-link', '?hold= reaches the checkout request');
-    const dl = await page.evaluate(() => JSON.stringify(window.dataLayer || []));
-    check(!JSON.stringify(beacons).includes('tok-from-link') && !dl.includes('tok-from-link'), 'the hold key is in no beacon and no tag-manager entry');
-    await ctx.close();
-  }
-  {
-    const { ctx, page, checkouts, avail } = await open({ name: 'no-hold-link', phone: true, cardSeen: true });
+    const { ctx, page, markers } = await open({ name: 'marker-already', phone: true });
     await bookReady(page, `/book?checkIn=${CI}&checkOut=${CO}`);
-    await fillCheckout(page);
-    check(await until(() => checkouts.length === 1) && !('hold' in checkouts[0]) && !/hold=/.test(avail[0] || ''), 'without a token: no hold in the checkout request or the calendar call');
+    await page.click('#gatehouse .gh-marker .gh-link');
+    await page.fill('#gh-marker-email', TEST_EMAIL);
+    await page.click('#gh-marker-form button[type="submit"]');
+    await until(() => markers.length === 1);
+    await page.waitForSelector('#gatehouse .gh-marker__done');
+    await page.clock.runFor(14000); await settle(page);
+    check(await shown(page) && !(await page.$('#lf-talk input')) && (await cardText(page)) === TALK_ONLY, 'marker already left: the card without the email, only the call line');
     await ctx.close();
   }
 
-  console.log('/book, the hold waits while a field is in use');
+  console.log('/book, the email (marker mode) waits while a field is in use');
   {
-    const { ctx, page } = await open({ name: 'hold-typing', phone: true });
+    const { ctx, page } = await open({ name: 'ask-typing', phone: true });
     await bookReady(page, `/book?checkIn=${CI}&checkOut=${CO}`);
     await page.click('#gatehouse .gh-marker .gh-link');
     await page.focus('#gh-marker-email');
@@ -600,7 +627,61 @@ async function main() {
     check(!(await card(page)), 'cursor in the trail-marker field: no card at 20 s');
     await page.evaluate(() => document.activeElement.blur());
     await page.clock.runFor(2500); await settle(page);
-    check(await shown(page) && !!(await page.$('#lf-talk #lf-talk-email')), 'field left: the card with the hold');
+    check(await shown(page) && !!(await page.$('#lf-talk #lf-talk-email')), 'field left: the card, asking for an email');
+    await ctx.close();
+  }
+
+  console.log("/book, the email in hold mode (CARD_EMAIL set to 'hold' for these checks only)");
+  {
+    const { ctx, page, beacons, holds, markers, checkouts, quotes } = await open({ name: 'hold-ok', phone: true, hold: 'ok', mode: 'hold' });
+    await askCard(page);
+    const look = await cardLook(page);
+    check(look.h === 'Want a day to think it over?' && look.p === "Leave your email and we'll hold these nights for you for 24 hours. No card, no charge." && look.btn === 'Hold my nights', 'hold: the drafted words, exactly');
+    check(look.fields === 1 && look.buttons === 1 && look.order && look.r.left >= 16 && look.r.right <= 374, 'hold: one field, one button, the call line below, inside the gutters (' + Math.round(look.r.height) + ' px tall)');
+    check((await overflow(page)) <= 0 && !(await overlapsAny(page, '#gatehouse .gh-cta')), 'hold: no overflow at 390, clear of the pay button');
+    check(await until(() => beacons.some((x) => x.step === 'hold_shown')) && Object.keys(beacons.find((x) => x.step === 'hold_shown')).sort().join() === 'path,step,visit', 'hold_shown beacon: visit, step, path only');
+    await shot(page, 'phone-book-hold.png');
+    await clearOfPay(page, 'hold');
+    await tapAsk(page);
+    check(await until(() => holds.length === 1) && markers.length === 0, 'hold: POST /v1/hold sent once, no marker');
+    const b = holds[0] || {};
+    check(Object.keys(b).sort().join() === HOLD_FIELDS && b.email === TEST_EMAIL && b.check_in === CI && b.check_out === CO && b.unit === 'loxley-forest-canopy-treehouse-dahlonega' && b.visit && b.visit === (beacons[0] || {}).visit,
+      "hold: the engine's shape (guests not yet chosen): " + Object.keys(b).sort().join());
+    await page.waitForSelector('#lf-talk .lf-talk__done', { timeout: 5000 }).catch(() => {});
+    const done = await page.evaluate(() => { const d = document.querySelector('#lf-talk .lf-talk__done'); return d ? { text: d.textContent, focus: document.activeElement === d } : null; });
+    check(!!done && done.text === HELD_LINE && done.focus, 'hold done, Eastern time: "' + (done && done.text) + '"');
+    check(await until(() => beacons.some((x) => x.step === 'hold_made')) && Object.keys(beacons.find((x) => x.step === 'hold_made')).sort().join() === 'path,step,visit', 'hold_made beacon: visit, step, path only');
+    const dl = await page.evaluate(() => JSON.stringify(window.dataLayer || []));
+    check(!JSON.stringify(beacons).includes(TEST_EMAIL) && !dl.includes(TEST_EMAIL) && !JSON.stringify(beacons).includes('tok-held-1') && !dl.includes('tok-held-1'), 'hold: the email and the key in no beacon and no tag-manager entry');
+    check(await page.evaluate(() => { try { return JSON.parse(sessionStorage.getItem('gh_keys'))['/book'].hold === 'tok-held-1'; } catch (e) { return false; } }), 'hold: the key kept for this tab where the head script restores keys on a refresh');
+    await shot(page, 'phone-book-held.png');
+    await page.click('#lf-talk .lf-talk__x');
+    await page.clock.runFor(500); await page.waitForTimeout(450);
+    await fillCheckout(page);
+    check(await until(() => checkouts.length === 1) && checkouts[0].hold === 'tok-held-1' && checkouts[0].visit === b.visit, 'hold: a hold made on the card rides this tab\'s checkout, with the visit');
+    await ctx.close();
+  }
+  for (const kind of [404, 'taken', 'already_held', 429, 400, 410, 'net', 'not-held']) {
+    const { ctx, page, beacons, holds } = await open({ name: 'hold-' + kind, phone: true, hold: kind, mode: 'hold' });
+    await askCard(page);
+    await tapAsk(page);
+    const sent = await until(() => holds.length === 1);
+    const what = kind === 'taken' || kind === 'already_held' ? '409 ' + kind : kind === 'net' ? 'no network' : kind === 'not-held' ? '200 without held: true' : kind === 410 ? '410 (the engine today)' : String(kind);
+    await refusedOnly(page, 'hold ' + what, sent, beacons, 'hold_made');
+    if (kind === 'taken') await shot(page, 'phone-book-hold-refused.png');
+    await ctx.close();
+  }
+
+  console.log('/book, a hold link (#hold=, the key path in js/gatehouse.js that hold mode uses)');
+  {
+    const { ctx, page, beacons, checkouts, avail, quotes } = await open({ name: 'hold-link', phone: true, cardSeen: true });
+    await bookReady(page, `/book?checkIn=${CI}&checkOut=${CO}#hold=tok-from-link`);
+    check(!/hold=/.test(page.url()) && /checkIn=/.test(page.url()), 'the key is lifted out of the address bar, the dates kept');
+    check(/[?&]hold=tok-from-link(&|$)/.test(avail[0] || '') && /[?&]hold=tok-from-link(&|$)/.test(quotes[0] || ''), 'the calendar and the quote ask with the hold');
+    await fillCheckout(page);
+    check(await until(() => checkouts.length === 1) && checkouts[0].hold === 'tok-from-link' && checkouts[0].visit === (beacons[0] || {}).visit, 'the hold reaches the checkout request, with the visit');
+    const dl = await page.evaluate(() => JSON.stringify(window.dataLayer || []));
+    check(!JSON.stringify(beacons).includes('tok-from-link') && !dl.includes('tok-from-link'), 'the hold key is in no beacon and no tag-manager entry');
     await ctx.close();
   }
 
@@ -611,8 +692,8 @@ async function main() {
     await page.clock.runFor(44000);
     check(!(await card(page)), '/proposals: no card at 44 s');
     await page.clock.runFor(1500); await settle(page);
-    check(await shown(page) && !(await page.$('#lf-talk .lf-talk__hold, #lf-talk input')) && (await cardText(page)) === TALK_ONLY, '/proposals: the card at 45 s, as before, no hold');
-    check(await until(() => beacons.some((x) => x.step === 'card_shown' && x.path === '/proposals')) && !beacons.some((x) => /^hold_/.test(x.step)), '/proposals: card_shown, no hold_ beacon');
+    check(await shown(page) && !(await page.$('#lf-talk .lf-talk__ask, #lf-talk input')) && (await cardText(page)) === TALK_ONLY, '/proposals: the card at 45 s, as before, no email');
+    check(await until(() => beacons.some((x) => x.step === 'card_shown' && x.path === '/proposals')) && !beacons.some((x) => /^(hold|marker)_/.test(x.step)), '/proposals: card_shown, no hold_ or marker_ beacon');
     await ctx.close();
   }
 

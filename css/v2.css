@@ -466,12 +466,12 @@ a[href^="tel:"] { white-space: nowrap; }
 .lf-talk__phone a { color: var(--on-dark); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
 .lf-talk__phone a:focus-visible { outline: 2px solid var(--on-dark); outline-offset: 3px; }
 .lf-talk__call { display: flex; width: 100%; min-height: 48px; margin-top: 16px; padding: 0 16px; }
-/* The date hold on /book (2026-10-24): one field and one button above the call line, which
+/* The email on /book (2026-10-24, js/talk.js CARD_EMAIL): one field and one button above the call line, which
    steps down a size beneath it so the card stays short on a phone. Linen, never gold. */
-.lf-talk__hold { margin: 0 0 16px; padding-bottom: 16px; border-bottom: 1px solid rgba(247, 243, 237, 0.18); }
-.lf-talk__form { display: flex; gap: 8px; margin-top: 14px; }
+.lf-talk__ask { margin: 0 0 16px; padding-bottom: 16px; border-bottom: 1px solid rgba(247, 243, 237, 0.18); }
+.lf-talk__form { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
 .lf-talk__email {
-  flex: 1 1 auto; min-width: 0; min-height: 48px; padding: 0 12px; border: 1px solid var(--cream); border-radius: 0;
+  flex: 1 1 10rem; min-width: 0; min-height: 48px; padding: 0 12px; border: 1px solid var(--cream); border-radius: 0;
   background: var(--cream); color: var(--bark); font-family: 'Montserrat', Arial, sans-serif;
   font-size: 16px; /* 16px stops iOS zooming into the field */
 }
@@ -479,17 +479,17 @@ a[href^="tel:"] { white-space: nowrap; }
 .lf-talk__email:focus { outline: 2px solid var(--on-dark); outline-offset: 2px; }
 .lf-talk__email[aria-invalid="true"] { outline: 2px solid var(--on-dark); outline-offset: 2px; }
 .lf-btn.lf-talk__go {
-  flex: none; min-height: 48px; padding: 0 14px; letter-spacing: 0.12em;
+  flex: 1 0 auto; min-height: 48px; padding: 0 14px; letter-spacing: 0.12em;
   background: var(--on-dark); border-color: var(--on-dark); color: var(--forest-deep);
 }
 .lf-btn.lf-talk__go:hover { background: #ffffff; }
 .lf-btn.lf-talk__go[aria-disabled="true"] { opacity: 0.6; cursor: default; transform: none; }
 .lf-talk__done { color: var(--on-dark); }
 .lf-talk__done:focus { outline: none; }
-.lf-talk.has-hold .lf-talk__talk .lf-talk__h { padding-right: 0; font-size: 1.3rem; }
-.lf-talk.has-hold .lf-talk__talk .lf-talk__p,
-.lf-talk.has-hold .lf-talk__talk .lf-talk__phone { margin-top: 6px; font-size: 1rem; }
-.lf-talk.has-hold .lf-talk__talk .lf-talk__call { margin-top: 12px; }
+.lf-talk.has-ask .lf-talk__talk .lf-talk__h { padding-right: 0; font-size: 1.3rem; }
+.lf-talk.has-ask .lf-talk__talk .lf-talk__p,
+.lf-talk.has-ask .lf-talk__talk .lf-talk__phone { margin-top: 6px; font-size: 1rem; }
+.lf-talk.has-ask .lf-talk__talk .lf-talk__call { margin-top: 12px; }
 .lf-talk__sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 @media (min-width: 768px) {
   .lf-talk { left: auto; right: 24px; bottom: 24px; width: 360px; }
