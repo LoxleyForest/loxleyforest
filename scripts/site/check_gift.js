@@ -341,6 +341,46 @@ async function main() {
   // page moving under Playwright's pointer for longer than its patience (seen 2026-10-25, twice in
   // four runs); what the page does with the press, not the pointer, is what these checks are for.
   const press = (page, sel) => page.$eval(sel, (b) => b.click());
+  // Every control in a region, brought in turn to the top of the screen (just under the header) and
+  // to the bottom edge, where a reader scrolling meets it: no fixed element (the floating Book
+  // button, a card, anything pinned) may sit over it in either place.
+  async function covered(page, within) {
+    const q = (sel) => sel + ' input, ' + sel + ' select, ' + sel + ' textarea, ' + sel + ' button, ' + sel + ' a[href]';
+    const n = await page.evaluate((all) => document.querySelectorAll(all).length, q(within));
+    const out = [];
+    for (let i = 0; i < n; i++) {
+      for (const edge of ['start', 'end']) {
+        const shown = await page.evaluate(([all, k, edge]) => {
+          const c = document.querySelectorAll(all)[k];
+          const r0 = c.getBoundingClientRect();
+          if (!r0.width || !r0.height || getComputedStyle(c).visibility === 'hidden') return false;
+          const hdr = document.querySelector('.lf-hdr'), keep = [c.style.scrollMarginTop, c.style.scrollMarginBottom];
+          c.style.scrollMarginTop = ((hdr ? hdr.getBoundingClientRect().height : 0) + 8) + 'px';
+          c.style.scrollMarginBottom = '0px';
+          c.scrollIntoView({ block: edge });
+          c.style.scrollMarginTop = keep[0]; c.style.scrollMarginBottom = keep[1];
+          return true;
+        }, [q(within), i, edge]);
+        if (!shown) continue;
+        // Let the page answer the scroll as a reader would see it (the floating button fades in
+        // and out over 0.3 s on scroll).
+        await page.waitForTimeout(400);
+        const hit = await page.evaluate(([all, k, edge]) => {
+          const c = document.querySelectorAll(all)[k], r = c.getBoundingClientRect();
+          const fixed = [...document.querySelectorAll('body *')].filter((x) => {
+            const cs = getComputedStyle(x);
+            if (cs.position !== 'fixed' || cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity < 0.05) return false;
+            const f = x.getBoundingClientRect();
+            return f.width > 0 && f.height > 0 && f.left < r.right && f.right > r.left && f.top < r.bottom && f.bottom > r.top;
+          });
+          return fixed.length ? (c.id || c.textContent.trim().slice(0, 30) || c.tagName) + ' (at the ' + (edge === 'end' ? 'bottom' : 'top') + ') under ' +
+            (String(fixed[0].className) || fixed[0].tagName) : null;
+        }, [q(within), i, edge]);
+        if (hit) out.push(hit);
+      }
+    }
+    return out;
+  }
   // Anything marked hidden that a stylesheet still shows (a display rule beats the hidden attribute).
   const leaky = (page, sel) => page.evaluate((s) => [...document.querySelectorAll(s + ' [hidden]')]
     .filter((n) => getComputedStyle(n).display !== 'none').map((n) => n.className || n.tagName), sel);
@@ -515,6 +555,8 @@ async function main() {
     const labelled2 = await page.evaluate(() => [...document.querySelectorAll('#ga-buy input, #ga-buy select, #ga-buy textarea')]
       .filter((n) => !(n.labels && n.labels.length) && !n.getAttribute('aria-label')).map((n) => n.id || n.name));
     check(!labelled.length && !labelled2.length, 'every field has its label' + (labelled.concat(labelled2).length ? ': ' + labelled.concat(labelled2).join(', ') : ''));
+    const cov = await covered(page, '#give');
+    check(!cov.length, 'no fixed element over any field or button of the panel at 390' + (cov.length ? ': ' + cov.join('; ') : ''));
     const r = await rings(page, '#ga-buy');
     check(r.stops.length >= 15 && !r.bad.length, 'every keyboard stop shows its ring (' + r.stops.length + ' stops' + (r.bad.length ? '; none on ' + r.bad.join(', ') : '') + ')');
     await press(page, '#ga-mail');
@@ -529,6 +571,8 @@ async function main() {
     check(await overflow(page) <= 0, 'no sideways scroll at 390');
     await page.locator('#ga-buy .ga-confirm').scrollIntoViewIfNeeded();
     await shot(page, 'gift-purchase-them.png', false);
+    const covC = await covered(page, '#give');
+    check(!covC.length, 'nor over the purchase step' + (covC.length ? ': ' + covC.join('; ') : ''));
     const confRings = await rings(page, '#ga-buy');
     check(!confRings.bad.length && confRings.stops.length >= 2, 'the purchase step\'s buttons show their rings too');
     const dl = await dataLayer(page);
@@ -537,6 +581,8 @@ async function main() {
     await page.waitForSelector('[data-ga-thanks-lead]');
     check(await text(page, '[data-ga-thanks-lead]') === 'We\u2019ll email it to them on Christmas morning at 7 AM.', 'the thank-you: "We\'ll email it to them on Christmas morning at 7 AM."');
     check(await page.evaluate(() => { const v = sessionStorage.getItem('ga_deliver') || ''; return v.indexOf('@') < 0 && v.indexOf('sleep') < 0; }), 'what the thank-you reads holds no email and no note');
+    const covT = await covered(page, '#ga-thanks');
+    check(!covT.length, 'no fixed element over the thank-you\'s links' + (covT.length ? ': ' + covT.join('; ') : ''));
     await shot(page, 'gift-thanks-them.png');
     leaks(rec, dl, 'to them');
     await ctx.close();
@@ -656,6 +702,8 @@ async function main() {
     check(cr.stops.length >= 3 && !cr.bad.length, 'the card page\'s buttons show their rings (' + cr.stops.length + ' stops)');
     const lk = await leaky(page, '#ga-card-page');
     check(!lk.length, 'nothing marked hidden shows on the card page' + (lk.length ? ': ' + lk.join(', ') : ''));
+    const covK = await covered(page, '#ga-card-page');
+    check(!covK.length, 'no fixed element over the card page\'s buttons' + (covK.length ? ': ' + covK.join('; ') : ''));
     leaks(rec, await dataLayer(page), 'the card');
 
     await Promise.all([page.waitForURL(/\/book/, { timeout: 5000 }), press(page, '[data-ga-dates]')]);
@@ -708,6 +756,8 @@ async function main() {
     await page.goto(BASE + '/gift/card');
     await page.waitForSelector('[data-ga-lost]:not([hidden])', { timeout: 10000 });
     check(await text(page, '#ga-lost-h') === CARD_W.lost_h && await text(page, '[data-ga-note]') === CARD_W.card_none, 'no code: "' + CARD_W.lost_h + '"');
+    const covL = await covered(page, '[data-ga-lost]');
+    check(!covL.length, 'no fixed element over the lost-card form' + (covL.length ? ': ' + covL.join('; ') : ''));
     check(await page.evaluate(() => { const i = document.getElementById('ga-lost-email'); return !!(i.labels && i.labels.length); }), 'its field has its label');
     await press(page, '[data-ga-lost] button[type=submit]');
     check(await text(page, '#ga-lost-error') === CARD_W.lost_need && rec.resends.length === 0, 'empty: it asks, sends nothing');
@@ -770,6 +820,8 @@ async function main() {
     check(await page.inputValue('#ga-their-email') === THEM && await page.inputValue('#ga-day') === xd && await page.inputValue('#ga-hour') === '8', 'the form holds the email, the day and the hour as they stand');
     const labelled = await page.evaluate(() => [...document.querySelectorAll('#ga-manage input, #ga-manage select')].filter((n) => !(n.labels && n.labels.length)).map((n) => n.id));
     check(!labelled.length, 'every field has its label');
+    const covM = await covered(page, '#ga-manage');
+    check(!covM.length, 'no fixed element over the change page\'s fields' + (covM.length ? ': ' + covM.join('; ') : ''));
     check(await overflow(page) <= 0, 'no sideways scroll at 390');
     await shot(page, 'gift-manage.png');
     await page.selectOption('#ga-hour', '9');
