@@ -64,9 +64,9 @@
     // The email on /book (2026-10-24), above the words above, which stay as they are.
     email: 'Your email',   // the field's label and placeholder: the trail marker's own label
     // CARD_EMAIL 'marker' (on). Done: the trail marker's own line, from js/gatehouse.js.
-    markerHeading: 'Want a day to think it over?',   // awaiting Mick
-    markerLine: "Leave your email and we'll send you these dates and the all-in price, with a link straight back to them.",   // awaiting Mick
-    markerButton: 'Leave a trail marker',   // awaiting Mick
+    markerHeading: 'Want a day to think it over?',   // approved by Mick 2026-10-24
+    markerLine: "Leave your email and we'll send you these dates and the all-in price, with a link straight back to them.",   // approved by Mick 2026-10-24
+    markerButton: 'Leave a trail marker',   // approved by Mick 2026-10-24
     // CARD_EMAIL 'hold' (off).
     holdHeading: 'Want a day to think it over?',   // awaiting Mick
     holdLine: "Leave your email and we'll hold these nights for you for 24 hours. No card, no charge.",   // awaiting Mick

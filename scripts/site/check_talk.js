@@ -590,6 +590,18 @@ async function main() {
     await ctx.close();
   }
 
+  console.log('/book, the email (marker mode) with a call link, as the live card has');
+  {
+    const { ctx, page } = await open({ name: 'marker-call-link', phone: true, callLink: 'https://example.com/mick-30' });
+    await askCard(page);
+    const look = await cardLook(page);
+    check(!!(await page.$('#lf-talk .lf-talk__talk a.lf-talk__call')) && look.r.top >= 68 && look.r.left >= 16 && look.r.right <= 374 && (await overflow(page)) <= 0,
+      'with the call button: inside the gutters, below the header, no overflow (' + Math.round(look.r.height) + ' px tall)');
+    await shot(page, 'phone-book-marker-with-call-link.png');
+    await clearOfPay(page, 'marker-call-link');
+    await ctx.close();
+  }
+
   console.log('/book, the email (marker mode) refused, missing or unreachable');
   for (const kind of [409, 422, 429, 400, 404, 500, 'net']) {
     const { ctx, page, beacons, markers } = await open({ name: 'marker-' + kind, phone: true, marker: kind });
