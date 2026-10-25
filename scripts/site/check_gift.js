@@ -307,6 +307,13 @@ async function main() {
   const text = (page, sel) => page.evaluate((s) => { const n = document.querySelector(s); return n ? n.innerText.replace(/\s+/g, ' ').trim() : null; }, sel);
   // A button's own words (its CSS sets them in capitals, which innerText would report).
   const label = (page, sel) => page.evaluate((s) => { const n = document.querySelector(s); return n ? n.textContent.replace(/\s+/g, ' ').trim() : null; }, sel);
+  // A button, box or link pressed as the DOM does. The page's smooth scroll (Lenis) can keep a long
+  // page moving under Playwright's pointer for longer than its patience (seen 2026-10-25, twice in
+  // four runs); what the page does with the press, not the pointer, is what these checks are for.
+  const press = (page, sel) => page.$eval(sel, (b) => b.click());
+  // Anything marked hidden that a stylesheet still shows (a display rule beats the hidden attribute).
+  const leaky = (page, sel) => page.evaluate((s) => [...document.querySelectorAll(s + ' [hidden]')]
+    .filter((n) => getComputedStyle(n).display !== 'none').map((n) => n.className || n.tagName), sel);
   // Tab through a region by keyboard: every stop must show a ring (2 px or more, not the linen of
   // the site's dark-ground ring), on the control or, for a radio or tick box, on its label.
   async function rings(page, within) {
@@ -381,15 +388,15 @@ async function main() {
     await page.locator('#ga-buy form').scrollIntoViewIfNeeded();
     await shot(page, 'gift-panel-form.png', false);
 
-    await page.click('#ga-buy button[type=submit]');
+    await press(page, '#ga-buy button[type=submit]');
     check(await text(page, '#ga-error') === PANEL.need_for && rec.sales.length === 0, 'empty: it asks for their names and sends nothing');
     await page.fill('#ga-for', BUYER.names);
     await page.fill('#ga-from', BUYER.giver);
     await page.fill('#ga-email', 'not-an-email');
-    await page.click('#ga-buy button[type=submit]');
+    await press(page, '#ga-buy button[type=submit]');
     check(await text(page, '#ga-error') === PANEL.need_email && rec.sales.length === 0, 'a bad email: it asks for a working one');
     await page.fill('#ga-email', BUYER.email);
-    await page.check('#ga-mail');
+    await press(page, '#ga-mail');
     check(!(await page.evaluate(() => document.querySelector('.ga-ship').hidden)), 'ticked: the address opens');
     await page.fill('#ga-ship-name', SHIP.name);
     await page.fill('#ga-ship-line1', SHIP.line1);
@@ -397,15 +404,15 @@ async function main() {
     await page.fill('#ga-ship-city', SHIP.city);
     await page.fill('#ga-ship-state', 'G');
     await page.fill('#ga-ship-zip', SHIP.zip);
-    await page.click('#ga-buy button[type=submit]');
+    await press(page, '#ga-buy button[type=submit]');
     check(await text(page, '#ga-error') === PANEL.need_state && rec.sales.length === 0, 'a state that is not two letters: it asks for two');
     await page.fill('#ga-ship-state', 'ga');
     await page.fill('#ga-ship-zip', '3053');
-    await page.click('#ga-buy button[type=submit]');
+    await press(page, '#ga-buy button[type=submit]');
     check(await text(page, '#ga-error') === PANEL.need_zip && rec.sales.length === 0, 'a ZIP that is not five digits: it asks for five');
     await shot(page, 'gift-panel-address.png', false);
     await page.fill('#ga-ship-zip', SHIP.zip);
-    await page.click('#ga-buy button[type=submit]');
+    await press(page, '#ga-buy button[type=submit]');
     await page.waitForSelector('#ga-buy .ga-confirm', { timeout: 5000 });
     const sent = rec.sales[0] || {};
     check(Object.keys(sent).sort().join() === 'deliver,email,giver_name,product,recipient_names,ship_to', 'POST /v1/gift/checkout carries the contract\'s fields and nothing else');
@@ -421,14 +428,14 @@ async function main() {
     await page.locator('#ga-buy .ga-confirm').scrollIntoViewIfNeeded();
     await shot(page, 'gift-purchase-step.png', false);
 
-    await page.click('#ga-buy .gh-back');
+    await press(page, '#ga-buy .gh-back');
     await page.waitForSelector('#ga-buy form');
     check(await page.inputValue('#ga-for') === BUYER.names && await page.inputValue('#ga-ship-zip') === SHIP.zip, 'back: everything typed is still there');
-    await page.click('#ga-buy button[type=submit]');
+    await press(page, '#ga-buy button[type=submit]');
     await page.waitForSelector('#ga-buy .ga-confirm');
     check(rec.sales.length === 1, 'the same details again: the payment page already made, not a second');
     const dl = await dataLayer(page);
-    await Promise.all([page.waitForURL(/checkout\.stripe\.com/, { timeout: 5000 }), page.click('#ga-buy .ga-pay')]);
+    await Promise.all([page.waitForURL(/checkout\.stripe\.com/, { timeout: 5000 }), press(page, '#ga-buy .ga-pay')]);
     check(rec.stripePages[0] === PAY_URL, 'pay: the buyer goes to the engine\'s Stripe page');
     await page.goto(BASE + '/gift/thanks?session_id=' + SESSION);
     await page.waitForSelector('[data-ga-thanks-lead]');
@@ -444,24 +451,26 @@ async function main() {
     await page.waitForSelector('#ga-buy form', { timeout: 10000 });
     check(await page.isChecked('#ga-deliver-me') && await page.evaluate(() => document.querySelector('.ga-them').hidden), '"Send the card to me" is the default; the rest stays folded');
     await page.fill('#ga-for', BUYER.names); await page.fill('#ga-from', BUYER.giver); await page.fill('#ga-email', BUYER.email);
-    await page.check('#ga-deliver-them');
+    await press(page, '#ga-deliver-them');
     check(!(await page.evaluate(() => document.querySelector('.ga-them').hidden)), '"Email it to them on a day I choose" opens their email, the day and hour, the picks and the note');
+    const lk = await leaky(page, '#give');
+    check(!lk.length, 'nothing marked hidden shows in the panel' + (lk.length ? ': ' + lk.join(', ') : ''));
     const dayAttrs = await page.evaluate(() => { const d = document.getElementById('ga-day'); return { min: d.min, max: d.max }; });
     const lastDay = (() => { const t = nowEastern().slice(0, 10); const d = new Date(+t.slice(0, 4), +t.slice(5, 7) - 1, +t.slice(8, 10)); d.setMonth(d.getMonth() + 12); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); })();
     check(dayAttrs.min === nowEastern().slice(0, 10) && dayAttrs.max === lastDay, 'the day: from today (Eastern) to twelve months ahead (' + dayAttrs.min + ' to ' + dayAttrs.max + ')');
     const picks = await page.evaluate(() => [...document.querySelectorAll('.ga-pick')].map((b) => b.textContent));
     check(picks.join(' | ') === PANEL.pick_christmas + ' | ' + PANEL.pick_valentine, 'the quick picks: ' + picks.join(', '));
-    await page.click('#ga-buy button[type=submit]');
+    await press(page, '#ga-buy button[type=submit]');
     check(await text(page, '#ga-error') === PANEL.need_their_email && rec.sales.length === 0, 'no email for them: it asks');
     await page.fill('#ga-their-email', THEM);
     await page.fill('#ga-day', '2099-01-01');
-    await page.click('#ga-buy button[type=submit]');
+    await press(page, '#ga-buy button[type=submit]');
     check(await text(page, '#ga-error') === PANEL.need_day && rec.sales.length === 0, 'a day past twelve months: it asks for one within');
     await page.fill('#ga-day', nowEastern().slice(0, 10));
     await page.selectOption('#ga-hour', '0');
-    await page.click('#ga-buy button[type=submit]');
+    await press(page, '#ga-buy button[type=submit]');
     check(await text(page, '#ga-error') === PANEL.need_future && rec.sales.length === 0, 'an hour already gone: it asks for one to come');
-    await page.click('.ga-pick[data-pick="christmas"]');
+    await press(page, '.ga-pick[data-pick="christmas"]');
     const xmas = nextMorning('12-25');
     check(await page.inputValue('#ga-day') === xmas.slice(0, 10) && await page.inputValue('#ga-hour') === '7' &&
       await page.getAttribute('.ga-pick[data-pick="christmas"]', 'aria-pressed') === 'true', '"Christmas morning, 7 AM" sets ' + xmas);
@@ -472,16 +481,16 @@ async function main() {
     await page.fill('#ga-note', NOTE);
     const labelled = await page.evaluate(() => [...document.querySelectorAll('#ga-buy input, #ga-buy select, #ga-buy textarea')]
       .filter((n) => !(n.labels && n.labels.length) && !n.getAttribute('aria-label')).map((n) => n.id || n.name));
-    await page.check('#ga-mail');
+    await press(page, '#ga-mail');
     const labelled2 = await page.evaluate(() => [...document.querySelectorAll('#ga-buy input, #ga-buy select, #ga-buy textarea')]
       .filter((n) => !(n.labels && n.labels.length) && !n.getAttribute('aria-label')).map((n) => n.id || n.name));
     check(!labelled.length && !labelled2.length, 'every field has its label' + (labelled.concat(labelled2).length ? ': ' + labelled.concat(labelled2).join(', ') : ''));
     const r = await rings(page, '#ga-buy');
     check(r.stops.length >= 15 && !r.bad.length, 'every keyboard stop shows its ring (' + r.stops.length + ' stops' + (r.bad.length ? '; none on ' + r.bad.join(', ') : '') + ')');
-    await page.uncheck('#ga-mail');
+    await press(page, '#ga-mail');
     await page.locator('.ga-deliver').scrollIntoViewIfNeeded();
     await shot(page, 'gift-deliver-them.png', false);
-    await page.click('#ga-buy button[type=submit]');
+    await press(page, '#ga-buy button[type=submit]');
     await page.waitForSelector('#ga-buy .ga-confirm', { timeout: 5000 });
     const d = (rec.sales[0] || {}).deliver || {};
     check(JSON.stringify(d) === JSON.stringify({ to: 'them', email: THEM, at: xmas, message: NOTE }), 'deliver {to: "them", email, at: "' + xmas + '", message}');
@@ -493,7 +502,7 @@ async function main() {
     const confRings = await rings(page, '#ga-buy');
     check(!confRings.bad.length && confRings.stops.length >= 2, 'the purchase step\'s buttons show their rings too');
     const dl = await dataLayer(page);
-    await Promise.all([page.waitForURL(/checkout\.stripe\.com/, { timeout: 5000 }), page.click('#ga-buy .ga-pay')]);
+    await Promise.all([page.waitForURL(/checkout\.stripe\.com/, { timeout: 5000 }), press(page, '#ga-buy .ga-pay')]);
     await page.goto(BASE + '/gift/thanks?session_id=' + SESSION);
     await page.waitForSelector('[data-ga-thanks-lead]');
     check(await text(page, '[data-ga-thanks-lead]') === 'We\u2019ll email it to them on Christmas morning at 7 AM.', 'the thank-you: "We\'ll email it to them on Christmas morning at 7 AM."');
@@ -512,7 +521,7 @@ async function main() {
     await page.goto(BASE + '/gift');
     await page.waitForSelector('#ga-buy form', { timeout: 10000 });
     await page.fill('#ga-for', BUYER.names); await page.fill('#ga-from', BUYER.giver); await page.fill('#ga-email', BUYER.email);
-    await page.click('#ga-buy button[type=submit]');
+    await press(page, '#ga-buy button[type=submit]');
     await until(async () => (await text(page, '#ga-error')) === want);
     check(await text(page, '#ga-error') === want && !(await page.$('#ga-buy .ga-confirm')), what);
     if (engine.sale503) check(Object.keys(rec.sales[0] || {}).sort().join() === 'deliver,email,giver_name,product,recipient_names', 'no box ticked: no ship_to sent');
@@ -579,10 +588,10 @@ async function main() {
     await shot(page, 'card.png');
     if (SHOTS) await page.locator('.ga-card').screenshot({ path: path.join(SHOTS, 'card-only.png') });
 
-    await page.click('[data-ga-share]');
+    await press(page, '[data-ga-share]');
     const shared = await page.evaluate(() => window.__shared);
     check(shared && shared.url === BASE + '/gift/card#code=' + CODE, 'send the link: /gift/card#code=, through the share sheet');
-    await page.click('[data-ga-print]');
+    await press(page, '[data-ga-print]');
     check(await page.evaluate(() => window.__printed) === 1, 'print the card: the browser\'s print');
     await page.emulateMedia({ media: 'print' });
     const pr = await page.evaluate(() => {
@@ -602,9 +611,11 @@ async function main() {
     check(!(await page.evaluate(() => document.querySelector('.ga-card').classList.contains('is-opening'))), 'the second open: no reveal');
     const cr = await rings(page, '#ga-card-page');
     check(cr.stops.length >= 3 && !cr.bad.length, 'the card page\'s buttons show their rings (' + cr.stops.length + ' stops)');
+    const lk = await leaky(page, '#ga-card-page');
+    check(!lk.length, 'nothing marked hidden shows on the card page' + (lk.length ? ': ' + lk.join(', ') : ''));
     leaks(rec, await dataLayer(page), 'the card');
 
-    await Promise.all([page.waitForURL(/\/book/, { timeout: 5000 }), page.click('[data-ga-dates]')]);
+    await Promise.all([page.waitForURL(/\/book/, { timeout: 5000 }), press(page, '[data-ga-dates]')]);
     await page.waitForSelector('#gatehouse .gh-summary', { timeout: 10000 });
     check(!has(page.url(), CODE) && await page.evaluate((c) => window.__ghKeys.gift === c, CODE), '"Book your nights" opens /book with the gift, out of the address bar');
     check(await text(page, '#gatehouse .gh-gift') === BOOK_W.book_with, 'and /book says the Golden Arrow is with them');
@@ -655,13 +666,16 @@ async function main() {
     await page.waitForSelector('[data-ga-lost]:not([hidden])', { timeout: 10000 });
     check(await text(page, '#ga-lost-h') === CARD_W.lost_h && await text(page, '[data-ga-note]') === CARD_W.card_none, 'no code: "' + CARD_W.lost_h + '"');
     check(await page.evaluate(() => { const i = document.getElementById('ga-lost-email'); return !!(i.labels && i.labels.length); }), 'its field has its label');
-    await page.click('[data-ga-lost] button[type=submit]');
+    await press(page, '[data-ga-lost] button[type=submit]');
     check(await text(page, '#ga-lost-error') === CARD_W.lost_need && rec.resends.length === 0, 'empty: it asks, sends nothing');
     await page.fill('#ga-lost-email', 'lost@example.test');
-    await page.click('[data-ga-lost] button[type=submit]');
+    await press(page, '[data-ga-lost] button[type=submit]');
     await page.waitForSelector('[data-ga-lost-said]:not([hidden])', { timeout: 5000 });
     check(JSON.stringify(rec.resends[0]) === '{"email":"lost@example.test"}', 'POST /v1/gift/resend {email}');
     check(await text(page, '[data-ga-lost-said]') === RESEND, 'then the engine\'s one sentence, as it wrote it');
+    check(await page.evaluate(() => { const b = document.querySelector('[data-ga-lost] button[type=submit]'); return getComputedStyle(b).display === 'none'; }), 'and the button steps aside');
+    const lk = await leaky(page, '#ga-card-page');
+    check(!lk.length, 'nothing marked hidden shows' + (lk.length ? ': ' + lk.join(', ') : ''));
     check(await overflow(page) <= 0, 'no sideways scroll at 390');
     await shot(page, 'card-lost.png', false);
     leaks(rec, await dataLayer(page), 'lost card');
@@ -673,7 +687,7 @@ async function main() {
     await page.waitForSelector('[data-ga-lost]:not([hidden])', { timeout: 10000 });
     check(await text(page, '[data-ga-note]') === NOT_FOUND + ' ' + CARD_W.questions, 'a code it cannot find: its sentence, and the lost-card form');
     await page.fill('#ga-lost-email', 'lost@example.test');
-    await page.click('[data-ga-lost] button[type=submit]');
+    await press(page, '[data-ga-lost] button[type=submit]');
     await page.waitForSelector('[data-ga-lost-said]:not([hidden])', { timeout: 5000 });
     check(await text(page, '[data-ga-lost-said]') === CARD_W.lost_off, 'the resend door off: "' + CARD_W.lost_off + '"');
     await ctx.close();
@@ -701,13 +715,13 @@ async function main() {
     await page.waitForSelector('#gatehouse button.gh-cta', { timeout: 10000 });
   }
   async function details(page) {
-    await page.click('#gatehouse button.gh-cta');
+    await press(page, '#gatehouse button.gh-cta');
     await page.waitForSelector('#gatehouse form.gh-form', { timeout: 5000 });
     await page.fill('#gh-email', 'guest@example.test');
     await page.fill('#gh-first_name', 'Test'); await page.fill('#gh-last_name', 'Guest');
     await page.fill('#gh-phone', '7065550100');
     await page.selectOption('#gh-guests', '2');
-    await page.check('#gh-agree');
+    await press(page, '#gh-agree');
     await page.fill('#gh-typed_name', 'Test Guest');
   }
   const lineText = (page) => page.evaluate(() => [...document.querySelectorAll('#gatehouse .gh-summary .gh-lines dt, #gatehouse .gh-summary .gh-lines dd')].map((n) => n.innerText.trim()).join(' | '));
@@ -721,7 +735,7 @@ async function main() {
     check(await label(page, '#gatehouse .gh-extend') === 'Add a third night: ' + BOOK_W.book_extend_free, 'the third night offered: "' + BOOK_W.book_extend_free + '"');
     await page.locator('#gatehouse .gh-summary').scrollIntoViewIfNeeded();
     await shot(page, 'book-gift-two-nights.png', false);
-    await page.click('#gatehouse .gh-extend');
+    await press(page, '#gatehouse .gh-extend');
     await until(async () => rec.quotes.length > 1 && has(await lineText(page), '$1,933.17'));
     check(has(rec.quotes[1] || '', 'check_out=' + CO3) && has(rec.quotes[1] || '', 'gift=' + CODE), 'one tap: three nights, quoted with the gift');
     await ctx.close();
@@ -743,7 +757,7 @@ async function main() {
     const sum = await page.evaluate(() => [...document.querySelectorAll('.gh-booking .gh-lines dt, .gh-booking .gh-lines dd')].map((n) => n.innerText.trim()).join(' | '));
     check(has(sum, 'Total | $1,933.17 | ' + BOOK_W.book_name + ' | -$1,933.17 | Due today | $0.00'), 'the booking summary: Total, The Golden Arrow, Due today $0.00');
     check(await label(page, '#gatehouse form.gh-form button[type=submit]') === BOOK_W.book_cta, 'the pay step\'s button says the same');
-    await Promise.all([page.waitForURL(/\/booked/, { timeout: 8000 }), page.click('#gatehouse form.gh-form button[type=submit]')]);
+    await Promise.all([page.waitForURL(/\/booked/, { timeout: 8000 }), press(page, '#gatehouse form.gh-form button[type=submit]')]);
     const sent = rec.checkouts[0] || {};
     check(sent.gift === CODE && sent.check_in === CI && sent.check_out === CO3, 'POST /v1/checkout carries gift=<code> with the dates');
     await page.waitForSelector('#gatehouse-stay .gh-stay', { timeout: 8000 });
@@ -771,9 +785,9 @@ async function main() {
     check(!!(await page.$('#gatehouse .gh-marker')), 'something left to pay: the trail marker stays');
     await page.locator('#gatehouse .gh-summary').scrollIntoViewIfNeeded();
     await shot(page, 'book-gift-partial.png', false);
-    await page.click('#gatehouse .gh-option:last-of-type input');
+    await press(page, '#gatehouse .gh-option:last-of-type input');
     await details(page);
-    await page.click('#gatehouse form.gh-form button[type=submit]');
+    await press(page, '#gatehouse form.gh-form button[type=submit]');
     await page.waitForSelector('#gh-paying:not([hidden])', { timeout: 8000 });
     check((rec.checkouts[0] || {}).gift === CODE, 'POST /v1/checkout carries gift=<code>');
     check(has(await text(page, '#gh-paying'), '$644.39 due today, of $644.39'), 'Stripe opens for what is left (' + (await text(page, '#gh-paying')) + ')');
@@ -791,7 +805,7 @@ async function main() {
     check(has(await lineText(page), 'Total | $1,933.17') && !has(await lineText(page), BOOK_W.book_left), 'the full price, shown as the full price');
     await page.locator('#gatehouse .gh-summary').scrollIntoViewIfNeeded();
     await shot(page, 'book-gift-refused.png', false);
-    await page.click('#gatehouse button.gh-cta');
+    await press(page, '#gatehouse button.gh-cta');
     await page.waitForSelector('#gatehouse form.gh-form');
     check(await text(page, '.gh-booking .gh-credit--off') === t, 'said again above the agreement');
     await ctx.close();

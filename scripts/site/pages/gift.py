@@ -124,7 +124,7 @@ WORDS = {
     'total_at_stripe': 'Stripe shows the whole price, taxes and fees included, before you pay.',
     'pay': 'Pay securely with Stripe',
     'leaving': 'Opening secure payment…',
-    'change': '‹ Change the names or the address',
+    'change': '‹ Change the details',
     'pay_fine': 'Payment is by Stripe. Questions? Call or text Mick at ' + PHONE + '.',
     'no_payment': 'Secure payment could not open. Nothing was charged. Please try again, or call or text Mick at ' + PHONE + '.',
     'questions': 'Questions? Call or text Mick at ' + PHONE + '.',
@@ -576,7 +576,7 @@ CSS = '''
 .ga-message__from { display: block; font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 0.6875rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--gold-text); }
 .ga-message__text { display: block; margin-top: 12px; font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 500; font-size: 1.3rem; line-height: 1.5; color: var(--forest-deep); white-space: pre-line; overflow-wrap: anywhere; text-wrap: pretty; }
 .ga-status { margin: 0; text-align: center; font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 0.75rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold-text); }
-.ga-status[hidden], .ga-lost[hidden], .ga-lost__said[hidden] { display: none; }
+.ga-status[hidden], .ga-lost[hidden], .ga-lost [hidden] { display: none; }
 .ga-lost { display: grid; gap: 14px; padding: clamp(20px, 5vw, 28px); background: var(--linen); border: 1px solid rgba(44, 34, 25, 0.12); }
 .ga-lost__h { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 1.45rem; line-height: 1.3; color: var(--forest-deep); }
 .ga-lost .lf-btn { width: 100%; }
