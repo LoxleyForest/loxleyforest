@@ -190,6 +190,23 @@ WORDS = {
     'lost_off': 'This can\u2019t be done online just yet. Call or text Mick at ' + PHONE + '.',
     'lost_sent': 'If that email bought a gift, its card is on its way there now.',   # only if the engine sends no sentence
 
+    # ---- /gift/manage#token=: the buyer's change page for a card emailed on a day (js/gift.js)
+    'manage_title': 'Your gift\u2019s delivery | Loxley Forest',
+    'manage_eyebrow': 'The Golden Arrow',
+    'manage_h1': 'Your gift\u2019s delivery',
+    'manage_opening': 'Opening the delivery\u2026',
+    'manage_goes': 'Their card is emailed to {email} on {when}.',
+    'manage_went': 'Their card was emailed to {email} on {when}.',
+    'manage_note_h': 'Your note',
+    'manage_note_fixed': 'The note stays as you wrote it.',
+    'manage_change_h': 'Change the day, the hour or their email',
+    'manage_save': 'Save the change',
+    'manage_saving': 'Saving\u2026',
+    'manage_saved': 'Saved. Their card is now emailed to {email} on {when}.',
+    'manage_none': 'This link is missing its key. Use the link in your email, or call or text Mick at ' + PHONE + '.',
+    'manage_off': 'Changing the day online isn\u2019t open yet. Call or text Mick at ' + PHONE + ' and he will change it.',
+    'manage_down': 'We couldn\u2019t reach our booking system just now. Please try again in a moment, or call or text Mick at ' + PHONE + '.',
+
     # ---- /book, when a Golden Arrow rides the link (js/gatehouse.js) -----------------------
     'book_name': 'The Golden Arrow',
     'book_with': 'The Golden Arrow is with you. Choose your nights, and you will see what it covers before you book.',
@@ -231,6 +248,10 @@ PANEL_KEYS = ('opening', 'off', 'down', 'call_mick', 'text_mick', 'for_label', '
 CARD_KEYS = ('card_none', 'card_unknown', 'card_off', 'card_down', 'card_void', 'state_unused', 'state_booked', 'state_used',
              'note_from', 'choose_dates', 'print', 'share', 'share_copied', 'share_manual', 'keep', 'questions',
              'lost_h', 'lost_label', 'lost_send', 'lost_sending', 'lost_need', 'lost_off', 'lost_sent')
+MANAGE_KEYS = ('manage_opening', 'manage_goes', 'manage_went', 'manage_note_h', 'manage_note_fixed', 'manage_change_h',
+               'manage_save', 'manage_saving', 'manage_saved', 'manage_none', 'manage_off', 'manage_down',
+               'their_email_label', 'day_label', 'hour_label', 'picks_label', 'pick_christmas', 'pick_valentine',
+               'need_their_email', 'need_day', 'need_future', 'questions', 'when_christmas', 'when_valentine', 'when_at')
 THANKS_KEYS = ('thanks_lead', 'thanks_me', 'thanks_them', 'when_christmas', 'when_valentine', 'when_at')
 BOOK_KEYS = tuple(k for k in WORDS if k.startswith('book_'))
 STAY_KEYS = ('book_name', 'stay_gift_includes', 'stay_gift_move', 'stay_booked_now')
@@ -445,7 +466,40 @@ def page_gift_thanks():
     return 'gift-thanks.html', h, gtm, body, '/book', True
 
 
-PAGES = [page_gift, page_gift_card, page_gift_thanks]
+def page_gift_manage():
+    """/gift/manage#token=...: the buyer's change page for a card emailed on a day they chose (engine
+    ceo/golden-arrow-2: GET and POST /v1/gift/delivery). The token arrives after # in the buyer's
+    letter and the keys script lifts it out of the address bar before Tag Manager loads; it goes to
+    our own booking server and nowhere else. The note is shown and never changed. Noindex."""
+    W = WORDS
+    h, gtm = head_for(W['manage_title'], W['description'], URL + '/manage', noindex=True)
+    body = head_section(W['manage_eyebrow'], W['manage_h1']) + f'''
+    <section class="lf-sec lf-parch ga-cardpage ga-manage" id="ga-manage" data-api="{B.API}" aria-label="{W['manage_h1']}">
+      <div class="ga-cardpage__in">
+        <p class="ga-wait" role="status" data-ga-wait>{W["manage_opening"]}</p>
+        <noscript><p class="ga-note">This page needs JavaScript. {CALL}</p></noscript>
+        <p class="ga-note" role="status" data-ga-note hidden></p>
+        <div class="ga-letter" data-ga-letter hidden>
+          {ARROW}
+          <p class="ga-letter__for">{CARD["for"]} <span data-v="names"></span></p>
+          <p class="ga-letter__from">{CARD["from"]} <span data-v="giver"></span></p>
+          <p class="ga-letter__when" data-v="when"></p>
+          <div data-ga-letter-note hidden>
+            <span class="ga-message__from">{W["manage_note_h"]}</span>
+            <span class="ga-message__text" data-v="message"></span>
+            <p class="ga-letter__fixed">{W["manage_note_fixed"]}</p>
+          </div>
+        </div>
+        <p class="ga-saved" role="status" data-ga-saved></p>
+        <div data-ga-change></div>
+      </div>
+    </section>
+    {words_block(MANAGE_KEYS)}
+'''
+    return 'gift-manage.html', h, gtm, body, '/book', True
+
+
+PAGES = [page_gift, page_gift_card, page_gift_thanks, page_gift_manage]
 
 # 'u' is one unit of the card's 1080-wide design: every size below is the card's own, times u,
 # so the card scales with its frame (a phone, a desk, a printed page) and stays the same card.
@@ -595,6 +649,23 @@ CSS = '''
 @keyframes ga-door-l { to { transform: translateX(-102%); } }
 @keyframes ga-door-r { to { transform: translateX(102%); } }
 @media (prefers-reduced-motion: reduce) { .ga-card.is-opening .ga-arch::before, .ga-card.is-opening .ga-arch::after { content: none; animation: none; } }
+
+/* ---- the buyer's change page, in the card's look ---- */
+.ga-letter { position: relative; padding: clamp(28px, 7vw, 44px) clamp(22px, 6vw, 40px); background: var(--linen); text-align: center;
+  box-shadow: 0 18px 50px rgba(20, 36, 24, 0.18), inset 0 0 0 10px var(--linen), inset 0 0 0 11px rgba(196, 162, 101, 0.75); }
+.ga-letter[hidden] { display: none; }
+.ga-letter .ga-arrow { display: block; width: min(220px, 60%); height: auto; margin: 0 auto 22px; color: var(--gold); }
+.ga-letter__for { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 1.7rem; line-height: 1.15; color: var(--forest-deep); overflow-wrap: anywhere; }
+.ga-letter__from { margin: 6px 0 0; font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 500; font-size: 1.3rem; color: var(--stone); overflow-wrap: anywhere; }
+.ga-letter__when { margin: 22px 0 0; padding-top: 18px; border-top: 1px solid rgba(196, 162, 101, 0.6); font-size: 1.2rem; line-height: 1.5; color: var(--bark); overflow-wrap: anywhere; }
+.ga-letter .ga-message__from { margin-top: 22px; }
+.ga-letter__fixed { margin: 10px 0 0; font-size: 0.95rem; color: var(--stone); }
+.ga-change { display: grid; gap: 14px; padding: clamp(20px, 5vw, 28px); background: var(--linen); border: 1px solid rgba(44, 34, 25, 0.12); }
+.ga-change__h { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 1.45rem; line-height: 1.3; color: var(--forest-deep); }
+.ga-change .lf-btn { width: 100%; }
+.ga-saved { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.25rem; line-height: 1.45; color: var(--forest-deep); }
+.ga-saved:empty { display: none; }
+.ga-manage .lf-btn:focus-visible, .ga-manage .ga-pick:focus-visible { outline: 2px solid var(--forest-deep); outline-offset: 3px; }
 
 /* Keyboard focus, seen on the light panels too (the site's button ring is linen, for dark ground). */
 .ga-give .lf-btn:focus-visible, .ga-cardpage .lf-btn:focus-visible, .ga-buy .gh-back:focus-visible,

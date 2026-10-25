@@ -8,20 +8,27 @@
 
    The engine (book.loxleyforest.com, loxley-rescue ceo/golden-arrow,
    cdb68bc):
-     GET  /v1/health -> {..., gift_sales: true|false}, whether to sell.
+     GET  /v1/health -> {..., gift_sales, gift_delivery}: whether to
+          sell, and whether to offer "a day I choose".
      POST /v1/gift/checkout {product, email, giver_name,
           recipient_names, ship_to?{name, line1, line2, city, state
-          (two letters), zip (five digits)}, deliver: {to: "me"} or
-          {to: "them", email, at: "YYYY-MM-DDTHH:MM" Eastern, within
-          12 months, message (500 at most)}} -> {url, total_cents};
+          (two letters), zip (five digits)}, deliver?{email, date
+          "YYYY-MM-DD", hour 0-23 Eastern, message}} -> {url,
+          total_cents}; no deliver: the card goes to the buyer;
           400 or 503 {error: a sentence}. Stripe returns the buyer to
           /gift/thanks?session_id=..., or to /gift on the way back.
      GET  /v1/gift?code=LF-XXXX-XXXX -> {code, product, name, status
           (issued, redeemed or void), recipient_names, giver_name,
           covers, never_expires, includes, state (unused, booked or
-          used), month (of the stay, "YYYY-MM"), message}; 404 {error}.
-     POST /v1/gift/resend {email} -> {message: one sentence, the same
-          whatever the email} (round two, 2026-10-25).
+          used), month ("January 2027" or null)}; 404 {error}.
+     POST /v1/gift/resend {email} -> {ok, message}: one sentence,
+          the same whatever the email.
+     GET  /v1/gift/delivery?token= and POST /v1/gift/delivery {token,
+          date?, hour?, email?} -> {name, recipient_names, giver_name,
+          email, date, hour, when, message, sent, can_change}: the
+          buyer's change page. GET /v1/health's gift_delivery says
+          whether "a day I choose" is offered.
+   (engine round two: loxley-rescue ceo/golden-arrow-2, 4c9175d.)
    Each has its own door (sales, lookup). A door that is off answers
    404 with the engine's bare {"error": "not found"}, as for a path it
    does not have: the panel then says to call or text Mick. Anything
@@ -97,17 +104,58 @@
   }
   // The last day a card may be sent: twelve months from today.
   function lastDay() { var d = G.parse(G.today()); d.setMonth(d.getMonth() + 12); return G.iso(d); }
-  // The next 7 AM on a day of the year ("12-25"), this year if it is still ahead.
+  // The next 7 AM on a day of the year ("12-25"), this year if it is still ahead: its day.
   function nextMorning(md) {
     var y = +G.today().slice(0, 4), at = y + '-' + md + 'T07:00';
-    return at > nowEastern() ? at : (y + 1) + '-' + md + 'T07:00';
+    return (at > nowEastern() ? at : (y + 1) + '-' + md + 'T07:00').slice(0, 10);
   }
   function hourWords(h) { return (h % 12 || 12) + ' ' + (h < 12 ? 'AM' : 'PM'); }
+  function at(day, hour) { return day + 'T' + pad(+hour) + ':00'; }
   // "Christmas morning at 7 AM", "Valentine's Day at 7 AM", "Friday, January 8, 2027 at 9 AM".
-  function whenWords(at) {
-    var md = at.slice(5, 10), h = +at.slice(11, 13);
-    var day = md === '12-25' && h < 12 ? w('when_christmas') : md === '02-14' ? w('when_valentine') : G.long(at.slice(0, 10));
-    return w('when_at').replace('{day}', day).replace('{hour}', hourWords(h));
+  function whenWords(day, hour) {
+    var md = String(day).slice(5, 10), h = +hour;
+    var d = md === '12-25' && h < 12 ? w('when_christmas') : md === '02-14' ? w('when_valentine') : G.long(day);
+    return w('when_at').replace('{day}', d).replace('{hour}', hourWords(h));
+  }
+  // Is a day and hour one the engine takes: still ahead, and no later than twelve months out?
+  function whenProblem(day, hour) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(day || '') || day < G.today() || day > lastDay()) return 'need_day';
+    if (at(day, hour) <= nowEastern()) return 'need_future';
+    return '';
+  }
+
+  // A labelled field bound to obj[key].
+  function inputField(obj, id, key, label, opts) {
+    opts = opts || {};
+    var input = el('input', { id: id, name: key, type: opts.type || 'text', autocomplete: opts.auto || null,
+      inputmode: opts.mode || null, maxlength: opts.type === 'date' ? null : opts.max || 120, required: opts.optional ? null : 'required',
+      min: opts.min || null, max: opts.type === 'date' ? opts.maxDay || null : null,
+      'aria-describedby': opts.hint ? id + '-hint' : null, value: obj[key] === undefined || obj[key] === null ? '' : obj[key],
+      oninput: function (e) { obj[key] = e.target.value; if (opts.after) opts.after(); } });
+    return el('div', { 'class': 'gh-field' }, [
+      el('label', { 'for': id, text: label + (opts.optional ? ' ' + w('optional') : '') }), input,
+      opts.hint ? el('small', { id: id + '-hint', text: opts.hint }) : null]);
+  }
+
+  // The day, the hour (Eastern) and the quick picks, bound to t {day, hour, pick}; for the purchase
+  // panel and the buyer's change page alike.
+  function whenPicker(t) {
+    function unpick() { t.pick = ''; refresh(); }
+    var day = inputField(t, 'ga-day', 'day', w('day_label'), { type: 'date', min: G.today(), maxDay: lastDay(), after: unpick });
+    var hour = el('select', { id: 'ga-hour', name: 'hour', onchange: function (e) { t.hour = +e.target.value; unpick(); } });
+    for (var h = 0; h < 24; h++) hour.appendChild(el('option', { value: String(h), text: hourWords(h), selected: +t.hour === h ? 'selected' : null }));
+    var picks = [['christmas', '12-25', w('pick_christmas')], ['valentine', '02-14', w('pick_valentine')]].map(function (p) {
+      var d = nextMorning(p[1]);
+      if (d > lastDay()) return null;
+      return el('button', { type: 'button', 'class': 'ga-pick', 'data-pick': p[0], 'aria-pressed': 'false', text: p[2], onclick: function () {
+        t.pick = p[0]; t.day = d; t.hour = 7;
+        day.querySelector('input').value = d; hour.value = '7'; refresh();
+      } });
+    }).filter(Boolean);
+    function refresh() { picks.forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-pick') === t.pick ? 'true' : 'false'); }); }
+    refresh();
+    return [el('div', { 'class': 'ga-row2' }, [day, el('div', { 'class': 'gh-field' }, [el('label', { 'for': 'ga-hour', text: w('hour_label') }), hour])]),
+      picks.length ? el('div', { 'class': 'ga-picks', role: 'group', 'aria-labelledby': 'ga-picks-l' }, [el('span', { id: 'ga-picks-l', text: w('picks_label') })].concat(picks)) : null];
   }
 
   // ================================================== /gift: the purchase panel
@@ -116,9 +164,10 @@
     var API = (root.getAttribute('data-api') || '').replace(/\/$/, '');
     var f = { recipient_names: '', giver_name: '', email: '', mail: false,
               ship: { name: '', line1: '', line2: '', city: '', state: '', zip: '' },
-              deliver: 'me', pick: '', them: { email: '', day: '', hour: 7, message: '' } };
+              deliver: 'me', them: { email: '', day: '', hour: 7, pick: '', message: '' } };
     var opened = null;          // {key, res, at}: a payment page already made for these exact details
     var error = '';
+    var canDeliver = false;     // GET /v1/health's gift_delivery: "a day I choose" is offered
 
     function show(nodes) { root.replaceChildren.apply(root, nodes); }
 
@@ -132,15 +181,7 @@
 
     function field(id, key, label, opts) {
       opts = opts || {};
-      var obj = opts.obj || (opts.ship ? f.ship : f);
-      var input = el('input', { id: id, name: key, type: opts.type || 'text', autocomplete: opts.auto || null,
-        inputmode: opts.mode || null, maxlength: opts.type === 'date' ? null : opts.max || 120, required: opts.optional ? null : 'required',
-        min: opts.min || null, max: opts.type === 'date' ? opts.maxDay || null : null,
-        'aria-describedby': opts.hint ? id + '-hint' : null, value: obj[key] || '',
-        oninput: function (e) { obj[key] = e.target.value; if (opts.after) opts.after(); } });
-      return el('div', { 'class': 'gh-field' }, [
-        el('label', { 'for': id, text: label + (opts.optional ? ' ' + w('optional') : '') }), input,
-        opts.hint ? el('small', { id: id + '-hint', text: opts.hint }) : null]);
+      return inputField(opts.obj || (opts.ship ? f.ship : f), id, key, label, opts);
     }
 
     // How the card arrives: to the buyer (the default), or to them by email on a day chosen here,
@@ -154,31 +195,16 @@
             onchange: function () { f.deliver = v; them.hidden = v !== 'them'; } }),
           el('span', { text: text })]);
       }
-      function unpick() { f.pick = ''; refresh(); }
-      var day = field('ga-day', 'day', w('day_label'), { obj: t, type: 'date', min: G.today(), maxDay: lastDay(), after: unpick });
-      var hour = el('select', { id: 'ga-hour', name: 'hour', onchange: function (e) { t.hour = +e.target.value; unpick(); } });
-      for (var h = 0; h < 24; h++) hour.appendChild(el('option', { value: String(h), text: hourWords(h), selected: t.hour === h ? 'selected' : null }));
-      var picks = [['christmas', '12-25', w('pick_christmas')], ['valentine', '02-14', w('pick_valentine')]].map(function (p) {
-        var at = nextMorning(p[1]);
-        if (at.slice(0, 10) > lastDay()) return null;
-        return el('button', { type: 'button', 'class': 'ga-pick', 'data-pick': p[0], 'aria-pressed': 'false', text: p[2], onclick: function () {
-          f.pick = p[0]; t.day = at.slice(0, 10); t.hour = 7;
-          day.querySelector('input').value = t.day; hour.value = '7'; refresh();
-        } });
-      }).filter(Boolean);
-      function refresh() { picks.forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-pick') === f.pick ? 'true' : 'false'); }); }
-      refresh();
       function counted() { return w('note_count').replace('{n}', String(t.message.length)); }
       var count = el('span', { 'class': 'ga-count', id: 'ga-note-count', text: counted() });
       var note = el('textarea', { id: 'ga-note', name: 'message', maxlength: '500', rows: '4', 'aria-describedby': 'ga-note-hint ga-note-count',
         oninput: function (e) { t.message = e.target.value.slice(0, 500); count.textContent = counted(); } });
       note.value = t.message;
-      [field('ga-their-email', 'email', w('their_email_label'), { obj: t, type: 'email', auto: 'off', mode: 'email', hint: w('their_email_hint') }),
-       el('div', { 'class': 'ga-row2' }, [day, el('div', { 'class': 'gh-field' }, [el('label', { 'for': 'ga-hour', text: w('hour_label') }), hour])]),
-       picks.length ? el('div', { 'class': 'ga-picks', role: 'group', 'aria-labelledby': 'ga-picks-l' }, [el('span', { id: 'ga-picks-l', text: w('picks_label') })].concat(picks)) : null,
+      [field('ga-their-email', 'email', w('their_email_label'), { obj: t, type: 'email', auto: 'off', mode: 'email', hint: w('their_email_hint') })]
+      .concat(whenPicker(t)).concat([
        el('div', { 'class': 'gh-field' }, [el('label', { 'for': 'ga-note', text: w('note_label') + ' ' + w('optional') }), note,
          el('small', { id: 'ga-note-hint', text: w('note_hint') }), count])
-      ].forEach(function (n) { if (n) them.appendChild(n); });
+      ]).forEach(function (n) { if (n) them.appendChild(n); });
       return el('fieldset', { 'class': 'ga-deliver' }, [el('legend', { text: w('deliver_legend') }),
         choice('me', w('deliver_me')), choice('them', w('deliver_them')), them]);
     }
@@ -202,7 +228,7 @@
         field('ga-for', 'recipient_names', w('for_label'), { hint: w('for_hint'), auto: 'off', max: 80 }),
         field('ga-from', 'giver_name', w('from_label'), { hint: w('from_hint'), auto: 'name', max: 80 }),
         field('ga-email', 'email', w('email_label'), { type: 'email', auto: 'email', mode: 'email' }),
-        deliverBlock(),
+        canDeliver ? deliverBlock() : null,
         el('label', { 'class': 'gh-optin', 'for': 'ga-mail' }, [mail, el('span', { text: w('mail_label') })]),
         ship, err, btn]);
     }
@@ -214,10 +240,10 @@
         ['name', 'line1', 'line2', 'city', 'state', 'zip'].forEach(function (k) { b.ship_to[k] = String(f.ship[k] || '').trim(); });
         b.ship_to.state = b.ship_to.state.toUpperCase();
       }
+      // "Email it to them on a day I choose": deliver {email, date, hour, message}. Without it the
+      // card goes to the buyer.
       var t = f.them;
-      b.deliver = f.deliver === 'them'
-        ? { to: 'them', email: t.email.trim(), at: (t.day || '') + 'T' + pad(t.hour) + ':00', message: t.message.trim() }
-        : { to: 'me' };
+      if (canDeliver && f.deliver === 'them') b.deliver = { email: t.email.trim(), date: t.day || '', hour: +t.hour, message: t.message.trim() };
       return b;
     }
 
@@ -226,11 +252,10 @@
       if (!b.giver_name) return ['need_from', 'ga-from'];
       if (!/^\S+@\S+\.\S+$/.test(b.email)) return ['need_email', 'ga-email'];
       var d = b.deliver;
-      if (d.to === 'them') {
+      if (d) {
         if (!/^\S+@\S+\.\S+$/.test(d.email)) return ['need_their_email', 'ga-their-email'];
-        var dd = d.at.slice(0, 10);
-        if (!/^\d{4}-\d{2}-\d{2}$/.test(dd) || dd < G.today() || dd > lastDay()) return ['need_day', 'ga-day'];
-        if (d.at <= nowEastern()) return ['need_future', 'ga-hour'];
+        var wp = whenProblem(d.date, d.hour);
+        if (wp) return [wp, wp === 'need_day' ? 'ga-day' : 'ga-hour'];
       }
       if (b.ship_to) {
         // The engine's rule: the state as two letters, the ZIP as five digits.
@@ -291,15 +316,15 @@
         pay.disabled = true; pay.textContent = w('leaving');
         // For /gift/thanks to read back how the card arrives: the choice and its moment only,
         // never an email or the note, in this tab alone.
-        try { sessionStorage.setItem('ga_deliver', JSON.stringify(b.deliver.to === 'them' ? { to: 'them', at: b.deliver.at } : { to: 'me' })); } catch (e) {}
+        try { sessionStorage.setItem('ga_deliver', JSON.stringify(b.deliver ? { to: 'them', date: b.deliver.date, hour: b.deliver.hour } : { to: 'me' })); } catch (e) {}
         location.assign(res.url);
       } });
-      var d = b.deliver, them = d.to === 'them';
+      var d = b.deliver, them = !!d;
       var head = el('p', { 'class': 'gh-eyebrow', tabindex: '-1', text: w('confirm_eyebrow') });
       show([el('div', { 'class': 'ga-confirm' }, [
         head,
         el('p', { 'class': 'ga-confirm__names' }, [w('card_for') + ' ' + b.recipient_names, el('span', { text: w('card_from') + ' ' + b.giver_name })]),
-        el('p', { 'class': 'gh-fine', text: them ? w('confirm_them').replace('{email}', d.email).replace('{when}', whenWords(d.at)) : w('confirm_link') }),
+        el('p', { 'class': 'gh-fine', text: them ? w('confirm_them').replace('{email}', d.email).replace('{when}', whenWords(d.date, d.hour)) : w('confirm_link') }),
         them && d.message ? el('p', { 'class': 'ga-confirm__note', 'aria-label': w('confirm_note') }, [d.message]) : null,
         b.ship_to ? el('p', { 'class': 'gh-fine', text: w('confirm_mail') + ' ' + where + '.' }) : null,
         el('div', {}, amount),
@@ -313,6 +338,7 @@
     // Is the sales door open? GET /v1/health says so, gift_sales true or false (the engine, main
     // 002ab6c). A missing field or a failed read counts as closed: the call-or-text panel.
     G.api(API, '/v1/health', null, 8000).then(function (h) {
+      canDeliver = !!(h && h.gift_delivery === true);
       if (h && h.gift_sales === true) show([form()]); else off('off');
     }, function (e) { off(unreachable(e) ? 'down' : 'off'); });
   }
@@ -452,6 +478,70 @@
     load();
   }
 
+  // ====================================== /gift/manage: the buyer's change page
+
+  // A card emailed to them on a day the buyer chose: its day, hour and email can change until it
+  // goes; the note never does. The token arrives after # in the buyer's letter and the keys script
+  // has lifted it out of the address bar; it goes to our own booking server and nowhere else.
+  function Manage(root) {
+    var API = (root.getAttribute('data-api') || '').replace(/\/$/, '');
+    var TOKEN = String((window.__ghKeys || {}).token || '');
+    function q(sel) { return root.querySelector(sel); }
+    var wait = q('[data-ga-wait]'), note = q('[data-ga-note]'), letter = q('[data-ga-letter]');
+    var saved = q('[data-ga-saved]'), change = q('[data-ga-change]');
+    function say(t) { wait.hidden = true; letter.hidden = true; change.replaceChildren(); note.textContent = t; note.hidden = false; }
+    function fail(e) {
+      if (routeOff(e)) return say(w('manage_off'));
+      if (unreachable(e)) return say(w('manage_down'));
+      say(e && e.body && e.body.error ? said(e) : w('manage_down'));
+    }
+
+    function render(v) {
+      wait.hidden = true; note.hidden = true;
+      letter.querySelector('[data-v="names"]').textContent = String(v.recipient_names || '').trim();
+      letter.querySelector('[data-v="giver"]').textContent = String(v.giver_name || '').trim();
+      letter.querySelector('[data-v="when"]').textContent = w(v.sent ? 'manage_went' : 'manage_goes')
+        .replace('{email}', String(v.email || '')).replace('{when}', String(v.when || ''));
+      var msg = String(v.message || '').trim(), nb = letter.querySelector('[data-ga-letter-note]');
+      nb.querySelector('[data-v="message"]').textContent = msg;
+      nb.hidden = !msg;
+      letter.hidden = false;
+      change.replaceChildren();
+      if (v.can_change && !v.sent) change.appendChild(form(v));
+    }
+
+    function form(v) {
+      var t = { email: String(v.email || ''), day: String(v.date || ''), hour: +v.hour || 0, pick: '' };
+      var err = el('p', { 'class': 'gh-error', id: 'ga-change-error', role: 'alert' });
+      var btn = el('button', { type: 'submit', 'class': 'lf-btn gh-btn--dark', text: w('manage_save') });
+      function focus(id) { var n = document.getElementById(id); if (n && n.focus) n.focus(); }
+      return el('form', { 'class': 'ga-change', novalidate: 'novalidate', 'aria-labelledby': 'ga-change-h', onsubmit: function (ev) {
+        ev.preventDefault();
+        saved.textContent = '';
+        if (!/^\S+@\S+\.\S+$/.test(t.email.trim())) { err.textContent = w('need_their_email'); return focus('ga-their-email'); }
+        var wp = whenProblem(t.day, t.hour);
+        if (wp) { err.textContent = w(wp); return focus(wp === 'need_day' ? 'ga-day' : 'ga-hour'); }
+        err.textContent = ''; btn.disabled = true; btn.textContent = w('manage_saving');
+        G.api(API, '/v1/gift/delivery', { token: TOKEN, date: t.day, hour: +t.hour, email: t.email.trim() }, 15000).then(function (nv) {
+          render(nv);
+          saved.textContent = w('manage_saved').replace('{email}', String(nv.email || '')).replace('{when}', String(nv.when || ''));
+        }, function (e) {
+          btn.disabled = false; btn.textContent = w('manage_save');
+          if (routeOff(e)) return say(w('manage_off'));
+          // Already emailed (422): the engine's sentence, and the page as it now stands.
+          if (e && e.status === 422 && e.body && e.body.error) { load(); saved.textContent = said(e); return; }
+          err.textContent = e && e.body && e.body.error ? said(e) : w('manage_down');
+        });
+      } }, [el('h2', { 'class': 'ga-change__h', id: 'ga-change-h', text: w('manage_change_h') }),
+        inputField(t, 'ga-their-email', 'email', w('their_email_label'), { type: 'email', auto: 'off', mode: 'email' })]
+        .concat(whenPicker(t)).concat([err, btn, el('p', { 'class': 'gh-fine', text: w('questions') })]).filter(Boolean));
+    }
+
+    function load() { G.api(API, '/v1/gift/delivery?token=' + encodeURIComponent(TOKEN), null, 12000).then(render, fail); }
+    if (!TOKEN) return say(w('manage_none'));
+    load();
+  }
+
   // ============================================ /gift/thanks: how the card arrives
 
   function Thanks(root) {
@@ -459,8 +549,8 @@
     try { d = JSON.parse(sessionStorage.getItem('ga_deliver') || 'null'); } catch (e) {}
     if (!d) return;
     var lead = root.querySelector('[data-ga-thanks-lead]'), me = root.querySelector('[data-ga-thanks-me]'), them = root.querySelector('[data-ga-thanks-them]');
-    if (d.to === 'them' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(d.at || '')) {
-      lead.textContent = w('thanks_them').replace('{when}', whenWords(d.at));
+    if (d.to === 'them' && /^\d{4}-\d{2}-\d{2}$/.test(d.date || '') && d.hour >= 0 && d.hour <= 23) {
+      lead.textContent = w('thanks_them').replace('{when}', whenWords(d.date, d.hour));
       me.hidden = true; them.hidden = false;
     } else if (d.to === 'me') lead.textContent = w('thanks_me');
   }
@@ -471,4 +561,6 @@
   if (page) Card(page);
   var thanks = document.getElementById('ga-thanks');
   if (thanks) Thanks(thanks);
+  var manage = document.getElementById('ga-manage');
+  if (manage) Manage(manage);
 })();

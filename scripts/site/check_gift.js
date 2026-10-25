@@ -21,8 +21,11 @@
    them by email on a day and hour, with the quick picks and a note with a live count), the card's
    reveal, note and status line, "Print this card" and "Book your nights", the lost-card form
    (POST /v1/gift/resend), the thank-you reading the choice back, every field labelled and every
-   focus ring visible. The engine's round-two shapes are mocked as the coordinator gave them
-   (deliver; state, month, message; resend {message}) until its report arrives.
+   focus ring visible, and the buyer's change page (/gift/manage#token=). The engine's round-two
+   shapes are its own (loxley-rescue ceo/golden-arrow-2, 4c9175d): deliver {email, date, hour,
+   message}, gift_delivery on /v1/health, GET and POST /v1/gift/delivery, state and month on
+   GET /v1/gift, resend {ok, message}. One thing the engine does not send is mocked here on
+   purpose: a "message" on GET /v1/gift, to prove the card shows a note when one comes.
 
    It proves:
      - /gift: no price in the page's prose; the panel reads GET /v1/health's gift_sales and says to
@@ -107,7 +110,11 @@ const CI = day(20), CO2 = day(22), CO3 = day(23), CO4 = day(24), CI_NO = day(40)
 const NIGHT_ALL_IN = 64439;
 const CODE = 'LF-TEST-7Q2X', CODE_USED = 'LF-TEST-USED', CODE_VOID = 'LF-TEST-VOID', CODE_LONG = 'LF-TEST-LONG', CODE_BOOKED = 'LF-TEST-BOOK';
 const NOTE = 'For the anniversary you keep talking about.\nGo slow, sleep late, and let Livy feed you.';
-const RESEND = 'If that email bought a Golden Arrow, its card is on the way there now.';
+const RESEND = 'If that email bought a Golden Arrow, its card is on its way.';
+const DELIVERY_OFF = 'Emailing the card on a day you pick is not open yet.';
+const NO_DELIVERY = 'We could not find that gift\'s delivery.';
+const SENT_ALREADY = 'Their card has already been emailed, so it can no longer change.';
+const DTOKEN = 'tok-deliver-1x9';
 const COVERS = 'January 4 to May 31, 2027, weekends included, Valentine\'s weekend aside';
 function giftRow(code, status, names, giver, more) {
   return Object.assign({ code, product: 'golden-arrow', name: 'The Golden Arrow', status, recipient_names: names, giver_name: giver,
@@ -115,8 +122,8 @@ function giftRow(code, status, names, giver, more) {
 }
 const GIFTS = {
   [CODE]: giftRow(CODE, 'issued', 'Ana & Luis', 'Aunt June', { message: NOTE }),
-  [CODE_USED]: giftRow(CODE_USED, 'redeemed', 'Ana & Luis', 'Aunt June', { state: 'used', month: '2027-03' }),
-  [CODE_BOOKED]: giftRow(CODE_BOOKED, 'redeemed', 'Ana & Luis', 'Aunt June', { state: 'booked', month: '2027-02' }),
+  [CODE_USED]: giftRow(CODE_USED, 'redeemed', 'Ana & Luis', 'Aunt June', { state: 'used', month: 'March 2027' }),
+  [CODE_BOOKED]: giftRow(CODE_BOOKED, 'redeemed', 'Ana & Luis', 'Aunt June', { state: 'booked', month: 'February 2027' }),
   [CODE_VOID]: giftRow(CODE_VOID, 'void', 'Ana & Luis', 'Aunt June'),
   [CODE_LONG]: giftRow(CODE_LONG, 'issued', 'Elizabeth Anne Whitfield & Christopher James Okonkwo-Brennan', 'Grandmother Josephine and Grandfather Bartholomew Whitfield'),
 };
@@ -128,13 +135,18 @@ function nowEastern() {
   return p.year + '-' + p.month + '-' + p.day + 'T' + p.hour + ':' + p.minute;
 }
 function nextMorning(md) { const y = +nowEastern().slice(0, 4), at = y + '-' + md + 'T07:00'; return at > nowEastern() ? at : (y + 1) + '-' + md + 'T07:00'; }
+// The engine's words for a delivery moment (gatehouse/gifts.py when_words).
+function whenEngine(date, hour) {
+  const d = new Date(+date.slice(0, 4), +date.slice(5, 7) - 1, +date.slice(8, 10));
+  return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }) + ' at ' + ((hour % 12) || 12) + ' ' + (hour < 12 ? 'AM' : 'PM') + ' Eastern';
+}
 const THEM = 'them@example.test';
 const AGREEMENT = { version: 'check', text: '# The stay agreement\n\nA made-up agreement for the check.\n\n**I accept the release of liability.**\n' };
 const PAY_URL = 'https://checkout.stripe.com/c/pay/cs_test_giftcheck';
 const SESSION = 'cs_test_thanks_5RTq';
 const BUYER = { names: 'Maya & Sam', giver: 'Dad', email: 'buyer@example.test' };
 const SHIP = { name: 'Dad Example', line1: '1 Test Lane', line2: 'Apt 2', city: 'Testville', state: 'GA', zip: '30533' };
-const SECRETS = [CODE, CODE_USED, CODE_VOID, CODE_LONG, CODE_BOOKED, SESSION, 'mt-test-1', BUYER.email, BUYER.names, THEM, 'Ana & Luis', 'Aunt June', 'Test Lane', 'sleep late', 'lost@example.test'];
+const SECRETS = [DTOKEN, CODE, CODE_USED, CODE_VOID, CODE_LONG, CODE_BOOKED, SESSION, 'mt-test-1', BUYER.email, BUYER.names, THEM, 'Ana & Luis', 'Aunt June', 'Test Lane', 'sleep late', 'lost@example.test'];
 
 // The engine's quote (gatehouse/api.py _quote_payload): `quote` and `total` stay the stay's own
 // all-in; with a gift, gift_card says what it covers and plans, summary and extend are on what is left.
@@ -170,18 +182,18 @@ const has = (s, t) => String(s).indexOf(t) >= 0;
 // Static: the pages as built.
 function statics() {
   console.log('the pages as built');
-  const gift = read('gift.html'), card = read('gift-card.html'), thanks = read('gift-thanks.html'), book = read('book.html');
+  const gift = read('gift.html'), card = read('gift-card.html'), thanks = read('gift-thanks.html'), mng = read('gift-manage.html'), book = read('book.html');
   const prose = gift.replace(/<script[\s\S]*?<\/script>/g, '').replace(/<style[\s\S]*?<\/style>/g, '');
   check(!/\$\s?\d/.test(prose) && !/\$\s?\d/.test(JSON.stringify(PANEL)), '/gift: no price in its prose or its words');
-  check([gift, card, thanks].every((h) => has(h, 'GTM-5N4BX66K')), 'Tag Manager on all three pages (the house rule)');
-  for (const [n, h] of [['/gift/card', card], ['/gift/thanks', thanks]]) {
+  check([gift, card, thanks, mng].every((h) => has(h, 'GTM-5N4BX66K')), 'Tag Manager on all four pages (the house rule)');
+  for (const [n, h] of [['/gift/card', card], ['/gift/thanks', thanks], ['/gift/manage', mng]]) {
     const keysAt = h.indexOf('<!-- Booking keys'), gtmAt = h.indexOf('gtm.js?id=');
     check(keysAt > 0 && gtmAt > keysAt, n + ': the keys script runs before Tag Manager');
     check(has(h, 'noindex') && /src="\/js\//.test(h) && /href="\/css\/v2-pages\.css"/.test(h), n + ': noindex, root paths (served one folder deep)');
   }
   check(!has(gift, 'noindex'), '/gift is indexable');
   check(/'gift','code'\]/.test(book) && /'gift','code'\]/.test(card), 'the keys script lifts gift and code');
-  check(REWRITES['/gift/card'] === '/gift-card.html' && REWRITES['/gift/thanks'] === '/gift-thanks.html', 'netlify.toml serves /gift/card and /gift/thanks');
+  check(REWRITES['/gift/card'] === '/gift-card.html' && REWRITES['/gift/thanks'] === '/gift-thanks.html' && REWRITES['/gift/manage'] === '/gift-manage.html', 'netlify.toml serves /gift/card, /gift/thanks and /gift/manage');
   const linking = fs.readdirSync(ROOT).filter((n) => n.endsWith('.html') && !/^gift/.test(n))
     .filter((n) => /href="\/?gift(?:[\/"#?.-])/i.test(read(n)));
   check(linking.length === 0, 'no other page links to the gift pages yet' + (linking.length ? ': ' + linking.join(', ') : ''));
@@ -207,7 +219,8 @@ async function main() {
       window.__printed = 0;
       window.print = () => { window.__printed++; };
     });
-    const rec = { beacons: [], health: 0, lookups: [], probes: 0, sales: [], resends: [], quotes: [], checkouts: [], stays: [], outside: [], stripePages: [] };
+    const rec = { beacons: [], health: 0, lookups: [], probes: 0, sales: [], resends: [], deliveries: [],
+      dv: { recipient_names: 'Ana & Luis', giver_name: 'Aunt June', email: THEM, date: nextMorning('12-25').slice(0, 10), hour: 8, message: NOTE, sent: !!engine.sent }, quotes: [], checkouts: [], stays: [], outside: [], stripePages: [] };
     await ctx.route('**/*', (route) => {
       const req = route.request(), u = new URL(req.url());
       if (u.hostname === '127.0.0.1') return route.continue();
@@ -224,6 +237,7 @@ async function main() {
           if (engine.down) return route.abort('failed');
           const h = { ok: true, units: 1, agreement: true, stripe: true, live: false, payments: true };
           if (engine.sales !== 'nofield') h.gift_sales = engine.sales === 'on';
+          h.gift_delivery = engine.delivery !== 'off';
           return json(h);
         }
         if (u.pathname === '/v1/gift') {
@@ -238,12 +252,28 @@ async function main() {
           if (!b.product) { rec.probes++; return json({ error: 'A product is needed.' }, 400); }
           rec.sales.push(b);
           if (engine.sale503) return json({ error: PAY_503 }, 503);
+          if (b.deliver && engine.delivery === 'off') return json({ error: DELIVERY_OFF }, 400);
           return json({ url: engine.checkoutUrl, total_cents: 254580 });
         }
         if (u.pathname === '/v1/gift/resend') {
           if (engine.resend === 'off') return json({ error: 'not found' }, 404);
           rec.resends.push(b);
-          return json({ message: RESEND });
+          return json({ ok: true, message: RESEND });
+        }
+        if (u.pathname === '/v1/gift/delivery') {
+          if (engine.delivery === 'off') return json({ error: 'not found' }, 404);
+          const dv = rec.dv;
+          const view = () => ({ name: 'The Golden Arrow', recipient_names: dv.recipient_names, giver_name: dv.giver_name, email: dv.email,
+            date: dv.date, hour: dv.hour, when: whenEngine(dv.date, dv.hour), message: dv.message, sent: dv.sent, can_change: !dv.sent });
+          const tok = req.method() === 'GET' ? u.searchParams.get('token') : b.token;
+          rec.deliveries.push({ method: req.method(), body: b, token: tok });
+          if (tok !== DTOKEN) return json({ error: NO_DELIVERY }, 404);
+          if (req.method() === 'GET') return json(view());
+          if (dv.sent) return json({ error: SENT_ALREADY }, 422);
+          if (b.email) dv.email = b.email;
+          if (b.date) dv.date = b.date;
+          if (b.hour !== undefined) dv.hour = +b.hour;
+          return json(view());
         }
         if (u.pathname === '/v1/availability') return json(NIGHTS);
         if (u.pathname === '/v1/agreement') return json(AGREEMENT);
@@ -415,8 +445,8 @@ async function main() {
     await press(page, '#ga-buy button[type=submit]');
     await page.waitForSelector('#ga-buy .ga-confirm', { timeout: 5000 });
     const sent = rec.sales[0] || {};
-    check(Object.keys(sent).sort().join() === 'deliver,email,giver_name,product,recipient_names,ship_to', 'POST /v1/gift/checkout carries the contract\'s fields and nothing else');
-    check(JSON.stringify(sent.deliver) === '{"to":"me"}', 'the default: deliver {to: "me"}');
+    check(Object.keys(sent).sort().join() === 'email,giver_name,product,recipient_names,ship_to', 'POST /v1/gift/checkout carries the contract\'s fields and nothing else');
+    check(!('deliver' in sent), 'the default, "Send the card to me": no deliver sent');
     check(sent.product === 'golden-arrow' && sent.email === BUYER.email && sent.giver_name === BUYER.giver && sent.recipient_names === BUYER.names, 'product, email, giver and their names as typed');
     check(JSON.stringify(sent.ship_to) === JSON.stringify(SHIP), 'ship_to {name, line1, line2, city, state, zip}, the state in capitals');
     const conf = await text(page, '#ga-buy .ga-confirm');
@@ -493,7 +523,7 @@ async function main() {
     await press(page, '#ga-buy button[type=submit]');
     await page.waitForSelector('#ga-buy .ga-confirm', { timeout: 5000 });
     const d = (rec.sales[0] || {}).deliver || {};
-    check(JSON.stringify(d) === JSON.stringify({ to: 'them', email: THEM, at: xmas, message: NOTE }), 'deliver {to: "them", email, at: "' + xmas + '", message}');
+    check(JSON.stringify(d) === JSON.stringify({ email: THEM, date: xmas.slice(0, 10), hour: 7, message: NOTE }), 'deliver {email, date: "' + xmas.slice(0, 10) + '", hour: 7, message}');
     const conf = await text(page, '#ga-buy .ga-confirm');
     check(has(conf, 'We will email it to ' + THEM + ' on Christmas morning at 7 AM.') && has(conf, 'sleep late'), 'the purchase step reads it back: Christmas morning at 7 AM, and the note');
     check(await overflow(page) <= 0, 'no sideways scroll at 390');
@@ -512,6 +542,19 @@ async function main() {
     await ctx.close();
   }
 
+  console.log('/gift: "a day I choose" while the engine\'s delivery door is off');
+  {
+    const { ctx, page, rec } = await open('gift-no-delivery', { delivery: 'off' });
+    await page.goto(BASE + '/gift');
+    await page.waitForSelector('#ga-buy form', { timeout: 10000 });
+    check(!(await page.$('#ga-deliver-them')) && !(await page.$('.ga-deliver')), 'gift_delivery false: the choice is not offered, the card goes to the buyer');
+    await page.fill('#ga-for', BUYER.names); await page.fill('#ga-from', BUYER.giver); await page.fill('#ga-email', BUYER.email);
+    await press(page, '#ga-buy button[type=submit]');
+    await page.waitForSelector('#ga-buy .ga-confirm', { timeout: 5000 });
+    check(rec.sales.length === 1 && !('deliver' in rec.sales[0]), 'and nothing about a day is sent');
+    await ctx.close();
+  }
+
   console.log('/gift: the engine refuses, or answers with something that is not Stripe');
   for (const [what, engine, want] of [
     ['payments unavailable (503): the engine\'s sentence as it wrote it', { sale503: true }, PAY_503 + ' ' + PANEL.questions],
@@ -524,7 +567,7 @@ async function main() {
     await press(page, '#ga-buy button[type=submit]');
     await until(async () => (await text(page, '#ga-error')) === want);
     check(await text(page, '#ga-error') === want && !(await page.$('#ga-buy .ga-confirm')), what);
-    if (engine.sale503) check(Object.keys(rec.sales[0] || {}).sort().join() === 'deliver,email,giver_name,product,recipient_names', 'no box ticked: no ship_to sent');
+    if (engine.sale503) check(Object.keys(rec.sales[0] || {}).sort().join() === 'email,giver_name,product,recipient_names', 'no box ticked: no ship_to sent');
     await ctx.close();
   }
 
@@ -706,6 +749,66 @@ async function main() {
     await page.waitForSelector('[data-ga-note]:not([hidden])', { timeout: 10000 });
     check(await text(page, '[data-ga-note]') === want && await page.evaluate(() => document.querySelector('[data-ga-card]').hidden), what + ', no card');
     if (want.indexOf(NOT_FOUND) === 0) { check(await overflow(page) <= 0, 'no sideways scroll at 390'); await shot(page, 'card-unknown.png', false); }
+    await ctx.close();
+  }
+
+  // ------------------------------------------------------------- /gift/manage
+  console.log('/gift/manage#token=: the buyer changes the day');
+  {
+    const { ctx, page, rec } = await open('manage-delivery', {});
+    await page.goto(BASE + '/gift/manage#token=' + DTOKEN);
+    await page.waitForSelector('[data-ga-letter]:not([hidden])', { timeout: 10000 });
+    check(!has(page.url(), DTOKEN) && new URL(page.url()).pathname === '/gift/manage', 'the token is out of the address bar');
+    check(rec.deliveries[0] && rec.deliveries[0].method === 'GET' && rec.deliveries[0].token === DTOKEN, 'GET /v1/gift/delivery?token=, of our own server');
+    const xd = nextMorning('12-25').slice(0, 10);
+    const v = await page.evaluate(() => ({ for_: document.querySelector('.ga-letter__for').textContent, from: document.querySelector('.ga-letter__from').textContent,
+      when: document.querySelector('.ga-letter__when').textContent, note: document.querySelector('[data-ga-letter-note] [data-v="message"]').textContent,
+      fixed: !document.querySelector('[data-ga-letter-note]').hidden, noteField: !!document.querySelector('[data-ga-change] textarea') }));
+    check(v.for_ === 'For Ana & Luis' && v.from === 'With love from Aunt June', 'the names, as the card reads');
+    check(v.when === 'Their card is emailed to ' + THEM + ' on ' + whenEngine(xd, 8) + '.', 'where and when, in the engine\'s words (' + v.when + ')');
+    check(v.fixed && v.note === NOTE && !v.noteField, 'the note shown, and not to be changed');
+    check(await page.inputValue('#ga-their-email') === THEM && await page.inputValue('#ga-day') === xd && await page.inputValue('#ga-hour') === '8', 'the form holds the email, the day and the hour as they stand');
+    const labelled = await page.evaluate(() => [...document.querySelectorAll('#ga-manage input, #ga-manage select')].filter((n) => !(n.labels && n.labels.length)).map((n) => n.id));
+    check(!labelled.length, 'every field has its label');
+    check(await overflow(page) <= 0, 'no sideways scroll at 390');
+    await shot(page, 'gift-manage.png');
+    await page.selectOption('#ga-hour', '9');
+    await press(page, '[data-ga-change] button[type=submit]');
+    await page.waitForFunction(() => document.querySelector('[data-ga-saved]').textContent.length > 0, null, { timeout: 5000 });
+    const post = rec.deliveries.filter((x) => x.method === 'POST')[0] || {};
+    check(JSON.stringify(post.body) === JSON.stringify({ token: DTOKEN, date: xd, hour: 9, email: THEM }), 'POST /v1/gift/delivery {token, date, hour, email}');
+    check(await text(page, '[data-ga-saved]') === 'Saved. Their card is now emailed to ' + THEM + ' on ' + whenEngine(xd, 9) + '.' &&
+      has(await text(page, '.ga-letter__when'), whenEngine(xd, 9)), 'saved: the new moment, in the engine\'s words');
+    const r = await rings(page, '#ga-manage');
+    check(r.stops.length >= 4 && !r.bad.length, 'every keyboard stop shows its ring (' + r.stops.length + ' stops)');
+    rec.dv.sent = true;
+    await page.selectOption('#ga-hour', '10');
+    await press(page, '[data-ga-change] button[type=submit]');
+    await page.waitForFunction(() => !document.querySelector('[data-ga-change] form'), null, { timeout: 5000 });
+    check(await text(page, '[data-ga-saved]') === SENT_ALREADY + ' ' + PANEL.questions && has(await text(page, '.ga-letter__when'), 'was emailed'),
+      'already emailed: the engine\'s sentence, and no form to change it');
+    leaks(rec, await dataLayer(page), 'the change page');
+    await ctx.close();
+  }
+  {
+    const { ctx, page } = await open('manage-none', {});
+    await page.goto(BASE + '/gift/manage');
+    await page.waitForSelector('[data-ga-note]:not([hidden])', { timeout: 10000 });
+    check(has(await text(page, '[data-ga-note]'), 'missing its key'), 'no token: it says the link is missing its key');
+    await ctx.close();
+  }
+  {
+    const { ctx, page } = await open('manage-off', { delivery: 'off' });
+    await page.goto(BASE + '/gift/manage#token=' + DTOKEN);
+    await page.waitForSelector('[data-ga-note]:not([hidden])', { timeout: 10000 });
+    check(has(await text(page, '[data-ga-note]'), 'isn\u2019t open yet') && await page.evaluate(() => document.querySelector('[data-ga-letter]').hidden), 'the delivery door off: "not open yet", quietly');
+    await ctx.close();
+  }
+  {
+    const { ctx, page } = await open('manage-unknown', {});
+    await page.goto(BASE + '/gift/manage#token=tok-nope');
+    await page.waitForSelector('[data-ga-note]:not([hidden])', { timeout: 10000 });
+    check(await text(page, '[data-ga-note]') === NO_DELIVERY + ' ' + PANEL.questions, 'a token it does not know: the engine\'s sentence');
     await ctx.close();
   }
 

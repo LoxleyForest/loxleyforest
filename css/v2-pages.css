@@ -359,6 +359,23 @@
 @keyframes ga-door-r { to { transform: translateX(102%); } }
 @media (prefers-reduced-motion: reduce) { .ga-card.is-opening .ga-arch::before, .ga-card.is-opening .ga-arch::after { content: none; animation: none; } }
 
+/* ---- the buyer's change page, in the card's look ---- */
+.ga-letter { position: relative; padding: clamp(28px, 7vw, 44px) clamp(22px, 6vw, 40px); background: var(--linen); text-align: center;
+  box-shadow: 0 18px 50px rgba(20, 36, 24, 0.18), inset 0 0 0 10px var(--linen), inset 0 0 0 11px rgba(196, 162, 101, 0.75); }
+.ga-letter[hidden] { display: none; }
+.ga-letter .ga-arrow { display: block; width: min(220px, 60%); height: auto; margin: 0 auto 22px; color: var(--gold); }
+.ga-letter__for { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 1.7rem; line-height: 1.15; color: var(--forest-deep); overflow-wrap: anywhere; }
+.ga-letter__from { margin: 6px 0 0; font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 500; font-size: 1.3rem; color: var(--stone); overflow-wrap: anywhere; }
+.ga-letter__when { margin: 22px 0 0; padding-top: 18px; border-top: 1px solid rgba(196, 162, 101, 0.6); font-size: 1.2rem; line-height: 1.5; color: var(--bark); overflow-wrap: anywhere; }
+.ga-letter .ga-message__from { margin-top: 22px; }
+.ga-letter__fixed { margin: 10px 0 0; font-size: 0.95rem; color: var(--stone); }
+.ga-change { display: grid; gap: 14px; padding: clamp(20px, 5vw, 28px); background: var(--linen); border: 1px solid rgba(44, 34, 25, 0.12); }
+.ga-change__h { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 1.45rem; line-height: 1.3; color: var(--forest-deep); }
+.ga-change .lf-btn { width: 100%; }
+.ga-saved { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.25rem; line-height: 1.45; color: var(--forest-deep); }
+.ga-saved:empty { display: none; }
+.ga-manage .lf-btn:focus-visible, .ga-manage .ga-pick:focus-visible { outline: 2px solid var(--forest-deep); outline-offset: 3px; }
+
 /* Keyboard focus, seen on the light panels too (the site's button ring is linen, for dark ground). */
 .ga-give .lf-btn:focus-visible, .ga-cardpage .lf-btn:focus-visible, .ga-buy .gh-back:focus-visible,
 .ga-pick:focus-visible, .ga-choice:has(input:focus-visible), .ga-buy .gh-optin:has(input:focus-visible) { outline: 2px solid var(--forest-deep); outline-offset: 3px; }
