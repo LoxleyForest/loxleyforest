@@ -37,6 +37,7 @@
   <link rel="canonical" href="https://loxleyforest.com/gift/thanks">
   <meta name="robots" content="noindex, nofollow, noarchive">
 
+  <link rel="preconnect" href="https://book.loxleyforest.com" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
@@ -67,14 +68,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <main id="main">
 
-    <section class="lf-sec lf-dark lf-note ga-thanks" aria-labelledby="nt-h">
+    <section class="lf-sec lf-dark lf-note ga-thanks" id="ga-thanks" aria-labelledby="nt-h">
       <div class="lf-wrap lf-split">
         <div>
           <p class="lf-eyebrow">The Golden Arrow</p>
           <h1 class="lf-h1" id="nt-h">Thank you.</h1>
-          <p class="lf-lead">Your card and its link are on their way by email.</p>
+          <p class="lf-lead" data-ga-thanks-lead>Your card and its link are on their way by email.</p>
           <div class="lf-body">
-          <p>Send them the link when the moment is right, or print the card at home. If you asked for the printed card, we will mail it to you.</p>
+          <p data-ga-thanks-me>Send them the link when the moment is right, or print the card at home. If you asked for the printed card, we will mail it to you.</p>
+          <p data-ga-thanks-them hidden>If you asked for the printed card as well, we will mail it to you.</p>
           <p>When they know their dates, they call or text Mick at 706-502-4823, and he books them in.</p>
           <p>Anything at all, call or text Mick at 706-502-4823.</p>
           </div>
@@ -84,6 +86,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <figure class="lf-photo"><img src="/images/v2/eq3a0907-800.webp" srcset="/images/v2/eq3a0907-800.webp 800w, /images/v2/eq3a0907-1600.webp 1600w" sizes="(min-width: 900px) 50vw, 100vw" width="800" height="533" alt="The treehouse at dusk, its canvas glowing, the rope bridge strung with lights" fetchpriority="high"></figure>
       </div>
     </section>
+    <script type="application/json" id="lf-gift-words">{"card_for": "For", "card_from": "With love from", "card_name": "The Golden Arrow", "thanks_lead": "Your card and its link are on their way by email.", "thanks_me": "Your card is on its way to your inbox.", "thanks_them": "We’ll email it to them on {when}.", "when_at": "{day} at {hour}", "when_christmas": "Christmas morning", "when_valentine": "Valentine’s Day"}</script>
 
   </main>
 
@@ -105,5 +108,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script src="/js/global.js"></script>
   <script src="/js/v2.js"></script>
   <script src="/js/reviews.js" defer></script>
+  <script src="/js/gatehouse.js" defer></script>
+  <script src="/js/gift.js" defer></script>
 </body>
 </html>

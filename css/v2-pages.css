@@ -314,16 +314,70 @@
 .ga-card .ga-foot { position: absolute; left: calc(96 * var(--u)); right: calc(96 * var(--u)); bottom: calc(84 * var(--u)); text-align: center; border-top: max(1px, calc(1 * var(--u))) solid rgba(196, 162, 101, 0.6); padding-top: calc(26 * var(--u)); }
 .ga-card .ga-foot .ga-label { font-size: calc(23 * var(--u)); letter-spacing: 0.24em; color: var(--stone); }
 
-/* Printed from the browser: the card alone, centred, 7 inches wide (fits Letter and A4). */
+/* ---- round two: how the card arrives (the purchase panel) ---- */
+.ga-deliver { border: 0; margin: 0; padding: 0; min-width: 0; display: grid; gap: 10px; }
+.ga-deliver legend { padding: 0; margin-bottom: 8px; font-family: 'Montserrat', Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 1px; color: var(--forest); }
+.ga-choice { display: flex; gap: 12px; align-items: center; min-height: 52px; padding: 12px 14px; border: 1px solid var(--driftwood); background: var(--cream); cursor: pointer; font-size: 17px; line-height: 1.35; color: var(--bark); }
+.ga-choice:has(input:checked) { border-color: var(--forest-deep); background: var(--white); }
+.ga-choice input { flex: none; width: 22px; height: 22px; margin: 0; accent-color: var(--forest-deep); }
+.ga-them { display: grid; gap: 14px; padding: 4px 0 0 14px; border-left: 2px solid rgba(26, 46, 26, 0.18); }
+.ga-them[hidden] { display: none; }
+.ga-picks { display: flex; flex-wrap: wrap; gap: 8px; }
+.ga-picks > span { width: 100%; font-family: 'Montserrat', Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 1px; color: var(--forest); }
+.ga-pick { min-height: 44px; padding: 0 16px; border: 1px solid var(--driftwood); border-radius: 999px; cursor: pointer; background: var(--cream); color: var(--bark); font: 14px/1.2 'Montserrat', Arial, sans-serif; }
+.ga-pick[aria-pressed="true"] { background: var(--forest-deep); border-color: var(--forest-deep); color: var(--on-dark); }
+.ga-form .gh-field textarea { width: 100%; min-height: 128px; padding: 12px 14px; border: 1px solid var(--driftwood); background: var(--cream); border-radius: 0; resize: vertical;
+  font: 400 17px/1.5 'Cormorant Garamond', Georgia, serif; color: var(--bark); }
+.ga-form .gh-field textarea:focus { outline: 2px solid var(--gold); border-color: var(--gold); }
+.ga-count { display: block; margin-top: 6px; text-align: right; font: 13px/1.3 'Montserrat', Arial, sans-serif; color: var(--stone); font-variant-numeric: tabular-nums; }
+.ga-confirm__note { margin: 0; padding: 12px 14px; border-left: 2px solid var(--gold); background: var(--cream); font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 1.15rem; line-height: 1.5; color: var(--bark); white-space: pre-line; overflow-wrap: anywhere; }
+
+/* ---- round two: the card page ---- */
+.ga-message { display: block; margin: 0; padding: 22px 24px 26px; background: var(--linen); border-top: 1px solid rgba(196, 162, 101, 0.6);
+  box-shadow: 0 18px 50px rgba(20, 36, 24, 0.12); text-align: center; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.ga-message[hidden] { display: none; }
+.ga-message__from { display: block; font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 0.6875rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--gold-text); }
+.ga-message__text { display: block; margin-top: 12px; font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 500; font-size: 1.3rem; line-height: 1.5; color: var(--forest-deep); white-space: pre-line; overflow-wrap: anywhere; text-wrap: pretty; }
+.ga-status { margin: 0; text-align: center; font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 0.75rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold-text); }
+.ga-status[hidden], .ga-lost[hidden], .ga-lost__said[hidden] { display: none; }
+.ga-lost { display: grid; gap: 14px; padding: clamp(20px, 5vw, 28px); background: var(--linen); border: 1px solid rgba(44, 34, 25, 0.12); }
+.ga-lost__h { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 1.45rem; line-height: 1.3; color: var(--forest-deep); }
+.ga-lost .lf-btn { width: 100%; }
+.ga-lost__said { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.3rem; line-height: 1.45; color: var(--forest-deep); }
+.ga-lost .gh-fine { margin: 0; }
+
+/* The reveal, on a card's first open on this device: the arch's two doors part onto the photo in
+   under a second. Nothing else moves; the gift number is never covered. None with reduced motion. */
+.ga-card .ga-arch { position: relative; }
+.ga-card.is-opening .ga-arch::before, .ga-card.is-opening .ga-arch::after {
+  content: ''; position: absolute; z-index: 1; top: 0; bottom: 0; width: 50.5%; background: var(--ink);
+  animation: ga-door-l 0.75s cubic-bezier(0.65, 0, 0.35, 1) 0.1s both;
+}
+.ga-card.is-opening .ga-arch::before { left: 0; border-right: max(1px, calc(1.5 * var(--u))) solid var(--gold); }
+.ga-card.is-opening .ga-arch::after { right: 0; border-left: max(1px, calc(1.5 * var(--u))) solid var(--gold); animation-name: ga-door-r; }
+@keyframes ga-door-l { to { transform: translateX(-102%); } }
+@keyframes ga-door-r { to { transform: translateX(102%); } }
+@media (prefers-reduced-motion: reduce) { .ga-card.is-opening .ga-arch::before, .ga-card.is-opening .ga-arch::after { content: none; animation: none; } }
+
+/* Keyboard focus, seen on the light panels too (the site's button ring is linen, for dark ground). */
+.ga-give .lf-btn:focus-visible, .ga-cardpage .lf-btn:focus-visible, .ga-buy .gh-back:focus-visible,
+.ga-pick:focus-visible, .ga-choice:has(input:focus-visible), .ga-buy .gh-optin:has(input:focus-visible) { outline: 2px solid var(--forest-deep); outline-offset: 3px; }
+
+/* Printed from the browser: the card alone, centred, 7 inches wide (fits Letter and A4); with a
+   note, 6 inches, so the card and its note share one page. */
 @media print {
   body:has(#ga-card-page) .lf-hdr, body:has(#ga-card-page) .lf-menu, body:has(#ga-card-page) .lf-foot,
   body:has(#ga-card-page) .book-fab, body:has(#ga-card-page) .skip-link, body:has(#ga-card-page) .ga-head,
   body:has(#ga-card-page) .ga-wait, body:has(#ga-card-page) .ga-note, body:has(#ga-card-page) .ga-actions,
-  body:has(#ga-card-page) .ga-share, body:has(#ga-card-page) .ga-keep { display: none !important; }
+  body:has(#ga-card-page) .ga-share, body:has(#ga-card-page) .ga-keep, body:has(#ga-card-page) .ga-status,
+  body:has(#ga-card-page) .ga-lost { display: none !important; }
   body:has(#ga-card-page), body:has(#ga-card-page) main, .ga-cardpage { background: #fff !important; }
   .ga-cardpage { padding: 0 !important; }
   .ga-cardpage__in, .ga-cardpage .ga-figure, .ga-cardpage .ga-stage { max-width: 7in; }
-  .ga-cardpage .ga-card { box-shadow: none; break-inside: avoid; }
+  .ga-cardpage .ga-card, .ga-cardpage .ga-message { box-shadow: none; break-inside: avoid; }
+  .ga-cardpage .ga-figure:has(.ga-message:not([hidden])), .ga-cardpage .ga-figure:has(.ga-message:not([hidden])) .ga-stage { max-width: 6in; }
+  .ga-cardpage .ga-message { padding: 0.18in 0.3in 0.22in; }
+  .ga-cardpage .ga-message__text { font-size: 12.5pt; }
 }
 
 /* ---- guest ---- */

@@ -17,6 +17,13 @@
    local server applies netlify.toml's 200 rewrites, so /gift/card and /gift/thanks are served as
    they will be live.
 
+   Round two (Mick, 2026-10-25: "as good as a Disney gift card"): the delivery choice (to me, or to
+   them by email on a day and hour, with the quick picks and a note with a live count), the card's
+   reveal, note and status line, "Print this card" and "Book your nights", the lost-card form
+   (POST /v1/gift/resend), the thank-you reading the choice back, every field labelled and every
+   focus ring visible. The engine's round-two shapes are mocked as the coordinator gave them
+   (deliver; state, month, message; resend {message}) until its report arrives.
+
    It proves:
      - /gift: no price in the page's prose; the panel reads GET /v1/health's gift_sales and says to
        call or text Mick while it is false, missing, or the engine unreachable; with it on, the checks before anything is sent (the state as
@@ -98,24 +105,36 @@ function day(n) { const d = new Date(); d.setDate(d.getDate() + n); return d.toI
 const NIGHTS = { nights: Array.from({ length: 150 }, (_, i) => ({ night: day(i + 1), rate_cents: 55000, min_stay: 2 })) };
 const CI = day(20), CO2 = day(22), CO3 = day(23), CO4 = day(24), CI_NO = day(40), CO_NO = day(43);
 const NIGHT_ALL_IN = 64439;
-const CODE = 'LF-TEST-7Q2X', CODE_USED = 'LF-TEST-USED', CODE_VOID = 'LF-TEST-VOID', CODE_LONG = 'LF-TEST-LONG';
+const CODE = 'LF-TEST-7Q2X', CODE_USED = 'LF-TEST-USED', CODE_VOID = 'LF-TEST-VOID', CODE_LONG = 'LF-TEST-LONG', CODE_BOOKED = 'LF-TEST-BOOK';
+const NOTE = 'For the anniversary you keep talking about.\nGo slow, sleep late, and let Livy feed you.';
+const RESEND = 'If that email bought a Golden Arrow, its card is on the way there now.';
 const COVERS = 'January 4 to May 31, 2027, weekends included, Valentine\'s weekend aside';
-function giftRow(code, status, names, giver) {
-  return { code, product: 'golden-arrow', name: 'The Golden Arrow', status, recipient_names: names, giver_name: giver,
-    covers: COVERS, never_expires: true, includes: 'the Dawn Table' };
+function giftRow(code, status, names, giver, more) {
+  return Object.assign({ code, product: 'golden-arrow', name: 'The Golden Arrow', status, recipient_names: names, giver_name: giver,
+    covers: COVERS, never_expires: true, includes: 'the Dawn Table', state: status === 'issued' ? 'unused' : 'used' }, more || {});
 }
 const GIFTS = {
-  [CODE]: giftRow(CODE, 'issued', 'Ana & Luis', 'Aunt June'),
-  [CODE_USED]: giftRow(CODE_USED, 'redeemed', 'Ana & Luis', 'Aunt June'),
+  [CODE]: giftRow(CODE, 'issued', 'Ana & Luis', 'Aunt June', { message: NOTE }),
+  [CODE_USED]: giftRow(CODE_USED, 'redeemed', 'Ana & Luis', 'Aunt June', { state: 'used', month: '2027-03' }),
+  [CODE_BOOKED]: giftRow(CODE_BOOKED, 'redeemed', 'Ana & Luis', 'Aunt June', { state: 'booked', month: '2027-02' }),
   [CODE_VOID]: giftRow(CODE_VOID, 'void', 'Ana & Luis', 'Aunt June'),
   [CODE_LONG]: giftRow(CODE_LONG, 'issued', 'Elizabeth Anne Whitfield & Christopher James Okonkwo-Brennan', 'Grandmother Josephine and Grandfather Bartholomew Whitfield'),
 };
+// Eastern time and the quick picks, worked out here as the page must.
+function nowEastern() {
+  const p = {};
+  new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
+    .formatToParts(new Date()).forEach((x) => { p[x.type] = x.value; });
+  return p.year + '-' + p.month + '-' + p.day + 'T' + p.hour + ':' + p.minute;
+}
+function nextMorning(md) { const y = +nowEastern().slice(0, 4), at = y + '-' + md + 'T07:00'; return at > nowEastern() ? at : (y + 1) + '-' + md + 'T07:00'; }
+const THEM = 'them@example.test';
 const AGREEMENT = { version: 'check', text: '# The stay agreement\n\nA made-up agreement for the check.\n\n**I accept the release of liability.**\n' };
 const PAY_URL = 'https://checkout.stripe.com/c/pay/cs_test_giftcheck';
 const SESSION = 'cs_test_thanks_5RTq';
 const BUYER = { names: 'Maya & Sam', giver: 'Dad', email: 'buyer@example.test' };
 const SHIP = { name: 'Dad Example', line1: '1 Test Lane', line2: 'Apt 2', city: 'Testville', state: 'GA', zip: '30533' };
-const SECRETS = [CODE, CODE_USED, CODE_VOID, CODE_LONG, SESSION, 'mt-test-1', BUYER.email, BUYER.names, 'Ana & Luis', 'Aunt June', 'Test Lane'];
+const SECRETS = [CODE, CODE_USED, CODE_VOID, CODE_LONG, CODE_BOOKED, SESSION, 'mt-test-1', BUYER.email, BUYER.names, THEM, 'Ana & Luis', 'Aunt June', 'Test Lane', 'sleep late', 'lost@example.test'];
 
 // The engine's quote (gatehouse/api.py _quote_payload): `quote` and `total` stay the stay's own
 // all-in; with a gift, gift_card says what it covers and plans, summary and extend are on what is left.
@@ -181,13 +200,14 @@ async function main() {
   // engine: doors { sales, lookup, redeem } each 'on' | 'off'; down: no answer at all; sale503; checkoutUrl
   async function open(name, engine) {
     engine = Object.assign({ sales: 'on', lookup: 'on', redeem: 'on', down: false, checkoutUrl: PAY_URL }, engine || {});
-    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true,
+      reducedMotion: engine.reducedMotion ? 'reduce' : 'no-preference' });
     await ctx.addInitScript(() => {
       try { Object.defineProperty(navigator, 'share', { configurable: true, value: (d) => { window.__shared = d; return Promise.resolve(); } }); } catch (e) {}
       window.__printed = 0;
       window.print = () => { window.__printed++; };
     });
-    const rec = { beacons: [], health: 0, lookups: [], probes: 0, sales: [], quotes: [], checkouts: [], stays: [], outside: [], stripePages: [] };
+    const rec = { beacons: [], health: 0, lookups: [], probes: 0, sales: [], resends: [], quotes: [], checkouts: [], stays: [], outside: [], stripePages: [] };
     await ctx.route('**/*', (route) => {
       const req = route.request(), u = new URL(req.url());
       if (u.hostname === '127.0.0.1') return route.continue();
@@ -219,6 +239,11 @@ async function main() {
           rec.sales.push(b);
           if (engine.sale503) return json({ error: PAY_503 }, 503);
           return json({ url: engine.checkoutUrl, total_cents: 254580 });
+        }
+        if (u.pathname === '/v1/gift/resend') {
+          if (engine.resend === 'off') return json({ error: 'not found' }, 404);
+          rec.resends.push(b);
+          return json({ message: RESEND });
         }
         if (u.pathname === '/v1/availability') return json(NIGHTS);
         if (u.pathname === '/v1/agreement') return json(AGREEMENT);
@@ -282,6 +307,32 @@ async function main() {
   const text = (page, sel) => page.evaluate((s) => { const n = document.querySelector(s); return n ? n.innerText.replace(/\s+/g, ' ').trim() : null; }, sel);
   // A button's own words (its CSS sets them in capitals, which innerText would report).
   const label = (page, sel) => page.evaluate((s) => { const n = document.querySelector(s); return n ? n.textContent.replace(/\s+/g, ' ').trim() : null; }, sel);
+  // Tab through a region by keyboard: every stop must show a ring (2 px or more, not the linen of
+  // the site's dark-ground ring), on the control or, for a radio or tick box, on its label.
+  async function rings(page, within) {
+    // Start just inside the region (no scrolling of our own: the page's smooth scroll owns that),
+    // then let the keyboard walk.
+    await page.evaluate((sel) => { const b = document.querySelector(sel); b.setAttribute('tabindex', '-1'); b.focus({ preventScroll: true }); }, within);
+    const stops = [], bad = [];
+    for (let i = 0; i < 80; i++) {
+      await page.keyboard.press('Tab');
+      const r = await page.evaluate((sel) => {
+        const a = document.activeElement, box = document.querySelector(sel);
+        if (!a || !box || !box.contains(a)) return null;
+        const ring = (n) => { const c = getComputedStyle(n); return { w: parseFloat(c.outlineWidth) || 0, s: c.outlineStyle, c: c.outlineColor }; };
+        let o = ring(a);
+        if ((a.type === 'radio' || a.type === 'checkbox') && a.closest('label')) { const l = ring(a.closest('label')); if (l.w >= o.w) o = l; }
+        return { id: a.id || (a.textContent || '').trim().slice(0, 40) || a.className || a.tagName, ok: o.w >= 2 && o.s !== 'none' && o.c !== 'rgb(247, 243, 237)' };
+      }, within);
+      if (!r) { if (stops.length) break; else continue; }
+      if (r.id === stops[stops.length - 1]) continue;      // a date field's next part: the same stop
+      if (stops.indexOf(r.id) >= 0) break;
+      stops.push(r.id);
+      if (!r.ok) bad.push(r.id);
+    }
+    await page.evaluate((sel) => { const b = document.querySelector(sel); b.removeAttribute('tabindex'); document.activeElement && document.activeElement.blur && document.activeElement.blur(); }, within);
+    return { stops, bad };
+  }
 
   // ------------------------------------------------------------------ /gift
   console.log('/gift while the engine\'s sales door is off');
@@ -357,7 +408,8 @@ async function main() {
     await page.click('#ga-buy button[type=submit]');
     await page.waitForSelector('#ga-buy .ga-confirm', { timeout: 5000 });
     const sent = rec.sales[0] || {};
-    check(Object.keys(sent).sort().join() === 'email,giver_name,product,recipient_names,ship_to', 'POST /v1/gift/checkout carries the contract\'s fields and nothing else');
+    check(Object.keys(sent).sort().join() === 'deliver,email,giver_name,product,recipient_names,ship_to', 'POST /v1/gift/checkout carries the contract\'s fields and nothing else');
+    check(JSON.stringify(sent.deliver) === '{"to":"me"}', 'the default: deliver {to: "me"}');
     check(sent.product === 'golden-arrow' && sent.email === BUYER.email && sent.giver_name === BUYER.giver && sent.recipient_names === BUYER.names, 'product, email, giver and their names as typed');
     check(JSON.stringify(sent.ship_to) === JSON.stringify(SHIP), 'ship_to {name, line1, line2, city, state, zip}, the state in capitals');
     const conf = await text(page, '#ga-buy .ga-confirm');
@@ -378,7 +430,76 @@ async function main() {
     const dl = await dataLayer(page);
     await Promise.all([page.waitForURL(/checkout\.stripe\.com/, { timeout: 5000 }), page.click('#ga-buy .ga-pay')]);
     check(rec.stripePages[0] === PAY_URL, 'pay: the buyer goes to the engine\'s Stripe page');
+    await page.goto(BASE + '/gift/thanks?session_id=' + SESSION);
+    await page.waitForSelector('[data-ga-thanks-lead]');
+    check(await text(page, '[data-ga-thanks-lead]') === 'Your card is on its way to your inbox.', 'back from Stripe: "Your card is on its way to your inbox."');
     leaks(rec, dl, 'the purchase');
+    await ctx.close();
+  }
+
+  console.log('/gift: "Email it to them on a day I choose"');
+  {
+    const { ctx, page, rec } = await open('gift-them', {});
+    await page.goto(BASE + '/gift');
+    await page.waitForSelector('#ga-buy form', { timeout: 10000 });
+    check(await page.isChecked('#ga-deliver-me') && await page.evaluate(() => document.querySelector('.ga-them').hidden), '"Send the card to me" is the default; the rest stays folded');
+    await page.fill('#ga-for', BUYER.names); await page.fill('#ga-from', BUYER.giver); await page.fill('#ga-email', BUYER.email);
+    await page.check('#ga-deliver-them');
+    check(!(await page.evaluate(() => document.querySelector('.ga-them').hidden)), '"Email it to them on a day I choose" opens their email, the day and hour, the picks and the note');
+    const dayAttrs = await page.evaluate(() => { const d = document.getElementById('ga-day'); return { min: d.min, max: d.max }; });
+    const lastDay = (() => { const t = nowEastern().slice(0, 10); const d = new Date(+t.slice(0, 4), +t.slice(5, 7) - 1, +t.slice(8, 10)); d.setMonth(d.getMonth() + 12); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); })();
+    check(dayAttrs.min === nowEastern().slice(0, 10) && dayAttrs.max === lastDay, 'the day: from today (Eastern) to twelve months ahead (' + dayAttrs.min + ' to ' + dayAttrs.max + ')');
+    const picks = await page.evaluate(() => [...document.querySelectorAll('.ga-pick')].map((b) => b.textContent));
+    check(picks.join(' | ') === PANEL.pick_christmas + ' | ' + PANEL.pick_valentine, 'the quick picks: ' + picks.join(', '));
+    await page.click('#ga-buy button[type=submit]');
+    check(await text(page, '#ga-error') === PANEL.need_their_email && rec.sales.length === 0, 'no email for them: it asks');
+    await page.fill('#ga-their-email', THEM);
+    await page.fill('#ga-day', '2099-01-01');
+    await page.click('#ga-buy button[type=submit]');
+    check(await text(page, '#ga-error') === PANEL.need_day && rec.sales.length === 0, 'a day past twelve months: it asks for one within');
+    await page.fill('#ga-day', nowEastern().slice(0, 10));
+    await page.selectOption('#ga-hour', '0');
+    await page.click('#ga-buy button[type=submit]');
+    check(await text(page, '#ga-error') === PANEL.need_future && rec.sales.length === 0, 'an hour already gone: it asks for one to come');
+    await page.click('.ga-pick[data-pick="christmas"]');
+    const xmas = nextMorning('12-25');
+    check(await page.inputValue('#ga-day') === xmas.slice(0, 10) && await page.inputValue('#ga-hour') === '7' &&
+      await page.getAttribute('.ga-pick[data-pick="christmas"]', 'aria-pressed') === 'true', '"Christmas morning, 7 AM" sets ' + xmas);
+    await page.fill('#ga-note', NOTE);
+    check(await text(page, '#ga-note-count') === NOTE.length + ' of 500', 'the note\'s live count (' + (await text(page, '#ga-note-count')) + ')');
+    await page.fill('#ga-note', 'x'.repeat(600));
+    check((await page.inputValue('#ga-note')).length === 500 && await text(page, '#ga-note-count') === '500 of 500', 'five hundred characters at most');
+    await page.fill('#ga-note', NOTE);
+    const labelled = await page.evaluate(() => [...document.querySelectorAll('#ga-buy input, #ga-buy select, #ga-buy textarea')]
+      .filter((n) => !(n.labels && n.labels.length) && !n.getAttribute('aria-label')).map((n) => n.id || n.name));
+    await page.check('#ga-mail');
+    const labelled2 = await page.evaluate(() => [...document.querySelectorAll('#ga-buy input, #ga-buy select, #ga-buy textarea')]
+      .filter((n) => !(n.labels && n.labels.length) && !n.getAttribute('aria-label')).map((n) => n.id || n.name));
+    check(!labelled.length && !labelled2.length, 'every field has its label' + (labelled.concat(labelled2).length ? ': ' + labelled.concat(labelled2).join(', ') : ''));
+    const r = await rings(page, '#ga-buy');
+    check(r.stops.length >= 15 && !r.bad.length, 'every keyboard stop shows its ring (' + r.stops.length + ' stops' + (r.bad.length ? '; none on ' + r.bad.join(', ') : '') + ')');
+    await page.uncheck('#ga-mail');
+    await page.locator('.ga-deliver').scrollIntoViewIfNeeded();
+    await shot(page, 'gift-deliver-them.png', false);
+    await page.click('#ga-buy button[type=submit]');
+    await page.waitForSelector('#ga-buy .ga-confirm', { timeout: 5000 });
+    const d = (rec.sales[0] || {}).deliver || {};
+    check(JSON.stringify(d) === JSON.stringify({ to: 'them', email: THEM, at: xmas, message: NOTE }), 'deliver {to: "them", email, at: "' + xmas + '", message}');
+    const conf = await text(page, '#ga-buy .ga-confirm');
+    check(has(conf, 'We will email it to ' + THEM + ' on Christmas morning at 7 AM.') && has(conf, 'sleep late'), 'the purchase step reads it back: Christmas morning at 7 AM, and the note');
+    check(await overflow(page) <= 0, 'no sideways scroll at 390');
+    await page.locator('#ga-buy .ga-confirm').scrollIntoViewIfNeeded();
+    await shot(page, 'gift-purchase-them.png', false);
+    const confRings = await rings(page, '#ga-buy');
+    check(!confRings.bad.length && confRings.stops.length >= 2, 'the purchase step\'s buttons show their rings too');
+    const dl = await dataLayer(page);
+    await Promise.all([page.waitForURL(/checkout\.stripe\.com/, { timeout: 5000 }), page.click('#ga-buy .ga-pay')]);
+    await page.goto(BASE + '/gift/thanks?session_id=' + SESSION);
+    await page.waitForSelector('[data-ga-thanks-lead]');
+    check(await text(page, '[data-ga-thanks-lead]') === 'We\u2019ll email it to them on Christmas morning at 7 AM.', 'the thank-you: "We\'ll email it to them on Christmas morning at 7 AM."');
+    check(await page.evaluate(() => { const v = sessionStorage.getItem('ga_deliver') || ''; return v.indexOf('@') < 0 && v.indexOf('sleep') < 0; }), 'what the thank-you reads holds no email and no note');
+    await shot(page, 'gift-thanks-them.png');
+    leaks(rec, dl, 'to them');
     await ctx.close();
   }
 
@@ -394,7 +515,7 @@ async function main() {
     await page.click('#ga-buy button[type=submit]');
     await until(async () => (await text(page, '#ga-error')) === want);
     check(await text(page, '#ga-error') === want && !(await page.$('#ga-buy .ga-confirm')), what);
-    if (engine.sale503) check(Object.keys(rec.sales[0] || {}).sort().join() === 'email,giver_name,product,recipient_names', 'no box ticked: no ship_to sent');
+    if (engine.sale503) check(Object.keys(rec.sales[0] || {}).sort().join() === 'deliver,email,giver_name,product,recipient_names', 'no box ticked: no ship_to sent');
     await ctx.close();
   }
 
@@ -419,6 +540,16 @@ async function main() {
     const { ctx, page, rec } = await open('card', {});
     await page.goto(BASE + '/gift/card#code=' + CODE);
     await page.waitForSelector('[data-ga-card]:not([hidden])', { timeout: 10000 });
+    const rv = await page.evaluate(() => {
+      const card = document.querySelector('.ga-card'), door = getComputedStyle(document.querySelector('.ga-arch'), '::after');
+      const no = document.querySelector('.ga-giftno');
+      return { opening: card.classList.contains('is-opening'), dur: parseFloat(door.animationDuration) + parseFloat(door.animationDelay),
+        no: getComputedStyle(no).opacity === '1' && !no.hidden && no.getBoundingClientRect().height > 0 };
+    });
+    check(rv.opening && rv.dur > 0 && rv.dur < 1, 'first open: the arch\'s doors part onto the photo, under a second (' + rv.dur + ' s)');
+    check(rv.no, 'the gift number shows throughout');
+    await page.waitForTimeout(1300);
+    check(!(await page.evaluate(() => document.querySelector('.ga-card').classList.contains('is-opening'))), 'and then it is done');
     await page.evaluate(() => document.fonts.ready);
     const url = new URL(page.url());
     check(!has(page.url(), CODE) && url.pathname === '/gift/card', 'the code is out of the address bar (' + url.pathname + url.hash + ')');
@@ -433,7 +564,11 @@ async function main() {
     check(/LF-TEST-7Q2X/.test(c.no || ''), 'its gift number, the code, as the card prints it (' + (c.no || '').trim() + ')');
     check(c.gift === RATIFIED_GIFT && c.nights === RATIFIED && c.title === 'The Golden Arrow' && c.sub === 'A gift of three nights in the trees', 'the card\'s ratified words, word for word');
     check(/^To choose your dates, call or text Mick at 706-502-4823\.$/.test(c.call || ''), 'and its call line');
-    check(c.dates && c.keep, '"Choose your dates" and the keep-it-close line for a gift not yet used');
+    check(c.dates && c.keep, '"Book your nights" and the keep-it-close line for a gift not yet used');
+    check(await text(page, '[data-ga-status]') === 'UNUSED, READY FOR THREE NIGHTS' || await label(page, '[data-ga-status]') === CARD_W.state_unused, 'the status line: "' + CARD_W.state_unused + '"');
+    check(await label(page, '[data-ga-dates]') === CARD_W.choose_dates && await label(page, '[data-ga-print]') === CARD_W.print, 'the buttons: "' + CARD_W.choose_dates + '" and "' + CARD_W.print + '"');
+    const m = await page.evaluate(() => { const b = document.querySelector('[data-ga-message]'); return { shown: !b.hidden, from: b.querySelector('[data-ga-message-from]').textContent, text: b.querySelector('[data-ga-message-text]').textContent }; });
+    check(m.shown && m.from === 'A note from Aunt June' && m.text === NOTE, 'the note under the dedication, as it was written');
     const lay = await page.evaluate(() => {
       const r = (s) => document.querySelector(s).getBoundingClientRect();
       return { callBottom: r('.ga-call').bottom, footTop: r('.ga-foot').top, side: document.querySelector('.ga-side').scrollHeight,
@@ -457,18 +592,21 @@ async function main() {
     check(pr.card && !pr.hdr && !pr.foot && !pr.actions && !pr.fab, 'printed: the card alone, no header, footer or buttons');
     const pdf = await page.pdf({ format: 'Letter', printBackground: true });
     const pages = (pdf.toString('latin1').match(/\/Type\s*\/Page[^s]/g) || []).length;
-    check(pages === 1, 'printed on Letter: one page (' + pages + ')');
+    check(pages === 1, 'printed on Letter, with its note: one page (' + pages + ')');
     if (SHOTS) fs.writeFileSync(path.join(SHOTS, 'card-print.pdf'), pdf);
     await page.emulateMedia({ media: 'screen' });
 
     await page.reload();
     await page.waitForSelector('[data-ga-card]:not([hidden])', { timeout: 10000 });
     check(await page.evaluate(() => document.querySelector('.ga-for').innerText) === 'For Ana & Luis', 'a refresh keeps the card');
+    check(!(await page.evaluate(() => document.querySelector('.ga-card').classList.contains('is-opening'))), 'the second open: no reveal');
+    const cr = await rings(page, '#ga-card-page');
+    check(cr.stops.length >= 3 && !cr.bad.length, 'the card page\'s buttons show their rings (' + cr.stops.length + ' stops)');
     leaks(rec, await dataLayer(page), 'the card');
 
     await Promise.all([page.waitForURL(/\/book/, { timeout: 5000 }), page.click('[data-ga-dates]')]);
     await page.waitForSelector('#gatehouse .gh-summary', { timeout: 10000 });
-    check(!has(page.url(), CODE) && await page.evaluate((c) => window.__ghKeys.gift === c, CODE), '"Choose your dates" opens /book with the gift, out of the address bar');
+    check(!has(page.url(), CODE) && await page.evaluate((c) => window.__ghKeys.gift === c, CODE), '"Book your nights" opens /book with the gift, out of the address bar');
     check(await text(page, '#gatehouse .gh-gift') === BOOK_W.book_with, 'and /book says the Golden Arrow is with them');
     leaks(rec, await dataLayer(page), 'card to /book');
     await ctx.close();
@@ -491,6 +629,56 @@ async function main() {
     await ctx.close();
   }
 
+  console.log('/gift/card: reduced motion, and a gift booked or enjoyed');
+  {
+    const { ctx, page } = await open('card-still', { reducedMotion: true });
+    await page.goto(BASE + '/gift/card#code=' + CODE);
+    await page.waitForSelector('[data-ga-card]:not([hidden])', { timeout: 10000 });
+    check(!(await page.evaluate(() => document.querySelector('.ga-card').classList.contains('is-opening'))), 'with reduced motion: no reveal on first open');
+    await ctx.close();
+  }
+  for (const [code, want] of [[CODE_BOOKED, 'Booked for February 2027'], [CODE_USED, 'Enjoyed in March 2027']]) {
+    const { ctx, page } = await open('card-state', {});
+    await page.goto(BASE + '/gift/card#code=' + code);
+    await page.waitForSelector('[data-ga-card]:not([hidden])', { timeout: 10000 });
+    const v = await page.evaluate(() => ({ status: document.querySelector('[data-ga-status]').textContent, dates: document.querySelector('[data-ga-dates]').hidden,
+      keep: document.querySelector('[data-ga-keep]').hidden, msg: document.querySelector('[data-ga-message]').hidden }));
+    check(v.status === want && v.dates && v.keep && v.msg, '"' + want + '": the card to keep, no "Book your nights", no note when none was written');
+    if (code === CODE_BOOKED) await shot(page, 'card-booked.png');
+    await ctx.close();
+  }
+
+  console.log('/gift/card: lost your card?');
+  {
+    const { ctx, page, rec } = await open('card-lost', {});
+    await page.goto(BASE + '/gift/card');
+    await page.waitForSelector('[data-ga-lost]:not([hidden])', { timeout: 10000 });
+    check(await text(page, '#ga-lost-h') === CARD_W.lost_h && await text(page, '[data-ga-note]') === CARD_W.card_none, 'no code: "' + CARD_W.lost_h + '"');
+    check(await page.evaluate(() => { const i = document.getElementById('ga-lost-email'); return !!(i.labels && i.labels.length); }), 'its field has its label');
+    await page.click('[data-ga-lost] button[type=submit]');
+    check(await text(page, '#ga-lost-error') === CARD_W.lost_need && rec.resends.length === 0, 'empty: it asks, sends nothing');
+    await page.fill('#ga-lost-email', 'lost@example.test');
+    await page.click('[data-ga-lost] button[type=submit]');
+    await page.waitForSelector('[data-ga-lost-said]:not([hidden])', { timeout: 5000 });
+    check(JSON.stringify(rec.resends[0]) === '{"email":"lost@example.test"}', 'POST /v1/gift/resend {email}');
+    check(await text(page, '[data-ga-lost-said]') === RESEND, 'then the engine\'s one sentence, as it wrote it');
+    check(await overflow(page) <= 0, 'no sideways scroll at 390');
+    await shot(page, 'card-lost.png', false);
+    leaks(rec, await dataLayer(page), 'lost card');
+    await ctx.close();
+  }
+  {
+    const { ctx, page } = await open('card-lost-off', { resend: 'off' });
+    await page.goto(BASE + '/gift/card#code=LF-NOPE-NOPE');
+    await page.waitForSelector('[data-ga-lost]:not([hidden])', { timeout: 10000 });
+    check(await text(page, '[data-ga-note]') === NOT_FOUND + ' ' + CARD_W.questions, 'a code it cannot find: its sentence, and the lost-card form');
+    await page.fill('#ga-lost-email', 'lost@example.test');
+    await page.click('[data-ga-lost] button[type=submit]');
+    await page.waitForSelector('[data-ga-lost-said]:not([hidden])', { timeout: 5000 });
+    check(await text(page, '[data-ga-lost-said]') === CARD_W.lost_off, 'the resend door off: "' + CARD_W.lost_off + '"');
+    await ctx.close();
+  }
+
   console.log('/gift/card: the plain sentences');
   for (const [what, hash, engine, want] of [
     ['no code on the link', '', {}, CARD_W.card_none],
@@ -504,14 +692,6 @@ async function main() {
     await page.waitForSelector('[data-ga-note]:not([hidden])', { timeout: 10000 });
     check(await text(page, '[data-ga-note]') === want && await page.evaluate(() => document.querySelector('[data-ga-card]').hidden), what + ', no card');
     if (want.indexOf(NOT_FOUND) === 0) { check(await overflow(page) <= 0, 'no sideways scroll at 390'); await shot(page, 'card-unknown.png', false); }
-    await ctx.close();
-  }
-  {
-    const { ctx, page } = await open('card-used', {});
-    await page.goto(BASE + '/gift/card#code=' + CODE_USED);
-    await page.waitForSelector('[data-ga-card]:not([hidden])', { timeout: 10000 });
-    const v = await page.evaluate(() => ({ dates: document.querySelector('[data-ga-dates]').hidden, keep: document.querySelector('[data-ga-keep]').hidden, note: document.querySelector('[data-ga-note]').innerText }));
-    check(v.dates && v.keep && v.note === CARD_W.card_used, 'a gift already used: the card to keep, no "Choose your dates"');
     await ctx.close();
   }
 

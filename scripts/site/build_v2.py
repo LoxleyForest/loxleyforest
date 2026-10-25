@@ -690,7 +690,7 @@ PATHS = {'gift-card.html': '/gift/card', 'gift-thanks.html': '/gift/thanks'}
 TALK_PAGES = ('book.html', 'elopements.html', 'proposals.html')
 
 # The Golden Arrow's pages (scripts/site/pages/gift.py): the purchase panel and the card.
-GIFT_PAGES = ('gift.html', 'gift-card.html')
+GIFT_PAGES = ('gift.html', 'gift-card.html', 'gift-thanks.html')
 
 
 def build(page):
