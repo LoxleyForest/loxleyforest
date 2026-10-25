@@ -133,17 +133,21 @@ def footer(book, gatehouse):
 # A key arriving as a hash change on the same page (no new load) reloads the page, so it is lifted too.
 # The referrer policy sends only the origin, even on our own requests, so a key in an older
 # query-string link is not copied into a Referer while the page loads.
-KEYS_PAGES = ('book.html', 'booked.html', 'manage.html')
+# The Golden Arrow (2026-10-25): a gift's code rides /book#gift= like a credit (kept for the session,
+# so a guest who wanders off and comes back by any Book button keeps it), and the card page's own
+# code, /gift/card#code=, and the payment session Stripe returns to /gift/thanks?session_id= are
+# lifted the same way before Tag Manager can read the address.
+KEYS_PAGES = ('book.html', 'booked.html', 'manage.html', 'gift-card.html', 'gift-thanks.html')
 KEYS_SCRIPT = r"""  <!-- Booking keys: out of the address bar before anything loads -->
   <meta name="referrer" content="strict-origin">
-  <script>(function(){var N=['token','credit','session_id','hold'],k={},f=!1,st={},p=location.pathname.replace(/\.html$/,'').replace(/(.)\/$/,'$1');
+  <script>(function(){var N=['token','credit','session_id','hold','gift','code'],k={},f=!1,st={},p=location.pathname.replace(/\.html$/,'').replace(/(.)\/$/,'$1');
   try{st=JSON.parse(sessionStorage.getItem('gh_keys')||'{}')||{}}catch(e){}
   var q=new URLSearchParams(location.search),hp=location.hash.indexOf('=')>0,h=new URLSearchParams(hp?location.hash.slice(1):'');
   N.forEach(function(n){var v=h.get(n)||q.get(n);if(q.has(n)||h.has(n)){f=!0;q.delete(n);h.delete(n)}if(v)k[n]=v});
   if(f){st[p]=k;try{sessionStorage.setItem('gh_keys',JSON.stringify(st))}catch(e){}
   var s=q.toString(),t=hp?h.toString():location.hash.slice(1);history.replaceState(history.state,'',location.pathname+(s?'?'+s:'')+(t?'#'+t:''))}
-  else{var nv=(performance.getEntriesByType&&performance.getEntriesByType('navigation')[0])||{};if(nv.type==='reload'||nv.type==='back_forward')k=st[p]||{};else if(st[p]&&st[p].credit)k={credit:st[p].credit}}
-  window.__ghKeys=k;addEventListener('hashchange',function(){if(/(^#|&)(token|credit|session_id|hold)=/.test(location.hash))location.reload()})})();</script>
+  else{var nv=(performance.getEntriesByType&&performance.getEntriesByType('navigation')[0])||{};if(nv.type==='reload'||nv.type==='back_forward')k=st[p]||{};else if(st[p]){if(st[p].credit)k.credit=st[p].credit;if(st[p].gift)k.gift=st[p].gift}}
+  window.__ghKeys=k;addEventListener('hashchange',function(){if(/(^#|&)(token|credit|session_id|hold|gift|code)=/.test(location.hash))location.reload()})})();</script>
   <!-- End booking keys -->
 """
 KEYS_RE = re.compile(r'  <!-- Booking keys: out of the address bar before anything loads -->\n.*?<!-- End booking keys -->\n', re.S)
@@ -673,13 +677,20 @@ def page_treehouses():
 def page_path(name):
     """The page's clean path ('index.html' is '/', 'treehouses.html' is '/treehouses'). The page
     beacon (js/v2.js) sends this, never the address bar, so no query or fragment can ride it."""
-    return '/' if name == 'index.html' else '/' + name[:-len('.html')]
+    return '/' if name == 'index.html' else PATHS.get(name) or '/' + name[:-len('.html')]
+
+
+# Pages served at a path other than their file's (a rewrite in netlify.toml).
+PATHS = {'gift-card.html': '/gift/card', 'gift-thanks.html': '/gift/thanks'}
 
 
 # The talk-to-Mick card (js/talk.js, styles at the end of css/v2.css): offered to a visitor who is
 # hesitating, so Mick can close by phone (Mick, 2026-10-23). Only these pages load it; the script
 # also refuses /booked and /manage on its own. proposals.html picks it up when its page lands.
 TALK_PAGES = ('book.html', 'elopements.html', 'proposals.html')
+
+# The Golden Arrow's pages (scripts/site/pages/gift.py): the purchase panel and the card.
+GIFT_PAGES = ('gift.html', 'gift-card.html')
 
 
 def build(page):
@@ -692,6 +703,7 @@ def build(page):
     html = (head + f'<body class="v2" data-lf-path="{page_path(name)}" data-lf-api="{API}">\n' + gtm + '\n' + header(book) + '\n  <main id="main">\n' + body + '\n  </main>\n\n'
             + footer(book, gatehouse) + ('  <script src="js/crossing.js" defer></script>\n' if 'data-crossing' in body else '')
             + ('  <script src="js/talk.js" defer></script>\n' if name in TALK_PAGES else '')
+            + ('  <script src="js/gift.js" defer></script>\n' if name in GIFT_PAGES else '')
             + '</body>\n</html>\n')
     if name in ROOTED_PAGES:
         html = rooted(html)
@@ -702,7 +714,9 @@ def build(page):
 # Netlify serves 404.html at whatever path was missed, so a miss one folder deep (/a/b) would
 # resolve the shared header's and footer's relative paths (images/, css/, js/) under /a/ and
 # lose the logo and every script. These pages get root paths throughout.
-ROOTED_PAGES = ('404.html',)
+# The gift's card and thank-you are served at /gift/card and /gift/thanks (netlify.toml), one
+# folder deep, so they are rooted too.
+ROOTED_PAGES = ('404.html', 'gift-card.html', 'gift-thanks.html')
 
 
 def rooted(html):

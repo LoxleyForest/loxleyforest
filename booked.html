@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
   <!-- Booking keys: out of the address bar before anything loads -->
   <meta name="referrer" content="strict-origin">
-  <script>(function(){var N=['token','credit','session_id','hold'],k={},f=!1,st={},p=location.pathname.replace(/\.html$/,'').replace(/(.)\/$/,'$1');
+  <script>(function(){var N=['token','credit','session_id','hold','gift','code'],k={},f=!1,st={},p=location.pathname.replace(/\.html$/,'').replace(/(.)\/$/,'$1');
   try{st=JSON.parse(sessionStorage.getItem('gh_keys')||'{}')||{}}catch(e){}
   var q=new URLSearchParams(location.search),hp=location.hash.indexOf('=')>0,h=new URLSearchParams(hp?location.hash.slice(1):'');
   N.forEach(function(n){var v=h.get(n)||q.get(n);if(q.has(n)||h.has(n)){f=!0;q.delete(n);h.delete(n)}if(v)k[n]=v});
   if(f){st[p]=k;try{sessionStorage.setItem('gh_keys',JSON.stringify(st))}catch(e){}
   var s=q.toString(),t=hp?h.toString():location.hash.slice(1);history.replaceState(history.state,'',location.pathname+(s?'?'+s:'')+(t?'#'+t:''))}
-  else{var nv=(performance.getEntriesByType&&performance.getEntriesByType('navigation')[0])||{};if(nv.type==='reload'||nv.type==='back_forward')k=st[p]||{};else if(st[p]&&st[p].credit)k={credit:st[p].credit}}
-  window.__ghKeys=k;addEventListener('hashchange',function(){if(/(^#|&)(token|credit|session_id|hold)=/.test(location.hash))location.reload()})})();</script>
+  else{var nv=(performance.getEntriesByType&&performance.getEntriesByType('navigation')[0])||{};if(nv.type==='reload'||nv.type==='back_forward')k=st[p]||{};else if(st[p]){if(st[p].credit)k.credit=st[p].credit;if(st[p].gift)k.gift=st[p].gift}}
+  window.__ghKeys=k;addEventListener('hashchange',function(){if(/(^#|&)(token|credit|session_id|hold|gift|code)=/.test(location.hash))location.reload()})})();</script>
   <!-- End booking keys -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Google Tag Manager -->
@@ -81,6 +81,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="gh-summary"><p class="gh-lead gh-pulse">Confirming your booking with the payment, a few seconds…</p></div>
           <noscript><p class="gh-lead">This page needs JavaScript to show your stay. Your confirmation email has everything, or call or text <a href="tel:+17065024823">706-502-4823</a>.</p></noscript>
         </div>
+        <script type="application/json" id="lf-gift-words">{"book_name": "The Golden Arrow", "card_for": "For", "card_from": "With love from", "card_name": "The Golden Arrow", "stay_booked_now": "Your nights are booked. For anything at all, call or text Mick at 706-502-4823.", "stay_gift_includes": "{x} included", "stay_gift_move": "To move or change a gift stay, call or text Mick at 706-502-4823."}</script>
       </div>
     </section>
 
