@@ -6,16 +6,20 @@
    shows is in the page's JSON block (id lf-gift-words), written by
    scripts/site/pages/gift.py from its WORDS (awaiting Mick).
 
-   The engine (book.loxleyforest.com, loxley-rescue branch
-   ceo/golden-arrow):
+   The engine (book.loxleyforest.com, loxley-rescue ceo/golden-arrow,
+   cdb68bc):
      POST /v1/gift/checkout {product, email, giver_name,
-          recipient_names, ship_to?} -> {url, total_cents?, lines?}
-     GET  /v1/gift?code=... -> {product, status, recipient_names,
-          giver_name, covers, never_expires, number?}
-   Until those routes are switched on they answer 404 with the
-   engine's bare {"error": "not found"} (gatehouse/api.py, a route it
-   does not have): the panel then says to call or text Mick. A gift
-   the engine cannot find is a sentence, never those two words.
+          recipient_names, ship_to?{name, line1, line2, city, state
+          (two letters), zip (five digits)}} -> {url, total_cents};
+          400 or 503 {error: a sentence}. Stripe returns the buyer to
+          /gift/thanks?session_id=..., or to /gift on the way back.
+     GET  /v1/gift?code=LF-XXXX-XXXX -> {code, product, name, status
+          (issued, redeemed or void), recipient_names, giver_name,
+          covers, never_expires, includes}; 404 {error: a sentence}.
+   Each has its own door (sales, lookup). A door that is off answers
+   404 with the engine's bare {"error": "not found"}, as for a path it
+   does not have: the panel then says to call or text Mick. Anything
+   the engine refuses is a sentence, shown as is.
 
    The card's code arrives after # and the keys script in the head
    (scripts/site/build_v2.py KEYS_SCRIPT) has already lifted it out
@@ -35,15 +39,20 @@
     try { var n = document.getElementById('lf-gift-words'); return (n && JSON.parse(n.textContent)) || {}; } catch (e) { return {}; }
   })();
   function w(k) { return W[k] || ''; }
+  // The engine's refusal, as it wrote it, then Mick's number; our own words when it gave none.
+  function said(e, fallback) {
+    var t = e && e.body && typeof e.body.error === 'string' ? e.body.error.trim() : '';
+    return t ? t + ' ' + w('questions') : (e && e.message) || w(fallback);
+  }
 
-  // The engine's own answer for a route it does not have: the gift routes are switched off.
+  // The engine's own answer for a door that is off (or a path it does not have).
   function routeOff(e) { return !!(e && e.status === 404 && e.body && e.body.error === 'not found'); }
   // No answer at all, a timeout, or the server's own failure.
   function unreachable(e) { return !e || !e.status || e.status >= 500; }
 
   var PRODUCT = 'golden-arrow';
-  var USABLE = { paid: 1, active: 1 };
-  var USED = { redeemed: 1, used: 1 };
+  var USABLE = { issued: 1 };
+  var USED = { redeemed: 1 };
   var STRIPE = /^https:\/\/([a-z0-9-]+\.)*stripe\.com\//i;
 
   // Two taps for the phone, under a sentence that already gives the number.
@@ -112,8 +121,8 @@
         field('ga-ship-line2', 'line2', w('ship_line2'), { ship: true, auto: 'shipping address-line2', optional: true }),
         field('ga-ship-city', 'city', w('ship_city'), { ship: true, auto: 'shipping address-level2' }),
         el('div', { 'class': 'ga-row2' }, [
-          field('ga-ship-state', 'state', w('ship_state'), { ship: true, auto: 'shipping address-level1', max: 30 }),
-          field('ga-ship-zip', 'zip', w('ship_zip'), { ship: true, auto: 'shipping postal-code', mode: 'numeric', max: 10 })])
+          field('ga-ship-state', 'state', w('ship_state'), { ship: true, auto: 'shipping address-level1', max: 2 }),
+          field('ga-ship-zip', 'zip', w('ship_zip'), { ship: true, auto: 'shipping postal-code', mode: 'numeric', max: 5 })])
       ]);
       var btn = el('button', { type: 'submit', 'class': 'lf-btn gh-btn--dark gh-cta', text: w('continue') });
       return el('form', { 'class': 'ga-form', novalidate: 'novalidate', onsubmit: function (ev) { ev.preventDefault(); submit(ev.target, btn, err); } }, [
@@ -129,6 +138,7 @@
       if (f.mail) {
         b.ship_to = {};
         ['name', 'line1', 'line2', 'city', 'state', 'zip'].forEach(function (k) { b.ship_to[k] = String(f.ship[k] || '').trim(); });
+        b.ship_to.state = b.ship_to.state.toUpperCase();
       }
       return b;
     }
@@ -138,8 +148,11 @@
       if (!b.giver_name) return ['need_from', 'ga-from'];
       if (!/^\S+@\S+\.\S+$/.test(b.email)) return ['need_email', 'ga-email'];
       if (b.ship_to) {
-        var s = b.ship_to, miss = !s.name ? 'name' : !s.line1 ? 'line1' : !s.city ? 'city' : !s.state ? 'state' : !/^\d{5}(-?\d{4})?$/.test(s.zip) ? 'zip' : '';
+        // The engine's rule: the state as two letters, the ZIP as five digits.
+        var s = b.ship_to, miss = !s.name ? 'name' : !s.line1 ? 'line1' : !s.city ? 'city' : '';
         if (miss) return ['need_address', 'ga-ship-' + miss];
+        if (!/^[A-Z]{2}$/.test(s.state)) return ['need_state', 'ga-ship-state'];
+        if (!/^\d{5}$/.test(s.zip)) return ['need_zip', 'ga-ship-zip'];
       }
       return null;
     }
@@ -162,14 +175,15 @@
         confirm(res, b);
       }).catch(function (e) {
         if (routeOff(e)) return off('off');
-        error = e.message || w('no_payment');
+        error = e && e.body && e.body.error ? said(e) : (e && e.message) || w('no_payment');
         err.textContent = error; btn.disabled = false; btn.textContent = w('continue');
       });
     }
 
     // The purchase step: the whole amount, from the engine, right before Stripe. Never in the
     // page's prose (Mick, 2026-10-19). A Google Ads conversion for a gift bought is NOT here: it
-    // would fire on Stripe's return, on the card page, as an Ads account change (Mick's clicks).
+    // would fire on Stripe's return, a page view of /gift/thanks, as an Ads account change
+    // (Mick's clicks).
     function confirm(res, b) {
       var total = Number(res.total_cents);
       var amount = [];
@@ -205,9 +219,11 @@
       try { head.focus({ preventScroll: true }); } catch (e) {}
     }
 
-    // Is the gift route on? Asked once, with no code: a route the engine has answers with a
-    // sentence (400 or 404); a route it does not have answers {"error": "not found"}.
-    G.api(API, '/v1/gift?code=', null, 8000).then(function () { show([form()]); }, function (e) {
+    // Is the sales door open? Asked once, with an empty order: an open door refuses it with a
+    // sentence (400, nothing kept; the engine's product check comes before anything is written);
+    // a closed one answers {"error": "not found"}. It costs one of the engine's 20 writes per
+    // address per ten minutes; a door flag on /v1/health would let this be a read.
+    G.api(API, '/v1/gift/checkout', {}, 8000).then(function () { show([form()]); }, function (e) {
       if (routeOff(e)) return off('off');
       if (unreachable(e)) return off('down');
       show([form()]);
@@ -222,17 +238,16 @@
     var wait = root.querySelector('[data-ga-wait]'), fig = root.querySelector('[data-ga-card]');
     var note = root.querySelector('[data-ga-note]'), actions = root.querySelector('[data-ga-actions]');
     var keep = root.querySelector('[data-ga-keep]'), out = root.querySelector('[data-ga-share-out]');
-    var tries = 0;
-
-    function say(k) { wait.hidden = true; note.textContent = w(k); note.hidden = false; }
+    function say(k, text) { wait.hidden = true; note.textContent = text || w(k); note.hidden = false; }
 
     function draw(g, usable) {
       var card = fig.querySelector('.ga-card');
       card.querySelector('[data-fill="names"]').textContent = String(g.recipient_names || '').trim();
       card.querySelector('[data-fill="giver"]').textContent = String(g.giver_name || '').trim();
-      // The gift number, printed only when the engine sends one; the code itself is never printed.
-      var no = card.querySelector('[data-ga-giftno]'), num = String(g.number || '').trim();
-      if (no && num && num !== CODE) { no.querySelector('[data-fill="giftno"]').textContent = num; no.hidden = false; }
+      // The gift's number is its code (LF-XXXX-XXXX), as the card prints it: what the couple
+      // reads to Mick when they call, and what the link carries.
+      var no = card.querySelector('[data-ga-giftno]'), num = String(g.code || '').trim();
+      if (no && num) { no.querySelector('[data-fill="giftno"]').textContent = num; no.hidden = false; }
       wait.hidden = true; note.hidden = true;
       fig.hidden = false;
       fit(card);
@@ -246,18 +261,14 @@
       G.api(API, '/v1/gift?code=' + encodeURIComponent(CODE), null, 12000).then(function (g) {
         if (!g || g.product !== PRODUCT) return say('card_unknown');
         var st = String(g.status || '').toLowerCase();
-        if (st === 'pending') {
-          // Stripe's return can beat its webhook by a few seconds: ask again, for half a minute.
-          if (++tries <= 10) { say('card_pending'); setTimeout(load, 3000); } else say('card_slow');
-          return;
-        }
         if (USABLE[st]) return draw(g, true);
         if (USED[st]) return draw(g, false);
         say('card_void');
       }).catch(function (e) {
         if (routeOff(e)) return say('card_off');
         if (unreachable(e)) return say('card_down');
-        say('card_unknown');
+        // A code it cannot find (404), or too many tries (429): the engine's sentence, as is.
+        say('card_unknown', e && e.body && e.body.error ? said(e) : '');
       });
     }
 

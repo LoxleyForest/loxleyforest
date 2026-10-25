@@ -17,6 +17,10 @@ on a desk and on paper.
              server and nowhere else. Served at /gift/card by a rewrite in netlify.toml; the file
              is gift-card.html so scripts/ensure_gtm.py and the other root checks see it. Noindex.
 
+/gift/thanks where Stripe returns the buyer (?session_id=..., lifted out of the address bar before
+             Tag Manager like every key): a thank-you, the card and its link on their way by email,
+             Mick's number. Noindex. Served by a rewrite like the card.
+
 Not linked from the menu or any page until Mick says so. Not in sitemap.xml.
 
 Every sentence on both pages, and the Golden Arrow's lines on /book, lives in WORDS below and
@@ -51,11 +55,13 @@ CARD = {
 
 # =============================================================================================
 # WORDS · AWAITING MICK
-# Drafted 2026-10-25 by the Foreman from canon/voice.md and the card's ratified words. None is
-# ratified yet. No price in any of them. Facts used: the treehouse (canvas peak, sixty feet up,
-# the hundred-foot bridge with small warm lights, Dahlonega), the Dawn Table (Livy makes it,
-# Mick carries it across the bridge), the card's own terms and phone line. Lines marked ENGINE
-# are true only once the engine's gift routes are switched on.
+# Drafted 2026-10-25 by the Foreman from canon/voice.md and the card's ratified words; three
+# lines are the CEO's own (marked). None is ratified yet. No price in any of them. Facts used:
+# the treehouse (canvas peak, sixty feet up, the hundred-foot bridge with small warm lights,
+# Dahlonega), the Dawn Table (Livy makes it, Mick carries it across the bridge), the card's own
+# terms and phone line, and the engine's behaviour (loxley-rescue ceo/golden-arrow, cdb68bc).
+# Lines marked ENGINE are true only once the engine's gift doors are on; LETTER, only once Mick
+# approves the engine's gift_issued letter (a skeleton today, so it cannot send).
 # =============================================================================================
 WORDS = {
     # ---- /gift: the page -------------------------------------------------------------------
@@ -78,8 +84,8 @@ WORDS = {
     'choose_h': 'Choosing their nights',
     'choose': 'When they know their dates, they call or text Mick at ' + PHONE + ', and he books them in.',
     'card_h': 'The card',
-    'card_how': 'Their names and yours on the card. You have it as a link the moment you pay, to send them '   # ENGINE
-                'or print at home. Tick the box below and we will mail you the printed card as well.',
+    'card_how': 'Their names and yours on the card. The card and its link come to you by email once you pay, '   # LETTER
+                'to send them or print at home. Tick the box below and we will mail you the printed card as well.',
     'give_h': 'Give The Golden Arrow',
     'give_lead': 'Their names, yours, and your email. You see the whole price, taxes and fees included, before you pay.',
 
@@ -106,11 +112,13 @@ WORDS = {
     'need_from': 'Please add your name, as the card should sign it.',
     'need_email': 'Please add a working email.',
     'need_address': 'Please add the full address for the printed card, or untick the box.',
+    'need_state': 'Please give the state as two letters, like GA.',
+    'need_zip': 'Please give the five-digit ZIP code.',
     'continue': 'Continue',
     'adding': 'Adding it up…',
     'confirm_eyebrow': 'Your gift',
     'confirm_mail': 'The printed card goes to',
-    'confirm_link': 'The card comes to you as a link once you pay.',    # ENGINE
+    'confirm_link': 'The card and its link come to you by email once you pay.',    # LETTER
     'total_label': 'Total',
     'all_in': 'Taxes and fees included.',
     'total_at_stripe': 'Stripe shows the whole price, taxes and fees included, before you pay.',
@@ -119,8 +127,20 @@ WORDS = {
     'change': '‹ Change the names or the address',
     'pay_fine': 'Payment is by Stripe. Questions? Call or text Mick at ' + PHONE + '.',
     'no_payment': 'Secure payment could not open. Nothing was charged. Please try again, or call or text Mick at ' + PHONE + '.',
+    'questions': 'Questions? Call or text Mick at ' + PHONE + '.',
 
-    # ---- /gift/card (js/gift.js) -----------------------------------------------------------
+    # ---- /gift/thanks: where Stripe returns the buyer --------------------------------------
+    'thanks_title': 'Thank you | Loxley Forest',
+    'thanks_eyebrow': 'The Golden Arrow',
+    'thanks_h1': 'Thank you.',
+    'thanks_lead': 'Your card and its link are on their way by email.',     # the CEO's words; LETTER
+    'thanks_body': [
+        'Send them the link when the moment is right, or print the card at home. If you asked for the printed card, we will mail it to you.',
+        'When they know their dates, they call or text Mick at ' + PHONE + ', and he books them in.',
+    ],
+    'thanks_help': 'Anything at all, call or text Mick at ' + PHONE + '.',
+
+    # ---- /gift/card (js/gift.js); the engine's own sentence is shown as is for a code it cannot find
     'card_title': 'Your Golden Arrow | Loxley Forest',
     'card_eyebrow': 'A gift from Loxley Forest',
     'card_opening': 'Opening the card…',
@@ -128,8 +148,6 @@ WORDS = {
     'card_unknown': 'We could not find a gift on this link. Call or text Mick at ' + PHONE + ' and he will sort it out.',
     'card_off': 'The card can’t be shown online just yet. Call or text Mick at ' + PHONE + '.',
     'card_down': 'We couldn’t reach the card just now. Please try again in a moment, or call or text Mick at ' + PHONE + '.',
-    'card_pending': 'The payment is still coming through. The card will appear here in a moment.',
-    'card_slow': 'The payment is taking longer than usual to come through. Refresh in a minute, or call or text Mick at ' + PHONE + '.',
     'card_void': 'This gift is no longer active. Questions? Call or text Mick at ' + PHONE + '.',
     'card_used': 'This Golden Arrow has been used to book a stay. The card stays here to keep.',
     'choose_dates': 'Choose your dates',                                # ENGINE
@@ -142,33 +160,42 @@ WORDS = {
     # ---- /book, when a Golden Arrow rides the link (js/gatehouse.js) -----------------------
     'book_name': 'The Golden Arrow',
     'book_with': 'The Golden Arrow is with you. Choose your nights, and you will see what it covers before you book.',
-    'book_covers': 'The Golden Arrow covers these nights.',             # the CEO's words, 2026-10-25
+    'book_covers': 'The Golden Arrow covers these nights.',             # the CEO's words
+    'book_covers_some': 'The Golden Arrow covers {n} of these nights.',
+    'book_includes': '{x} comes with it.',
+    'book_after_window': 'These nights fall after May 31, 2027, so we ask only the difference.',
     'book_left': 'Left to pay',
     'book_nothing_left': 'Nothing left to pay, today or later.',
-    'book_not_these': 'The Golden Arrow can’t be used for these dates.',
-    'book_other_dates': 'Choose other nights, or call or text Mick at ' + PHONE + ' before you book.',
+    'book_extend_free': 'covered by The Golden Arrow',
+    'book_full_price': 'These dates are at full price. Call or text Mick at ' + PHONE + ' before you book.',
     'book_missing': 'We could not find a Golden Arrow on your link, so these dates are at full price. '
                     'If you expected one, call or text Mick at ' + PHONE + ' before you book.',
     'book_used': 'The Golden Arrow on your link has been used already, so these dates are at full price. '
                  'Questions? Call or text Mick at ' + PHONE + '.',
+    'book_void': 'The Golden Arrow on your link is no longer valid, so these dates are at full price. '
+                 'Questions? Call or text Mick at ' + PHONE + '.',
     'book_off': 'The Golden Arrow can’t be used online just yet, so these dates are at full price. '
                 'To use it, call or text Mick at ' + PHONE + '.',
-    'book_down': 'We couldn’t check your Golden Arrow just now, so these dates are at full price. '
-                 'Refresh in a moment, or call or text Mick at ' + PHONE + '.',
     'book_cta': 'Book with The Golden Arrow',
     'book_booking': 'Booking with The Golden Arrow…',
     'book_covered_title': 'Covered by The Golden Arrow',
+
+    # ---- /booked and /manage, a stay the gift paid for (js/gatehouse-stay.js) --------------
+    'stay_gift_includes': '{x} included',
+    'stay_gift_move': 'To move or change a gift stay, call or text Mick at ' + PHONE + '.',   # the CEO's words
+    'stay_booked_now': 'Your nights are booked. For anything at all, call or text Mick at ' + PHONE + '.',
 }
 
 # Which words each page's script reads (the JSON block the builder writes into the page).
 PANEL_KEYS = ('opening', 'off', 'down', 'call_mick', 'text_mick', 'for_label', 'for_hint', 'from_label', 'from_hint',
               'email_label', 'mail_label', 'ship_name', 'ship_line1', 'ship_line2', 'ship_city', 'ship_state', 'ship_zip',
-              'optional', 'need_for', 'need_from', 'need_email', 'need_address', 'continue', 'adding', 'confirm_eyebrow',
-              'confirm_mail', 'confirm_link', 'total_label', 'all_in', 'total_at_stripe', 'pay', 'leaving', 'change',
-              'pay_fine', 'no_payment')
-CARD_KEYS = ('card_none', 'card_unknown', 'card_off', 'card_down', 'card_pending', 'card_slow', 'card_void', 'card_used',
-             'choose_dates', 'print', 'share', 'share_copied', 'share_manual', 'keep')
+              'optional', 'need_for', 'need_from', 'need_email', 'need_address', 'need_state', 'need_zip', 'continue',
+              'adding', 'confirm_eyebrow', 'confirm_mail', 'confirm_link', 'total_label', 'all_in', 'total_at_stripe',
+              'pay', 'leaving', 'change', 'pay_fine', 'no_payment', 'questions')
+CARD_KEYS = ('card_none', 'card_unknown', 'card_off', 'card_down', 'card_void', 'card_used', 'choose_dates', 'print',
+             'share', 'share_copied', 'share_manual', 'keep', 'questions')
 BOOK_KEYS = tuple(k for k in WORDS if k.startswith('book_'))
+STAY_KEYS = ('book_name', 'stay_gift_includes', 'stay_gift_move', 'stay_booked_now')
 
 
 def words_block(keys):
@@ -333,7 +360,35 @@ def page_gift_card():
     return 'gift-card.html', h, gtm, body, '/book', True
 
 
-PAGES = [page_gift, page_gift_card]
+def page_gift_thanks():
+    """/gift/thanks?session_id=...: where Stripe returns the buyer (the engine's success_url). The
+    session id is lifted out of the address bar by the keys script before Tag Manager loads; this
+    page never reads it. Here is where a Google Ads conversion for a gift bought would fire (a page
+    view of /gift/thanks): NOT added, the account's changes are Mick's clicks. Noindex."""
+    W = WORDS
+    h, gtm = head_for(W['thanks_title'], W['description'], URL + '/thanks', noindex=True)
+    words = ''.join(f'\n          <p>{escape(p, quote=False)}</p>' for p in W['thanks_body'])
+    body = f'''
+    <section class="lf-sec lf-dark lf-note ga-thanks" aria-labelledby="nt-h">
+      <div class="lf-wrap lf-split">
+        <div>
+          <p class="lf-eyebrow">{W["thanks_eyebrow"]}</p>
+          <h1 class="lf-h1" id="nt-h">{W["thanks_h1"]}</h1>
+          <p class="lf-lead">{escape(W["thanks_lead"], quote=False)}</p>
+          <div class="lf-body">{words}
+          <p>{escape(W["thanks_help"], quote=False)}</p>
+          </div>
+          <p class="lf-note__sign">Mick &amp; Livy</p>
+          <div class="lf-actions"><a href="/" class="lf-link">Return home</a><a href="/treehouses" class="lf-link">See the treehouse</a></div>
+        </div>
+        <figure class="lf-photo">{B.pic('eq3a0907', 'The treehouse at dusk, its canvas glowing, the rope bridge strung with lights', '(min-width: 900px) 50vw, 100vw', eager=True)}</figure>
+      </div>
+    </section>
+'''
+    return 'gift-thanks.html', h, gtm, body, '/book', False
+
+
+PAGES = [page_gift, page_gift_card, page_gift_thanks]
 
 # 'u' is one unit of the card's 1080-wide design: every size below is the card's own, times u,
 # so the card scales with its frame (a phone, a desk, a printed page) and stays the same card.

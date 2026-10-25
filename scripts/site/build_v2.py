@@ -135,8 +135,9 @@ def footer(book, gatehouse):
 # query-string link is not copied into a Referer while the page loads.
 # The Golden Arrow (2026-10-25): a gift's code rides /book#gift= like a credit (kept for the session,
 # so a guest who wanders off and comes back by any Book button keeps it), and the card page's own
-# code, /gift/card#code=, is lifted the same way before Tag Manager can read the address.
-KEYS_PAGES = ('book.html', 'booked.html', 'manage.html', 'gift-card.html')
+# code, /gift/card#code=, and the payment session Stripe returns to /gift/thanks?session_id= are
+# lifted the same way before Tag Manager can read the address.
+KEYS_PAGES = ('book.html', 'booked.html', 'manage.html', 'gift-card.html', 'gift-thanks.html')
 KEYS_SCRIPT = r"""  <!-- Booking keys: out of the address bar before anything loads -->
   <meta name="referrer" content="strict-origin">
   <script>(function(){var N=['token','credit','session_id','hold','gift','code'],k={},f=!1,st={},p=location.pathname.replace(/\.html$/,'').replace(/(.)\/$/,'$1');
@@ -680,7 +681,7 @@ def page_path(name):
 
 
 # Pages served at a path other than their file's (a rewrite in netlify.toml).
-PATHS = {'gift-card.html': '/gift/card'}
+PATHS = {'gift-card.html': '/gift/card', 'gift-thanks.html': '/gift/thanks'}
 
 
 # The talk-to-Mick card (js/talk.js, styles at the end of css/v2.css): offered to a visitor who is
@@ -713,8 +714,9 @@ def build(page):
 # Netlify serves 404.html at whatever path was missed, so a miss one folder deep (/a/b) would
 # resolve the shared header's and footer's relative paths (images/, css/, js/) under /a/ and
 # lose the logo and every script. These pages get root paths throughout.
-# The card is served at /gift/card (netlify.toml), one folder deep, so it is rooted too.
-ROOTED_PAGES = ('404.html', 'gift-card.html')
+# The gift's card and thank-you are served at /gift/card and /gift/thanks (netlify.toml), one
+# folder deep, so they are rooted too.
+ROOTED_PAGES = ('404.html', 'gift-card.html', 'gift-thanks.html')
 
 
 def rooted(html):
