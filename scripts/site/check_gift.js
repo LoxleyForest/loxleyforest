@@ -17,6 +17,16 @@
    local server applies netlify.toml's 200 rewrites, so /gift/card and /gift/thanks are served as
    they will be live.
 
+   Round two (Mick, 2026-10-25: "as good as a Disney gift card"): the delivery choice (to me, or to
+   them by email on a day and hour, with the quick picks and a note with a live count), the card's
+   reveal, note and status line, "Print this card" and "Book your nights", the lost-card form
+   (POST /v1/gift/resend), the thank-you reading the choice back, every field labelled and every
+   focus ring visible, and the buyer's change page (/gift/manage#token=). The engine's round-two
+   shapes are its own (loxley-rescue ceo/golden-arrow-2, 4c9175d): deliver {email, date, hour,
+   message}, gift_delivery on /v1/health, GET and POST /v1/gift/delivery, state and month on
+   GET /v1/gift, resend {ok, message}. One thing the engine does not send is mocked here on
+   purpose: a "message" on GET /v1/gift, to prove the card shows a note when one comes.
+
    It proves:
      - /gift: no price in the page's prose; the panel reads GET /v1/health's gift_sales and says to
        call or text Mick while it is false, missing, or the engine unreachable; with it on, the checks before anything is sent (the state as
@@ -98,24 +108,45 @@ function day(n) { const d = new Date(); d.setDate(d.getDate() + n); return d.toI
 const NIGHTS = { nights: Array.from({ length: 150 }, (_, i) => ({ night: day(i + 1), rate_cents: 55000, min_stay: 2 })) };
 const CI = day(20), CO2 = day(22), CO3 = day(23), CO4 = day(24), CI_NO = day(40), CO_NO = day(43);
 const NIGHT_ALL_IN = 64439;
-const CODE = 'LF-TEST-7Q2X', CODE_USED = 'LF-TEST-USED', CODE_VOID = 'LF-TEST-VOID', CODE_LONG = 'LF-TEST-LONG';
+const CODE = 'LF-TEST-7Q2X', CODE_USED = 'LF-TEST-USED', CODE_VOID = 'LF-TEST-VOID', CODE_LONG = 'LF-TEST-LONG', CODE_BOOKED = 'LF-TEST-BOOK';
+const NOTE = 'For the anniversary you keep talking about.\nGo slow, sleep late, and let Livy feed you.';
+const RESEND = 'If that email bought a Golden Arrow, its card is on its way.';
+const DELIVERY_OFF = 'Emailing the card on a day you pick is not open yet.';
+const NO_DELIVERY = 'We could not find that gift\'s delivery.';
+const SENT_ALREADY = 'Their card has already been emailed, so it can no longer change.';
+const DTOKEN = 'tok-deliver-1x9';
 const COVERS = 'January 4 to May 31, 2027, weekends included, Valentine\'s weekend aside';
-function giftRow(code, status, names, giver) {
-  return { code, product: 'golden-arrow', name: 'The Golden Arrow', status, recipient_names: names, giver_name: giver,
-    covers: COVERS, never_expires: true, includes: 'the Dawn Table' };
+function giftRow(code, status, names, giver, more) {
+  return Object.assign({ code, product: 'golden-arrow', name: 'The Golden Arrow', status, recipient_names: names, giver_name: giver,
+    covers: COVERS, never_expires: true, includes: 'the Dawn Table', state: status === 'issued' ? 'unused' : 'used' }, more || {});
 }
 const GIFTS = {
-  [CODE]: giftRow(CODE, 'issued', 'Ana & Luis', 'Aunt June'),
-  [CODE_USED]: giftRow(CODE_USED, 'redeemed', 'Ana & Luis', 'Aunt June'),
+  [CODE]: giftRow(CODE, 'issued', 'Ana & Luis', 'Aunt June', { message: NOTE }),
+  [CODE_USED]: giftRow(CODE_USED, 'redeemed', 'Ana & Luis', 'Aunt June', { state: 'used', month: 'March 2027' }),
+  [CODE_BOOKED]: giftRow(CODE_BOOKED, 'redeemed', 'Ana & Luis', 'Aunt June', { state: 'booked', month: 'February 2027' }),
   [CODE_VOID]: giftRow(CODE_VOID, 'void', 'Ana & Luis', 'Aunt June'),
   [CODE_LONG]: giftRow(CODE_LONG, 'issued', 'Elizabeth Anne Whitfield & Christopher James Okonkwo-Brennan', 'Grandmother Josephine and Grandfather Bartholomew Whitfield'),
 };
+// Eastern time and the quick picks, worked out here as the page must.
+function nowEastern() {
+  const p = {};
+  new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
+    .formatToParts(new Date()).forEach((x) => { p[x.type] = x.value; });
+  return p.year + '-' + p.month + '-' + p.day + 'T' + p.hour + ':' + p.minute;
+}
+function nextMorning(md) { const y = +nowEastern().slice(0, 4), at = y + '-' + md + 'T07:00'; return at > nowEastern() ? at : (y + 1) + '-' + md + 'T07:00'; }
+// The engine's words for a delivery moment (gatehouse/gifts.py when_words).
+function whenEngine(date, hour) {
+  const d = new Date(+date.slice(0, 4), +date.slice(5, 7) - 1, +date.slice(8, 10));
+  return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }) + ' at ' + ((hour % 12) || 12) + ' ' + (hour < 12 ? 'AM' : 'PM') + ' Eastern';
+}
+const THEM = 'them@example.test';
 const AGREEMENT = { version: 'check', text: '# The stay agreement\n\nA made-up agreement for the check.\n\n**I accept the release of liability.**\n' };
 const PAY_URL = 'https://checkout.stripe.com/c/pay/cs_test_giftcheck';
 const SESSION = 'cs_test_thanks_5RTq';
 const BUYER = { names: 'Maya & Sam', giver: 'Dad', email: 'buyer@example.test' };
 const SHIP = { name: 'Dad Example', line1: '1 Test Lane', line2: 'Apt 2', city: 'Testville', state: 'GA', zip: '30533' };
-const SECRETS = [CODE, CODE_USED, CODE_VOID, CODE_LONG, SESSION, 'mt-test-1', BUYER.email, BUYER.names, 'Ana & Luis', 'Aunt June', 'Test Lane'];
+const SECRETS = [DTOKEN, CODE, CODE_USED, CODE_VOID, CODE_LONG, CODE_BOOKED, SESSION, 'mt-test-1', BUYER.email, BUYER.names, THEM, 'Ana & Luis', 'Aunt June', 'Test Lane', 'sleep late', 'lost@example.test'];
 
 // The engine's quote (gatehouse/api.py _quote_payload): `quote` and `total` stay the stay's own
 // all-in; with a gift, gift_card says what it covers and plans, summary and extend are on what is left.
@@ -151,18 +182,18 @@ const has = (s, t) => String(s).indexOf(t) >= 0;
 // Static: the pages as built.
 function statics() {
   console.log('the pages as built');
-  const gift = read('gift.html'), card = read('gift-card.html'), thanks = read('gift-thanks.html'), book = read('book.html');
+  const gift = read('gift.html'), card = read('gift-card.html'), thanks = read('gift-thanks.html'), mng = read('gift-manage.html'), book = read('book.html');
   const prose = gift.replace(/<script[\s\S]*?<\/script>/g, '').replace(/<style[\s\S]*?<\/style>/g, '');
   check(!/\$\s?\d/.test(prose) && !/\$\s?\d/.test(JSON.stringify(PANEL)), '/gift: no price in its prose or its words');
-  check([gift, card, thanks].every((h) => has(h, 'GTM-5N4BX66K')), 'Tag Manager on all three pages (the house rule)');
-  for (const [n, h] of [['/gift/card', card], ['/gift/thanks', thanks]]) {
+  check([gift, card, thanks, mng].every((h) => has(h, 'GTM-5N4BX66K')), 'Tag Manager on all four pages (the house rule)');
+  for (const [n, h] of [['/gift/card', card], ['/gift/thanks', thanks], ['/gift/manage', mng]]) {
     const keysAt = h.indexOf('<!-- Booking keys'), gtmAt = h.indexOf('gtm.js?id=');
     check(keysAt > 0 && gtmAt > keysAt, n + ': the keys script runs before Tag Manager');
     check(has(h, 'noindex') && /src="\/js\//.test(h) && /href="\/css\/v2-pages\.css"/.test(h), n + ': noindex, root paths (served one folder deep)');
   }
   check(!has(gift, 'noindex'), '/gift is indexable');
   check(/'gift','code'\]/.test(book) && /'gift','code'\]/.test(card), 'the keys script lifts gift and code');
-  check(REWRITES['/gift/card'] === '/gift-card.html' && REWRITES['/gift/thanks'] === '/gift-thanks.html', 'netlify.toml serves /gift/card and /gift/thanks');
+  check(REWRITES['/gift/card'] === '/gift-card.html' && REWRITES['/gift/thanks'] === '/gift-thanks.html' && REWRITES['/gift/manage'] === '/gift-manage.html', 'netlify.toml serves /gift/card, /gift/thanks and /gift/manage');
   const linking = fs.readdirSync(ROOT).filter((n) => n.endsWith('.html') && !/^gift/.test(n))
     .filter((n) => /href="\/?gift(?:[\/"#?.-])/i.test(read(n)));
   check(linking.length === 0, 'no other page links to the gift pages yet' + (linking.length ? ': ' + linking.join(', ') : ''));
@@ -181,13 +212,15 @@ async function main() {
   // engine: doors { sales, lookup, redeem } each 'on' | 'off'; down: no answer at all; sale503; checkoutUrl
   async function open(name, engine) {
     engine = Object.assign({ sales: 'on', lookup: 'on', redeem: 'on', down: false, checkoutUrl: PAY_URL }, engine || {});
-    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true,
+      reducedMotion: engine.reducedMotion ? 'reduce' : 'no-preference' });
     await ctx.addInitScript(() => {
       try { Object.defineProperty(navigator, 'share', { configurable: true, value: (d) => { window.__shared = d; return Promise.resolve(); } }); } catch (e) {}
       window.__printed = 0;
       window.print = () => { window.__printed++; };
     });
-    const rec = { beacons: [], health: 0, lookups: [], probes: 0, sales: [], quotes: [], checkouts: [], stays: [], outside: [], stripePages: [] };
+    const rec = { beacons: [], health: 0, lookups: [], probes: 0, sales: [], resends: [], deliveries: [],
+      dv: { recipient_names: 'Ana & Luis', giver_name: 'Aunt June', email: THEM, date: nextMorning('12-25').slice(0, 10), hour: 8, message: NOTE, sent: !!engine.sent }, quotes: [], checkouts: [], stays: [], outside: [], stripePages: [] };
     await ctx.route('**/*', (route) => {
       const req = route.request(), u = new URL(req.url());
       if (u.hostname === '127.0.0.1') return route.continue();
@@ -204,6 +237,7 @@ async function main() {
           if (engine.down) return route.abort('failed');
           const h = { ok: true, units: 1, agreement: true, stripe: true, live: false, payments: true };
           if (engine.sales !== 'nofield') h.gift_sales = engine.sales === 'on';
+          h.gift_delivery = engine.delivery !== 'off';
           return json(h);
         }
         if (u.pathname === '/v1/gift') {
@@ -218,7 +252,28 @@ async function main() {
           if (!b.product) { rec.probes++; return json({ error: 'A product is needed.' }, 400); }
           rec.sales.push(b);
           if (engine.sale503) return json({ error: PAY_503 }, 503);
+          if (b.deliver && engine.delivery === 'off') return json({ error: DELIVERY_OFF }, 400);
           return json({ url: engine.checkoutUrl, total_cents: 254580 });
+        }
+        if (u.pathname === '/v1/gift/resend') {
+          if (engine.resend === 'off') return json({ error: 'not found' }, 404);
+          rec.resends.push(b);
+          return json({ ok: true, message: RESEND });
+        }
+        if (u.pathname === '/v1/gift/delivery') {
+          if (engine.delivery === 'off') return json({ error: 'not found' }, 404);
+          const dv = rec.dv;
+          const view = () => ({ name: 'The Golden Arrow', recipient_names: dv.recipient_names, giver_name: dv.giver_name, email: dv.email,
+            date: dv.date, hour: dv.hour, when: whenEngine(dv.date, dv.hour), message: dv.message, sent: dv.sent, can_change: !dv.sent });
+          const tok = req.method() === 'GET' ? u.searchParams.get('token') : b.token;
+          rec.deliveries.push({ method: req.method(), body: b, token: tok });
+          if (tok !== DTOKEN) return json({ error: NO_DELIVERY }, 404);
+          if (req.method() === 'GET') return json(view());
+          if (dv.sent) return json({ error: SENT_ALREADY }, 422);
+          if (b.email) dv.email = b.email;
+          if (b.date) dv.date = b.date;
+          if (b.hour !== undefined) dv.hour = +b.hour;
+          return json(view());
         }
         if (u.pathname === '/v1/availability') return json(NIGHTS);
         if (u.pathname === '/v1/agreement') return json(AGREEMENT);
@@ -282,6 +337,39 @@ async function main() {
   const text = (page, sel) => page.evaluate((s) => { const n = document.querySelector(s); return n ? n.innerText.replace(/\s+/g, ' ').trim() : null; }, sel);
   // A button's own words (its CSS sets them in capitals, which innerText would report).
   const label = (page, sel) => page.evaluate((s) => { const n = document.querySelector(s); return n ? n.textContent.replace(/\s+/g, ' ').trim() : null; }, sel);
+  // A button, box or link pressed as the DOM does. The page's smooth scroll (Lenis) can keep a long
+  // page moving under Playwright's pointer for longer than its patience (seen 2026-10-25, twice in
+  // four runs); what the page does with the press, not the pointer, is what these checks are for.
+  const press = (page, sel) => page.$eval(sel, (b) => b.click());
+  // Anything marked hidden that a stylesheet still shows (a display rule beats the hidden attribute).
+  const leaky = (page, sel) => page.evaluate((s) => [...document.querySelectorAll(s + ' [hidden]')]
+    .filter((n) => getComputedStyle(n).display !== 'none').map((n) => n.className || n.tagName), sel);
+  // Tab through a region by keyboard: every stop must show a ring (2 px or more, not the linen of
+  // the site's dark-ground ring), on the control or, for a radio or tick box, on its label.
+  async function rings(page, within) {
+    // Start just inside the region (no scrolling of our own: the page's smooth scroll owns that),
+    // then let the keyboard walk.
+    await page.evaluate((sel) => { const b = document.querySelector(sel); b.setAttribute('tabindex', '-1'); b.focus({ preventScroll: true }); }, within);
+    const stops = [], bad = [];
+    for (let i = 0; i < 80; i++) {
+      await page.keyboard.press('Tab');
+      const r = await page.evaluate((sel) => {
+        const a = document.activeElement, box = document.querySelector(sel);
+        if (!a || !box || !box.contains(a)) return null;
+        const ring = (n) => { const c = getComputedStyle(n); return { w: parseFloat(c.outlineWidth) || 0, s: c.outlineStyle, c: c.outlineColor }; };
+        let o = ring(a);
+        if ((a.type === 'radio' || a.type === 'checkbox') && a.closest('label')) { const l = ring(a.closest('label')); if (l.w >= o.w) o = l; }
+        return { id: a.id || (a.textContent || '').trim().slice(0, 40) || a.className || a.tagName, ok: o.w >= 2 && o.s !== 'none' && o.c !== 'rgb(247, 243, 237)' };
+      }, within);
+      if (!r) { if (stops.length) break; else continue; }
+      if (r.id === stops[stops.length - 1]) continue;      // a date field's next part: the same stop
+      if (stops.indexOf(r.id) >= 0) break;
+      stops.push(r.id);
+      if (!r.ok) bad.push(r.id);
+    }
+    await page.evaluate((sel) => { const b = document.querySelector(sel); b.removeAttribute('tabindex'); document.activeElement && document.activeElement.blur && document.activeElement.blur(); }, within);
+    return { stops, bad };
+  }
 
   // ------------------------------------------------------------------ /gift
   console.log('/gift while the engine\'s sales door is off');
@@ -330,15 +418,15 @@ async function main() {
     await page.locator('#ga-buy form').scrollIntoViewIfNeeded();
     await shot(page, 'gift-panel-form.png', false);
 
-    await page.click('#ga-buy button[type=submit]');
+    await press(page, '#ga-buy button[type=submit]');
     check(await text(page, '#ga-error') === PANEL.need_for && rec.sales.length === 0, 'empty: it asks for their names and sends nothing');
     await page.fill('#ga-for', BUYER.names);
     await page.fill('#ga-from', BUYER.giver);
     await page.fill('#ga-email', 'not-an-email');
-    await page.click('#ga-buy button[type=submit]');
+    await press(page, '#ga-buy button[type=submit]');
     check(await text(page, '#ga-error') === PANEL.need_email && rec.sales.length === 0, 'a bad email: it asks for a working one');
     await page.fill('#ga-email', BUYER.email);
-    await page.check('#ga-mail');
+    await press(page, '#ga-mail');
     check(!(await page.evaluate(() => document.querySelector('.ga-ship').hidden)), 'ticked: the address opens');
     await page.fill('#ga-ship-name', SHIP.name);
     await page.fill('#ga-ship-line1', SHIP.line1);
@@ -346,18 +434,19 @@ async function main() {
     await page.fill('#ga-ship-city', SHIP.city);
     await page.fill('#ga-ship-state', 'G');
     await page.fill('#ga-ship-zip', SHIP.zip);
-    await page.click('#ga-buy button[type=submit]');
+    await press(page, '#ga-buy button[type=submit]');
     check(await text(page, '#ga-error') === PANEL.need_state && rec.sales.length === 0, 'a state that is not two letters: it asks for two');
     await page.fill('#ga-ship-state', 'ga');
     await page.fill('#ga-ship-zip', '3053');
-    await page.click('#ga-buy button[type=submit]');
+    await press(page, '#ga-buy button[type=submit]');
     check(await text(page, '#ga-error') === PANEL.need_zip && rec.sales.length === 0, 'a ZIP that is not five digits: it asks for five');
     await shot(page, 'gift-panel-address.png', false);
     await page.fill('#ga-ship-zip', SHIP.zip);
-    await page.click('#ga-buy button[type=submit]');
+    await press(page, '#ga-buy button[type=submit]');
     await page.waitForSelector('#ga-buy .ga-confirm', { timeout: 5000 });
     const sent = rec.sales[0] || {};
     check(Object.keys(sent).sort().join() === 'email,giver_name,product,recipient_names,ship_to', 'POST /v1/gift/checkout carries the contract\'s fields and nothing else');
+    check(!('deliver' in sent), 'the default, "Send the card to me": no deliver sent');
     check(sent.product === 'golden-arrow' && sent.email === BUYER.email && sent.giver_name === BUYER.giver && sent.recipient_names === BUYER.names, 'product, email, giver and their names as typed');
     check(JSON.stringify(sent.ship_to) === JSON.stringify(SHIP), 'ship_to {name, line1, line2, city, state, zip}, the state in capitals');
     const conf = await text(page, '#ga-buy .ga-confirm');
@@ -369,16 +458,100 @@ async function main() {
     await page.locator('#ga-buy .ga-confirm').scrollIntoViewIfNeeded();
     await shot(page, 'gift-purchase-step.png', false);
 
-    await page.click('#ga-buy .gh-back');
+    await press(page, '#ga-buy .gh-back');
     await page.waitForSelector('#ga-buy form');
     check(await page.inputValue('#ga-for') === BUYER.names && await page.inputValue('#ga-ship-zip') === SHIP.zip, 'back: everything typed is still there');
-    await page.click('#ga-buy button[type=submit]');
+    await press(page, '#ga-buy button[type=submit]');
     await page.waitForSelector('#ga-buy .ga-confirm');
     check(rec.sales.length === 1, 'the same details again: the payment page already made, not a second');
     const dl = await dataLayer(page);
-    await Promise.all([page.waitForURL(/checkout\.stripe\.com/, { timeout: 5000 }), page.click('#ga-buy .ga-pay')]);
+    await Promise.all([page.waitForURL(/checkout\.stripe\.com/, { timeout: 5000 }), press(page, '#ga-buy .ga-pay')]);
     check(rec.stripePages[0] === PAY_URL, 'pay: the buyer goes to the engine\'s Stripe page');
+    await page.goto(BASE + '/gift/thanks?session_id=' + SESSION);
+    await page.waitForSelector('[data-ga-thanks-lead]');
+    check(await text(page, '[data-ga-thanks-lead]') === 'Your card is on its way to your inbox.', 'back from Stripe: "Your card is on its way to your inbox."');
     leaks(rec, dl, 'the purchase');
+    await ctx.close();
+  }
+
+  console.log('/gift: "Email it to them on a day I choose"');
+  {
+    const { ctx, page, rec } = await open('gift-them', {});
+    await page.goto(BASE + '/gift');
+    await page.waitForSelector('#ga-buy form', { timeout: 10000 });
+    check(await page.isChecked('#ga-deliver-me') && await page.evaluate(() => document.querySelector('.ga-them').hidden), '"Send the card to me" is the default; the rest stays folded');
+    await page.fill('#ga-for', BUYER.names); await page.fill('#ga-from', BUYER.giver); await page.fill('#ga-email', BUYER.email);
+    await press(page, '#ga-deliver-them');
+    check(!(await page.evaluate(() => document.querySelector('.ga-them').hidden)), '"Email it to them on a day I choose" opens their email, the day and hour, the picks and the note');
+    const lk = await leaky(page, '#give');
+    check(!lk.length, 'nothing marked hidden shows in the panel' + (lk.length ? ': ' + lk.join(', ') : ''));
+    const dayAttrs = await page.evaluate(() => { const d = document.getElementById('ga-day'); return { min: d.min, max: d.max }; });
+    const lastDay = (() => { const t = nowEastern().slice(0, 10); const d = new Date(+t.slice(0, 4), +t.slice(5, 7) - 1, +t.slice(8, 10)); d.setMonth(d.getMonth() + 12); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); })();
+    check(dayAttrs.min === nowEastern().slice(0, 10) && dayAttrs.max === lastDay, 'the day: from today (Eastern) to twelve months ahead (' + dayAttrs.min + ' to ' + dayAttrs.max + ')');
+    const picks = await page.evaluate(() => [...document.querySelectorAll('.ga-pick')].map((b) => b.textContent));
+    check(picks.join(' | ') === PANEL.pick_christmas + ' | ' + PANEL.pick_valentine, 'the quick picks: ' + picks.join(', '));
+    await press(page, '#ga-buy button[type=submit]');
+    check(await text(page, '#ga-error') === PANEL.need_their_email && rec.sales.length === 0, 'no email for them: it asks');
+    await page.fill('#ga-their-email', THEM);
+    await page.fill('#ga-day', '2099-01-01');
+    await press(page, '#ga-buy button[type=submit]');
+    check(await text(page, '#ga-error') === PANEL.need_day && rec.sales.length === 0, 'a day past twelve months: it asks for one within');
+    await page.fill('#ga-day', nowEastern().slice(0, 10));
+    await page.selectOption('#ga-hour', '0');
+    await press(page, '#ga-buy button[type=submit]');
+    check(await text(page, '#ga-error') === PANEL.need_future && rec.sales.length === 0, 'an hour already gone: it asks for one to come');
+    await press(page, '.ga-pick[data-pick="christmas"]');
+    const xmas = nextMorning('12-25');
+    check(await page.inputValue('#ga-day') === xmas.slice(0, 10) && await page.inputValue('#ga-hour') === '7' &&
+      await page.getAttribute('.ga-pick[data-pick="christmas"]', 'aria-pressed') === 'true', '"Christmas morning, 7 AM" sets ' + xmas);
+    await page.fill('#ga-note', NOTE);
+    check(await text(page, '#ga-note-count') === NOTE.length + ' of 500', 'the note\'s live count (' + (await text(page, '#ga-note-count')) + ')');
+    await page.fill('#ga-note', 'x'.repeat(600));
+    check((await page.inputValue('#ga-note')).length === 500 && await text(page, '#ga-note-count') === '500 of 500', 'five hundred characters at most');
+    await page.fill('#ga-note', NOTE);
+    const labelled = await page.evaluate(() => [...document.querySelectorAll('#ga-buy input, #ga-buy select, #ga-buy textarea')]
+      .filter((n) => !(n.labels && n.labels.length) && !n.getAttribute('aria-label')).map((n) => n.id || n.name));
+    await press(page, '#ga-mail');
+    const labelled2 = await page.evaluate(() => [...document.querySelectorAll('#ga-buy input, #ga-buy select, #ga-buy textarea')]
+      .filter((n) => !(n.labels && n.labels.length) && !n.getAttribute('aria-label')).map((n) => n.id || n.name));
+    check(!labelled.length && !labelled2.length, 'every field has its label' + (labelled.concat(labelled2).length ? ': ' + labelled.concat(labelled2).join(', ') : ''));
+    const r = await rings(page, '#ga-buy');
+    check(r.stops.length >= 15 && !r.bad.length, 'every keyboard stop shows its ring (' + r.stops.length + ' stops' + (r.bad.length ? '; none on ' + r.bad.join(', ') : '') + ')');
+    await press(page, '#ga-mail');
+    await page.locator('.ga-deliver').scrollIntoViewIfNeeded();
+    await shot(page, 'gift-deliver-them.png', false);
+    await press(page, '#ga-buy button[type=submit]');
+    await page.waitForSelector('#ga-buy .ga-confirm', { timeout: 5000 });
+    const d = (rec.sales[0] || {}).deliver || {};
+    check(JSON.stringify(d) === JSON.stringify({ email: THEM, date: xmas.slice(0, 10), hour: 7, message: NOTE }), 'deliver {email, date: "' + xmas.slice(0, 10) + '", hour: 7, message}');
+    const conf = await text(page, '#ga-buy .ga-confirm');
+    check(has(conf, 'We will email it to ' + THEM + ' on Christmas morning at 7 AM.') && has(conf, 'sleep late'), 'the purchase step reads it back: Christmas morning at 7 AM, and the note');
+    check(await overflow(page) <= 0, 'no sideways scroll at 390');
+    await page.locator('#ga-buy .ga-confirm').scrollIntoViewIfNeeded();
+    await shot(page, 'gift-purchase-them.png', false);
+    const confRings = await rings(page, '#ga-buy');
+    check(!confRings.bad.length && confRings.stops.length >= 2, 'the purchase step\'s buttons show their rings too');
+    const dl = await dataLayer(page);
+    await Promise.all([page.waitForURL(/checkout\.stripe\.com/, { timeout: 5000 }), press(page, '#ga-buy .ga-pay')]);
+    await page.goto(BASE + '/gift/thanks?session_id=' + SESSION);
+    await page.waitForSelector('[data-ga-thanks-lead]');
+    check(await text(page, '[data-ga-thanks-lead]') === 'We\u2019ll email it to them on Christmas morning at 7 AM.', 'the thank-you: "We\'ll email it to them on Christmas morning at 7 AM."');
+    check(await page.evaluate(() => { const v = sessionStorage.getItem('ga_deliver') || ''; return v.indexOf('@') < 0 && v.indexOf('sleep') < 0; }), 'what the thank-you reads holds no email and no note');
+    await shot(page, 'gift-thanks-them.png');
+    leaks(rec, dl, 'to them');
+    await ctx.close();
+  }
+
+  console.log('/gift: "a day I choose" while the engine\'s delivery door is off');
+  {
+    const { ctx, page, rec } = await open('gift-no-delivery', { delivery: 'off' });
+    await page.goto(BASE + '/gift');
+    await page.waitForSelector('#ga-buy form', { timeout: 10000 });
+    check(!(await page.$('#ga-deliver-them')) && !(await page.$('.ga-deliver')), 'gift_delivery false: the choice is not offered, the card goes to the buyer');
+    await page.fill('#ga-for', BUYER.names); await page.fill('#ga-from', BUYER.giver); await page.fill('#ga-email', BUYER.email);
+    await press(page, '#ga-buy button[type=submit]');
+    await page.waitForSelector('#ga-buy .ga-confirm', { timeout: 5000 });
+    check(rec.sales.length === 1 && !('deliver' in rec.sales[0]), 'and nothing about a day is sent');
     await ctx.close();
   }
 
@@ -391,7 +564,7 @@ async function main() {
     await page.goto(BASE + '/gift');
     await page.waitForSelector('#ga-buy form', { timeout: 10000 });
     await page.fill('#ga-for', BUYER.names); await page.fill('#ga-from', BUYER.giver); await page.fill('#ga-email', BUYER.email);
-    await page.click('#ga-buy button[type=submit]');
+    await press(page, '#ga-buy button[type=submit]');
     await until(async () => (await text(page, '#ga-error')) === want);
     check(await text(page, '#ga-error') === want && !(await page.$('#ga-buy .ga-confirm')), what);
     if (engine.sale503) check(Object.keys(rec.sales[0] || {}).sort().join() === 'email,giver_name,product,recipient_names', 'no box ticked: no ship_to sent');
@@ -419,6 +592,16 @@ async function main() {
     const { ctx, page, rec } = await open('card', {});
     await page.goto(BASE + '/gift/card#code=' + CODE);
     await page.waitForSelector('[data-ga-card]:not([hidden])', { timeout: 10000 });
+    const rv = await page.evaluate(() => {
+      const card = document.querySelector('.ga-card'), door = getComputedStyle(document.querySelector('.ga-arch'), '::after');
+      const no = document.querySelector('.ga-giftno');
+      return { opening: card.classList.contains('is-opening'), dur: parseFloat(door.animationDuration) + parseFloat(door.animationDelay),
+        no: getComputedStyle(no).opacity === '1' && !no.hidden && no.getBoundingClientRect().height > 0 };
+    });
+    check(rv.opening && rv.dur > 0 && rv.dur < 1, 'first open: the arch\'s doors part onto the photo, under a second (' + rv.dur + ' s)');
+    check(rv.no, 'the gift number shows throughout');
+    await page.waitForTimeout(1300);
+    check(!(await page.evaluate(() => document.querySelector('.ga-card').classList.contains('is-opening'))), 'and then it is done');
     await page.evaluate(() => document.fonts.ready);
     const url = new URL(page.url());
     check(!has(page.url(), CODE) && url.pathname === '/gift/card', 'the code is out of the address bar (' + url.pathname + url.hash + ')');
@@ -433,7 +616,11 @@ async function main() {
     check(/LF-TEST-7Q2X/.test(c.no || ''), 'its gift number, the code, as the card prints it (' + (c.no || '').trim() + ')');
     check(c.gift === RATIFIED_GIFT && c.nights === RATIFIED && c.title === 'The Golden Arrow' && c.sub === 'A gift of three nights in the trees', 'the card\'s ratified words, word for word');
     check(/^To choose your dates, call or text Mick at 706-502-4823\.$/.test(c.call || ''), 'and its call line');
-    check(c.dates && c.keep, '"Choose your dates" and the keep-it-close line for a gift not yet used');
+    check(c.dates && c.keep, '"Book your nights" and the keep-it-close line for a gift not yet used');
+    check(await text(page, '[data-ga-status]') === 'UNUSED, READY FOR THREE NIGHTS' || await label(page, '[data-ga-status]') === CARD_W.state_unused, 'the status line: "' + CARD_W.state_unused + '"');
+    check(await label(page, '[data-ga-dates]') === CARD_W.choose_dates && await label(page, '[data-ga-print]') === CARD_W.print, 'the buttons: "' + CARD_W.choose_dates + '" and "' + CARD_W.print + '"');
+    const m = await page.evaluate(() => { const b = document.querySelector('[data-ga-message]'); return { shown: !b.hidden, from: b.querySelector('[data-ga-message-from]').textContent, text: b.querySelector('[data-ga-message-text]').textContent }; });
+    check(m.shown && m.from === 'A note from Aunt June' && m.text === NOTE, 'the note under the dedication, as it was written');
     const lay = await page.evaluate(() => {
       const r = (s) => document.querySelector(s).getBoundingClientRect();
       return { callBottom: r('.ga-call').bottom, footTop: r('.ga-foot').top, side: document.querySelector('.ga-side').scrollHeight,
@@ -444,10 +631,10 @@ async function main() {
     await shot(page, 'card.png');
     if (SHOTS) await page.locator('.ga-card').screenshot({ path: path.join(SHOTS, 'card-only.png') });
 
-    await page.click('[data-ga-share]');
+    await press(page, '[data-ga-share]');
     const shared = await page.evaluate(() => window.__shared);
     check(shared && shared.url === BASE + '/gift/card#code=' + CODE, 'send the link: /gift/card#code=, through the share sheet');
-    await page.click('[data-ga-print]');
+    await press(page, '[data-ga-print]');
     check(await page.evaluate(() => window.__printed) === 1, 'print the card: the browser\'s print');
     await page.emulateMedia({ media: 'print' });
     const pr = await page.evaluate(() => {
@@ -457,18 +644,23 @@ async function main() {
     check(pr.card && !pr.hdr && !pr.foot && !pr.actions && !pr.fab, 'printed: the card alone, no header, footer or buttons');
     const pdf = await page.pdf({ format: 'Letter', printBackground: true });
     const pages = (pdf.toString('latin1').match(/\/Type\s*\/Page[^s]/g) || []).length;
-    check(pages === 1, 'printed on Letter: one page (' + pages + ')');
+    check(pages === 1, 'printed on Letter, with its note: one page (' + pages + ')');
     if (SHOTS) fs.writeFileSync(path.join(SHOTS, 'card-print.pdf'), pdf);
     await page.emulateMedia({ media: 'screen' });
 
     await page.reload();
     await page.waitForSelector('[data-ga-card]:not([hidden])', { timeout: 10000 });
     check(await page.evaluate(() => document.querySelector('.ga-for').innerText) === 'For Ana & Luis', 'a refresh keeps the card');
+    check(!(await page.evaluate(() => document.querySelector('.ga-card').classList.contains('is-opening'))), 'the second open: no reveal');
+    const cr = await rings(page, '#ga-card-page');
+    check(cr.stops.length >= 3 && !cr.bad.length, 'the card page\'s buttons show their rings (' + cr.stops.length + ' stops)');
+    const lk = await leaky(page, '#ga-card-page');
+    check(!lk.length, 'nothing marked hidden shows on the card page' + (lk.length ? ': ' + lk.join(', ') : ''));
     leaks(rec, await dataLayer(page), 'the card');
 
-    await Promise.all([page.waitForURL(/\/book/, { timeout: 5000 }), page.click('[data-ga-dates]')]);
+    await Promise.all([page.waitForURL(/\/book/, { timeout: 5000 }), press(page, '[data-ga-dates]')]);
     await page.waitForSelector('#gatehouse .gh-summary', { timeout: 10000 });
-    check(!has(page.url(), CODE) && await page.evaluate((c) => window.__ghKeys.gift === c, CODE), '"Choose your dates" opens /book with the gift, out of the address bar');
+    check(!has(page.url(), CODE) && await page.evaluate((c) => window.__ghKeys.gift === c, CODE), '"Book your nights" opens /book with the gift, out of the address bar');
     check(await text(page, '#gatehouse .gh-gift') === BOOK_W.book_with, 'and /book says the Golden Arrow is with them');
     leaks(rec, await dataLayer(page), 'card to /book');
     await ctx.close();
@@ -491,6 +683,59 @@ async function main() {
     await ctx.close();
   }
 
+  console.log('/gift/card: reduced motion, and a gift booked or enjoyed');
+  {
+    const { ctx, page } = await open('card-still', { reducedMotion: true });
+    await page.goto(BASE + '/gift/card#code=' + CODE);
+    await page.waitForSelector('[data-ga-card]:not([hidden])', { timeout: 10000 });
+    check(!(await page.evaluate(() => document.querySelector('.ga-card').classList.contains('is-opening'))), 'with reduced motion: no reveal on first open');
+    await ctx.close();
+  }
+  for (const [code, want] of [[CODE_BOOKED, 'Booked for February 2027'], [CODE_USED, 'Enjoyed in March 2027']]) {
+    const { ctx, page } = await open('card-state', {});
+    await page.goto(BASE + '/gift/card#code=' + code);
+    await page.waitForSelector('[data-ga-card]:not([hidden])', { timeout: 10000 });
+    const v = await page.evaluate(() => ({ status: document.querySelector('[data-ga-status]').textContent, dates: document.querySelector('[data-ga-dates]').hidden,
+      keep: document.querySelector('[data-ga-keep]').hidden, msg: document.querySelector('[data-ga-message]').hidden }));
+    check(v.status === want && v.dates && v.keep && v.msg, '"' + want + '": the card to keep, no "Book your nights", no note when none was written');
+    if (code === CODE_BOOKED) await shot(page, 'card-booked.png');
+    await ctx.close();
+  }
+
+  console.log('/gift/card: lost your card?');
+  {
+    const { ctx, page, rec } = await open('card-lost', {});
+    await page.goto(BASE + '/gift/card');
+    await page.waitForSelector('[data-ga-lost]:not([hidden])', { timeout: 10000 });
+    check(await text(page, '#ga-lost-h') === CARD_W.lost_h && await text(page, '[data-ga-note]') === CARD_W.card_none, 'no code: "' + CARD_W.lost_h + '"');
+    check(await page.evaluate(() => { const i = document.getElementById('ga-lost-email'); return !!(i.labels && i.labels.length); }), 'its field has its label');
+    await press(page, '[data-ga-lost] button[type=submit]');
+    check(await text(page, '#ga-lost-error') === CARD_W.lost_need && rec.resends.length === 0, 'empty: it asks, sends nothing');
+    await page.fill('#ga-lost-email', 'lost@example.test');
+    await press(page, '[data-ga-lost] button[type=submit]');
+    await page.waitForSelector('[data-ga-lost-said]:not([hidden])', { timeout: 5000 });
+    check(JSON.stringify(rec.resends[0]) === '{"email":"lost@example.test"}', 'POST /v1/gift/resend {email}');
+    check(await text(page, '[data-ga-lost-said]') === RESEND, 'then the engine\'s one sentence, as it wrote it');
+    check(await page.evaluate(() => { const b = document.querySelector('[data-ga-lost] button[type=submit]'); return getComputedStyle(b).display === 'none'; }), 'and the button steps aside');
+    const lk = await leaky(page, '#ga-card-page');
+    check(!lk.length, 'nothing marked hidden shows' + (lk.length ? ': ' + lk.join(', ') : ''));
+    check(await overflow(page) <= 0, 'no sideways scroll at 390');
+    await shot(page, 'card-lost.png', false);
+    leaks(rec, await dataLayer(page), 'lost card');
+    await ctx.close();
+  }
+  {
+    const { ctx, page } = await open('card-lost-off', { resend: 'off' });
+    await page.goto(BASE + '/gift/card#code=LF-NOPE-NOPE');
+    await page.waitForSelector('[data-ga-lost]:not([hidden])', { timeout: 10000 });
+    check(await text(page, '[data-ga-note]') === NOT_FOUND + ' ' + CARD_W.questions, 'a code it cannot find: its sentence, and the lost-card form');
+    await page.fill('#ga-lost-email', 'lost@example.test');
+    await press(page, '[data-ga-lost] button[type=submit]');
+    await page.waitForSelector('[data-ga-lost-said]:not([hidden])', { timeout: 5000 });
+    check(await text(page, '[data-ga-lost-said]') === CARD_W.lost_off, 'the resend door off: "' + CARD_W.lost_off + '"');
+    await ctx.close();
+  }
+
   console.log('/gift/card: the plain sentences');
   for (const [what, hash, engine, want] of [
     ['no code on the link', '', {}, CARD_W.card_none],
@@ -506,12 +751,64 @@ async function main() {
     if (want.indexOf(NOT_FOUND) === 0) { check(await overflow(page) <= 0, 'no sideways scroll at 390'); await shot(page, 'card-unknown.png', false); }
     await ctx.close();
   }
+
+  // ------------------------------------------------------------- /gift/manage
+  console.log('/gift/manage#token=: the buyer changes the day');
   {
-    const { ctx, page } = await open('card-used', {});
-    await page.goto(BASE + '/gift/card#code=' + CODE_USED);
-    await page.waitForSelector('[data-ga-card]:not([hidden])', { timeout: 10000 });
-    const v = await page.evaluate(() => ({ dates: document.querySelector('[data-ga-dates]').hidden, keep: document.querySelector('[data-ga-keep]').hidden, note: document.querySelector('[data-ga-note]').innerText }));
-    check(v.dates && v.keep && v.note === CARD_W.card_used, 'a gift already used: the card to keep, no "Choose your dates"');
+    const { ctx, page, rec } = await open('manage-delivery', {});
+    await page.goto(BASE + '/gift/manage#token=' + DTOKEN);
+    await page.waitForSelector('[data-ga-letter]:not([hidden])', { timeout: 10000 });
+    check(!has(page.url(), DTOKEN) && new URL(page.url()).pathname === '/gift/manage', 'the token is out of the address bar');
+    check(rec.deliveries[0] && rec.deliveries[0].method === 'GET' && rec.deliveries[0].token === DTOKEN, 'GET /v1/gift/delivery?token=, of our own server');
+    const xd = nextMorning('12-25').slice(0, 10);
+    const v = await page.evaluate(() => ({ for_: document.querySelector('.ga-letter__for').textContent, from: document.querySelector('.ga-letter__from').textContent,
+      when: document.querySelector('.ga-letter__when').textContent, note: document.querySelector('[data-ga-letter-note] [data-v="message"]').textContent,
+      fixed: !document.querySelector('[data-ga-letter-note]').hidden, noteField: !!document.querySelector('[data-ga-change] textarea') }));
+    check(v.for_ === 'For Ana & Luis' && v.from === 'With love from Aunt June', 'the names, as the card reads');
+    check(v.when === 'Their card is emailed to ' + THEM + ' on ' + whenEngine(xd, 8) + '.', 'where and when, in the engine\'s words (' + v.when + ')');
+    check(v.fixed && v.note === NOTE && !v.noteField, 'the note shown, and not to be changed');
+    check(await page.inputValue('#ga-their-email') === THEM && await page.inputValue('#ga-day') === xd && await page.inputValue('#ga-hour') === '8', 'the form holds the email, the day and the hour as they stand');
+    const labelled = await page.evaluate(() => [...document.querySelectorAll('#ga-manage input, #ga-manage select')].filter((n) => !(n.labels && n.labels.length)).map((n) => n.id));
+    check(!labelled.length, 'every field has its label');
+    check(await overflow(page) <= 0, 'no sideways scroll at 390');
+    await shot(page, 'gift-manage.png');
+    await page.selectOption('#ga-hour', '9');
+    await press(page, '[data-ga-change] button[type=submit]');
+    await page.waitForFunction(() => document.querySelector('[data-ga-saved]').textContent.length > 0, null, { timeout: 5000 });
+    const post = rec.deliveries.filter((x) => x.method === 'POST')[0] || {};
+    check(JSON.stringify(post.body) === JSON.stringify({ token: DTOKEN, date: xd, hour: 9, email: THEM }), 'POST /v1/gift/delivery {token, date, hour, email}');
+    check(await text(page, '[data-ga-saved]') === 'Saved. Their card is now emailed to ' + THEM + ' on ' + whenEngine(xd, 9) + '.' &&
+      has(await text(page, '.ga-letter__when'), whenEngine(xd, 9)), 'saved: the new moment, in the engine\'s words');
+    const r = await rings(page, '#ga-manage');
+    check(r.stops.length >= 4 && !r.bad.length, 'every keyboard stop shows its ring (' + r.stops.length + ' stops)');
+    rec.dv.sent = true;
+    await page.selectOption('#ga-hour', '10');
+    await press(page, '[data-ga-change] button[type=submit]');
+    await page.waitForFunction(() => !document.querySelector('[data-ga-change] form'), null, { timeout: 5000 });
+    check(await text(page, '[data-ga-saved]') === SENT_ALREADY + ' ' + PANEL.questions && has(await text(page, '.ga-letter__when'), 'was emailed'),
+      'already emailed: the engine\'s sentence, and no form to change it');
+    leaks(rec, await dataLayer(page), 'the change page');
+    await ctx.close();
+  }
+  {
+    const { ctx, page } = await open('manage-none', {});
+    await page.goto(BASE + '/gift/manage');
+    await page.waitForSelector('[data-ga-note]:not([hidden])', { timeout: 10000 });
+    check(has(await text(page, '[data-ga-note]'), 'missing its key'), 'no token: it says the link is missing its key');
+    await ctx.close();
+  }
+  {
+    const { ctx, page } = await open('manage-off', { delivery: 'off' });
+    await page.goto(BASE + '/gift/manage#token=' + DTOKEN);
+    await page.waitForSelector('[data-ga-note]:not([hidden])', { timeout: 10000 });
+    check(has(await text(page, '[data-ga-note]'), 'isn\u2019t open yet') && await page.evaluate(() => document.querySelector('[data-ga-letter]').hidden), 'the delivery door off: "not open yet", quietly');
+    await ctx.close();
+  }
+  {
+    const { ctx, page } = await open('manage-unknown', {});
+    await page.goto(BASE + '/gift/manage#token=tok-nope');
+    await page.waitForSelector('[data-ga-note]:not([hidden])', { timeout: 10000 });
+    check(await text(page, '[data-ga-note]') === NO_DELIVERY + ' ' + PANEL.questions, 'a token it does not know: the engine\'s sentence');
     await ctx.close();
   }
 
@@ -521,13 +818,13 @@ async function main() {
     await page.waitForSelector('#gatehouse button.gh-cta', { timeout: 10000 });
   }
   async function details(page) {
-    await page.click('#gatehouse button.gh-cta');
+    await press(page, '#gatehouse button.gh-cta');
     await page.waitForSelector('#gatehouse form.gh-form', { timeout: 5000 });
     await page.fill('#gh-email', 'guest@example.test');
     await page.fill('#gh-first_name', 'Test'); await page.fill('#gh-last_name', 'Guest');
     await page.fill('#gh-phone', '7065550100');
     await page.selectOption('#gh-guests', '2');
-    await page.check('#gh-agree');
+    await press(page, '#gh-agree');
     await page.fill('#gh-typed_name', 'Test Guest');
   }
   const lineText = (page) => page.evaluate(() => [...document.querySelectorAll('#gatehouse .gh-summary .gh-lines dt, #gatehouse .gh-summary .gh-lines dd')].map((n) => n.innerText.trim()).join(' | '));
@@ -541,7 +838,7 @@ async function main() {
     check(await label(page, '#gatehouse .gh-extend') === 'Add a third night: ' + BOOK_W.book_extend_free, 'the third night offered: "' + BOOK_W.book_extend_free + '"');
     await page.locator('#gatehouse .gh-summary').scrollIntoViewIfNeeded();
     await shot(page, 'book-gift-two-nights.png', false);
-    await page.click('#gatehouse .gh-extend');
+    await press(page, '#gatehouse .gh-extend');
     await until(async () => rec.quotes.length > 1 && has(await lineText(page), '$1,933.17'));
     check(has(rec.quotes[1] || '', 'check_out=' + CO3) && has(rec.quotes[1] || '', 'gift=' + CODE), 'one tap: three nights, quoted with the gift');
     await ctx.close();
@@ -563,7 +860,7 @@ async function main() {
     const sum = await page.evaluate(() => [...document.querySelectorAll('.gh-booking .gh-lines dt, .gh-booking .gh-lines dd')].map((n) => n.innerText.trim()).join(' | '));
     check(has(sum, 'Total | $1,933.17 | ' + BOOK_W.book_name + ' | -$1,933.17 | Due today | $0.00'), 'the booking summary: Total, The Golden Arrow, Due today $0.00');
     check(await label(page, '#gatehouse form.gh-form button[type=submit]') === BOOK_W.book_cta, 'the pay step\'s button says the same');
-    await Promise.all([page.waitForURL(/\/booked/, { timeout: 8000 }), page.click('#gatehouse form.gh-form button[type=submit]')]);
+    await Promise.all([page.waitForURL(/\/booked/, { timeout: 8000 }), press(page, '#gatehouse form.gh-form button[type=submit]')]);
     const sent = rec.checkouts[0] || {};
     check(sent.gift === CODE && sent.check_in === CI && sent.check_out === CO3, 'POST /v1/checkout carries gift=<code> with the dates');
     await page.waitForSelector('#gatehouse-stay .gh-stay', { timeout: 8000 });
@@ -591,9 +888,9 @@ async function main() {
     check(!!(await page.$('#gatehouse .gh-marker')), 'something left to pay: the trail marker stays');
     await page.locator('#gatehouse .gh-summary').scrollIntoViewIfNeeded();
     await shot(page, 'book-gift-partial.png', false);
-    await page.click('#gatehouse .gh-option:last-of-type input');
+    await press(page, '#gatehouse .gh-option:last-of-type input');
     await details(page);
-    await page.click('#gatehouse form.gh-form button[type=submit]');
+    await press(page, '#gatehouse form.gh-form button[type=submit]');
     await page.waitForSelector('#gh-paying:not([hidden])', { timeout: 8000 });
     check((rec.checkouts[0] || {}).gift === CODE, 'POST /v1/checkout carries gift=<code>');
     check(has(await text(page, '#gh-paying'), '$644.39 due today, of $644.39'), 'Stripe opens for what is left (' + (await text(page, '#gh-paying')) + ')');
@@ -611,7 +908,7 @@ async function main() {
     check(has(await lineText(page), 'Total | $1,933.17') && !has(await lineText(page), BOOK_W.book_left), 'the full price, shown as the full price');
     await page.locator('#gatehouse .gh-summary').scrollIntoViewIfNeeded();
     await shot(page, 'book-gift-refused.png', false);
-    await page.click('#gatehouse button.gh-cta');
+    await press(page, '#gatehouse button.gh-cta');
     await page.waitForSelector('#gatehouse form.gh-form');
     check(await text(page, '.gh-booking .gh-credit--off') === t, 'said again above the agreement');
     await ctx.close();

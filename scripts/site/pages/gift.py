@@ -84,8 +84,8 @@ WORDS = {
     'choose_h': 'Choosing their nights',
     'choose': 'When they know their dates, they call or text Mick at ' + PHONE + ', and he books them in.',
     'card_h': 'The card',
-    'card_how': 'Their names and yours on the card. The card and its link come to you by email once you pay, '   # LETTER
-                'to send them or print at home. Tick the box below and we will mail you the printed card as well.',
+    'card_how': 'Their names and yours on the card. Have it sent to you, to give by hand or print at home, or have us '   # LETTER
+                'email it to them on a day you choose, Christmas morning if you like. We can mail you the printed card as well.',
     'give_h': 'Give The Golden Arrow',
     'give_lead': 'Their names, yours, and your email. You see the whole price, taxes and fees included, before you pay.',
 
@@ -124,38 +124,88 @@ WORDS = {
     'total_at_stripe': 'Stripe shows the whole price, taxes and fees included, before you pay.',
     'pay': 'Pay securely with Stripe',
     'leaving': 'Opening secure payment…',
-    'change': '‹ Change the names or the address',
+    'change': '‹ Change the details',
     'pay_fine': 'Payment is by Stripe. Questions? Call or text Mick at ' + PHONE + '.',
     'no_payment': 'Secure payment could not open. Nothing was charged. Please try again, or call or text Mick at ' + PHONE + '.',
     'questions': 'Questions? Call or text Mick at ' + PHONE + '.',
+    # round two (Mick, 2026-10-25: "as good as a Disney gift card"): when and how the card arrives
+    'deliver_legend': 'How should the card arrive?',
+    'deliver_me': 'Send the card to me',                                  # the CEO's words
+    'deliver_them': 'Email it to them on a day I choose',                 # the CEO's words
+    'their_email_label': 'Their email',
+    'their_email_hint': 'One of them is enough.',
+    'day_label': 'The day',
+    'hour_label': 'The hour, Eastern time',
+    'picks_label': 'Or choose',
+    'pick_christmas': 'Christmas morning, 7 AM',                          # the CEO's words
+    'pick_valentine': 'Valentine\u2019s Day, 7 AM',                       # the CEO's words
+    'note_label': 'A note to them',
+    'note_hint': 'It comes with the card, under your names.',
+    'note_count': '{n} of 500',
+    'need_their_email': 'Please add their email, so the card reaches them.',
+    'need_day': 'Please choose a day within the next 12 months.',
+    'need_future': 'Please choose a time that has not come yet.',
+    'when_christmas': 'Christmas morning',
+    'when_valentine': 'Valentine\u2019s Day',
+    'when_at': '{day} at {hour}',
+    'confirm_them': 'We will email it to {email} on {when}.',
+    'confirm_note': 'Your note',
 
     # ---- /gift/thanks: where Stripe returns the buyer --------------------------------------
     'thanks_title': 'Thank you | Loxley Forest',
     'thanks_eyebrow': 'The Golden Arrow',
     'thanks_h1': 'Thank you.',
     'thanks_lead': 'Your card and its link are on their way by email.',     # the CEO's words; LETTER
-    'thanks_body': [
-        'Send them the link when the moment is right, or print the card at home. If you asked for the printed card, we will mail it to you.',
-        'When they know their dates, they call or text Mick at ' + PHONE + ', and he books them in.',
-    ],
+    'thanks_me': 'Your card is on its way to your inbox.',                   # the CEO's words; LETTER
+    'thanks_them': 'We\u2019ll email it to them on {when}.',                # the CEO's words; LETTER
+    'thanks_body_me': 'Send them the link when the moment is right, or print the card at home. If you asked for the printed card, we will mail it to you.',
+    'thanks_body_them': 'If you asked for the printed card as well, we will mail it to you.',
+    'thanks_choose': 'When they know their dates, they call or text Mick at ' + PHONE + ', and he books them in.',
     'thanks_help': 'Anything at all, call or text Mick at ' + PHONE + '.',
 
     # ---- /gift/card (js/gift.js); the engine's own sentence is shown as is for a code it cannot find
     'card_title': 'Your Golden Arrow | Loxley Forest',
     'card_eyebrow': 'A gift from Loxley Forest',
     'card_opening': 'Opening the card…',
-    'card_none': 'This link has no gift on it. Call or text Mick at ' + PHONE + ' and he will sort it out.',
+    'card_none': 'This link has no gift on it.',
     'card_unknown': 'We could not find a gift on this link. Call or text Mick at ' + PHONE + ' and he will sort it out.',
     'card_off': 'The card can’t be shown online just yet. Call or text Mick at ' + PHONE + '.',
     'card_down': 'We couldn’t reach the card just now. Please try again in a moment, or call or text Mick at ' + PHONE + '.',
     'card_void': 'This gift is no longer active. Questions? Call or text Mick at ' + PHONE + '.',
-    'card_used': 'This Golden Arrow has been used to book a stay. The card stays here to keep.',
-    'choose_dates': 'Choose your dates',                                # ENGINE
-    'print': 'Print the card',
+    'state_unused': 'Unused, ready for three nights',                     # the CEO's words
+    'state_booked': 'Booked for {month}',                                 # the CEO's words
+    'state_used': 'Enjoyed in {month}',                                   # the CEO's words
+    'note_from': 'A note from {giver}',
+    'choose_dates': 'Book your nights',                                   # the CEO's words; ENGINE
+    'print': 'Print this card',                                           # the CEO's words
     'share': 'Send the link',
     'share_copied': 'The link is copied. Paste it into a message to them.',
     'share_manual': 'Copy this link and send it to them:',
     'keep': 'Anyone with this link can use the gift. Send it to them, and keep it close.',
+    'lost_h': 'Lost your card? Enter the email that bought it.',          # the CEO's words
+    'lost_label': 'The email that bought it',
+    'lost_send': 'Send it again',
+    'lost_sending': 'Sending\u2026',
+    'lost_need': 'Please add the email that bought the gift.',
+    'lost_off': 'This can\u2019t be done online just yet. Call or text Mick at ' + PHONE + '.',
+    'lost_sent': 'If that email bought a gift, its card is on its way there now.',   # only if the engine sends no sentence
+
+    # ---- /gift/manage#token=: the buyer's change page for a card emailed on a day (js/gift.js)
+    'manage_title': 'Your gift\u2019s delivery | Loxley Forest',
+    'manage_eyebrow': 'The Golden Arrow',
+    'manage_h1': 'Your gift\u2019s delivery',
+    'manage_opening': 'Opening the delivery\u2026',
+    'manage_goes': 'Their card is emailed to {email} on {when}.',
+    'manage_went': 'Their card was emailed to {email} on {when}.',
+    'manage_note_h': 'Your note',
+    'manage_note_fixed': 'The note stays as you wrote it.',
+    'manage_change_h': 'Change the day, the hour or their email',
+    'manage_save': 'Save the change',
+    'manage_saving': 'Saving\u2026',
+    'manage_saved': 'Saved. Their card is now emailed to {email} on {when}.',
+    'manage_none': 'This link is missing its key. Use the link in your email, or call or text Mick at ' + PHONE + '.',
+    'manage_off': 'Changing the day online isn\u2019t open yet. Call or text Mick at ' + PHONE + ' and he will change it.',
+    'manage_down': 'We couldn\u2019t reach our booking system just now. Please try again in a moment, or call or text Mick at ' + PHONE + '.',
 
     # ---- /book, when a Golden Arrow rides the link (js/gatehouse.js) -----------------------
     'book_name': 'The Golden Arrow',
@@ -191,9 +241,18 @@ PANEL_KEYS = ('opening', 'off', 'down', 'call_mick', 'text_mick', 'for_label', '
               'email_label', 'mail_label', 'ship_name', 'ship_line1', 'ship_line2', 'ship_city', 'ship_state', 'ship_zip',
               'optional', 'need_for', 'need_from', 'need_email', 'need_address', 'need_state', 'need_zip', 'continue',
               'adding', 'confirm_eyebrow', 'confirm_mail', 'confirm_link', 'total_label', 'all_in', 'total_at_stripe',
-              'pay', 'leaving', 'change', 'pay_fine', 'no_payment', 'questions')
-CARD_KEYS = ('card_none', 'card_unknown', 'card_off', 'card_down', 'card_void', 'card_used', 'choose_dates', 'print',
-             'share', 'share_copied', 'share_manual', 'keep', 'questions')
+              'pay', 'leaving', 'change', 'pay_fine', 'no_payment', 'questions', 'deliver_legend', 'deliver_me',
+              'deliver_them', 'their_email_label', 'their_email_hint', 'day_label', 'hour_label', 'picks_label',
+              'pick_christmas', 'pick_valentine', 'note_label', 'note_hint', 'note_count', 'need_their_email', 'need_day',
+              'need_future', 'when_christmas', 'when_valentine', 'when_at', 'confirm_them', 'confirm_note')
+CARD_KEYS = ('card_none', 'card_unknown', 'card_off', 'card_down', 'card_void', 'state_unused', 'state_booked', 'state_used',
+             'note_from', 'choose_dates', 'print', 'share', 'share_copied', 'share_manual', 'keep', 'questions',
+             'lost_h', 'lost_label', 'lost_send', 'lost_sending', 'lost_need', 'lost_off', 'lost_sent')
+MANAGE_KEYS = ('manage_opening', 'manage_goes', 'manage_went', 'manage_note_h', 'manage_note_fixed', 'manage_change_h',
+               'manage_save', 'manage_saving', 'manage_saved', 'manage_none', 'manage_off', 'manage_down',
+               'their_email_label', 'day_label', 'hour_label', 'picks_label', 'pick_christmas', 'pick_valentine',
+               'need_their_email', 'need_day', 'need_future', 'questions', 'when_christmas', 'when_valentine', 'when_at')
+THANKS_KEYS = ('thanks_lead', 'thanks_me', 'thanks_them', 'when_christmas', 'when_valentine', 'when_at')
 BOOK_KEYS = tuple(k for k in WORDS if k.startswith('book_'))
 STAY_KEYS = ('book_name', 'stay_gift_includes', 'stay_gift_move', 'stay_booked_now')
 
@@ -344,8 +403,20 @@ def page_gift_card():
         <noscript><p class="ga-note">This page needs JavaScript to show the card. {CALL}</p></noscript>
         <figure class="ga-figure" data-ga-card hidden>
           {card(fill=True)}
+          <figcaption class="ga-message" data-ga-message hidden><span class="ga-message__from" data-ga-message-from></span><span class="ga-message__text" data-ga-message-text></span></figcaption>
         </figure>
+        <p class="ga-status" data-ga-status hidden></p>
         <p class="ga-note" role="status" data-ga-note hidden></p>
+        <!-- Lost card (no code, or one the engine cannot find): POST /v1/gift/resend {{email}}, then the
+             engine's one sentence, whatever the answer. -->
+        <form class="ga-lost" data-ga-lost novalidate hidden>
+          <h2 class="ga-lost__h" id="ga-lost-h">{escape(W["lost_h"], quote=False)}</h2>
+          <div class="gh-field"><label for="ga-lost-email">{W["lost_label"]}</label><input id="ga-lost-email" name="email" type="email" autocomplete="email" inputmode="email" required></div>
+          <p class="gh-error" id="ga-lost-error" role="alert"></p>
+          <button type="submit" class="lf-btn gh-btn--dark">{W["lost_send"]}</button>
+          <p class="ga-lost__said" role="status" data-ga-lost-said hidden></p>
+          <p class="gh-fine">{escape(W["questions"], quote=False)}</p>
+        </form>
         <div class="ga-actions" data-ga-actions hidden>
           <button type="button" class="lf-btn" data-ga-dates hidden>{B.ACORN}{W["choose_dates"]}</button>
           <button type="button" class="lf-btn gh-btn--quiet" data-ga-print>{W["print"]}</button>
@@ -363,20 +434,26 @@ def page_gift_card():
 def page_gift_thanks():
     """/gift/thanks?session_id=...: where Stripe returns the buyer (the engine's success_url). The
     session id is lifted out of the address bar by the keys script before Tag Manager loads; this
-    page never reads it. Here is where a Google Ads conversion for a gift bought would fire (a page
-    view of /gift/thanks): NOT added, the account's changes are Mick's clicks. Noindex."""
+    page never reads it. js/gift.js reads back how the card arrives from this tab's sessionStorage
+    (ga_deliver {to, at}: kept by the purchase panel before Stripe, never an email or a message);
+    with none, the general line stands. Here is where a Google Ads conversion for a gift bought
+    would fire (a page view of /gift/thanks): NOT added, the account's changes are Mick's clicks.
+    Noindex."""
     W = WORDS
     h, gtm = head_for(W['thanks_title'], W['description'], URL + '/thanks', noindex=True)
-    words = ''.join(f'\n          <p>{escape(p, quote=False)}</p>' for p in W['thanks_body'])
+    e = lambda t: escape(t, quote=False)
     body = f'''
-    <section class="lf-sec lf-dark lf-note ga-thanks" aria-labelledby="nt-h">
+    <section class="lf-sec lf-dark lf-note ga-thanks" id="ga-thanks" aria-labelledby="nt-h">
       <div class="lf-wrap lf-split">
         <div>
           <p class="lf-eyebrow">{W["thanks_eyebrow"]}</p>
           <h1 class="lf-h1" id="nt-h">{W["thanks_h1"]}</h1>
-          <p class="lf-lead">{escape(W["thanks_lead"], quote=False)}</p>
-          <div class="lf-body">{words}
-          <p>{escape(W["thanks_help"], quote=False)}</p>
+          <p class="lf-lead" data-ga-thanks-lead>{e(W["thanks_lead"])}</p>
+          <div class="lf-body">
+          <p data-ga-thanks-me>{e(W["thanks_body_me"])}</p>
+          <p data-ga-thanks-them hidden>{e(W["thanks_body_them"])}</p>
+          <p>{e(W["thanks_choose"])}</p>
+          <p>{e(W["thanks_help"])}</p>
           </div>
           <p class="lf-note__sign">Mick &amp; Livy</p>
           <div class="lf-actions"><a href="/" class="lf-link">Return home</a><a href="/treehouses" class="lf-link">See the treehouse</a></div>
@@ -384,11 +461,45 @@ def page_gift_thanks():
         <figure class="lf-photo">{B.pic('eq3a0907', 'The treehouse at dusk, its canvas glowing, the rope bridge strung with lights', '(min-width: 900px) 50vw, 100vw', eager=True)}</figure>
       </div>
     </section>
+    {words_block(THANKS_KEYS)}
 '''
-    return 'gift-thanks.html', h, gtm, body, '/book', False
+    return 'gift-thanks.html', h, gtm, body, '/book', True
 
 
-PAGES = [page_gift, page_gift_card, page_gift_thanks]
+def page_gift_manage():
+    """/gift/manage#token=...: the buyer's change page for a card emailed on a day they chose (engine
+    ceo/golden-arrow-2: GET and POST /v1/gift/delivery). The token arrives after # in the buyer's
+    letter and the keys script lifts it out of the address bar before Tag Manager loads; it goes to
+    our own booking server and nowhere else. The note is shown and never changed. Noindex."""
+    W = WORDS
+    h, gtm = head_for(W['manage_title'], W['description'], URL + '/manage', noindex=True)
+    body = head_section(W['manage_eyebrow'], W['manage_h1']) + f'''
+    <section class="lf-sec lf-parch ga-cardpage ga-manage" id="ga-manage" data-api="{B.API}" aria-label="{W['manage_h1']}">
+      <div class="ga-cardpage__in">
+        <p class="ga-wait" role="status" data-ga-wait>{W["manage_opening"]}</p>
+        <noscript><p class="ga-note">This page needs JavaScript. {CALL}</p></noscript>
+        <p class="ga-note" role="status" data-ga-note hidden></p>
+        <div class="ga-letter" data-ga-letter hidden>
+          {ARROW}
+          <p class="ga-letter__for">{CARD["for"]} <span data-v="names"></span></p>
+          <p class="ga-letter__from">{CARD["from"]} <span data-v="giver"></span></p>
+          <p class="ga-letter__when" data-v="when"></p>
+          <div data-ga-letter-note hidden>
+            <span class="ga-message__from">{W["manage_note_h"]}</span>
+            <span class="ga-message__text" data-v="message"></span>
+            <p class="ga-letter__fixed">{W["manage_note_fixed"]}</p>
+          </div>
+        </div>
+        <p class="ga-saved" role="status" data-ga-saved></p>
+        <div data-ga-change></div>
+      </div>
+    </section>
+    {words_block(MANAGE_KEYS)}
+'''
+    return 'gift-manage.html', h, gtm, body, '/book', True
+
+
+PAGES = [page_gift, page_gift_card, page_gift_thanks, page_gift_manage]
 
 # 'u' is one unit of the card's 1080-wide design: every size below is the card's own, times u,
 # so the card scales with its frame (a phone, a desk, a printed page) and stays the same card.
@@ -494,15 +605,86 @@ CSS = '''
 .ga-card .ga-foot { position: absolute; left: calc(96 * var(--u)); right: calc(96 * var(--u)); bottom: calc(84 * var(--u)); text-align: center; border-top: max(1px, calc(1 * var(--u))) solid rgba(196, 162, 101, 0.6); padding-top: calc(26 * var(--u)); }
 .ga-card .ga-foot .ga-label { font-size: calc(23 * var(--u)); letter-spacing: 0.24em; color: var(--stone); }
 
-/* Printed from the browser: the card alone, centred, 7 inches wide (fits Letter and A4). */
+/* ---- round two: how the card arrives (the purchase panel) ---- */
+.ga-deliver { border: 0; margin: 0; padding: 0; min-width: 0; display: grid; gap: 10px; }
+.ga-deliver legend { padding: 0; margin-bottom: 8px; font-family: 'Montserrat', Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 1px; color: var(--forest); }
+.ga-choice { display: flex; gap: 12px; align-items: center; min-height: 52px; padding: 12px 14px; border: 1px solid var(--driftwood); background: var(--cream); cursor: pointer; font-size: 17px; line-height: 1.35; color: var(--bark); }
+.ga-choice:has(input:checked) { border-color: var(--forest-deep); background: var(--white); }
+.ga-choice input { flex: none; width: 22px; height: 22px; margin: 0; accent-color: var(--forest-deep); }
+.ga-them { display: grid; gap: 14px; padding: 4px 0 0 14px; border-left: 2px solid rgba(26, 46, 26, 0.18); }
+.ga-them[hidden] { display: none; }
+.ga-picks { display: flex; flex-wrap: wrap; gap: 8px; }
+.ga-picks > span { width: 100%; font-family: 'Montserrat', Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 1px; color: var(--forest); }
+.ga-pick { min-height: 44px; padding: 0 16px; border: 1px solid var(--driftwood); border-radius: 999px; cursor: pointer; background: var(--cream); color: var(--bark); font: 14px/1.2 'Montserrat', Arial, sans-serif; }
+.ga-pick[aria-pressed="true"] { background: var(--forest-deep); border-color: var(--forest-deep); color: var(--on-dark); }
+.ga-form .gh-field textarea { width: 100%; min-height: 128px; padding: 12px 14px; border: 1px solid var(--driftwood); background: var(--cream); border-radius: 0; resize: vertical;
+  font: 400 17px/1.5 'Cormorant Garamond', Georgia, serif; color: var(--bark); }
+.ga-form .gh-field textarea:focus { outline: 2px solid var(--gold); border-color: var(--gold); }
+.ga-count { display: block; margin-top: 6px; text-align: right; font: 13px/1.3 'Montserrat', Arial, sans-serif; color: var(--stone); font-variant-numeric: tabular-nums; }
+.ga-confirm__note { margin: 0; padding: 12px 14px; border-left: 2px solid var(--gold); background: var(--cream); font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 1.15rem; line-height: 1.5; color: var(--bark); white-space: pre-line; overflow-wrap: anywhere; }
+
+/* ---- round two: the card page ---- */
+.ga-message { display: block; margin: 0; padding: 22px 24px 26px; background: var(--linen); border-top: 1px solid rgba(196, 162, 101, 0.6);
+  box-shadow: 0 18px 50px rgba(20, 36, 24, 0.12); text-align: center; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.ga-message[hidden] { display: none; }
+.ga-message__from { display: block; font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 0.6875rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--gold-text); }
+.ga-message__text { display: block; margin-top: 12px; font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 500; font-size: 1.3rem; line-height: 1.5; color: var(--forest-deep); white-space: pre-line; overflow-wrap: anywhere; text-wrap: pretty; }
+.ga-status { margin: 0; text-align: center; font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 0.75rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold-text); }
+.ga-status[hidden], .ga-lost[hidden], .ga-lost [hidden] { display: none; }
+.ga-lost { display: grid; gap: 14px; padding: clamp(20px, 5vw, 28px); background: var(--linen); border: 1px solid rgba(44, 34, 25, 0.12); }
+.ga-lost__h { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 1.45rem; line-height: 1.3; color: var(--forest-deep); }
+.ga-lost .lf-btn { width: 100%; }
+.ga-lost__said { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.3rem; line-height: 1.45; color: var(--forest-deep); }
+.ga-lost .gh-fine { margin: 0; }
+
+/* The reveal, on a card's first open on this device: the arch's two doors part onto the photo in
+   under a second. Nothing else moves; the gift number is never covered. None with reduced motion. */
+.ga-card .ga-arch { position: relative; }
+.ga-card.is-opening .ga-arch::before, .ga-card.is-opening .ga-arch::after {
+  content: ''; position: absolute; z-index: 1; top: 0; bottom: 0; width: 50.5%; background: var(--ink);
+  animation: ga-door-l 0.75s cubic-bezier(0.65, 0, 0.35, 1) 0.1s both;
+}
+.ga-card.is-opening .ga-arch::before { left: 0; border-right: max(1px, calc(1.5 * var(--u))) solid var(--gold); }
+.ga-card.is-opening .ga-arch::after { right: 0; border-left: max(1px, calc(1.5 * var(--u))) solid var(--gold); animation-name: ga-door-r; }
+@keyframes ga-door-l { to { transform: translateX(-102%); } }
+@keyframes ga-door-r { to { transform: translateX(102%); } }
+@media (prefers-reduced-motion: reduce) { .ga-card.is-opening .ga-arch::before, .ga-card.is-opening .ga-arch::after { content: none; animation: none; } }
+
+/* ---- the buyer's change page, in the card's look ---- */
+.ga-letter { position: relative; padding: clamp(28px, 7vw, 44px) clamp(22px, 6vw, 40px); background: var(--linen); text-align: center;
+  box-shadow: 0 18px 50px rgba(20, 36, 24, 0.18), inset 0 0 0 10px var(--linen), inset 0 0 0 11px rgba(196, 162, 101, 0.75); }
+.ga-letter[hidden] { display: none; }
+.ga-letter .ga-arrow { display: block; width: min(220px, 60%); height: auto; margin: 0 auto 22px; color: var(--gold); }
+.ga-letter__for { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 1.7rem; line-height: 1.15; color: var(--forest-deep); overflow-wrap: anywhere; }
+.ga-letter__from { margin: 6px 0 0; font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 500; font-size: 1.3rem; color: var(--stone); overflow-wrap: anywhere; }
+.ga-letter__when { margin: 22px 0 0; padding-top: 18px; border-top: 1px solid rgba(196, 162, 101, 0.6); font-size: 1.2rem; line-height: 1.5; color: var(--bark); overflow-wrap: anywhere; }
+.ga-letter .ga-message__from { margin-top: 22px; }
+.ga-letter__fixed { margin: 10px 0 0; font-size: 0.95rem; color: var(--stone); }
+.ga-change { display: grid; gap: 14px; padding: clamp(20px, 5vw, 28px); background: var(--linen); border: 1px solid rgba(44, 34, 25, 0.12); }
+.ga-change__h { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 1.45rem; line-height: 1.3; color: var(--forest-deep); }
+.ga-change .lf-btn { width: 100%; }
+.ga-saved { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.25rem; line-height: 1.45; color: var(--forest-deep); }
+.ga-saved:empty { display: none; }
+.ga-manage .lf-btn:focus-visible, .ga-manage .ga-pick:focus-visible { outline: 2px solid var(--forest-deep); outline-offset: 3px; }
+
+/* Keyboard focus, seen on the light panels too (the site's button ring is linen, for dark ground). */
+.ga-give .lf-btn:focus-visible, .ga-cardpage .lf-btn:focus-visible, .ga-buy .gh-back:focus-visible,
+.ga-pick:focus-visible, .ga-choice:has(input:focus-visible), .ga-buy .gh-optin:has(input:focus-visible) { outline: 2px solid var(--forest-deep); outline-offset: 3px; }
+
+/* Printed from the browser: the card alone, centred, 7 inches wide (fits Letter and A4); with a
+   note, 6 inches, so the card and its note share one page. */
 @media print {
   body:has(#ga-card-page) .lf-hdr, body:has(#ga-card-page) .lf-menu, body:has(#ga-card-page) .lf-foot,
   body:has(#ga-card-page) .book-fab, body:has(#ga-card-page) .skip-link, body:has(#ga-card-page) .ga-head,
   body:has(#ga-card-page) .ga-wait, body:has(#ga-card-page) .ga-note, body:has(#ga-card-page) .ga-actions,
-  body:has(#ga-card-page) .ga-share, body:has(#ga-card-page) .ga-keep { display: none !important; }
+  body:has(#ga-card-page) .ga-share, body:has(#ga-card-page) .ga-keep, body:has(#ga-card-page) .ga-status,
+  body:has(#ga-card-page) .ga-lost { display: none !important; }
   body:has(#ga-card-page), body:has(#ga-card-page) main, .ga-cardpage { background: #fff !important; }
   .ga-cardpage { padding: 0 !important; }
   .ga-cardpage__in, .ga-cardpage .ga-figure, .ga-cardpage .ga-stage { max-width: 7in; }
-  .ga-cardpage .ga-card { box-shadow: none; break-inside: avoid; }
+  .ga-cardpage .ga-card, .ga-cardpage .ga-message { box-shadow: none; break-inside: avoid; }
+  .ga-cardpage .ga-figure:has(.ga-message:not([hidden])), .ga-cardpage .ga-figure:has(.ga-message:not([hidden])) .ga-stage { max-width: 6in; }
+  .ga-cardpage .ga-message { padding: 0.18in 0.3in 0.22in; }
+  .ga-cardpage .ga-message__text { font-size: 12.5pt; }
 }
 '''

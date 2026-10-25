@@ -60,3 +60,9 @@
   from = "/gift/thanks"
   to = "/gift-thanks.html"
   status = 200
+
+# The buyer's change page for a card emailed on a day they chose: /gift/manage#token=...
+[[redirects]]
+  from = "/gift/manage"
+  to = "/gift-manage.html"
+  status = 200
