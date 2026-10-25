@@ -37,7 +37,7 @@ def ritual(img, alt, title, words, note):
 # only by guests who booked it before (Mick, 2026-10-19), so it is not offered here. This list is
 # also the one /booked shows (scripts/site/pages/guest.py).
 ADDONS = [
-    ('The Dawn Table', 'Breakfast carried across the bridge to your door, with a late checkout to go with it.'),
+    ('The Dawn Table', 'Breakfast carried across the bridge to your door.'),
     ('Forest Tableau', 'Our signature evening on a white oak slab from our forest.'),
     ('The Flight Deck', 'Sommelier-curated wines. Four pours. No two ever the same.'),
     ('The Landing', 'Artisan cheese paired to the Flight Deck.'),
