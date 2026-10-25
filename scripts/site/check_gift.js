@@ -239,6 +239,8 @@ async function main() {
   }
   const dataLayer = (page) => page.evaluate(() => JSON.stringify(window.dataLayer || []));
   const text = (page, sel) => page.evaluate((s) => { const n = document.querySelector(s); return n ? n.innerText.replace(/\s+/g, ' ').trim() : null; }, sel);
+  // A button's own words (its CSS sets them in capitals, which innerText would report).
+  const words_ = (page, sel) => page.evaluate((s) => { const n = document.querySelector(s); return n ? n.textContent.replace(/\s+/g, ' ').trim() : null; }, sel);
 
   // ------------------------------------------------------------------ /gift
   console.log('/gift while the engine\'s gift route answers 404 (switched off)');
@@ -425,9 +427,9 @@ async function main() {
     await page.waitForTimeout(200);
     const lay = await page.evaluate(() => {
       const card = document.querySelector('.ga-card'), side = card.querySelector('.ga-side'), arch = card.querySelector('.ga-arch');
-      return { cls: card.className, side: side.scrollHeight, arch: arch.offsetHeight };
+      return { ns: card.style.getPropertyValue('--ns'), side: side.scrollHeight, arch: arch.offsetHeight, call: card.querySelector('.ga-call').getBoundingClientRect().bottom, foot: card.querySelector('.ga-foot').getBoundingClientRect().top };
     });
-    check(/is-long/.test(lay.cls) && lay.side <= lay.arch + 1, 'the dedication fits beside the photo (' + lay.cls.replace('ga-card', '').trim() + ')');
+    check(+lay.ns > 0 && +lay.ns < 1 && lay.side <= lay.arch + 1 && lay.call <= lay.foot, 'the dedication steps down and fits beside the photo (names at ' + lay.ns + ')');
     await shot(page, 'card-long-names.png');
     await ctx.close();
   }
@@ -492,7 +494,7 @@ async function main() {
     const ls = await lineText(page);
     check(has(ls, 'Total | $1,933.17') && has(ls, BOOK_W.book_name + ' | -$1,933.17') && has(ls, BOOK_W.book_left + ' | $0.00'), 'the total panel: Total, The Golden Arrow, Left to pay (' + ls + ')');
     check(await text(page, '#gatehouse .gh-gift') === BOOK_W.book_covers + ' ' + BOOK_W.book_nothing_left, '"The Golden Arrow covers these nights." and nothing left');
-    check(await text(page, '#gatehouse button.gh-cta') === BOOK_W.book_cta && !(await page.$('#gatehouse .gh-options')), 'one button, "' + BOOK_W.book_cta + '", no way-to-pay choice');
+    check(await words_(page, '#gatehouse button.gh-cta') === BOOK_W.book_cta && !(await page.$('#gatehouse .gh-options')), 'one button, "' + BOOK_W.book_cta + '", no way-to-pay choice');
     check(!(await page.$('#gatehouse .gh-extend')), 'no extend offer priced at full while the gift is in hand');
     check(await overflow(page) <= 0, 'no sideways scroll at 390');
     await page.locator('#gatehouse .gh-summary').scrollIntoViewIfNeeded();
@@ -500,7 +502,7 @@ async function main() {
     await pay(page);
     const sum = await page.evaluate(() => [...document.querySelectorAll('.gh-booking .gh-lines dt, .gh-booking .gh-lines dd')].map((n) => n.innerText.trim()).join(' | '));
     check(has(sum, 'Total | $1,933.17 | ' + BOOK_W.book_name + ' | -$1,933.17 | Due today | $0.00'), 'the booking summary: Total, The Golden Arrow, Due today $0.00');
-    check(await text(page, '#gatehouse form.gh-form button[type=submit]') === BOOK_W.book_cta, 'the pay step\'s button says the same');
+    check(await words_(page, '#gatehouse form.gh-form button[type=submit]') === BOOK_W.book_cta, 'the pay step\'s button says the same');
     await Promise.all([page.waitForURL(/\/manage/, { timeout: 8000 }), page.click('#gatehouse form.gh-form button[type=submit]')]);
     const sent = rec.checkouts[0] || {};
     check(sent.gift === CODE && sent.check_in === CI && sent.check_out === CO3, 'POST /v1/checkout carries gift=<code> with the dates');

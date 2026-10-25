@@ -401,6 +401,7 @@ CSS = '''
 .ga-card {
   --u: calc(100cqw / 1080); position: relative; overflow: hidden; width: 100%; aspect-ratio: 1080 / 1350;
   background: var(--linen); color: var(--bark); box-shadow: 0 18px 50px rgba(20, 36, 24, 0.18);
+  font-size: calc(16 * var(--u)); line-height: normal;   /* the card's own page: 16 px on 1080, so no line box grows from the site's type */
   -webkit-font-smoothing: antialiased; font-kerning: normal; -webkit-print-color-adjust: exact; print-color-adjust: exact;
 }
 .ga-card p { margin: 0; }
@@ -421,17 +422,14 @@ CSS = '''
 .ga-card .ga-wordmark { width: 100%; height: auto; margin-left: -1%; }
 .ga-card .ga-title { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 400; font-size: calc(68 * var(--u)); line-height: 1.04; color: var(--forest-deep); margin-top: calc(44 * var(--u)); text-wrap: balance; letter-spacing: -0.005em; }
 .ga-card .ga-subtitle { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 500; font-size: calc(36 * var(--u)); line-height: 1.2; color: var(--stone); margin-top: calc(14 * var(--u)); }
-.ga-card .ga-sig { margin-top: auto; padding-top: calc(24 * var(--u)); }
+.ga-card .ga-sig { margin-top: auto; }
 .ga-card .ga-rule { width: calc(72 * var(--u)); height: 0; border-top: max(1px, calc(1.5 * var(--u))) solid var(--gold); margin: 0 0 calc(34 * var(--u)); }
-.ga-card .ga-for { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: calc(47 * var(--u)); line-height: 1.1; color: var(--forest-deep); overflow-wrap: break-word; text-wrap: balance; }
-.ga-card .ga-from { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 500; font-size: calc(37 * var(--u)); line-height: 1.2; color: var(--stone); margin-top: calc(12 * var(--u)); overflow-wrap: break-word; text-wrap: balance; }
+.ga-card .ga-for { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: calc(47 * var(--u) * var(--ns, 1)); line-height: 1.1; color: var(--forest-deep); overflow-wrap: break-word; text-wrap: balance; }
+.ga-card .ga-from { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 500; font-size: calc(37 * var(--u) * var(--ns, 1)); line-height: 1.2; color: var(--stone); margin-top: calc(12 * var(--u)); overflow-wrap: break-word; text-wrap: balance; }
 .ga-card .ga-label { font-family: 'Montserrat', sans-serif; font-weight: 500; text-transform: uppercase; letter-spacing: 0.28em; }
 .ga-card .ga-giftno { font-size: calc(22 * var(--u)); letter-spacing: 0.24em; color: var(--gold-text); margin-top: calc(34 * var(--u)); }
 .ga-card .ga-giftno[hidden] { display: none; }
-.ga-card.is-long .ga-for { font-size: calc(39 * var(--u)); }
-.ga-card.is-long .ga-from { font-size: calc(31 * var(--u)); }
-.ga-card.is-longer .ga-for { font-size: calc(32 * var(--u)); }
-.ga-card.is-longer .ga-from { font-size: calc(26 * var(--u)); }
+/* --ns: long names step down (js/gift.js fit) until the dedication sits beside the photo */
 .ga-card .ga-body { position: absolute; left: calc(96 * var(--u)); right: calc(96 * var(--u)); top: calc(728 * var(--u)); }
 .ga-card .ga-arrow { display: block; width: calc(440 * var(--u)); height: calc(23.5 * var(--u)); margin: 0; color: var(--gold); opacity: 1; }
 .ga-card .ga-gift { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: calc(43 * var(--u)); line-height: 1.32; color: var(--bark); margin-top: calc(38 * var(--u)); text-wrap: pretty; }

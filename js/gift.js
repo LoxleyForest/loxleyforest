@@ -53,14 +53,18 @@
       el('a', { 'class': 'lf-btn gh-btn--quiet', href: G.SMS, text: w('text_mick') })]);
   }
 
-  // The card's dedication must sit beside the photograph, never under it: long names step down.
+  // The card's dedication must sit beside the photograph, never under it: long names step down
+  // (--ns, the names' scale), five per cent at a time, to half size at the most. Everything on the
+  // card is in units of its width, so the scale that fits here fits on any screen and on paper.
   function fit(card) {
     var side = card.querySelector('.ga-side'), arch = card.querySelector('.ga-arch');
     if (!side || !arch) return;
-    card.classList.remove('is-long', 'is-longer');
-    var over = function () { return side.scrollHeight > arch.offsetHeight + 1; };
-    if (over()) card.classList.add('is-long');
-    if (over()) { card.classList.remove('is-long'); card.classList.add('is-longer'); }
+    var ns = 1;
+    card.style.removeProperty('--ns');
+    while (side.scrollHeight > arch.offsetHeight + 1 && ns > 0.5) {
+      ns = Math.round((ns - 0.05) * 100) / 100;
+      card.style.setProperty('--ns', String(ns));
+    }
   }
   function fitAll() { document.querySelectorAll('.ga-card').forEach(fit); }
   fitAll();
@@ -78,6 +82,9 @@
     function show(nodes) { root.replaceChildren.apply(root, nodes); }
 
     function off(kind) {
+      // The lead above promises a price before paying; with no way to pay here, it steps aside.
+      var lead = document.querySelector('.ga-give__lead');
+      if (lead) lead.hidden = true;
       show([el('div', { 'class': 'ga-panel', role: 'status' }, [
         el('p', { 'class': 'ga-panel__lead', text: w(kind) }), callLine()])]);
     }

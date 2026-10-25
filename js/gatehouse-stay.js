@@ -166,10 +166,13 @@
     var w = WELCOME[kind] || WELCOME.booked;
     if (title) title.textContent = w.h1;
     document.title = w.title + ' | Loxley Forest';
-    // A credit carried to /book in this tab has done its work once a stay is booked.
+    // A credit or a Golden Arrow carried to /book in this tab has done its work once a stay is booked.
     try {
       var st = JSON.parse(sessionStorage.getItem('gh_keys') || '{}') || {};
-      if (st['/book'] && st['/book'].credit) { delete st['/book'].credit; sessionStorage.setItem('gh_keys', JSON.stringify(st)); }
+      if (st['/book'] && (st['/book'].credit || st['/book'].gift)) {
+        delete st['/book'].credit; delete st['/book'].gift;
+        sessionStorage.setItem('gh_keys', JSON.stringify(st));
+      }
     } catch (e) {}
     var token = stay.manage_token || '';
     var balance = (stay.payments || []).filter(function (p) { return p.status === 'scheduled' && p.due_on; })[0];
