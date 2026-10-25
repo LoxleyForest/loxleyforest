@@ -418,8 +418,12 @@
   // Keys arrive after # and are lifted out of the address bar by the head script on /book
   // (build_v2.py KEYS_SCRIPT) before Tag Manager loads; they live in window.__ghKeys.
   var KEYS = window.__ghKeys || {};
-  // A guest returning from a Hold my dates link made before it was retired.
-  // No new holds exist; the API simply ignores a hold it no longer has.
+  // A hold's key: a Hold my dates link from before it was retired (2026-10-19), or, once the
+  // talk card's 'hold' mode is on (js/talk.js CARD_EMAIL, off), the link its email carries
+  // (#hold=, lifted out of the address bar by the head script like every key) or a hold made
+  // on this page (Gatehouse.useHold below). It rides the calendar, the quote and the checkout,
+  // so held nights are open to their holder at payment. The API ignores a hold it no longer
+  // has. Never a beacon, never the tag manager.
   var HOLD = KEYS.hold || '';
   // A credit to spend: the manage key of a cancelled stay, from its manage page (/book#credit=).
   var CREDIT = KEYS.credit || '';
@@ -493,6 +497,36 @@
   }
 
   function call(path, body) { return api(API, path, body); }
+
+  // ---- for the talk card's email (js/talk.js, 2026-10-24) ----
+  // booking(): the stay whose all-in total is on screen, before checkout begins; null at any
+  // other moment. leaveMarker(email): the trail marker below, the same call and the same body,
+  // resolving to its done line. useHold(key): 'hold' mode only, a hold the card made, kept for
+  // this tab (a refresh keeps it, as the head script keeps every key).
+  window.Gatehouse.booking = function () {
+    if (!API || HANDOFF || !cal || state.step !== 'dates' || !state.quote || !cal.checkIn || !cal.checkOut) return null;
+    return { api: API, visit: VISIT, unit: UNIT, check_in: cal.checkIn, check_out: cal.checkOut,
+      nights: state.quote.quote.nights, total_cents: state.quote.quote.total_cents,
+      guests: /^[1-6]$/.test(String(state.form.guests || '')) ? +state.form.guests : 0,
+      marker_done: !!state.marker.done, held: !!HOLD };
+  };
+  window.Gatehouse.leaveMarker = function (email) {
+    if (!window.Gatehouse.booking()) return Promise.reject(new Error('no stay on screen'));
+    return leaveMarker(email);
+  };
+  window.Gatehouse.useHold = function (key) {
+    key = String(key || '');
+    if (!key) return;
+    HOLD = key;
+    KEYS.hold = key;
+    try {
+      var p = location.pathname.replace(/\.html$/, '').replace(/(.)\/$/, '$1');
+      var st = JSON.parse(sessionStorage.getItem('gh_keys') || '{}') || {};
+      st[p] = st[p] || {};
+      st[p].hold = key;
+      sessionStorage.setItem('gh_keys', JSON.stringify(st));
+    } catch (e) {}
+  };
 
   // ---- the checkout lead (2026-10-24): the email, kept with these dates ----
   // When a guest types a working email at the top of the pay step and moves on, or opens the
@@ -578,7 +612,7 @@
     // With a credit held, the engine spends it in the quote: summary comes back net of it, and
     // credit_cents says how much it actually used on these dates.
     call('/v1/quote?unit=' + encodeURIComponent(UNIT) + '&check_in=' + ci + '&check_out=' + co +
-      (state.credit ? '&credit=' + encodeURIComponent(CREDIT) : '')).then(function (q) {
+      (state.credit ? '&credit=' + encodeURIComponent(CREDIT) : '') + (HOLD ? '&hold=' + encodeURIComponent(HOLD) : '')).then(function (q) {
       if (quoteFor !== key) return;
       state.quote = q;
       if (!state.payMode || (q.modes || []).indexOf(state.payMode) < 0) state.payMode = (q.modes || [])[0];
@@ -788,12 +822,25 @@
 
   // "Not ready? Leave a trail marker." The guest's email, these dates, the all-in price,
   // emailed with a link straight back. Nothing is claimed (POST /v1/marker).
+  function markerDone(ci, co) {
+    return 'Your trail marker is on its way. Check your inbox for ' + span(ci, co) + ' and the link straight back to them.';
+  }
+  // The one way a marker is left, from the block below or from the talk card (2026-10-24):
+  // resolves to the done line for the dates it was left for.
+  function leaveMarker(email) {
+    var mk = state.marker, q = state.quote, ci = cal.checkIn, co = cal.checkOut;
+    return call('/v1/marker', { unit: UNIT, check_in: ci, check_out: co, email: email, attribution: ATTR }).then(function () {
+      mk.done = true; mk.error = '';
+      step('gh_marker_left', { gh_check_in: ci, gh_check_out: co, value: q.quote.total_cents / 100, currency: 'USD' });
+      render();
+      return markerDone(ci, co);
+    });
+  }
   function markerBlock(q) {
     var mk = state.marker;
     var wrap = el('div', { 'class': 'gh-marker' });
     if (mk.done) {
-      wrap.appendChild(el('p', { 'class': 'gh-marker__done', role: 'status',
-        text: 'Your trail marker is on its way. Check your inbox for ' + span(cal.checkIn, cal.checkOut) + ' and the link straight back to them.' }));
+      wrap.appendChild(el('p', { 'class': 'gh-marker__done', role: 'status', text: markerDone(cal.checkIn, cal.checkOut) }));
       return wrap;
     }
     wrap.appendChild(el('button', { type: 'button', 'class': 'gh-link', 'aria-expanded': mk.open ? 'true' : 'false', 'aria-controls': 'gh-marker-form',
@@ -809,11 +856,7 @@
       var email = (input.value || '').trim();
       if (!/^\S+@\S+\.\S+$/.test(email)) { mk.error = 'Please add the email you would like the marker sent to.'; err.textContent = mk.error; input.focus(); return; }
       btn.disabled = true; err.textContent = '';
-      call('/v1/marker', { unit: UNIT, check_in: cal.checkIn, check_out: cal.checkOut, email: email, attribution: ATTR }).then(function () {
-        mk.done = true; mk.error = '';
-        step('gh_marker_left', { gh_check_in: cal.checkIn, gh_check_out: cal.checkOut, value: q.quote.total_cents / 100, currency: 'USD' });
-        render();
-      }).catch(function (e) { mk.error = e.message; err.textContent = e.message; btn.disabled = false; });
+      leaveMarker(email).catch(function (e) { mk.error = e.message; err.textContent = e.message; btn.disabled = false; });
     } }, [el('div', { 'class': 'gh-field' }, [el('label', { 'for': 'gh-marker-email', text: 'Your email' }), input]), btn, err]));
     return wrap;
   }
@@ -1009,7 +1052,7 @@
     // Optional: sent only when they tapped one of the seven.
     if (HEARD.some(function (h) { return h[0] === state.form.heard_from; })) body.heard_from = state.form.heard_from;
     if (CREDIT && state.credit && creditUsed(state.quote)) body.credit = CREDIT;
-    if (HOLD) body.hold = HOLD;
+    if (HOLD) { body.hold = HOLD; body.visit = VISIT; }   // the engine matches a hold to its visit
     // Same details, same dates: reuse the checkout already opened, never a second claim
     // on the guest's own nights (a retry must not lock them out). heard_from and list_opt_in are
     // left out of the key on purpose: changing either after payment opened reuses the first
