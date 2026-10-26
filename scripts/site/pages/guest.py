@@ -25,16 +25,6 @@ def _addons():
     return mod.ADDONS
 
 
-def _gift_words():
-    """The Golden Arrow's lines for a stay it paid for, from scripts/site/pages/gift.py WORDS
-    (awaiting Mick), as the JSON block js/gatehouse-stay.js reads."""
-    import importlib.util
-    spec = importlib.util.spec_from_file_location('lfpage_gift_for_guest', os.path.join(HERE, 'gift.py'))
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    return mod.words_block(mod.STAY_KEYS)
-
-
 ICONS = ('<link rel="icon" type="image/svg+xml" href="/favicon.svg">\n'
          '    <link rel="icon" type="image/png" sizes="32x32" href="/images/brand/logo/kit/favicon-32.png">\n'
          '    <link rel="apple-touch-icon" href="/apple-touch-icon.png">')
@@ -79,7 +69,6 @@ def page_booked():
           <div class="gh-summary"><p class="gh-lead gh-pulse">Confirming your booking with the payment, a few seconds…</p></div>
           {NOSCRIPT}
         </div>
-        {_gift_words()}
       </div>
     </section>
 
@@ -109,7 +98,6 @@ def page_manage():
           <div class="gh-summary"><p class="gh-lead gh-pulse">Opening your stay…</p></div>
           {NOSCRIPT}
         </div>
-        {_gift_words()}
       </div>
     </section>
 '''

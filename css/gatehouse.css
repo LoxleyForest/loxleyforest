@@ -148,10 +148,6 @@
 .gh-booking .gh-credit--off { margin: 14px 0 0; }
 .gh-summary--empty .gh-credit { margin-top: 14px; }
 .gh-covered { margin: 0 0 18px; color: var(--forest-deep); }
-/* the Golden Arrow on /book#gift=: what it covers on these dates, and what is left (2026-10-25) */
-.gh-gift { margin-bottom: 20px; padding: 12px 14px; border: 1px solid var(--forest-deep); border-left-width: 4px; background: var(--cream); }
-.gh-lines .gh-gift-line { color: var(--forest-deep); }
-.gh-lines .gh-left { border-top: 0; padding-top: 2px; margin-top: 0; }
 
 /* ---- one more night: the quote's extend offer, one tap (never gold) ---- */
 .gh-extend {
@@ -280,6 +276,7 @@
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
 /* the release, repeated beside the box in the agreement's own words */
+.gh-waiver-intro { margin: 0; font-size: 17px; line-height: 1.5; color: var(--forest-deep); }
 .gh-release { margin: 0; padding: 14px 16px; border: 1px solid var(--parchment); border-bottom: 0; background: var(--linen); font-family: 'Montserrat', Arial, sans-serif; font-size: 13px; line-height: 1.6; color: var(--forest-deep); }
 .gh-release + .gh-agree { margin-top: -12px; }
 

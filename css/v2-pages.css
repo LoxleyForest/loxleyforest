@@ -1,9 +1,61 @@
 /* Built by scripts/site/build_v2.py from scripts/site/pages/*.py. Do not edit by hand. */
 
 /* ---- book ---- */
-.lf-bk-top { padding-top: calc(var(--hdr-h) + clamp(44px, 8vw, 96px)); padding-bottom: clamp(56px, 8vw, 96px); }
+/* The hero: the photograph behind the words, under a scrim that is dark at the foot and behind the
+   words and clear where the lights are. The landscape photo's glowing canvas stands left of centre
+   and the dark forest above the lit bridge to the right, so the words never sit on the canvas:
+   - a phone held upright: the bridge photo full bleed, the words at its foot over the dark deck,
+     the band short enough that "Choose your nights" is on the first screen;
+   - a tablet held upright: the canvas photo whole at the top, fading into the room, the words below;
+   - a desktop or a tablet on its side: a strong band, not a whole screen, the words to the right
+     over the dark forest, the lit bridge running beneath them;
+   - a phone on its side (too short for a band): the words' own height, the photo dimmed behind. */
+.lf-bk-top {
+  display: flex; flex-direction: column; justify-content: flex-end; isolation: isolate; overflow: hidden;
+  min-height: clamp(460px, 76vh, 680px); min-height: clamp(460px, 76svh, 680px);
+  padding-top: calc(var(--hdr-h) + 40px); padding-bottom: 40px;
+}
+/* On a phone the photo is anchored at its foot and at least 168vw tall, so on a short or narrow
+   screen its top (sky) is what is cut and the lit end of the bridge stays above the words. */
+.lf-bk-top__photo { position: absolute; left: 0; right: 0; bottom: 0; z-index: -2; height: 100%; height: max(100%, 168vw); }
+.lf-bk-top__photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 100%; }
+.lf-bk-top::before {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(180deg, rgba(20, 36, 24, 0.62) 0%, rgba(20, 36, 24, 0) 15%, rgba(20, 36, 24, 0) 44%,
+    rgba(20, 36, 24, 0.72) 62%, rgba(20, 36, 24, 0.9) 80%, var(--ink) 100%);
+}
+.lf-bk-top .lf-wrap { width: 100%; }
+.lf-bk-top .lf-eyebrow, .lf-bk-top .lf-h1, .lf-bk-top .lf-lead { text-shadow: 0 1px 18px rgba(20, 36, 24, 0.6); }
 .lf-bk-top .lf-h1 { font-size: clamp(2.6rem, 9vw, 4.8rem); }
-.lf-bk-top .lf-lead { margin-left: auto; margin-right: auto; }
+.lf-bk-top .lf-lead { margin-left: auto; margin-right: auto; color: var(--on-dark); opacity: 0.92; }
+@media (min-width: 768px) and (orientation: portrait) {
+  .lf-bk-top { min-height: 0; padding-top: calc(66.667vw - 88px); padding-bottom: 64px; }
+  .lf-bk-top__photo, .lf-bk-top::before { top: 0; bottom: auto; height: 66.667vw; }
+  .lf-bk-top__photo img { object-position: 50% 50%; }
+  .lf-bk-top::before { background: linear-gradient(180deg, rgba(20, 36, 24, 0.6) 0%, rgba(20, 36, 24, 0) 16%, rgba(20, 36, 24, 0) 66%, rgba(20, 36, 24, 0.8) 88%, var(--ink) 100%); }
+}
+@media (orientation: landscape) {
+  .lf-bk-top {
+    min-height: clamp(440px, 64vh, 640px); min-height: clamp(440px, 64svh, 640px); justify-content: flex-start;
+    padding-top: calc(var(--hdr-h) + clamp(36px, 4.5vw, 96px)); padding-bottom: 64px;
+  }
+  .lf-bk-top__photo { height: 100%; }
+  .lf-bk-top__photo img { object-position: 50% 28%; }
+  .lf-bk-top .lf-wrap { width: min(30rem, 33%); margin: 0 0 0 auto; }
+  .lf-bk-top .lf-h1 { font-size: clamp(2.6rem, 5vw, 4.8rem); }
+  .lf-bk-top .lf-lead { font-size: clamp(1.25rem, 1.9vw, 1.5rem); text-wrap: balance; }
+  .lf-bk-top::before {
+    background: radial-gradient(ellipse 30% 46% at 81% 38%, rgba(20, 36, 24, 0.55) 0%, rgba(20, 36, 24, 0) 100%),
+      linear-gradient(180deg, rgba(20, 36, 24, 0.6) 0%, rgba(20, 36, 24, 0) 18%, rgba(20, 36, 24, 0) 84%, rgba(20, 36, 24, 0.7) 95%, var(--ink) 100%);
+  }
+}
+@media (orientation: landscape) and (max-height: 500px) {
+  .lf-bk-top { min-height: 0; justify-content: flex-end; padding-top: calc(var(--hdr-h) + 24px); padding-bottom: 32px; }
+  .lf-bk-top .lf-wrap { width: 100%; margin: 0 auto; }
+  .lf-bk-top .lf-h1 { font-size: clamp(2.6rem, 9vw, 4.8rem); }
+  .lf-bk-top .lf-lead { font-size: clamp(1.25rem, 3.6vw, 1.5rem); }
+  .lf-bk-top::before { background: linear-gradient(180deg, rgba(20, 36, 24, 0.8), rgba(20, 36, 24, 0.84) 60%, var(--ink)); }
+}
 .lf-bk-book { scroll-margin-top: var(--hdr-h); padding-top: clamp(56px, 8vw, 96px); padding-bottom: clamp(56px, 8vw, 96px); }
 .lf-bk-head { max-width: 36rem; margin: 0 auto 32px; text-align: center; }
 .lf-bk-head .lf-h3 { color: var(--forest-deep); font-size: clamp(1.75rem, 5vw, 2.3rem); }
@@ -210,201 +262,6 @@
   .gl-grid { columns: 3; column-gap: 20px; margin-top: 24px; }
   .gl-tile { margin-bottom: 26px; }
   .gl-tile figcaption { font-size: 1.15rem; }
-}
-
-/* ---- gift ---- */
-.ga-head { padding-top: calc(var(--hdr-h) + clamp(44px, 8vw, 96px)); padding-bottom: clamp(48px, 7vw, 80px); }
-.ga-head .lf-h1 { font-size: clamp(2.6rem, 9vw, 4.8rem); font-style: italic; }
-.ga-head .lf-lead { margin-left: auto; margin-right: auto; }
-
-.ga-show { padding-top: clamp(48px, 7vw, 88px); padding-bottom: clamp(48px, 7vw, 88px); }
-/* width 100%: the stage has size containment, so a shrink-to-fit parent (a grid item with auto
-   margins) would give it no width at all */
-.ga-figure { margin: 0 auto; width: 100%; max-width: 540px; }
-.ga-figure[hidden] { display: none; }
-.ga-figure figcaption { margin-top: 18px; text-align: center; font-size: 1.1rem; line-height: 1.5; color: var(--stone); }
-
-.ga-what .lf-h2 { color: var(--forest-deep); }
-.ga-what__body { margin-top: 22px; }
-.ga-cols { display: grid; gap: 44px; }
-@media (min-width: 900px) { .ga-cols { grid-template-columns: 1.1fr 1fr; gap: 72px; align-items: start; } }
-.ga-terms { margin: 0; display: grid; gap: 0; }
-.ga-terms > div { padding: 20px 0; border-top: 1px solid rgba(44, 34, 25, 0.14); }
-.ga-terms > div:last-child { border-bottom: 1px solid rgba(44, 34, 25, 0.14); }
-.ga-terms dt { font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 0.6875rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--stone); }
-.ga-terms dd { margin: 8px 0 0; font-size: 1.2rem; line-height: 1.6; color: var(--bark); }
-
-.ga-give { scroll-margin-top: var(--hdr-h); padding-top: clamp(56px, 8vw, 96px); padding-bottom: clamp(56px, 8vw, 96px); }
-.ga-give__in { max-width: 34rem; margin: 0 auto; }
-.ga-give .lf-h3 { color: var(--forest-deep); font-size: clamp(1.75rem, 5vw, 2.3rem); text-align: center; }
-.ga-give__lead { margin: 10px 0 28px; text-align: center; font-size: 1.2rem; line-height: 1.5; color: var(--stone); }
-.ga-buy { background: var(--linen); border: 1px solid rgba(44, 34, 25, 0.12); padding: clamp(20px, 5vw, 32px); }
-.ga-wait { margin: 0; font-size: 1.15rem; color: var(--stone); text-align: center; }
-.ga-form { display: grid; gap: 16px; }
-.ga-form .gh-field small { display: block; margin-top: 6px; font-size: 15px; line-height: 1.4; color: var(--stone); }
-.ga-ship { border: 0; margin: 0; padding: 0; display: grid; gap: 14px; min-width: 0; }
-.ga-ship[hidden] { display: none; }
-.ga-ship legend { padding: 0; margin-bottom: 4px; }
-.ga-row2 { display: grid; gap: 14px; grid-template-columns: 1fr 1fr; }
-.ga-panel__lead { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.35rem; line-height: 1.45; color: var(--forest-deep); }
-.ga-calls { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
-.ga-calls .lf-btn { padding: 0 12px; }
-.ga-panel__lead a, .ga-note a { color: var(--forest-deep); text-decoration: underline; text-underline-offset: 3px; }
-.ga-tel { white-space: nowrap; font-variant-numeric: lining-nums; }
-.ga-confirm { display: grid; gap: 14px; }
-.ga-confirm .gh-eyebrow { margin: 0; }
-.ga-confirm__names { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.45rem; line-height: 1.3; color: var(--forest-deep); overflow-wrap: anywhere; }
-.ga-confirm__names span { display: block; font-style: italic; font-size: 1.2rem; color: var(--stone); }
-.ga-confirm .gh-lines { margin: 4px 0 0; }
-.ga-confirm .gh-fine { margin: 0; overflow-wrap: anywhere; }
-.ga-confirm .lf-btn { width: 100%; }
-.ga-terms-line { margin: 22px 0 0; text-align: center; font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 1.15rem; line-height: 1.5; color: var(--stone); }
-
-.ga-cardpage { padding-top: clamp(40px, 7vw, 80px); }
-.ga-cardpage__in { max-width: 540px; margin: 0 auto; display: grid; gap: 22px; }
-.ga-note { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.35rem; line-height: 1.45; color: var(--forest-deep); text-align: center; }
-.ga-note[hidden], .ga-actions[hidden], .ga-keep[hidden], .ga-share[hidden], .ga-actions [hidden] { display: none; }
-.ga-actions { display: grid; gap: 12px; }
-.ga-actions .lf-btn { width: 100%; }
-.ga-keep { margin: 0; text-align: center; font-size: 1.05rem; line-height: 1.5; color: var(--stone); }
-.ga-share { display: grid; gap: 8px; }
-.ga-share p { margin: 0; font-size: 1.05rem; color: var(--stone); text-align: center; }
-.ga-share input { width: 100%; min-height: 48px; padding: 10px 12px; border: 1px solid var(--driftwood); background: var(--cream); font: 15px/1.3 'Montserrat', sans-serif; color: var(--bark); }
-
-/* ---- the card ---- */
-.ga-stage { container-type: inline-size; width: 100%; max-width: 540px; margin: 0 auto; }
-.ga-card {
-  --u: calc(100cqw / 1080); position: relative; overflow: hidden; width: 100%; aspect-ratio: 1080 / 1350;
-  background: var(--linen); color: var(--bark); box-shadow: 0 18px 50px rgba(20, 36, 24, 0.18);
-  font-size: calc(16 * var(--u)); line-height: normal;   /* the card's own page: 16 px on 1080, so no line box grows from the site's type */
-  -webkit-font-smoothing: antialiased; font-kerning: normal; -webkit-print-color-adjust: exact; print-color-adjust: exact;
-}
-.ga-card p { margin: 0; }
-.ga-card img { display: block; max-width: none; }
-.ga-card .ga-frame { position: absolute; inset: calc(34 * var(--u)); border: max(1px, calc(1.5 * var(--u))) solid rgba(196, 162, 101, 0.75); pointer-events: none; }
-.ga-card .ga-top { position: absolute; left: calc(96 * var(--u)); right: calc(96 * var(--u)); top: calc(116 * var(--u)); display: flex; gap: calc(64 * var(--u)); align-items: stretch; }
-.ga-card .ga-plate { --w: calc(384 * var(--u)); position: relative; flex: none; width: var(--w); align-self: flex-start; }
-.ga-card .ga-arch { width: var(--w); height: calc(var(--w) * 10 / 7); border-radius: calc(var(--w) / 2) calc(var(--w) / 2) 0 0; overflow: hidden; background: var(--ink); }
-.ga-card .ga-arch img { width: 100%; height: 100%; object-fit: cover; object-position: 35% 50%; }
-.ga-card .ga-plate::before {
-  content: ''; position: absolute; left: calc(var(--w) * -0.034); top: calc(var(--w) * -0.034);
-  width: calc(var(--w) * 1.068); height: calc(var(--w) * 10 / 7 + var(--w) * 0.068);
-  border: max(0.75px, calc(1.6 * var(--u))) solid var(--gold); border-radius: calc(var(--w) * 0.534) calc(var(--w) * 0.534) 0 0; pointer-events: none;
-}
-.ga-card .ga-finial { position: absolute; z-index: 1; left: 50%; top: calc(var(--w) * -0.106); width: calc(var(--w) * 0.058); height: calc(var(--w) * 0.0725); transform: translateX(-50%); color: var(--gold); }
-.ga-card .ga-finial svg { display: block; width: 100%; height: 100%; }
-.ga-card .ga-side { flex: 1; min-width: 0; display: flex; flex-direction: column; padding-top: calc(14 * var(--u)); }
-.ga-card .ga-wordmark { width: 100%; height: auto; margin-left: -1%; }
-.ga-card .ga-title { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 400; font-size: calc(68 * var(--u)); line-height: 1.04; color: var(--forest-deep); margin-top: calc(44 * var(--u)); text-wrap: balance; letter-spacing: -0.005em; }
-.ga-card .ga-subtitle { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 500; font-size: calc(36 * var(--u)); line-height: 1.2; color: var(--stone); margin-top: calc(14 * var(--u)); }
-.ga-card .ga-sig { margin-top: auto; }
-.ga-card .ga-rule { width: calc(72 * var(--u)); height: 0; border-top: max(1px, calc(1.5 * var(--u))) solid var(--gold); margin: 0 0 calc(34 * var(--u)); }
-.ga-card .ga-for { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: calc(47 * var(--u) * var(--ns, 1)); line-height: 1.1; color: var(--forest-deep); overflow-wrap: break-word; text-wrap: balance; }
-.ga-card .ga-from { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 500; font-size: calc(37 * var(--u) * var(--ns, 1)); line-height: 1.2; color: var(--stone); margin-top: calc(12 * var(--u)); overflow-wrap: break-word; text-wrap: balance; }
-.ga-card .ga-label { font-family: 'Montserrat', sans-serif; font-weight: 500; text-transform: uppercase; letter-spacing: 0.28em; }
-.ga-card .ga-giftno { font-size: calc(22 * var(--u)); letter-spacing: 0.24em; color: var(--gold-text); margin-top: calc(34 * var(--u)); }
-.ga-card .ga-giftno[hidden] { display: none; }
-/* --ns: long names step down (js/gift.js fit) until the dedication sits beside the photo */
-.ga-card .ga-body { position: absolute; left: calc(96 * var(--u)); right: calc(96 * var(--u)); top: calc(728 * var(--u)); }
-.ga-card .ga-arrow { display: block; width: calc(440 * var(--u)); height: calc(23.5 * var(--u)); margin: 0; color: var(--gold); opacity: 1; }
-.ga-card .ga-gift { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: calc(43 * var(--u)); line-height: 1.32; color: var(--bark); margin-top: calc(38 * var(--u)); text-wrap: pretty; }
-.ga-card .ga-nights { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 500; font-size: calc(35 * var(--u)); line-height: 1.3; color: var(--stone); margin-top: calc(28 * var(--u)); }
-.ga-card .ga-call { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: calc(37 * var(--u)); line-height: 1.3; color: var(--bark); margin-top: calc(20 * var(--u)); }
-.ga-card .ga-tel { font-variant-numeric: lining-nums; white-space: nowrap; }
-.ga-card .ga-foot { position: absolute; left: calc(96 * var(--u)); right: calc(96 * var(--u)); bottom: calc(84 * var(--u)); text-align: center; border-top: max(1px, calc(1 * var(--u))) solid rgba(196, 162, 101, 0.6); padding-top: calc(26 * var(--u)); }
-.ga-card .ga-foot .ga-label { font-size: calc(23 * var(--u)); letter-spacing: 0.24em; color: var(--stone); }
-
-/* ---- round two: how the card arrives (the purchase panel) ---- */
-.ga-deliver { border: 0; margin: 0; padding: 0; min-width: 0; display: grid; gap: 10px; }
-.ga-deliver legend { padding: 0; margin-bottom: 8px; font-family: 'Montserrat', Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 1px; color: var(--forest); }
-.ga-choice { display: flex; gap: 12px; align-items: center; min-height: 52px; padding: 12px 14px; border: 1px solid var(--driftwood); background: var(--cream); cursor: pointer; font-size: 17px; line-height: 1.35; color: var(--bark); }
-.ga-choice:has(input:checked) { border-color: var(--forest-deep); background: var(--white); }
-.ga-choice input { flex: none; width: 22px; height: 22px; margin: 0; accent-color: var(--forest-deep); }
-.ga-them { display: grid; gap: 14px; padding: 4px 0 0 14px; border-left: 2px solid rgba(26, 46, 26, 0.18); }
-.ga-them[hidden] { display: none; }
-.ga-picks { display: flex; flex-wrap: wrap; gap: 8px; }
-.ga-picks > span { width: 100%; font-family: 'Montserrat', Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 1px; color: var(--forest); }
-.ga-pick { min-height: 44px; padding: 0 16px; border: 1px solid var(--driftwood); border-radius: 999px; cursor: pointer; background: var(--cream); color: var(--bark); font: 14px/1.2 'Montserrat', Arial, sans-serif; }
-.ga-pick[aria-pressed="true"] { background: var(--forest-deep); border-color: var(--forest-deep); color: var(--on-dark); }
-.ga-form .gh-field textarea { width: 100%; min-height: 128px; padding: 12px 14px; border: 1px solid var(--driftwood); background: var(--cream); border-radius: 0; resize: vertical;
-  font: 400 17px/1.5 'Cormorant Garamond', Georgia, serif; color: var(--bark); }
-.ga-form .gh-field textarea:focus { outline: 2px solid var(--gold); border-color: var(--gold); }
-.ga-count { display: block; margin-top: 6px; text-align: right; font: 13px/1.3 'Montserrat', Arial, sans-serif; color: var(--stone); font-variant-numeric: tabular-nums; }
-.ga-confirm__note { margin: 0; padding: 12px 14px; border-left: 2px solid var(--gold); background: var(--cream); font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 1.15rem; line-height: 1.5; color: var(--bark); white-space: pre-line; overflow-wrap: anywhere; }
-
-.ga-mail-hint { margin: 6px 0 0 34px; font-size: 15px; line-height: 1.45; color: var(--stone); }
-.ga-mine { overflow-wrap: anywhere; }
-.ga-inline { display: inline; padding: 12px 6px; margin: -12px -6px; border: 0; background: none; cursor: pointer;
-  font: inherit; color: var(--forest-deep); text-decoration: underline; text-underline-offset: 3px; }
-.ga-inline:focus-visible { outline: 2px solid var(--forest-deep); outline-offset: 0; }
-
-/* ---- round two: the card page ---- */
-.ga-message { display: block; margin: 0; padding: 22px 24px 26px; background: var(--linen); border-top: 1px solid rgba(196, 162, 101, 0.6);
-  box-shadow: 0 18px 50px rgba(20, 36, 24, 0.12); text-align: center; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-.ga-message[hidden] { display: none; }
-.ga-message__from { display: block; font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 0.6875rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--gold-text); }
-.ga-message__text { display: block; margin-top: 12px; font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 500; font-size: 1.3rem; line-height: 1.5; color: var(--forest-deep); white-space: pre-line; overflow-wrap: anywhere; text-wrap: pretty; }
-.ga-status { margin: 0; text-align: center; font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 0.75rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold-text); }
-.ga-status[hidden], .ga-lost[hidden], .ga-lost [hidden] { display: none; }
-.ga-lost { display: grid; gap: 14px; padding: clamp(20px, 5vw, 28px); background: var(--linen); border: 1px solid rgba(44, 34, 25, 0.12); }
-.ga-lost__h { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 1.45rem; line-height: 1.3; color: var(--forest-deep); }
-.ga-lost .lf-btn { width: 100%; }
-.ga-lost__said { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.3rem; line-height: 1.45; color: var(--forest-deep); }
-.ga-lost .gh-fine { margin: 0; }
-
-/* The reveal, on a card's first open on this device: the arch's two doors part onto the photo in
-   under a second. Nothing else moves; the gift number is never covered. None with reduced motion. */
-.ga-card .ga-arch { position: relative; }
-.ga-card.is-opening .ga-arch::before, .ga-card.is-opening .ga-arch::after {
-  content: ''; position: absolute; z-index: 1; top: 0; bottom: 0; width: 50.5%; background: var(--ink);
-  animation: ga-door-l 0.75s cubic-bezier(0.65, 0, 0.35, 1) 0.1s both;
-}
-.ga-card.is-opening .ga-arch::before { left: 0; border-right: max(1px, calc(1.5 * var(--u))) solid var(--gold); }
-.ga-card.is-opening .ga-arch::after { right: 0; border-left: max(1px, calc(1.5 * var(--u))) solid var(--gold); animation-name: ga-door-r; }
-@keyframes ga-door-l { to { transform: translateX(-102%); } }
-@keyframes ga-door-r { to { transform: translateX(102%); } }
-@media (prefers-reduced-motion: reduce) { .ga-card.is-opening .ga-arch::before, .ga-card.is-opening .ga-arch::after { content: none; animation: none; } }
-
-/* ---- the buyer's change page, in the card's look ---- */
-.ga-letter { position: relative; padding: clamp(28px, 7vw, 44px) clamp(22px, 6vw, 40px); background: var(--linen); text-align: center;
-  box-shadow: 0 18px 50px rgba(20, 36, 24, 0.18), inset 0 0 0 10px var(--linen), inset 0 0 0 11px rgba(196, 162, 101, 0.75); }
-.ga-letter[hidden] { display: none; }
-.ga-letter .ga-arrow { display: block; width: min(220px, 60%); height: auto; margin: 0 auto 22px; color: var(--gold); }
-.ga-letter__for { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 1.7rem; line-height: 1.15; color: var(--forest-deep); overflow-wrap: anywhere; }
-.ga-letter__from { margin: 6px 0 0; font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 500; font-size: 1.3rem; color: var(--stone); overflow-wrap: anywhere; }
-.ga-letter__when { margin: 22px 0 0; padding-top: 18px; border-top: 1px solid rgba(196, 162, 101, 0.6); font-size: 1.2rem; line-height: 1.5; color: var(--bark); overflow-wrap: anywhere; }
-.ga-letter .ga-message__from { margin-top: 22px; }
-.ga-letter__fixed { margin: 10px 0 0; font-size: 0.95rem; color: var(--stone); }
-.ga-change { display: grid; gap: 14px; padding: clamp(20px, 5vw, 28px); background: var(--linen); border: 1px solid rgba(44, 34, 25, 0.12); }
-.ga-change__h { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 1.45rem; line-height: 1.3; color: var(--forest-deep); }
-.ga-change .lf-btn { width: 100%; }
-.ga-saved { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.25rem; line-height: 1.45; color: var(--forest-deep); }
-.ga-saved:empty { display: none; }
-.ga-manage .lf-btn:focus-visible, .ga-manage .ga-pick:focus-visible { outline: 2px solid var(--forest-deep); outline-offset: 3px; }
-
-/* The floating Book button stays off the gift's pages: on a phone it sat over the purchase panel's
-   fields (2026-10-25), and every one of these pages carries its own way on. */
-body:has(#ga-buy, #ga-card-page, #ga-manage, #ga-thanks) .book-fab { display: none !important; }
-
-/* Keyboard focus, seen on the light panels too (the site's button ring is linen, for dark ground). */
-.ga-give .lf-btn:focus-visible, .ga-cardpage .lf-btn:focus-visible, .ga-buy .gh-back:focus-visible,
-.ga-pick:focus-visible, .ga-choice:has(input:focus-visible), .ga-buy .gh-optin:has(input:focus-visible) { outline: 2px solid var(--forest-deep); outline-offset: 3px; }
-
-/* Printed from the browser: the card alone, centred, 7 inches wide (fits Letter and A4); with a
-   note, 6 inches, so the card and its note share one page. */
-@media print {
-  body:has(#ga-card-page) .lf-hdr, body:has(#ga-card-page) .lf-menu, body:has(#ga-card-page) .lf-foot,
-  body:has(#ga-card-page) .book-fab, body:has(#ga-card-page) .skip-link, body:has(#ga-card-page) .ga-head,
-  body:has(#ga-card-page) .ga-wait, body:has(#ga-card-page) .ga-note, body:has(#ga-card-page) .ga-actions,
-  body:has(#ga-card-page) .ga-share, body:has(#ga-card-page) .ga-keep, body:has(#ga-card-page) .ga-status,
-  body:has(#ga-card-page) .ga-lost { display: none !important; }
-  body:has(#ga-card-page), body:has(#ga-card-page) main, .ga-cardpage { background: #fff !important; }
-  .ga-cardpage { padding: 0 !important; }
-  .ga-cardpage__in, .ga-cardpage .ga-figure, .ga-cardpage .ga-stage { max-width: 7in; }
-  .ga-cardpage .ga-card, .ga-cardpage .ga-message { box-shadow: none; break-inside: avoid; }
-  .ga-cardpage .ga-figure:has(.ga-message:not([hidden])), .ga-cardpage .ga-figure:has(.ga-message:not([hidden])) .ga-stage { max-width: 6in; }
-  .ga-cardpage .ga-message { padding: 0.18in 0.3in 0.22in; }
-  .ga-cardpage .ga-message__text { font-size: 12.5pt; }
 }
 
 /* ---- guest ---- */

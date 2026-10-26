@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
   <!-- Booking keys: out of the address bar before anything loads -->
   <meta name="referrer" content="strict-origin">
-  <script>(function(){var N=['token','credit','session_id','hold','gift','code'],k={},f=!1,st={},p=location.pathname.replace(/\.html$/,'').replace(/(.)\/$/,'$1');
+  <script>(function(){var N=['token','credit','session_id','hold'],k={},f=!1,st={},p=location.pathname.replace(/\.html$/,'').replace(/(.)\/$/,'$1');
   try{st=JSON.parse(sessionStorage.getItem('gh_keys')||'{}')||{}}catch(e){}
   var q=new URLSearchParams(location.search),hp=location.hash.indexOf('=')>0,h=new URLSearchParams(hp?location.hash.slice(1):'');
   N.forEach(function(n){var v=h.get(n)||q.get(n);if(q.has(n)||h.has(n)){f=!0;q.delete(n);h.delete(n)}if(v)k[n]=v});
   if(f){st[p]=k;try{sessionStorage.setItem('gh_keys',JSON.stringify(st))}catch(e){}
   var s=q.toString(),t=hp?h.toString():location.hash.slice(1);history.replaceState(history.state,'',location.pathname+(s?'?'+s:'')+(t?'#'+t:''))}
-  else{var nv=(performance.getEntriesByType&&performance.getEntriesByType('navigation')[0])||{};if(nv.type==='reload'||nv.type==='back_forward')k=st[p]||{};else if(st[p]){if(st[p].credit)k.credit=st[p].credit;if(st[p].gift)k.gift=st[p].gift}}
-  window.__ghKeys=k;addEventListener('hashchange',function(){if(/(^#|&)(token|credit|session_id|hold|gift|code)=/.test(location.hash))location.reload()})})();</script>
+  else{var nv=(performance.getEntriesByType&&performance.getEntriesByType('navigation')[0])||{};if(nv.type==='reload'||nv.type==='back_forward')k=st[p]||{};else if(st[p]&&st[p].credit)k={credit:st[p].credit}}
+  window.__ghKeys=k;addEventListener('hashchange',function(){if(/(^#|&)(token|credit|session_id|hold)=/.test(location.hash))location.reload()})})();</script>
   <!-- End booking keys -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Google Tag Manager -->
@@ -45,6 +45,8 @@
   <link rel="stylesheet" href="css/gatehouse.css">
   <link rel="stylesheet" href="css/v2.css">
   <link rel="stylesheet" href="css/v2-pages.css">
+  <link rel="preload" as="image" type="image/webp" imagesrcset="images/book-hero-phone-640.webp 640w, images/book-hero-phone-828.webp 828w, images/book-hero-phone-1080.webp 1080w" imagesizes="100vw" media="(max-width: 767px) and (orientation: portrait)" fetchpriority="high">
+  <link rel="preload" as="image" type="image/webp" imagesrcset="images/book-hero-desk-960.webp 960w, images/book-hero-desk-1280.webp 1280w, images/book-hero-desk-1620.webp 1620w" imagesizes="100vw" media="not all and (max-width: 767px) and (orientation: portrait)" fetchpriority="high">
 </head>
 <body class="v2" data-lf-path="/book" data-lf-api="https://book.loxleyforest.com">
 <!-- Google Tag Manager (noscript) -->
@@ -67,8 +69,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <main id="main">
 
-    <!-- ========== BOOK DIRECT ========== -->
+    <!-- ========== BOOK DIRECT: the bridge at night behind the words ========== -->
     <section class="lf-sec lf-dark lf-center lf-bk-top" aria-labelledby="bk-h">
+      <picture class="lf-bk-top__photo">
+        <source media="(max-width: 767px) and (orientation: portrait)" type="image/webp" srcset="images/book-hero-phone-640.webp 640w, images/book-hero-phone-828.webp 828w, images/book-hero-phone-1080.webp 1080w" sizes="100vw">
+        <source media="(max-width: 767px) and (orientation: portrait)" srcset="images/book-hero-phone-828.jpg">
+        <source type="image/webp" srcset="images/book-hero-desk-960.webp 960w, images/book-hero-desk-1280.webp 1280w, images/book-hero-desk-1620.webp 1620w" sizes="100vw">
+        <img src="images/book-hero-desk-1280.jpg" width="1280" height="720" alt="" fetchpriority="high">
+      </picture>
       <div class="lf-wrap">
         <p class="lf-eyebrow">Dahlonega, Georgia</p>
         <h1 class="lf-h1" id="bk-h">Book your stay</h1>
@@ -90,7 +98,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div id="gh-down" class="lf-book__alt" hidden>
         <p>Our booking calendar isn't answering just now. Nothing is lost: <a href="#inquiry">send us your dates</a> and we'll write back within two hours, or call or text <a href="tel:+17065024823">706-502-4823</a>.</p>
       </div>
-      <script type="application/json" id="lf-gift-words">{"book_after_window": "These nights fall after May 31, 2027, so we ask only the difference.", "book_booking": "Booking with The Golden Arrow…", "book_covered_title": "Covered by The Golden Arrow", "book_covers": "The Golden Arrow covers these nights.", "book_covers_some": "The Golden Arrow covers {n} of these nights.", "book_cta": "Book with The Golden Arrow", "book_extend_free": "covered by The Golden Arrow", "book_full_price": "These dates are at full price. Call or text Mick at 706-502-4823 before you book.", "book_includes": "{x} comes with it.", "book_left": "Left to pay", "book_missing": "We could not find a Golden Arrow on your link, so these dates are at full price. If you expected one, call or text Mick at 706-502-4823 before you book.", "book_name": "The Golden Arrow", "book_nothing_left": "Nothing left to pay, today or later.", "book_off": "The Golden Arrow can’t be used online just yet, so these dates are at full price. To use it, call or text Mick at 706-502-4823.", "book_used": "The Golden Arrow on your link has been used already, so these dates are at full price. Questions? Call or text Mick at 706-502-4823.", "book_void": "The Golden Arrow on your link is no longer valid, so these dates are at full price. Questions? Call or text Mick at 706-502-4823.", "book_with": "The Golden Arrow is with you. Choose your nights, and you will see what it covers before you book.", "card_for": "For", "card_from": "With love from", "card_name": "The Golden Arrow"}</script>
       <p class="lf-bk-contact">Questions? Call or text <a href="tel:+17065024823">706-502-4823</a>, or write to <a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a>.</p>
     </section>
 

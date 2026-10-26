@@ -105,6 +105,12 @@
   function changeUntil(value, checkIn) {
     return value ? moment(value) : (checkIn ? '11:59 PM Eastern, ' + long(addDays(checkIn, -7)) : '');
   }
+  // Inside the last week that moment has passed; a date in the past is not shown (2026-10-26: a
+  // stay four days out read "Last moment to move or cancel ... October 20").
+  function changePassed(value, checkIn) {
+    var t = value ? Date.parse(value) : (checkIn ? Date.parse(addDays(checkIn, -6) + 'T04:59:00Z') : NaN);
+    return !isNaN(t) && t < Date.now();
+  }
 
   function withArticle(w) { return (/^[aeiou]/i.test(w) ? 'an ' : 'a ') + w; }
   function giftLine(gift) {
@@ -247,13 +253,14 @@
         // A night nobody may arrive on (the holidays): say so at the tap, not at the price.
         if (c.nights[day].no_arrival && (!c.checkIn || c.checkOut || day <= c.checkIn)) {
           c.note = 'No check-in on ' + short(day) + '. Arrive an earlier day and stay through.';
+          if (opts.onRefuse) opts.onRefuse(c.note, day);
           opts.onChange(c); return;
         }
         c.checkIn = day; c.checkOut = null;
         c.note = 'Arriving ' + short(day) + '. Now choose your check-out day.';
       } else {
         var why = c.stayOk(c.checkIn, day);
-        if (why) { c.note = why; opts.onChange(c); return; }
+        if (why) { c.note = why; if (opts.onRefuse) opts.onRefuse(why, c.checkIn); opts.onChange(c); return; }
         c.checkOut = day; c.note = '';
       }
       opts.onChange(c);
@@ -427,20 +434,6 @@
   var HOLD = KEYS.hold || '';
   // A credit to spend: the manage key of a cancelled stay, from its manage page (/book#credit=).
   var CREDIT = KEYS.credit || '';
-  // The Golden Arrow (2026-10-25): a gift's code from its card (/book#gift=), lifted out of the
-  // address bar by the head script like every key and kept for the session like a credit. Looked
-  // up once (GET /v1/gift), then it rides the quote and the checkout, and the engine decides
-  // (loxley-rescue ceo/golden-arrow, cdb68bc): the quote's gift_card {code, name, nights,
-  // gift_cents, due_cents, due, after_window, includes} says what it covers on these dates, with
-  // `quote` and `total` still the stay's own all-in and `plans`, `summary` and `extend` on what is
-  // left; a refusal is a sentence (404 a code it cannot find, 422 one these dates cannot use, or
-  // used, void or held). Never a beacon, never the tag manager. Its words are
-  // scripts/site/pages/gift.py WORDS (awaiting Mick), written into the page as lf-gift-words.
-  var GIFT = KEYS.gift || '';
-  var GW = (function () {
-    try { var n = document.getElementById('lf-gift-words'); return (n && JSON.parse(n.textContent)) || {}; } catch (e) { return {}; }
-  })();
-  function gw(k) { return GW[k] || ''; }
 
   var state = {
     agreement: null,
@@ -451,12 +444,7 @@
     form: {},                // what the guest typed, kept across steps
     marker: { open: false, email: '', done: false, error: '' },
     pending: null,           // a checkout already opened for these exact details
-    credit: null,            // {cents, expires_on} when spending one
-    gift: null,              // the Golden Arrow on the link, while it is in play
-    giftWhy: '',             // why it is not: 'missing', 'used' or 'void'
-    giftSentence: '',        // the engine's own sentence for a code it cannot find
-    giftRefused: null,       // {key, sentence}: dates the engine said this gift cannot cover
-    quoteGift: false         // whether the quote on screen was asked with the gift
+    credit: null             // {cents, expires_on} when spending one
   };
   var cal = null, quoteFor = '';
 
@@ -470,7 +458,9 @@
     } catch (e) { return Math.random().toString(36).slice(2); }
   })();
   var STEP_FOR = { gh_view: 'view', gh_dates_chosen: 'dates_chosen', gh_payment_mode: 'payment_mode',
-    begin_checkout: 'begin_checkout', add_payment_info: 'add_payment_info', gh_fallback_shown: 'fallback_shown' };
+    begin_checkout: 'begin_checkout', add_payment_info: 'add_payment_info', gh_fallback_shown: 'fallback_shown',
+    // 2026-10-26 (the CEO's funnel piece): the "Book these nights" tap, and dates refused, by a code.
+    gh_handoff: 'handoff', gh_quote_refused: 'quote_refused' };
 
   // Where this guest came from: a letter or trail marker (src, card), an ad (gclid and
   // friends), a campaign (utm_*). Kept for the visit, sent with the booking.
@@ -501,7 +491,22 @@
 
   // The check-in date rides on these three (the flywheel contract, 2026-10-20), so weekends and
   // weeknights can be told apart.
-  var WITH_CHECK_IN = { dates_chosen: 1, begin_checkout: 1, add_payment_info: 1 };
+  var WITH_CHECK_IN = { dates_chosen: 1, begin_checkout: 1, add_payment_info: 1, handoff: 1 };
+
+  // Why dates were refused, as one of the engine's codes (gatehouse/counts.py REFUSE_REASONS), never
+  // the sentence: taken, min_stay, no_arrival, too_far (past the last open night), other.
+  function refusedCode(why, ci) {
+    why = String(why || '');
+    if (/already taken/.test(why)) return 'taken';
+    if (/No check-in/.test(why)) return 'no_arrival';
+    if (/at least/.test(why)) return 'min_stay';
+    if (/not open/.test(why)) {
+      var last = Object.keys((cal && cal.nights) || {}).sort().pop();
+      return !last || (ci && ci > last) ? 'too_far' : 'other';
+    }
+    return 'other';
+  }
+  function refused(why, ci) { step('gh_quote_refused', { gh_reason: refusedCode(why, ci) }); }
 
   function step(event, data) {
     data = data || {};
@@ -511,7 +516,7 @@
     if (STEP_FOR[event]) {
       beacon(STEP_FOR[event], { mode: data.gh_mode || '', nights: data.gh_nights || '',
         value_cents: data.value ? Math.round(data.value * 100) : '',
-        check_in: WITH_CHECK_IN[STEP_FOR[event]] ? data.gh_check_in || '' : '' });
+        check_in: WITH_CHECK_IN[STEP_FOR[event]] ? data.gh_check_in || '' : '', reason: data.gh_reason || '' });
     }
   }
 
@@ -527,8 +532,7 @@
     return { api: API, visit: VISIT, unit: UNIT, check_in: cal.checkIn, check_out: cal.checkOut,
       nights: state.quote.quote.nights, total_cents: state.quote.quote.total_cents,
       guests: /^[1-6]$/.test(String(state.form.guests || '')) ? +state.form.guests : 0,
-      // A stay the Golden Arrow covers in full has nothing to hold: the card asks for no marker either.
-      marker_done: !!state.marker.done || (giftUsed(state.quote) > 0 && !leftToPay(state.quote)), held: !!HOLD };
+      marker_done: !!state.marker.done, held: !!HOLD };
   };
   window.Gatehouse.leaveMarker = function (email) {
     if (!window.Gatehouse.booking()) return Promise.reject(new Error('no stay on screen'));
@@ -598,6 +602,7 @@
     if (!u.checkOut || u.checkOut <= u.checkIn) { cal.set(u.checkIn, null); if (!cal.nights[u.checkIn]) cal.set(null, null); return; }
     var why = cal.stayOk(u.checkIn, u.checkOut);
     if (why) {
+      refused(why, u.checkIn);
       cal.set(null, null);
       cal.month = parse(u.checkIn.slice(0, 8) + '01');
       cal.note = 'The dates in your link, ' + span(u.checkIn, u.checkOut) + ", can't be booked now. " + why + ' Choose other nights, or call or text ' + PHONE + '.';
@@ -629,43 +634,26 @@
     var ci = cal.checkIn, co = cal.checkOut, key = ci + '/' + co;
     if (quoteFor === key && state.quote) { if (thenPay) toCheckout(true); else render(); return; }
     state.busy = true; state.quote = null; quoteFor = key; render();
-    var withGift = !!(state.gift && !(state.giftRefused && state.giftRefused.key === key));
     // With a credit held, the engine spends it in the quote: summary comes back net of it, and
-    // credit_cents says how much it actually used on these dates. A gift comes off first.
+    // credit_cents says how much it actually used on these dates.
     call('/v1/quote?unit=' + encodeURIComponent(UNIT) + '&check_in=' + ci + '&check_out=' + co +
-      (state.credit ? '&credit=' + encodeURIComponent(CREDIT) : '') + (HOLD ? '&hold=' + encodeURIComponent(HOLD) : '') +
-      (withGift ? '&gift=' + encodeURIComponent(GIFT) : '')).then(function (q) {
+      (state.credit ? '&credit=' + encodeURIComponent(CREDIT) : '') + (HOLD ? '&hold=' + encodeURIComponent(HOLD) : '')).then(function (q) {
       if (quoteFor !== key) return;
       state.quote = q;
-      state.quoteGift = withGift;
       if (!state.payMode || (q.modes || []).indexOf(state.payMode) < 0) state.payMode = (q.modes || [])[0];
       step('gh_dates_chosen', { gh_check_in: ci, gh_check_out: co, gh_nights: q.quote.nights, value: q.quote.total_cents / 100, currency: 'USD' });
     }).catch(function (e) {
       if (quoteFor !== key) return;
-      // The engine refused the gift, not the dates: say its sentence and quote them at full price.
-      if (withGift && giftRefusal(e, key)) return 'again';
       quoteFor = '';
+      if (e.status === 409) refused(e.message, ci);   // the engine refused the dates; not a lost connection
       cal.set(ci, null);
       cal.note = e.message;
       writeUrl(false);
-    }).then(function (r) {
-      if (r === 'again') { quoteFor = ''; return getQuote(thenPay); }
+    }).then(function () {
       if (quoteFor !== key && quoteFor !== '') return;
       state.busy = false;
       if (thenPay && state.quote) toCheckout(true); else render();
     });
-  }
-
-  // A quote asked with the gift and refused for the gift's sake. 404: a code the engine cannot
-  // find, set aside for the visit. 422: a gift these dates cannot use (Valentine's nights, before
-  // January 4), or one used, void or held: set aside for these dates. The engine's bare "not
-  // found" is a door that is off, never a refusal of the gift.
-  function giftRefusal(e, key) {
-    var t = e && e.body && typeof e.body.error === 'string' ? e.body.error.trim() : '';
-    if (!t || t === 'not found') return false;
-    if (e.status === 404) { state.gift = null; state.giftWhy = 'missing'; state.giftSentence = t; return true; }
-    if (e.status === 422) { state.giftRefused = { key: key, sentence: t }; return true; }
-    return false;
   }
 
   // The quote's summary for a pay mode: {today_cents, balance_cents, balance_on, change_until}.
@@ -685,30 +673,20 @@
   // The credit the engine spends on these dates (the quote's credit_cents): never the key's
   // whole balance, which these dates may not be able to use.
   function creditUsed(q) { return Math.max(0, Number(q && q.credit_cents) || 0); }
-  // What the Golden Arrow covers on these dates: the quote's gift_card, the engine's own figures.
-  function giftUsed(q) { return q && q.gift_card ? Math.max(0, Number(q.gift_card.gift_cents) || 0) : 0; }
-  // What is left to pay: the engine's due_cents with a gift (any credit then comes off it), else the total.
-  function leftToPay(q) {
-    var due = q.gift_card ? Number(q.gift_card.due_cents) || 0 : q.quote.total_cents;
-    return Math.max(0, due - creditUsed(q));
-  }
-  // Nothing to pay today: only when a credit or the gift covers it.
-  function coveredToday(q, mode) { return creditUsed(q) + giftUsed(q) > 0 && !summaryFor(q, mode).today_cents; }
+  // Nothing to pay today: only when a credit covers it.
+  function coveredToday(q, mode) { return creditUsed(q) > 0 && !summaryFor(q, mode).today_cents; }
 
   function planLine(mode, q) {
-    var s = summaryFor(q, mode), pct = (q.promise || {}).retainer_pct, used = creditUsed(q) + giftUsed(q);
-    var gift = giftUsed(q) > 0, by = gift ? gw('book_name') : 'your credit';
-    if (used && !s.today_cents && !s.balance_cents) {
-      return gift ? { title: gw('book_covered_title'), sub: gw('book_nothing_left') } : { title: 'Covered by your credit', sub: 'Nothing to pay, today or later.' };
-    }
+    var s = summaryFor(q, mode), pct = (q.promise || {}).retainer_pct, used = creditUsed(q);
+    if (used && !s.today_cents && !s.balance_cents) return { title: 'Covered by your credit', sub: 'Nothing to pay, today or later.' };
     if (mode === 'deposit') {
       return { title: 'Reserve with ' + money(s.today_cents) + ' today',
                sub: (pct ? 'A ' + pct + '% retainer deposit, non-refundable. ' : 'A retainer deposit, non-refundable. ') +
-                    (s.balance_cents ? (used ? 'After ' + by + ', the rest, ' : 'The rest, ') + money(s.balance_cents) + ', will be charged on ' + long(s.balance_on) + '.'
-                      : used ? (gift ? gw('book_name') + ' covers the rest.' : 'Your credit covers the rest.') : '') };
+                    (s.balance_cents ? (used ? 'After your credit, the rest, ' : 'The rest, ') + money(s.balance_cents) + ', will be charged on ' + long(s.balance_on) + '.'
+                      : used ? 'Your credit covers the rest.' : '') };
     }
     if (mode === 'affirm') return { title: 'Pay monthly with Affirm', sub: 'Choose a plan at checkout. Subject to approval.' };
-    return { title: used ? 'Pay in full: ' + money(s.today_cents) + ' after ' + by : 'Pay in full, ' + money(q.quote.total_cents),
+    return { title: used ? 'Pay in full: ' + money(s.today_cents) + ' after your credit' : 'Pay in full, ' + money(q.quote.total_cents),
              sub: giftLine(q.gift_if_paid_in_full) || 'Nothing more to pay.' };
   }
 
@@ -732,40 +710,18 @@
         ' Choose other dates, or call or text ' + PHONE + ' before you book.' });
   }
 
-  // The Golden Arrow on the link, in plain words, as a credit is: what it covers on these dates
-  // and what is left, or why it cannot be used here. Never full price without being told.
-  var COUNT = { 1: 'one', 2: 'two', 3: 'three' };
-  function giftNotice(q) {
-    if (!GIFT) return null;
-    function off(t) { return el('p', { 'class': 'gh-credit gh-credit--off', role: 'status', text: t }); }
-    if (!state.gift) return off(state.giftSentence ? state.giftSentence + ' ' + gw('book_full_price') : gw('book_' + (state.giftWhy || 'missing')));
-    if (!q) return el('p', { 'class': 'gh-credit gh-gift', text: gw('book_with') });
-    if (state.giftRefused && state.giftRefused.key === cal.checkIn + '/' + cal.checkOut) return off(state.giftRefused.sentence + ' ' + gw('book_full_price'));
-    var c = q.gift_card;
-    // Asked with the gift and answered without it: the engine's redeem door is off.
-    if (!c) return state.quoteGift ? off(gw('book_off')) : null;
-    var n = Number(c.nights) || 0;
-    var say = [n && q.quote.nights > n ? gw('book_covers_some').replace('{n}', COUNT[n] || String(n)) : gw('book_covers')];
-    if (c.includes) say.push(gw('book_includes').replace('{x}', String(c.includes).charAt(0).toUpperCase() + String(c.includes).slice(1)));
-    if (c.after_window) say.push(gw('book_after_window'));
-    if (!leftToPay(q)) say.push(gw('book_nothing_left'));
-    return el('p', { 'class': 'gh-credit gh-gift', role: 'status', text: say.join(' ') });
-  }
-
   function ctaText(q, mode, forDetails) {
     var s = summaryFor(q, mode);
-    if (coveredToday(q, mode)) return giftUsed(q) ? gw('book_cta') : 'Book with your credit';
+    if (coveredToday(q, mode)) return 'Book with your credit';
     if (forDetails) return 'Continue to payment · ' + money(s.today_cents) + ' today';
     return mode === 'deposit' ? 'Reserve for ' + money(s.today_cents)
       : mode === 'affirm' ? 'Continue with Affirm' : 'Book for ' + money(s.today_cents);
   }
 
-  function forgetCredit() { forgetKey('credit'); }
-  function forgetGift() { forgetKey('gift'); }
-  function forgetKey(name) {
+  function forgetCredit() {
     try {
       var st = JSON.parse(sessionStorage.getItem('gh_keys') || '{}') || {};
-      if (st['/book']) { delete st['/book'][name]; sessionStorage.setItem('gh_keys', JSON.stringify(st)); }
+      if (st['/book']) { delete st['/book'].credit; sessionStorage.setItem('gh_keys', JSON.stringify(st)); }
     } catch (e) {}
   }
 
@@ -791,13 +747,6 @@
     });
     dl.appendChild(el('dt', { 'class': 'gh-total', text: 'Total' }));
     dl.appendChild(el('dd', { 'class': 'gh-total', text: money(q.quote.total_cents) }));
-    // The Golden Arrow: what it covers on these dates, and what remains due.
-    if (giftUsed(q)) {
-      dl.appendChild(el('dt', { 'class': 'gh-gift-line', text: gw('book_name') }));
-      dl.appendChild(el('dd', { 'class': 'gh-gift-line', text: money(-giftUsed(q)) }));
-      dl.appendChild(el('dt', { 'class': 'gh-total gh-left', text: gw('book_left') }));
-      dl.appendChild(el('dd', { 'class': 'gh-total gh-left', text: money(leftToPay(q)) }));
-    }
     return dl;
   }
 
@@ -814,12 +763,9 @@
     var x = q && q.extend, n = q && q.quote && q.quote.nights, words = EXTEND_WORDS[n];
     if (!x || typeof x !== 'object' || !words || !cal.checkIn || !cal.checkOut) return null;
     var add = extendCents(x), co = addDays(cal.checkOut, 1);
-    // With the Golden Arrow the engine prices the next night against the gift: a night it
-    // covers adds nothing, and is offered as covered.
-    var free = !!(q.gift_card && Number(x.add_cents) === 0);
     // The calendar must agree the next night is open, or the tap would only meet a refusal.
-    if ((!add && !free) || cal.stayOk(cal.checkIn, co)) return null;
-    return el('button', { type: 'button', 'class': 'gh-extend', text: words + ': ' + (free ? gw('book_extend_free') : plus(add)),
+    if (!add || cal.stayOk(cal.checkIn, co)) return null;
+    return el('button', { type: 'button', 'class': 'gh-extend', text: words + ': ' + plus(add),
       onclick: function () {
         track('gh_extend', { gh_unit: UNIT, gh_nights_from: n, gh_nights: n + 1 });
         state.pending = null;
@@ -843,8 +789,7 @@
       return el('div', { 'class': 'gh-summary gh-summary--empty' }, [
         el('p', { 'class': 'gh-eyebrow', text: 'Your stay' }),
         el('p', { 'class': 'gh-lead', text: 'Choose your nights on the calendar. You see the whole price, taxes included, before we ask for a thing.' }),
-        creditNotice(null),
-        giftNotice(null)
+        creditNotice(null)
       ]);
     }
     if (!cal.checkOut) {
@@ -866,7 +811,7 @@
         lines(q),
         extendOffer(q),
         el('a', { 'class': 'lf-btn gh-cta', href: href, text: 'Book these nights',
-          onclick: function () { step('gh_handoff', { gh_nights: q.quote.nights, value: q.quote.total_cents / 100, currency: 'USD' }); } })
+          onclick: function () { step('gh_handoff', { gh_check_in: cal.checkIn, gh_nights: q.quote.nights, value: q.quote.total_cents / 100, currency: 'USD' }); } })
       ]));
     }
 
@@ -887,18 +832,15 @@
     }
     // A credit that covers every way to pay leaves nothing to choose: one plain line instead.
     var allCovered = (q.modes || []).length && (q.modes || []).every(function (m) {
-      var sm = summaryFor(q, m); return creditUsed(q) + giftUsed(q) > 0 && !sm.today_cents && !sm.balance_cents;
+      var sm = summaryFor(q, m); return creditUsed(q) > 0 && !sm.today_cents && !sm.balance_cents;
     });
     return el('div', { 'class': 'gh-summary', 'aria-live': 'polite' }, stayHead(q).concat([
       lines(q),
-      giftNotice(q),
       extendOffer(q),
       creditNotice(q),
-      // The gift's own line above already says nothing is left; a credit says it here.
-      allCovered ? (giftUsed(q) ? null : el('p', { 'class': 'gh-lead gh-covered', text: 'Your credit covers this stay. Nothing to pay, today or later.' })) : options,
+      allCovered ? el('p', { 'class': 'gh-lead gh-covered', text: 'Your credit covers this stay. Nothing to pay, today or later.' }) : options,
       el('button', { type: 'button', 'class': 'lf-btn gh-cta', onclick: function () { toCheckout(false); }, text: ctaText(q, state.payMode) }),
-      // A stay the gift covers in full has nothing to hold: no trail marker.
-      giftUsed(q) && !leftToPay(q) ? null : markerBlock(q)
+      markerBlock(q)
     ]));
   }
 
@@ -955,8 +897,125 @@
       gh_mode: state.payMode, gh_check_in: cal.checkIn, gh_check_out: cal.checkOut });
     sendLead(state.form.email);
     render();
+    if (!fromUrl) landOnPay();
+  }
+
+  // The bottom of the site's fixed header, or null: what a visitor sees starts below it.
+  function headerBottom() {
+    var hdr = document.querySelector('.lf-hdr');
+    return hdr && window.getComputedStyle && getComputedStyle(hdr).position === 'fixed' ? Math.max(0, hdr.getBoundingClientRect().bottom) : null;
+  }
+
+  // Where the Book tap lands (2026-10-26, the CEO's pay-step piece). Since the ads began, 8
+  // visits tapped Book and none typed an email: on a phone the tap landed on the section's
+  // heading, with the email box at the fold, or below it when a balance line is added. Now
+  // "Who is coming" and the email box are in view, with as much as fits above them, in this
+  // order: the way back to the dates, the summary's heading, the dates, the total. Never a
+  // focus: on iOS that opens the keyboard over the summary. Where the old landing (the
+  // section's top) already shows the email box, as on a tall desktop, it is kept as it was.
+  function landOnPay() {
+    payLanded = null;
+    payLandUntil = 0;
     var sec = root.closest('section') || root;
-    if (!fromUrl && sec.scrollIntoView) sec.scrollIntoView({ block: 'start' });
+    if (!sec.scrollIntoView) return;
+    var legend = root.querySelector('.gh-fields legend'), email = document.getElementById('gh-email');
+    if (!legend || !email || !window.getComputedStyle || !window.scrollTo) { sec.scrollIntoView({ block: 'start' }); return; }
+    var GAP = 12, FOOT = 16;
+    function docTop(n) { return n.getBoundingClientRect().top + window.pageYOffset; }
+    var margin = parseFloat(getComputedStyle(sec).scrollMarginTop) || 0;
+    var top = headerBottom();
+    if (top === null) top = margin;
+    var view = window.innerHeight, max = Math.max(0, document.documentElement.scrollHeight - view);
+    var from = docTop(legend), to = email.getBoundingClientRect().bottom + window.pageYOffset + FOOT;
+    var old = Math.min(max, Math.max(0, docTop(sec) - margin));
+    if (from - old >= top && to - old <= view) {
+      payLanded = Math.round(old); payLandUntil = Date.now() + 1500;
+      sec.scrollIntoView({ block: 'start' });
+      return;
+    }
+    var y = from - GAP - top;      // nothing above fits: "Who is coming" just under the header
+    var above = [root.querySelector('.gh-form > .gh-back'), document.getElementById('gh-booking-h'),
+      root.querySelector('.gh-booking .gh-dates'), root.querySelector('.gh-booking dt.gh-total')];
+    for (var i = 0; i < above.length; i++) {
+      if (above[i] && to - (docTop(above[i]) - GAP) <= view - top) { y = docTop(above[i]) - GAP - top; break; }
+    }
+    payLanded = Math.min(max, Math.max(0, Math.round(y)));
+    payLandUntil = Date.now() + 1500;
+    window.scrollTo(0, payLanded);
+  }
+
+  // ---- the pay step, measured (2026-10-26, the CEO's pay-step piece) ----
+  // Why a guest leaves the pay step before the first field was not measured. Five steps go to
+  // our own booking server through the page beacon's scrub, each once a visit a day (and the
+  // engine counts each visit once a day, gatehouse/counts.py STEP_KEYS): pay_step_10s (the step
+  // open 10 s, the tab in front), pay_scrolled_summary (the booking summary scrolled above the
+  // header), pay_saw_waiver (the release or the tick in view), pay_field_touched (the guest's
+  // first focus on a field, or the first thing typed or chosen in one; a focus this page moves
+  // is not a touch), pay_stopped (a "Continue to payment" tap a check stopped, with the field's
+  // code alone). Never a word or a value the guest typed, never
+  // the tag manager. A server that does not know a step refuses it and the beacon never looks
+  // at the answer, so nothing here can stand in the way of a booking.
+  var PAY_OPEN_S = 10, PAY_SEEN_PX = 40;
+  var STOP_CODE = { first_name: 'name', last_name: 'name', email: 'email', phone: 'phone',
+    guests: 'guests', dogs: 'dogs', agree: 'agree', typed_name: 'typed_name' };
+  // payLanded: where landOnPay put the page, and payLandUntil the end of its (smooth) scroll
+  // there. The way there and the spot itself are the page's doing, not the guest scrolling
+  // past the summary (on a screen too short for anything above "Who is coming" the summary
+  // sits just above the header there), so neither is counted.
+  var paySent = {}, payWatch = null, ownFocus = false, payLanded = null, payLandUntil = 0;
+  function payStep(name, reason) {
+    try {
+      var d = new Date(), on = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+      var key = name + (reason ? ':' + reason : '');
+      if (paySent[key] === on) return;
+      var kept = {};
+      try { kept = JSON.parse(sessionStorage.getItem('gh_pay_steps') || '{}') || {}; } catch (e) {}
+      paySent[key] = on;
+      if (kept[key] === on) return;   // this visit sent it today, before a reload
+      kept[key] = on;
+      try { sessionStorage.setItem('gh_pay_steps', JSON.stringify(kept)); } catch (e) {}
+      beacon(name, reason ? { reason: reason } : {});
+    } catch (e) {}
+  }
+  // Some of it on screen below the header: all of it, or PAY_SEEN_PX of a taller one.
+  function inView(n) {
+    if (!n) return false;
+    var r = n.getBoundingClientRect(), top = headerBottom() || 0;
+    if (!r.height) return false;
+    return Math.min(r.bottom, window.innerHeight) - Math.max(r.top, top) >= Math.min(r.height, PAY_SEEN_PX);
+  }
+  function unwatchPay() {
+    if (!payWatch) return;
+    clearInterval(payWatch.timer);
+    window.removeEventListener('scroll', payWatch.look);
+    window.removeEventListener('resize', payWatch.look);
+    payWatch = null;
+  }
+  function watchPay() {
+    unwatchPay();
+    var secs = 0;
+    function look() {
+      if (state.step !== 'pay') return;
+      var sum = root.querySelector('.gh-booking'), top = headerBottom() || 0;
+      var at = payLanded !== null && Math.abs(window.pageYOffset - payLanded) <= 2;
+      var going = payLanded !== null && !at && Date.now() < payLandUntil;
+      if (!at && !going && sum && sum.getClientRects().length && sum.getBoundingClientRect().bottom <= top) payStep('pay_scrolled_summary');
+      if (inView(root.querySelector('.gh-sign .gh-waiver-intro')) || inView(root.querySelector('label.gh-agree'))) payStep('pay_saw_waiver');
+    }
+    payWatch = { look: look, timer: setInterval(function () {
+      if (state.step !== 'pay') { unwatchPay(); return; }
+      if (document.visibilityState === 'visible' && ++secs >= PAY_OPEN_S) { clearInterval(payWatch.timer); payStep('pay_step_10s'); }
+    }, 1000) };
+    window.addEventListener('scroll', look, { passive: true });
+    window.addEventListener('resize', look, { passive: true });
+    setTimeout(look, 0);           // once the Book tap's landing has begun (toCheckout)
+  }
+  // A focus the guest gave a field, or anything they typed or chose in one (a field this page
+  // focused after a stop, then typed in, is touched).
+  function fieldTouched(e) {
+    var t = e.target;
+    if (e.type === 'focusin' && ownFocus) return;
+    if (t && /^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName)) payStep('pay_field_touched');
   }
 
   function backToDates() {
@@ -1024,21 +1083,15 @@
       dl.insertBefore(el('dd', { text: money(-creditUsed(q)) }), dl.children[2]);
       dl.insertBefore(el('dt', { text: 'Credit applied' }), dl.children[2]);
     }
-    if (giftUsed(q)) {
-      // The same for the Golden Arrow: the summary is net of what it covers.
-      dl.insertBefore(el('dd', { text: money(-giftUsed(q)) }), dl.children[2]);
-      dl.insertBefore(el('dt', { text: gw('book_name') }), dl.children[2]);
-    }
     return el('section', { 'class': 'gh-booking', 'aria-labelledby': 'gh-booking-h' }, [
       el('h3', { 'class': 'gh-eyebrow', id: 'gh-booking-h', text: 'Your booking summary' }),
       el('p', { 'class': 'gh-dates', text: span(cal.checkIn, cal.checkOut) }),
       el('p', { 'class': 'gh-times', text: 'Check-in from ' + CHECK_IN_TIME + ', ' + long(cal.checkIn) + '. Check-out by ' + CHECK_OUT_TIME + ', ' + long(cal.checkOut) + '.' }),
       dl,
-      el('p', { 'class': 'gh-change' }, [el('span', { text: 'Last moment to move or cancel' }),
+      changePassed(s.change_until, cal.checkIn) ? null : el('p', { 'class': 'gh-change' }, [el('span', { text: 'Last moment to move or cancel' }),
         el('strong', { text: changeUntil(s.change_until, cal.checkIn) })]),
       mode === 'full' && q.gift_if_paid_in_full ? el('p', { 'class': 'gh-fine', text: giftLine(q.gift_if_paid_in_full) }) : null,
-      CREDIT && !creditUsed(q) ? creditNotice(q) : null,
-      GIFT && !giftUsed(q) ? giftNotice(q) : null
+      CREDIT && !creditUsed(q) ? creditNotice(q) : null
     ]);
   }
 
@@ -1048,7 +1101,7 @@
     var err = el('p', { 'class': 'gh-error', id: 'gh-error', role: 'alert' });
     var agreeBox = el('input', { type: 'checkbox', id: 'gh-agree', name: 'agree', required: 'required' });
     var agreeLine = el('label', { 'class': 'gh-agree', 'for': 'gh-agree' }, [agreeBox,
-      el('span', { text: release ? 'I have read the stay agreement above and agree to it, including the release in bold.' : 'I have read the stay agreement above and agree to it.' })]);
+      el('span', { text: release ? 'I have read the stay agreement above and agree to it, including the liability waiver.' : 'I have read the stay agreement above and agree to it.' })]);
     var typed = field('typed_name', 'Type your full name to sign', 'text', { auto: 'name', cls: 'gh-sign__name' });
     // On a phone the keyboard covers the lower half: when the name is typed, keep the
     // tick box in view just above it, so the signature and the agreement are seen together.
@@ -1093,7 +1146,10 @@
         agreement
       ]),
       el('div', { 'class': 'gh-sign' }, [
-        release ? el('p', { 'class': 'gh-release' }, [el('strong', { text: release })]) : null,
+        // Mick's opener (2026-10-26, by ear: "I like that waiver opener"). The bold release lives in
+        // the full agreement only, one tap above (Mick, 2026-10-26: "Any language without clicking
+        // the full agreement should be warm"); the "In short" above says it in plain words.
+        release ? el('p', { 'class': 'gh-waiver-intro', text: "A simple liability waiver. You'll be sleeping sixty feet up in living trees, so we ask every guest to sign one. It's in the full agreement above. Tick the box to sign." }) : null,
         agreeLine,
         typed
       ]),
@@ -1101,6 +1157,7 @@
       submitBtn,
       el('p', { 'class': 'gh-fine gh-center', text: 'Payment is by Stripe, on this page. Questions? Call or text ' + PHONE + '.' })
     ]);
+    ['focusin', 'input', 'change'].forEach(function (t) { form.addEventListener(t, fieldTouched); });
     return el('div', { 'class': 'gh-checkout' }, [form,
       el('div', { 'class': 'gh-paying', id: 'gh-paying', hidden: 'hidden' }),
       el('div', { id: 'gh-pay', 'class': 'gh-pay' })]);
@@ -1129,7 +1186,9 @@
     if (problem) {
       err.textContent = problem;
       var f = form.elements[focus];
-      if (f && f.focus) f.focus();
+      ownFocus = true;               // this page moves the focus, not the guest: not a touch
+      try { if (f && f.focus) f.focus(); } finally { ownFocus = false; }
+      payStep('pay_stopped', STOP_CODE[focus] || '');
       return;
     }
     err.textContent = '';
@@ -1142,15 +1201,14 @@
     // Optional: sent only when they tapped one of the seven.
     if (HEARD.some(function (h) { return h[0] === state.form.heard_from; })) body.heard_from = state.form.heard_from;
     if (CREDIT && state.credit && creditUsed(state.quote)) body.credit = CREDIT;
-    if (GIFT && giftUsed(state.quote)) body.gift = GIFT;
     if (HOLD) { body.hold = HOLD; body.visit = VISIT; }   // the engine matches a hold to its visit
     // Same details, same dates: reuse the checkout already opened, never a second claim
     // on the guest's own nights (a retry must not lock them out). heard_from and list_opt_in are
     // left out of the key on purpose: changing either after payment opened reuses the first
     // checkout, which keeps what was sent the first time.
-    var key =[cal.checkIn, cal.checkOut, state.payMode, v.email.toLowerCase(), v.guests, v.dogs, body.credit || '', body.gift || ''].join('|');
+    var key =[cal.checkIn, cal.checkOut, state.payMode, v.email.toLowerCase(), v.guests, v.dogs, body.credit || ''].join('|');
     btn.disabled = true;
-    btn.textContent = coveredToday(state.quote, state.payMode) ? (body.gift ? gw('book_booking') : 'Booking with your credit…') : 'Opening secure payment…';
+    btn.textContent = coveredToday(state.quote, state.payMode) ? 'Booking with your credit…' : 'Opening secure payment…';
     // The booking system keeps a checkout's nights for about 35 minutes; reuse it well inside that.
     var reuse = state.pending && state.pending.key === key && Date.now() - state.pending.at < 25 * 60 * 1000;
     var opened = reuse ? Promise.resolve(state.pending.res)
@@ -1161,10 +1219,8 @@
         // Nothing to pay today (a credit covered it): the stay is booked.
         if (res.manage_token) {
           forgetCredit();
-          if (body.gift) forgetGift();
-          step(body.gift ? 'gh_booked_with_gift' : 'gh_booked_with_credit', { value: (res.total_cents || 0) / 100, currency: 'USD' });
-          // A stay the gift covers whole is confirmed with no card: straight to the welcome.
-          location.href = (body.gift ? '/booked#token=' : '/manage#token=') + encodeURIComponent(res.manage_token);
+          step('gh_booked_with_credit', { value: (res.total_cents || 0) / 100, currency: 'USD' });
+          location.href = '/manage#token=' + encodeURIComponent(res.manage_token);
           return;
         }
         throw new Error('Your booking went through with nothing to pay today. Your confirmation email is on its way. Questions? Call or text ' + PHONE + '.');
@@ -1204,6 +1260,7 @@
     var wrap = el('div', { 'class': 'gh-wrap' + (state.step === 'pay' && state.quote ? ' is-checkout' : '') },
       [state.step === 'pay' && state.quote ? null : cal.render(), side]);
     root.replaceChildren(wrap);
+    if (state.step === 'pay' && state.quote) watchPay(); else unwatchPay();
   }
 
   // ------------------------------------------------------------------- boot
@@ -1227,27 +1284,10 @@
     return st && st.credit && st.credit.cents > 0 ? st.credit : null;
   }).catch(function () { return null; }) : Promise.resolve(null);
 
-  // The Golden Arrow on the link, looked up once: issued, it is in play; redeemed or void, it is
-  // set aside with a plain line; a code the engine cannot find, with the engine's own sentence.
-  // The lookup door off (the bare "not found"), a busy engine or no answer: it stays in play and
-  // the quote decides.
-  var giftCall = GIFT && !HANDOFF ? call('/v1/gift?code=' + encodeURIComponent(GIFT)).then(function (g) {
-    var st = String((g && g.status) || '').toLowerCase();
-    if (g && g.product === 'golden-arrow' && st === 'issued') return { gift: g };
-    return { why: st === 'redeemed' ? 'used' : st === 'void' ? 'void' : 'missing' };
-  }, function (e) {
-    var t = e && e.body && typeof e.body.error === 'string' ? e.body.error.trim() : '';
-    if (e && e.status === 404 && t && t !== 'not found') return { why: 'missing', sentence: t };
-    return { gift: {} };
-  }) : Promise.resolve(null);
-
-  Promise.all([availability(API, UNIT, HOLD ? '&hold=' + encodeURIComponent(HOLD) : ''), agreementCall, creditCall, giftCall]).then(function (res) {
+  Promise.all([availability(API, UNIT, HOLD ? '&hold=' + encodeURIComponent(HOLD) : ''), agreementCall, creditCall]).then(function (res) {
     state.agreement = res[1];
     state.credit = res[2];
-    state.gift = (res[3] && res[3].gift) || null;
-    state.giftWhy = (res[3] && res[3].why) || '';
-    state.giftSentence = (res[3] && res[3].sentence) || '';
-    cal = Calendar({ nights: res[0], onChange: onCalendar });
+    cal = Calendar({ nights: res[0], onChange: onCalendar, onRefuse: refused });
     root.classList.remove('gh-loading');
     root.removeAttribute('aria-busy');
     applyUrl();

@@ -25,14 +25,6 @@
   // (build_v2.py KEYS_SCRIPT). They live in window.__ghKeys, never in a URL a tag can read.
   var KEYS = window.__ghKeys || {};
   var title = document.getElementById('gh-title');
-  // A stay the Golden Arrow paid for (2026-10-25): /v1/stay carries gift_card {gift_cents,
-  // includes}, and can_move and can_cancel are false: Mick moves or changes it by phone. Its
-  // words are scripts/site/pages/gift.py WORDS (awaiting Mick), the JSON block lf-gift-words.
-  var GW = (function () {
-    try { var n = document.getElementById('lf-gift-words'); return (n && JSON.parse(n.textContent)) || {}; } catch (e) { return {}; }
-  })();
-  function gw(k) { return GW[k] || ''; }
-  function giftOf(stay) { return stay && stay.gift_card && Number(stay.gift_card.gift_cents) > 0 ? stay.gift_card : null; }
 
   function call(path, body) { return G.api(API, path, body); }
   function show(nodes) { root.replaceChildren.apply(root, nodes.filter(Boolean)); root.removeAttribute('aria-busy'); }
@@ -81,14 +73,6 @@
   function stayCard(stay, eyebrow) {
     var dl = el('dl', { 'class': 'gh-lines gh-lines--pay' });
     (stay.payments || []).forEach(function (p) { payRow(p).forEach(function (n) { dl.appendChild(n); }); });
-    // The Golden Arrow is part of how it is paid, too.
-    var gc = giftOf(stay);
-    if (gc) {
-      var inc = String(gc.includes || '');
-      dl.appendChild(el('dt', {}, [el('span', { text: gw('book_name') }),
-        inc ? el('small', { text: gw('stay_gift_includes').replace('{x}', inc.charAt(0).toUpperCase() + inc.slice(1)) }) : null]));
-      dl.appendChild(el('dd', { text: money(gc.gift_cents) }));
-    }
     // Credit spent into the stay is part of how it is paid, so the lines add up to the total.
     if (Number(stay.credit_applied_cents) > 0) {
       dl.appendChild(el('dt', {}, [el('span', { text: 'Credit applied' }), el('small', { text: 'From your credit' })]));
@@ -127,15 +111,6 @@
 
   function booked() {
     var sid = KEYS.session_id || '';
-    // A stay the Golden Arrow covers whole is confirmed with no card, so it arrives with its manage
-    // key instead of a payment session (/booked#token=, from js/gatehouse.js).
-    if (!sid && KEYS.token) {
-      return call('/v1/stay?token=' + encodeURIComponent(KEYS.token)).then(function (stay) {
-        stay.manage_token = stay.manage_token || KEYS.token;
-        if (!active(stay)) return problem('We could not find a booked stay for this link. Call or text ' + PHONE + '.');
-        welcome(stay, 'booked');
-      }).catch(function (e) { problem(e.message); });
-    }
     if (!sid) return problem('This page opens from the payment link, and this one is missing its key. Your confirmation email has everything.');
     var tries = 0;
     (function load() {
@@ -188,18 +163,13 @@
   };
 
   function welcome(stay, kind) {
-    var w = WELCOME[kind] || WELCOME.booked, gift = giftOf(stay);
-    // A gift stay's letters wait on Mick's words (the engine holds them), so this page promises none.
-    if (gift && kind !== 'difference' && kind !== 'balance') w = { h1: w.h1, title: w.title, eyebrow: w.eyebrow, now: gw('stay_booked_now') };
+    var w = WELCOME[kind] || WELCOME.booked;
     if (title) title.textContent = w.h1;
     document.title = w.title + ' | Loxley Forest';
-    // A credit or a Golden Arrow carried to /book in this tab has done its work once a stay is booked.
+    // A credit carried to /book in this tab has done its work once a stay is booked.
     try {
       var st = JSON.parse(sessionStorage.getItem('gh_keys') || '{}') || {};
-      if (st['/book'] && (st['/book'].credit || st['/book'].gift)) {
-        delete st['/book'].credit; delete st['/book'].gift;
-        sessionStorage.setItem('gh_keys', JSON.stringify(st));
-      }
+      if (st['/book'] && st['/book'].credit) { delete st['/book'].credit; sessionStorage.setItem('gh_keys', JSON.stringify(st)); }
     } catch (e) {}
     var token = stay.manage_token || '';
     var balance = (stay.payments || []).filter(function (p) { return p.status === 'scheduled' && p.due_on; })[0];
@@ -213,8 +183,7 @@
         : el('li', {}, [el('b', { text: 'Today. ' }), 'The way in is in your inbox: the address, the drive and the walk to the bridge.']),
       daysOut >= 7 && (canMove(stay) || stay.can_cancel) ? el('li', {}, [el('b', { text: 'Plans change. ' }), 'Until ' + G.changeUntil(stay.change_until, stay.check_in) +
         (canMove(stay) ? ', you can move your stay once, free, or keep everything you have paid as credit for 12 months.'
-          : ', you can cancel and keep everything you have paid as credit for 12 months.')]) : null,
-      gift ? el('li', {}, [el('b', { text: 'Plans change. ' }), gw('stay_gift_move')]) : null
+          : ', you can cancel and keep everything you have paid as credit for 12 months.')]) : null
     ]);
     show([
       stayCard(stay, w.eyebrow),
@@ -262,11 +231,7 @@
       on && stay.pay_early_cents > 0 ? payEarlyPanel(stay) : null,
       on ? movePanel(stay) : null,
       on ? cancelPanel(stay) : null,
-      on && giftOf(stay) ? el('section', { 'class': 'gh-panel', 'aria-labelledby': 'gh-gift-h' }, [
-        el('h2', { 'class': 'gh-eyebrow', id: 'gh-gift-h', text: gw('book_name') }),
-        el('p', { 'class': 'gh-body', text: gw('stay_gift_move') })
-      ]) : null,
-      on && !giftOf(stay) && !canMove(stay) && !stay.can_cancel ? el('section', { 'class': 'gh-panel' }, [
+      on && !canMove(stay) && !stay.can_cancel ? el('section', { 'class': 'gh-panel' }, [
         el('h2', { 'class': 'gh-eyebrow', text: 'Your stay is set' }),
         el('p', { 'class': 'gh-body', text: stay.reschedules_used ? 'This stay has used its free move, and from 7 days before arrival nothing moves or carries over.' : 'From 7 days before arrival, nothing moves or carries over. We look forward to having you.' })
       ]) : null,

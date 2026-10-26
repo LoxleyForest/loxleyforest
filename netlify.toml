@@ -47,22 +47,3 @@
   from = "/cancellation.html"
   to = "/book"
   status = 301
-
-# The Golden Arrow's card (2026-10-25): /gift/card#code=... is gift-card.html, kept at the root
-# so ensure_gtm.py and the root checks see it. A rewrite (200), so the address stays /gift/card.
-[[redirects]]
-  from = "/gift/card"
-  to = "/gift-card.html"
-  status = 200
-
-# Where Stripe returns a gift's buyer (the engine's success_url): /gift/thanks?session_id=...
-[[redirects]]
-  from = "/gift/thanks"
-  to = "/gift-thanks.html"
-  status = 200
-
-# The buyer's change page for a card emailed on a day they chose: /gift/manage#token=...
-[[redirects]]
-  from = "/gift/manage"
-  to = "/gift-manage.html"
-  status = 200
