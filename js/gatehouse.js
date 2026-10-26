@@ -105,6 +105,12 @@
   function changeUntil(value, checkIn) {
     return value ? moment(value) : (checkIn ? '11:59 PM Eastern, ' + long(addDays(checkIn, -7)) : '');
   }
+  // Inside the last week that moment has passed; a date in the past is not shown (2026-10-26: a
+  // stay four days out read "Last moment to move or cancel ... October 20").
+  function changePassed(value, checkIn) {
+    var t = value ? Date.parse(value) : (checkIn ? Date.parse(addDays(checkIn, -6) + 'T04:59:00Z') : NaN);
+    return !isNaN(t) && t < Date.now();
+  }
 
   function withArticle(w) { return (/^[aeiou]/i.test(w) ? 'an ' : 'a ') + w; }
   function giftLine(gift) {
@@ -994,7 +1000,7 @@
       var at = payLanded !== null && Math.abs(window.pageYOffset - payLanded) <= 2;
       var going = payLanded !== null && !at && Date.now() < payLandUntil;
       if (!at && !going && sum && sum.getClientRects().length && sum.getBoundingClientRect().bottom <= top) payStep('pay_scrolled_summary');
-      if (inView(root.querySelector('.gh-sign .gh-release')) || inView(root.querySelector('label.gh-agree'))) payStep('pay_saw_waiver');
+      if (inView(root.querySelector('.gh-sign .gh-waiver-intro')) || inView(root.querySelector('label.gh-agree'))) payStep('pay_saw_waiver');
     }
     payWatch = { look: look, timer: setInterval(function () {
       if (state.step !== 'pay') { unwatchPay(); return; }
@@ -1082,7 +1088,7 @@
       el('p', { 'class': 'gh-dates', text: span(cal.checkIn, cal.checkOut) }),
       el('p', { 'class': 'gh-times', text: 'Check-in from ' + CHECK_IN_TIME + ', ' + long(cal.checkIn) + '. Check-out by ' + CHECK_OUT_TIME + ', ' + long(cal.checkOut) + '.' }),
       dl,
-      el('p', { 'class': 'gh-change' }, [el('span', { text: 'Last moment to move or cancel' }),
+      changePassed(s.change_until, cal.checkIn) ? null : el('p', { 'class': 'gh-change' }, [el('span', { text: 'Last moment to move or cancel' }),
         el('strong', { text: changeUntil(s.change_until, cal.checkIn) })]),
       mode === 'full' && q.gift_if_paid_in_full ? el('p', { 'class': 'gh-fine', text: giftLine(q.gift_if_paid_in_full) }) : null,
       CREDIT && !creditUsed(q) ? creditNotice(q) : null
@@ -1095,7 +1101,7 @@
     var err = el('p', { 'class': 'gh-error', id: 'gh-error', role: 'alert' });
     var agreeBox = el('input', { type: 'checkbox', id: 'gh-agree', name: 'agree', required: 'required' });
     var agreeLine = el('label', { 'class': 'gh-agree', 'for': 'gh-agree' }, [agreeBox,
-      el('span', { text: release ? 'I have read the stay agreement above and agree to it, including the release in bold.' : 'I have read the stay agreement above and agree to it.' })]);
+      el('span', { text: release ? 'I have read the stay agreement above and agree to it, including the liability waiver.' : 'I have read the stay agreement above and agree to it.' })]);
     var typed = field('typed_name', 'Type your full name to sign', 'text', { auto: 'name', cls: 'gh-sign__name' });
     // On a phone the keyboard covers the lower half: when the name is typed, keep the
     // tick box in view just above it, so the signature and the agreement are seen together.
@@ -1140,10 +1146,10 @@
         agreement
       ]),
       el('div', { 'class': 'gh-sign' }, [
-        // Mick's opener above the release (2026-10-26, by ear: "I like that waiver opener"); the
-        // release's own words stay as they are, bold and in view (Georgia's prominence test).
-        release ? el('p', { 'class': 'gh-waiver-intro', text: "A simple liability waiver. You'll be sleeping sixty feet up in living trees, so we ask every guest to sign one. Here it is. Tick the box to sign." }) : null,
-        release ? el('p', { 'class': 'gh-release' }, [el('strong', { text: release })]) : null,
+        // Mick's opener (2026-10-26, by ear: "I like that waiver opener"). The bold release lives in
+        // the full agreement only, one tap above (Mick, 2026-10-26: "Any language without clicking
+        // the full agreement should be warm"); the "In short" above says it in plain words.
+        release ? el('p', { 'class': 'gh-waiver-intro', text: "A simple liability waiver. You'll be sleeping sixty feet up in living trees, so we ask every guest to sign one. It's in the full agreement above. Tick the box to sign." }) : null,
         agreeLine,
         typed
       ]),
