@@ -41,13 +41,35 @@ DAY = [('3:00 PM', 'Turn off the paved road onto a gravel path through the fores
        ('8:30 AM', 'Wake up to birdsong. Check the TreeMail box at the entrance to your bridge. Something is waiting inside.')]
 
 
+# The hero's photograph (Mick, 2026-10-26: about 90 percent of visitors land on /book from Google
+# Ads; the top was plain, he wants it "super sexy ... super chic"). A phone held upright gets the lit
+# rope bridge leading to the glowing treehouse (images/EQ3A0943.webp); everything else, the glowing
+# canvas peak and the lit bridge at dusk (images/EQ3A0907.webp). The variants are made with
+# ImageMagick from those two (images/book-hero-*): webp at quality 78, a jpg for a browser without
+# webp, each under 180 KB. The phone one is preloaded as the page's largest paint; each preload's
+# media is its <source>'s, so a device fetches one photo. It is a backdrop behind the words, so
+# its alt is empty.
+HERO_PHONE = '(max-width: 767px) and (orientation: portrait)'
+HERO_PHONE_SET = ', '.join(f'images/book-hero-phone-{w}.webp {w}w' for w in (640, 828, 1080))
+HERO_DESK_SET = ', '.join(f'images/book-hero-desk-{w}.webp {w}w' for w in (960, 1280, 1620))
+HERO_PRELOAD = (f'<link rel="preload" as="image" type="image/webp" imagesrcset="{HERO_PHONE_SET}" imagesizes="100vw" media="{HERO_PHONE}" fetchpriority="high">\n'
+                f'  <link rel="preload" as="image" type="image/webp" imagesrcset="{HERO_DESK_SET}" imagesizes="100vw" media="not all and {HERO_PHONE}" fetchpriority="high">')
+HERO_PHOTO = f'''<picture class="lf-bk-top__photo">
+        <source media="{HERO_PHONE}" type="image/webp" srcset="{HERO_PHONE_SET}" sizes="100vw">
+        <source media="{HERO_PHONE}" srcset="images/book-hero-phone-828.jpg">
+        <source type="image/webp" srcset="{HERO_DESK_SET}" sizes="100vw">
+        <img src="images/book-hero-desk-1280.jpg" width="1280" height="853" alt="" fetchpriority="high">
+      </picture>'''
+
+
 def page_book():
-    head, gtm = B.head_from('book.html')
+    head, gtm = B.head_from('book.html', HERO_PRELOAD)
     head = tidy(head)
     day = ''.join(f'\n          <li><span>{t}</span><p>{x}</p></li>' for t, x in DAY)
     body = f'''
-    <!-- ========== BOOK DIRECT ========== -->
+    <!-- ========== BOOK DIRECT: the bridge at night behind the words ========== -->
     <section class="lf-sec lf-dark lf-center lf-bk-top" aria-labelledby="bk-h">
+      {HERO_PHOTO}
       <div class="lf-wrap">
         <p class="lf-eyebrow">Dahlonega, Georgia</p>
         <h1 class="lf-h1" id="bk-h">Book your stay</h1>
@@ -211,9 +233,61 @@ def page_book():
 PAGES = [page_book]
 
 CSS = '''
-.lf-bk-top { padding-top: calc(var(--hdr-h) + clamp(44px, 8vw, 96px)); padding-bottom: clamp(56px, 8vw, 96px); }
+/* The hero: the photograph behind the words, under a scrim that is dark at the foot and behind the
+   words and clear where the lights are. The landscape photo's glowing canvas stands left of centre
+   and the dark forest above the lit bridge to the right, so the words never sit on the canvas:
+   - a phone held upright: the bridge photo full bleed, the words at its foot over the dark deck,
+     the band short enough that "Choose your nights" is on the first screen;
+   - a tablet held upright: the canvas photo whole at the top, fading into the room, the words below;
+   - a desktop or a tablet on its side: a strong band, not a whole screen, the words to the right
+     over the dark forest, the lit bridge running beneath them;
+   - a phone on its side (too short for a band): the words' own height, the photo dimmed behind. */
+.lf-bk-top {
+  display: flex; flex-direction: column; justify-content: flex-end; isolation: isolate; overflow: hidden;
+  min-height: clamp(460px, 76vh, 680px); min-height: clamp(460px, 76svh, 680px);
+  padding-top: calc(var(--hdr-h) + 40px); padding-bottom: 40px;
+}
+/* On a phone the photo is anchored at its foot and at least 168vw tall, so on a short or narrow
+   screen its top (sky) is what is cut and the lit end of the bridge stays above the words. */
+.lf-bk-top__photo { position: absolute; left: 0; right: 0; bottom: 0; z-index: -2; height: 100%; height: max(100%, 168vw); }
+.lf-bk-top__photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 100%; }
+.lf-bk-top::before {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(180deg, rgba(20, 36, 24, 0.62) 0%, rgba(20, 36, 24, 0) 15%, rgba(20, 36, 24, 0) 44%,
+    rgba(20, 36, 24, 0.72) 62%, rgba(20, 36, 24, 0.9) 80%, var(--ink) 100%);
+}
+.lf-bk-top .lf-wrap { width: 100%; }
+.lf-bk-top .lf-eyebrow, .lf-bk-top .lf-h1, .lf-bk-top .lf-lead { text-shadow: 0 1px 18px rgba(20, 36, 24, 0.6); }
 .lf-bk-top .lf-h1 { font-size: clamp(2.6rem, 9vw, 4.8rem); }
-.lf-bk-top .lf-lead { margin-left: auto; margin-right: auto; }
+.lf-bk-top .lf-lead { margin-left: auto; margin-right: auto; color: var(--on-dark); opacity: 0.92; }
+@media (min-width: 768px) and (orientation: portrait) {
+  .lf-bk-top { min-height: 0; padding-top: calc(66.667vw - 88px); padding-bottom: 64px; }
+  .lf-bk-top__photo, .lf-bk-top::before { top: 0; bottom: auto; height: 66.667vw; }
+  .lf-bk-top__photo img { object-position: 50% 50%; }
+  .lf-bk-top::before { background: linear-gradient(180deg, rgba(20, 36, 24, 0.6) 0%, rgba(20, 36, 24, 0) 16%, rgba(20, 36, 24, 0) 66%, rgba(20, 36, 24, 0.8) 88%, var(--ink) 100%); }
+}
+@media (orientation: landscape) {
+  .lf-bk-top {
+    min-height: clamp(440px, 64vh, 640px); min-height: clamp(440px, 64svh, 640px); justify-content: flex-start;
+    padding-top: calc(var(--hdr-h) + clamp(36px, 4.5vw, 96px)); padding-bottom: 64px;
+  }
+  .lf-bk-top__photo { height: 100%; }
+  .lf-bk-top__photo img { object-position: 50% 28%; }
+  .lf-bk-top .lf-wrap { width: min(36rem, 42%); margin: 0 0 0 auto; }
+  .lf-bk-top .lf-h1 { font-size: clamp(2.6rem, 5vw, 4.8rem); }
+  .lf-bk-top .lf-lead { font-size: clamp(1.25rem, 1.9vw, 1.5rem); }
+  .lf-bk-top::before {
+    background: radial-gradient(ellipse 32% 46% at 77% 40%, rgba(20, 36, 24, 0.55) 0%, rgba(20, 36, 24, 0) 100%),
+      linear-gradient(180deg, rgba(20, 36, 24, 0.6) 0%, rgba(20, 36, 24, 0) 18%, rgba(20, 36, 24, 0) 84%, rgba(20, 36, 24, 0.7) 95%, var(--ink) 100%);
+  }
+}
+@media (orientation: landscape) and (max-height: 500px) {
+  .lf-bk-top { min-height: 0; justify-content: flex-end; padding-top: calc(var(--hdr-h) + 24px); padding-bottom: 32px; }
+  .lf-bk-top .lf-wrap { width: 100%; margin: 0 auto; }
+  .lf-bk-top .lf-h1 { font-size: clamp(2.6rem, 9vw, 4.8rem); }
+  .lf-bk-top .lf-lead { font-size: clamp(1.25rem, 3.6vw, 1.5rem); }
+  .lf-bk-top::before { background: linear-gradient(180deg, rgba(20, 36, 24, 0.8), rgba(20, 36, 24, 0.84) 60%, var(--ink)); }
+}
 .lf-bk-book { scroll-margin-top: var(--hdr-h); padding-top: clamp(56px, 8vw, 96px); padding-bottom: clamp(56px, 8vw, 96px); }
 .lf-bk-head { max-width: 36rem; margin: 0 auto 32px; text-align: center; }
 .lf-bk-head .lf-h3 { color: var(--forest-deep); font-size: clamp(1.75rem, 5vw, 2.3rem); }
