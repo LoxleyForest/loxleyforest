@@ -84,7 +84,7 @@ WORDS = {
     ],
     'when_h': 'When',
     'choose_h': 'Choosing their nights',
-    'choose': 'When they know their dates, they call or text Mick at ' + PHONE + ', and he books them in.',
+    'choose': 'When they know their dates, they book their nights from the card’s link, or call or text Mick at ' + PHONE + '.',
     'card_h': 'The card',
     'card_how': 'Their names and yours on the card. Have it sent to you, to give by hand or print at home, or have us '   # LETTER
                 'email it to them on a day you choose, Christmas morning if you like. We can mail you the printed card as well.',
@@ -168,7 +168,7 @@ WORDS = {
     'thanks_body_me': 'Send them the link when the moment is right, or print the card at home.',
     'thanks_printed': 'Mick hand-writes your printed card and mails it within two business days.',
     'thanks_printed_if': 'If you asked for the printed card, Mick hand-writes it and mails it within two business days.',
-    'thanks_choose': 'When they know their dates, they call or text Mick at ' + PHONE + ', and he books them in.',
+    'thanks_choose': 'When they know their dates, they book their nights from the card’s link, or call or text Mick at ' + PHONE + '.',
     'thanks_help': 'Anything at all, call or text Mick at ' + PHONE + '.',
 
     # ---- /gift/card (js/gift.js); the engine's own sentence is shown as is for a code it cannot find
