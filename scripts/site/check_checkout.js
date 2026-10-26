@@ -13,7 +13,10 @@
      - the full agreement is in the page and identical to agreement.md, before and after the tap
        on "Read the full agreement";
      - the short version is the agreement's own "In short" section, nothing added;
-     - the bold release lives in the full agreement only, Mick's warm opener sits above the tick (2026-10-26), the tick's words and the typed-name label are as ruled;
+     - (version B, 2026-10-26) the short box's own bold "A short liability waiver." line is in view
+       before any tap, a bold phrase and not a heading; nothing stands between the short box and
+       the tick (the opener is gone, its words now the agreement's own); the bold release lives in
+       the full agreement, word for word; the tick's words and the typed-name label are as ruled;
      - an agreement without "In short" still shows in full, as before;
      - the email is the first field; leaving it sends one lead to our own server (visit, dates,
        nights, total), once per dates and address, again for new dates at begin_checkout; and
@@ -25,7 +28,8 @@
      - the talk card (js/talk.js) counts card_shown and marker_shown only once it can be seen:
        not while it stands aside, hidden, because the Book button is under both its places;
      - the pay step's five steps reach our own server once a visit a day, through the scrub:
-       pay_step_10s, pay_scrolled_summary, pay_saw_waiver, pay_field_touched (not a focus the
+       pay_step_10s, pay_scrolled_summary, pay_saw_waiver (the short box's bold waiver line or the
+       tick in view), pay_field_touched (not a focus the
        page moved) and pay_stopped with the code of the check alone; nothing typed in any of
        them and none in the tag manager; and while the engine refuses them (400), checkout
        still opens.
@@ -53,8 +57,9 @@ const TYPES = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascrip
   '.png': 'image/png', '.jpg': 'image/jpeg', '.json': 'application/json', '.mp4': 'video/mp4', '.webm': 'video/webm', '.woff2': 'font/woff2' };
 
 // The words exactly as they stand on the pay step today (js/gatehouse.js), never to change here.
-const TICK = 'I have read the stay agreement above and agree to it, including the liability waiver.';
-const OPENER = "A simple liability waiver. You'll be sleeping sixty feet up in living trees, so we ask every guest to sign one. It's in the full agreement above. Tick the box to sign.";
+const TICK = "I'm 18 or older and have read and agree to the stay agreement, liability waiver included.";
+// Version B's bold line in the agreement's own "In short" (pending Mick's yes, 2026-10-26).
+const WAIVER_LINE = 'A short liability waiver.';
 const TYPED = 'Type your full name to sign';
 
 function serve() {
@@ -83,6 +88,8 @@ function inShort(md) {
   const m = /^#{1,6}\s+In short\s*$([\s\S]*?)(?=^#{1,6}\s)/im.exec(md);
   return m ? m[1].trim() : '';
 }
+// The bold phrases of a piece of markdown, as written.
+function boldOf(md) { return [...String(md).matchAll(/\*\*([^*\n]+)\*\*/g)].map((m) => m[1]); }
 function releaseOf(md) {
   const m = /^\s*\*\*([^*\n]*\brelease[^*\n]*)\*\*\s*$/im.exec(md);
   return m ? m[1] : '';
@@ -221,7 +228,14 @@ async function main() {
         fullDom: full ? full.textContent : null, closedH: d ? d.getBoundingClientRect().height : -1,
         summaryH: d ? d.querySelector('summary').getBoundingClientRect().height : -1,
         release: [...document.querySelectorAll('.gh-sign .gh-release')].length,
-        opener: (document.querySelector('.gh-sign .gh-waiver-intro') || {}).textContent,
+        opener: !!document.querySelector('.gh-waiver-intro'),
+        between: (() => { const t = document.querySelector('.gh-terms'), sign = document.querySelector('.gh-sign'), a = document.querySelector('label.gh-agree');
+          return { nextOfTerms: t && t.nextElementSibling === sign, firstInSign: sign && sign.firstElementChild === a }; })(),
+        shortHeads: s ? s.querySelectorAll('h1,h2,h3,h4,h5,h6').length : -1,
+        shortBold: s ? [...s.querySelectorAll('strong')].map((n) => n.textContent) : [],
+        line: (() => { const n = s && s.querySelector('strong.gh-waiver-line'); if (!n) return null; const r = n.getBoundingClientRect(), p = n.parentElement;
+          return { text: n.textContent, w: getComputedStyle(n).fontWeight, h: r.height, inClosed: !!n.closest('details'), first: p.tagName === 'P' && p.firstChild === n,
+            above: r.bottom <= document.querySelector('label.gh-agree').getBoundingClientRect().top }; })(),
         fullBold: full ? [...full.querySelectorAll('strong')].map((n) => n.textContent) : [],
         tick: (document.querySelector('label.gh-agree span') || {}).textContent,
         typed: (document.querySelector('label[for="gh-typed_name"]') || {}).textContent,
@@ -235,12 +249,23 @@ async function main() {
     check(view.summaryH >= 44, 'the tap line is a 44 px target (' + Math.round(view.summaryH) + ' px)');
     check(view.release === 0, 'no bold release beside the tick (Mick, 2026-10-26: only in the full agreement)');
     check(view.fullBold.some((b) => squash(b) === squash(releaseOf(AGREEMENT_TEXT))) && releaseOf(AGREEMENT_TEXT).length > 200, 'the release, bold and word for word, inside the full agreement');
-    check(view.opener === OPENER, 'Mick\'s waiver opener above the tick, word for word');
+    check(view.opener === false && view.between.nextOfTerms && view.between.firstInSign, 'no opener: the tick comes straight after the agreement, nothing written between them');
+    const shortMd = inShort(AGREEMENT_TEXT);
+    check(boldOf(shortMd).includes(WAIVER_LINE) && /^\*\*A short liability waiver\.\*\* /m.test(shortMd), 'the agreement\'s "In short" carries the bold "' + WAIVER_LINE + '" opening its paragraph');
+    check(view.shortHeads === 0, 'a bold line, not a heading: the short box holds no heading, so it does not stop early');
+    check(JSON.stringify(view.shortBold) === JSON.stringify(boldOf(shortMd)), 'the short box\'s bold is the "In short"\'s own bold, nothing more (' + view.shortBold.length + ': ' + view.shortBold.map((b) => b.slice(0, 24)).join(' | ') + ')');
+    check(!!view.line && view.line.text === WAIVER_LINE && view.line.first && Number(view.line.w) >= 600 && view.line.h > 0 && !view.line.inClosed && view.line.above,
+      'before any tap: "' + WAIVER_LINE + '" in the short box, bold (' + (view.line && view.line.w) + '), shown, outside the closed full text, above the tick');
     check(view.tick === TICK, 'the tick\'s words unchanged');
     check(view.typed === TYPED, 'the typed-name label unchanged');
     check(view.fine.length === 1 && view.fine[0] === "In short, in the agreement's own words. The full text covers payment, changes, cancellations and the risks of the forest.", 'the line under the heading no longer says "Shown in full"');
     check(view.overflow <= 0, 'no sideways scroll at 390');
     await shot(page, 'pay-closed.png');
+    if (SHOTS) {
+      const box = await page.evaluate(() => { const a = document.querySelector('.gh-terms').getBoundingClientRect(), b = document.querySelector('.gh-sign').getBoundingClientRect();
+        return { x: 0, y: Math.round(a.top + window.scrollY) - 8, width: window.innerWidth, height: Math.round(b.bottom - a.top) + 16 }; });
+      await page.screenshot({ path: path.join(SHOTS, 'pay-box.png'), clip: box, fullPage: true });
+    }
     await page.tap('details.gh-agreement-full > summary');
     const opened = await page.evaluate(() => {
       const d = document.querySelector('details.gh-agreement-full'), full = d.querySelector('.gh-agreement');
@@ -409,13 +434,15 @@ async function main() {
     await page.evaluate(() => window.scrollBy({ top: 40, behavior: 'instant' }));
     await tick();
     check(await until(() => n('pay_scrolled_summary') === 1), 'scrolled past the booking summary: pay_scrolled_summary');
-    check(n('pay_saw_waiver') === 0, 'the release still below: no pay_saw_waiver');
-    await page.evaluate(() => { const r = document.querySelector('.gh-sign .gh-waiver-intro').getBoundingClientRect(); window.scrollBy({ top: r.top - innerHeight + 20, behavior: 'instant' }); });
+    check(n('pay_saw_waiver') === 0, 'the waiver line still below: no pay_saw_waiver');
+    // An agreement without version B's bold line (the engine not yet deployed) fails here, plainly.
+    const lineH = await page.evaluate(() => { const l = document.querySelector('.gh-agreement-short .gh-waiver-line'); if (!l) return null; const r = l.getBoundingClientRect(); window.scrollBy({ top: r.top - innerHeight + Math.floor(r.height / 2), behavior: 'instant' }); return Math.round(r.height); });
     await tick();
-    check(n('pay_saw_waiver') === 0, 'the release\'s first 20 px in view: not yet');
+    check(lineH !== null && n('pay_saw_waiver') === 0, 'half the bold waiver line in view (' + lineH + ' px tall): not yet');
     await page.evaluate(() => window.scrollBy({ top: 60, behavior: 'instant' }));
     await tick();
-    check(await until(() => n('pay_saw_waiver') === 1), 'the release in view: pay_saw_waiver');
+    const tickBelow = await page.evaluate(() => document.querySelector('label.gh-agree').getBoundingClientRect().top >= innerHeight);
+    check(tickBelow && await until(() => n('pay_saw_waiver') === 1), 'the bold waiver line in view, the tick still below the screen: pay_saw_waiver');
 
     // Continue to payment, every check in its turn; the focus each stop moves is the page's, not a touch.
     const go = async () => { await page.tap('#gatehouse form.gh-form button[type=submit]'); await tick(); };
@@ -458,9 +485,9 @@ async function main() {
     await page.reload();
     await page.waitForSelector('#gatehouse form.gh-form', { timeout: 10000 });
     await tick(11000);
-    await page.evaluate(() => { const r = document.querySelector('.gh-sign .gh-waiver-intro').getBoundingClientRect(); window.scrollBy({ top: r.top - 100, behavior: 'instant' }); });
+    await page.evaluate(() => { const r = (document.querySelector('.gh-agreement-short .gh-waiver-line') || document.querySelector('label.gh-agree')).getBoundingClientRect(); window.scrollBy({ top: r.top - 100, behavior: 'instant' }); });
     await tick(); await page.waitForTimeout(300);
-    check(pays().length === before, 'reloaded, open 11 s, scrolled to the release: nothing sent again (' + (pays().length - before) + ' more)');
+    check(pays().length === before, 'reloaded, open 11 s, scrolled to the waiver line: nothing sent again (' + (pays().length - before) + ' more)');
     await ctx.close();
   }
 

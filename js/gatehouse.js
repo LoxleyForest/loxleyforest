@@ -215,6 +215,14 @@
     });
     return out.join('\n').trim();
   }
+  // In the short box, the agreement's own bold line naming the waiver ("A short liability
+  // waiver.", version B, 2026-10-26), marked so pay_saw_waiver can watch it. No word is added;
+  // a short version without such a line marks nothing.
+  function waiverLine(box) {
+    var b = [].filter.call(box.querySelectorAll('strong'), function (n) { return /\bliability waiver\b/i.test(n.textContent); })[0];
+    if (b) b.className = 'gh-waiver-line';
+    return box;
+  }
 
   // ------------------------------------------------------------ calendar
 
@@ -962,7 +970,7 @@
   // our own booking server through the page beacon's scrub, each once a visit a day (and the
   // engine counts each visit once a day, gatehouse/counts.py STEP_KEYS): pay_step_10s (the step
   // open 10 s, the tab in front), pay_scrolled_summary (the booking summary scrolled above the
-  // header), pay_saw_waiver (the release or the tick in view), pay_field_touched (the guest's
+  // header), pay_saw_waiver (the short box's bold waiver line or the tick in view), pay_field_touched (the guest's
   // first focus on a field, or the first thing typed or chosen in one; a focus this page moves
   // is not a touch), pay_stopped (a "Continue to payment" tap a check stopped, with the field's
   // code alone). Never a word or a value the guest typed, never
@@ -1013,7 +1021,7 @@
       var at = payLanded !== null && Math.abs(window.pageYOffset - payLanded) <= 2;
       var going = payLanded !== null && !at && Date.now() < payLandUntil;
       if (!at && !going && sum && sum.getClientRects().length && sum.getBoundingClientRect().bottom <= top) payStep('pay_scrolled_summary');
-      if (inView(root.querySelector('.gh-sign .gh-waiver-intro')) || inView(root.querySelector('label.gh-agree'))) payStep('pay_saw_waiver');
+      if (inView(root.querySelector('.gh-agreement-short .gh-waiver-line')) || inView(root.querySelector('label.gh-agree'))) payStep('pay_saw_waiver');
     }
     payWatch = { look: look, timer: setInterval(function () {
       if (state.step !== 'pay') { unwatchPay(); return; }
@@ -1114,7 +1122,7 @@
     var err = el('p', { 'class': 'gh-error', id: 'gh-error', role: 'alert' });
     var agreeBox = el('input', { type: 'checkbox', id: 'gh-agree', name: 'agree', required: 'required' });
     var agreeLine = el('label', { 'class': 'gh-agree', 'for': 'gh-agree' }, [agreeBox,
-      el('span', { text: release ? 'I have read the stay agreement above and agree to it, including the liability waiver.' : 'I have read the stay agreement above and agree to it.' })]);
+      el('span', { text: release ? "I'm 18 or older and have read and agree to the stay agreement, liability waiver included." : 'I have read the stay agreement above and agree to it.' })]);
     var typed = field('typed_name', 'Type your full name to sign', 'text', { auto: 'name', cls: 'gh-sign__name' });
     // On a phone the keyboard covers the lower half: when the name is typed, keep the
     // tick box in view just above it, so the signature and the agreement are seen together.
@@ -1129,7 +1137,7 @@
       ? el('p', { 'class': 'gh-agreement gh-agreement--missing', role: 'alert', text: 'The stay agreement could not load, so we cannot take a booking on this page just now. Please refresh, or call or text ' + PHONE + '.' })
       : !brief ? full
       : el('div', { 'class': 'gh-agreement-both' }, [
-        el('div', { 'class': 'gh-agreement-short', role: 'region', 'aria-label': 'The stay agreement, in short' }, [markdown(brief)]),
+        waiverLine(el('div', { 'class': 'gh-agreement-short', role: 'region', 'aria-label': 'The stay agreement, in short' }, [markdown(brief)])),
         el('details', { 'class': 'gh-agreement-full' }, [el('summary', { text: 'Read the full agreement' }), full])]);
     var email = field('email', 'Email', 'email', { auto: 'email', mode: 'email' });
     email.querySelector('input').addEventListener('change', function (e) { sendLead(e.target.value); });
@@ -1159,10 +1167,9 @@
         agreement
       ]),
       el('div', { 'class': 'gh-sign' }, [
-        // Mick's opener (2026-10-26, by ear: "I like that waiver opener"). The bold release lives in
-        // the full agreement only, one tap above (Mick, 2026-10-26: "Any language without clicking
-        // the full agreement should be warm"); the "In short" above says it in plain words.
-        release ? el('p', { 'class': 'gh-waiver-intro', text: "A simple liability waiver. You'll be sleeping sixty feet up in living trees, so we ask every guest to sign one. It's in the full agreement above. Tick the box to sign." }) : null,
+        // Version B (2026-10-26): the opener's words now live in the agreement's own "In short",
+        // its bold "A short liability waiver." line; the bold release lives in the full agreement,
+        // one tap above. Nothing is written here between the short box and the tick.
         agreeLine,
         typed
       ]),

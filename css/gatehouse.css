@@ -294,7 +294,6 @@
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
 /* the release, repeated beside the box in the agreement's own words */
-.gh-waiver-intro { margin: 0; font-size: 17px; line-height: 1.5; color: var(--forest-deep); }
 .gh-release { margin: 0; padding: 14px 16px; border: 1px solid var(--parchment); border-bottom: 0; background: var(--linen); font-family: 'Montserrat', Arial, sans-serif; font-size: 13px; line-height: 1.6; color: var(--forest-deep); }
 .gh-release + .gh-agree { margin-top: -12px; }
 
