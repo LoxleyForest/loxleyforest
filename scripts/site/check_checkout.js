@@ -13,7 +13,10 @@
      - the full agreement is in the page and identical to agreement.md, before and after the tap
        on "Read the full agreement";
      - the short version is the agreement's own "In short" section, nothing added;
-     - the bold release lives in the full agreement only, Mick's warm opener sits above the tick (2026-10-26), the tick's words and the typed-name label are as ruled;
+     - (version B, 2026-10-26) the short box's own bold "A short liability waiver." line is in view
+       before any tap, a bold phrase and not a heading; nothing stands between the short box and
+       the tick (the opener is gone, its words now the agreement's own); the bold release lives in
+       the full agreement, word for word; the tick's words and the typed-name label are as ruled;
      - an agreement without "In short" still shows in full, as before;
      - the email is the first field; leaving it sends one lead to our own server (visit, dates,
        nights, total), once per dates and address, again for new dates at begin_checkout; and
@@ -25,10 +28,16 @@
      - the talk card (js/talk.js) counts card_shown and marker_shown only once it can be seen:
        not while it stands aside, hidden, because the Book button is under both its places;
      - the pay step's five steps reach our own server once a visit a day, through the scrub:
-       pay_step_10s, pay_scrolled_summary, pay_saw_waiver, pay_field_touched (not a focus the
+       pay_step_10s, pay_scrolled_summary, pay_saw_waiver (the short box's bold waiver line or the
+       tick in view), pay_field_touched (not a focus the
        page moved) and pay_stopped with the code of the check alone; nothing typed in any of
        them and none in the tag manager; and while the engine refuses them (400), checkout
-       still opens.
+       still opens;
+     - (pending Mick's yes, 2026-10-26) the quote card at 390 x 844 puts Mick's terms first,
+       above the pay choices: a stay paid in full only reads "Paid in full today. Plans
+       change? ..." in place of the 30-day line; a deposit stay reads "Plans change? ..." with
+       its retainer line as before; a stay inside 7 days, its last moment to move gone, reads
+       "Paid in full today." and makes no move offer.
    Nothing leaves this machine: the booking API is answered here, everything else gets an empty
    answer, Stripe is never reached. */
 'use strict';
@@ -53,8 +62,9 @@ const TYPES = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascrip
   '.png': 'image/png', '.jpg': 'image/jpeg', '.json': 'application/json', '.mp4': 'video/mp4', '.webm': 'video/webm', '.woff2': 'font/woff2' };
 
 // The words exactly as they stand on the pay step today (js/gatehouse.js), never to change here.
-const TICK = 'I have read the stay agreement above and agree to it, including the liability waiver.';
-const OPENER = "A simple liability waiver. You'll be sleeping sixty feet up in living trees, so we ask every guest to sign one. It's in the full agreement above. Tick the box to sign.";
+const TICK = "I'm 18 or older and have read and agree to the stay agreement, liability waiver included.";
+// Version B's bold line in the agreement's own "In short" (pending Mick's yes, 2026-10-26).
+const WAIVER_LINE = 'A short liability waiver.';
 const TYPED = 'Type your full name to sign';
 
 function serve() {
@@ -83,6 +93,8 @@ function inShort(md) {
   const m = /^#{1,6}\s+In short\s*$([\s\S]*?)(?=^#{1,6}\s)/im.exec(md);
   return m ? m[1].trim() : '';
 }
+// The bold phrases of a piece of markdown, as written.
+function boldOf(md) { return [...String(md).matchAll(/\*\*([^*\n]+)\*\*/g)].map((m) => m[1]); }
 function releaseOf(md) {
   const m = /^\s*\*\*([^*\n]*\brelease[^*\n]*)\*\*\s*$/im.exec(md);
   return m ? m[1] : '';
@@ -111,6 +123,15 @@ function stayQuote(ci) {
   if (!within) q.summary.deposit = { today_cents: retainer, balance_cents: total - retainer, balance_on: isoDay(bal), change_until: isoDay(bal) };
   return q;
 }
+// The quote with the engine's own change_until (gatehouse/promise.py: 11:59 PM Eastern, 7 days
+// before arrival, with its offset) on every way to pay.
+function engineQuote(ci) {
+  const q = stayQuote(ci), by = new Date(ci + 'T12:00:00Z'); by.setUTCDate(by.getUTCDate() - 7);
+  const m = by.getUTCMonth(), off = m >= 2 && m <= 9 ? '-04:00' : '-05:00';
+  Object.keys(q.summary).forEach((k) => { q.summary[k].change_until = isoDay(by) + 'T23:59:00' + off; });
+  return q;
+}
+const PLANS_CHANGE = 'Plans change? Up to 7 days out, move once, free, or keep every dollar as credit for 12 months.';
 // A December stay at least five weeks out (the walk's: a balance line on the pay step).
 const [DEC_IN, DEC_OUT] = (() => {
   const now = new Date(day(0) + 'T12:00:00Z');
@@ -196,6 +217,11 @@ async function main() {
     });
   }
   async function until(fn) { for (let i = 0; i < 30 && !fn(); i++) await new Promise((r) => setTimeout(r, 100)); return fn(); }
+  // Scrolls until the element's top sits just under the fixed header (for a screenshot).
+  async function underHeader(page, sel) {
+    await page.evaluate((s) => { const n = document.querySelector(s), h = document.querySelector('.lf-hdr').getBoundingClientRect().bottom; window.scrollBy({ top: n.getBoundingClientRect().top - h - 12, behavior: 'instant' }); }, sel);
+    await page.waitForTimeout(250);
+  }
   async function shot(page, name) { if (SHOTS) { fs.mkdirSync(SHOTS, { recursive: true }); await page.screenshot({ path: path.join(SHOTS, name), fullPage: true }); } }
   async function toPay(page, ci, co) {
     await page.goto(BASE + '/book?checkIn=' + ci + '&checkOut=' + co);
@@ -221,7 +247,14 @@ async function main() {
         fullDom: full ? full.textContent : null, closedH: d ? d.getBoundingClientRect().height : -1,
         summaryH: d ? d.querySelector('summary').getBoundingClientRect().height : -1,
         release: [...document.querySelectorAll('.gh-sign .gh-release')].length,
-        opener: (document.querySelector('.gh-sign .gh-waiver-intro') || {}).textContent,
+        opener: !!document.querySelector('.gh-waiver-intro'),
+        between: (() => { const t = document.querySelector('.gh-terms'), sign = document.querySelector('.gh-sign'), a = document.querySelector('label.gh-agree');
+          return { nextOfTerms: t && t.nextElementSibling === sign, firstInSign: sign && sign.firstElementChild === a }; })(),
+        shortHeads: s ? s.querySelectorAll('h1,h2,h3,h4,h5,h6').length : -1,
+        shortBold: s ? [...s.querySelectorAll('strong')].map((n) => n.textContent) : [],
+        line: (() => { const n = s && s.querySelector('strong.gh-waiver-line'); if (!n) return null; const r = n.getBoundingClientRect(), p = n.parentElement;
+          return { text: n.textContent, w: getComputedStyle(n).fontWeight, h: r.height, inClosed: !!n.closest('details'), first: p.tagName === 'P' && p.firstChild === n,
+            above: r.bottom <= document.querySelector('label.gh-agree').getBoundingClientRect().top }; })(),
         fullBold: full ? [...full.querySelectorAll('strong')].map((n) => n.textContent) : [],
         tick: (document.querySelector('label.gh-agree span') || {}).textContent,
         typed: (document.querySelector('label[for="gh-typed_name"]') || {}).textContent,
@@ -235,12 +268,20 @@ async function main() {
     check(view.summaryH >= 44, 'the tap line is a 44 px target (' + Math.round(view.summaryH) + ' px)');
     check(view.release === 0, 'no bold release beside the tick (Mick, 2026-10-26: only in the full agreement)');
     check(view.fullBold.some((b) => squash(b) === squash(releaseOf(AGREEMENT_TEXT))) && releaseOf(AGREEMENT_TEXT).length > 200, 'the release, bold and word for word, inside the full agreement');
-    check(view.opener === OPENER, 'Mick\'s waiver opener above the tick, word for word');
+    check(view.opener === false && view.between.nextOfTerms && view.between.firstInSign, 'no opener: the tick comes straight after the agreement, nothing written between them');
+    const shortMd = inShort(AGREEMENT_TEXT);
+    check(boldOf(shortMd).includes(WAIVER_LINE) && /^\*\*A short liability waiver\.\*\* /m.test(shortMd), 'the agreement\'s "In short" carries the bold "' + WAIVER_LINE + '" opening its paragraph');
+    check(view.shortHeads === 0, 'a bold line, not a heading: the short box holds no heading, so it does not stop early');
+    check(JSON.stringify(view.shortBold) === JSON.stringify(boldOf(shortMd)), 'the short box\'s bold is the "In short"\'s own bold, nothing more (' + view.shortBold.length + ': ' + view.shortBold.map((b) => b.slice(0, 24)).join(' | ') + ')');
+    check(!!view.line && view.line.text === WAIVER_LINE && view.line.first && Number(view.line.w) >= 600 && view.line.h > 0 && !view.line.inClosed && view.line.above,
+      'before any tap: "' + WAIVER_LINE + '" in the short box, bold (' + (view.line && view.line.w) + '), shown, outside the closed full text, above the tick');
     check(view.tick === TICK, 'the tick\'s words unchanged');
     check(view.typed === TYPED, 'the typed-name label unchanged');
     check(view.fine.length === 1 && view.fine[0] === "In short, in the agreement's own words. The full text covers payment, changes, cancellations and the risks of the forest.", 'the line under the heading no longer says "Shown in full"');
     check(view.overflow <= 0, 'no sideways scroll at 390');
     await shot(page, 'pay-closed.png');
+    // The pay step's box as a phone shows it: the agreement's heading just under the header.
+    if (SHOTS) { await underHeader(page, '.gh-terms'); await page.screenshot({ path: path.join(SHOTS, 'pay-box.png') }); }
     await page.tap('details.gh-agreement-full > summary');
     const opened = await page.evaluate(() => {
       const d = document.querySelector('details.gh-agreement-full'), full = d.querySelector('.gh-agreement');
@@ -345,6 +386,42 @@ async function main() {
     await ctx.close();
   }
 
+  // Mick's terms first on the quote card (the book-path table, 2026-10-26; pending his yes).
+  console.log('the quote card: Mick\'s terms first, above the pay choices, phone 390 x 844');
+  for (const [what, ci, co, want, tap] of [
+    ['paid in full only (10 days out)', day(10), day(12), 'Paid in full today. ' + PLANS_CHANGE, /^Book for \$/],
+    ['deposit (December)', DEC_IN, DEC_OUT, PLANS_CHANGE, /^Reserve for \$/],
+    ['inside 7 days (5 days out)', day(5), day(7), 'Paid in full today.', /^Book for \$/]]) {
+    const { ctx, page } = await open('plans-' + what, AGREEMENT_TEXT, { quote: engineQuote });
+    await page.goto(BASE + '/book?checkIn=' + ci + '&checkOut=' + co);
+    await page.waitForSelector('#gatehouse button.gh-cta', { timeout: 10000 });
+    const c = await page.evaluate(() => {
+      const card = document.querySelector('#gatehouse .gh-summary'), line = card.querySelectorAll('.gh-plans'), opts = card.querySelector('fieldset.gh-options');
+      const legend = opts && opts.querySelector('legend'), l = line[0];
+      return { n: line.length, text: l ? l.textContent : null, next: l ? l.nextElementSibling === opts : false,
+        above: l && legend ? l.getBoundingClientRect().bottom <= legend.getBoundingClientRect().top : false,
+        firstOfPay: l ? [...card.children].indexOf(l) < [...card.children].indexOf(opts) : false,
+        modes: [...card.querySelectorAll('input[name="gh-pay"]')].map((i) => i.value).join(),
+        subs: [...card.querySelectorAll('.gh-option > span > span')].map((n) => n.textContent),
+        card: card.innerText, cta: card.querySelector('button.gh-cta').textContent,
+        shown: l ? l.getBoundingClientRect().height > 0 && getComputedStyle(l).visibility === 'visible' : false,
+        overflow: document.documentElement.scrollWidth - window.innerWidth };
+    });
+    check(tap.test(c.cta), what + ': the Book button reads "' + c.cta + '"');
+    check(c.n === 1 && c.text === want && c.shown, what + ': the line reads "' + c.text + '"');
+    check(c.next && c.above && c.firstOfPay, what + ': first, just above the pay choices ("How would you like to pay?")');
+    check(!/Stays within \d+ days of arrival are paid in full when you book\./.test(c.card), what + ': no 30-day line');
+    if (/deposit/.test(what)) {
+      check(c.modes === 'deposit,full' && c.subs.some((s) => /^A 25% retainer deposit, non-refundable\. The rest, \$[\d,.]+, will be charged on /.test(s)), what + ': the retainer line as before ("' + (c.subs[0] || '') + '")');
+    } else {
+      check(c.modes === 'full', what + ': pay in full is the only choice');
+    }
+    if (/inside 7/.test(what)) check(!/Up to 7 days out|Plans change\?/.test(c.card), what + ': the move date has passed, so no move offer anywhere on the card');
+    check(c.overflow <= 0, what + ': no sideways scroll at 390');
+    if (SHOTS) { fs.mkdirSync(SHOTS, { recursive: true }); await underHeader(page, '#gatehouse .gh-summary'); await page.screenshot({ path: path.join(SHOTS, 'card-' + what.replace(/\W+/g, '-').replace(/-+$/, '') + '.png') }); }
+    await ctx.close();
+  }
+
   // The walk found card_shown sent while the card stood aside, hidden, because the Book button
   // was under both of its places (js/talk.js guards()). Since 2026-10-26 (the CEO's quote-card
   // piece) the card comes 30 s after the total, set into the page under the Book button's row:
@@ -409,13 +486,15 @@ async function main() {
     await page.evaluate(() => window.scrollBy({ top: 40, behavior: 'instant' }));
     await tick();
     check(await until(() => n('pay_scrolled_summary') === 1), 'scrolled past the booking summary: pay_scrolled_summary');
-    check(n('pay_saw_waiver') === 0, 'the release still below: no pay_saw_waiver');
-    await page.evaluate(() => { const r = document.querySelector('.gh-sign .gh-waiver-intro').getBoundingClientRect(); window.scrollBy({ top: r.top - innerHeight + 20, behavior: 'instant' }); });
+    check(n('pay_saw_waiver') === 0, 'the waiver line still below: no pay_saw_waiver');
+    // An agreement without version B's bold line (the engine not yet deployed) fails here, plainly.
+    const lineH = await page.evaluate(() => { const l = document.querySelector('.gh-agreement-short .gh-waiver-line'); if (!l) return null; const r = l.getBoundingClientRect(); window.scrollBy({ top: r.top - innerHeight + Math.floor(r.height / 2), behavior: 'instant' }); return Math.round(r.height); });
     await tick();
-    check(n('pay_saw_waiver') === 0, 'the release\'s first 20 px in view: not yet');
+    check(lineH !== null && n('pay_saw_waiver') === 0, 'half the bold waiver line in view (' + lineH + ' px tall): not yet');
     await page.evaluate(() => window.scrollBy({ top: 60, behavior: 'instant' }));
     await tick();
-    check(await until(() => n('pay_saw_waiver') === 1), 'the release in view: pay_saw_waiver');
+    const tickBelow = await page.evaluate(() => document.querySelector('label.gh-agree').getBoundingClientRect().top >= innerHeight);
+    check(tickBelow && await until(() => n('pay_saw_waiver') === 1), 'the bold waiver line in view, the tick still below the screen: pay_saw_waiver');
 
     // Continue to payment, every check in its turn; the focus each stop moves is the page's, not a touch.
     const go = async () => { await page.tap('#gatehouse form.gh-form button[type=submit]'); await tick(); };
@@ -458,9 +537,9 @@ async function main() {
     await page.reload();
     await page.waitForSelector('#gatehouse form.gh-form', { timeout: 10000 });
     await tick(11000);
-    await page.evaluate(() => { const r = document.querySelector('.gh-sign .gh-waiver-intro').getBoundingClientRect(); window.scrollBy({ top: r.top - 100, behavior: 'instant' }); });
+    await page.evaluate(() => { const r = (document.querySelector('.gh-agreement-short .gh-waiver-line') || document.querySelector('label.gh-agree')).getBoundingClientRect(); window.scrollBy({ top: r.top - 100, behavior: 'instant' }); });
     await tick(); await page.waitForTimeout(300);
-    check(pays().length === before, 'reloaded, open 11 s, scrolled to the release: nothing sent again (' + (pays().length - before) + ' more)');
+    check(pays().length === before, 'reloaded, open 11 s, scrolled to the waiver line: nothing sent again (' + (pays().length - before) + ' more)');
     await ctx.close();
   }
 

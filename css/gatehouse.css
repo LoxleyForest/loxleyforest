@@ -162,6 +162,8 @@
 .gh-center { text-align: center; }
 /* a credit: what it takes off, or, boxed, why these dates cannot use it */
 .gh-credit { margin: 0 0 16px; font-size: 16px; line-height: 1.5; color: var(--forest-deep); }
+/* Mick's terms, first, above the pay choices on the quote card */
+.gh-plans { margin: 0 0 14px; font-size: 16px; line-height: 1.5; color: var(--forest-deep); }
 .gh-credit--off { padding: 12px 14px; border: 1px solid #c7a27b; border-left-width: 4px; background: #fbf4ea; color: #5c3418; }
 .gh-booking .gh-credit--off { margin: 14px 0 0; }
 .gh-summary--empty .gh-credit { margin-top: 14px; }
@@ -298,7 +300,6 @@
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
 /* the release, repeated beside the box in the agreement's own words */
-.gh-waiver-intro { margin: 0; font-size: 17px; line-height: 1.5; color: var(--forest-deep); }
 .gh-release { margin: 0; padding: 14px 16px; border: 1px solid var(--parchment); border-bottom: 0; background: var(--linen); font-family: 'Montserrat', Arial, sans-serif; font-size: 13px; line-height: 1.6; color: var(--forest-deep); }
 .gh-release + .gh-agree { margin-top: -12px; }
 

@@ -398,7 +398,9 @@ async function main() {
       check(pf.quote === '“' + QC.line + '”' && pf.by === QC.by, tag + ': the guest line and credit as build_v2.QUOTE_CARD has them: ' + pf.quote + ' ' + pf.by);
       check(pf.text === '4.9' + '“' + QC.line + '”' + QC.by, tag + ': nothing else in it: no count, no platform, no other words');
       check(pf.gap >= 8 && pf.gap <= 24 && pf.h <= 110 && pf.size <= 19, tag + ': small and quiet: ' + pf.gap + ' px under the button, ' + pf.h + ' px tall, ' + pf.size + ' px type');
-      check(pf.bTop >= pf.hdr && pf.bBottom <= pf.vh && (!phone || pf.pBottom <= pf.vh), tag + ': in the quote card\'s first view the Book button is whole on the screen' + (phone ? ', the guest line under it too' : ''));
+      // Mick, 2026-10-26 ("yes on both!"): his terms line comes first on the card; on a phone a deposit
+      // stay's guest line may sit just under the first view. The Book button never may.
+      check(pf.bTop >= pf.hdr && pf.bBottom <= pf.vh, tag + ': in the quote card\'s first view the Book button is whole on the screen');
     }
     const before = await guardsAt(page);
     const since = await page.evaluate(() => Date.now() - window.__lfT.total);
