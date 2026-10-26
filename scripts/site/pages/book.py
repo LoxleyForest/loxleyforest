@@ -6,9 +6,21 @@ their dates here (/book?checkIn=YYYY-MM-DD&checkOut=YYYY-MM-DD). No Hostfully an
 form below it; there is no preview. The booking-inquiry Netlify form keeps its name, honeypot,
 hidden fields, every field name and its action. The header Book button goes to #book, the calendar.
 """
+import importlib.util
+import os
 import re
 
 import build_v2 as B
+
+
+def _gift_words():
+    """The Golden Arrow's lines for /book, from scripts/site/pages/gift.py WORDS (awaiting Mick),
+    as the JSON block js/gatehouse.js reads when a gift rides the link (/book#gift=)."""
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'gift.py')
+    spec = importlib.util.spec_from_file_location('lfpage_gift_for_book', path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod.words_block(mod.BOOK_KEYS)
 
 
 def tidy(head):
@@ -86,6 +98,7 @@ def page_book():
         <p>Every open night shows its rate. Pick your dates and the whole price appears, taxes included. Then book right here.</p>
       </div>
       {GATEHOUSE}
+      {_gift_words()}
       <p class="lf-bk-contact">Questions? Call or text <a href="tel:+17065024823">706-502-4823</a>, or write to <a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a>.</p>
     </section>
 

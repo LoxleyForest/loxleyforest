@@ -442,6 +442,20 @@
   var HOLD = KEYS.hold || '';
   // A credit to spend: the manage key of a cancelled stay, from its manage page (/book#credit=).
   var CREDIT = KEYS.credit || '';
+  // The Golden Arrow (2026-10-25): a gift's code from its card (/book#gift=), lifted out of the
+  // address bar by the head script like every key and kept for the session like a credit. Looked
+  // up once (GET /v1/gift), then it rides the quote and the checkout, and the engine decides
+  // (loxley-rescue ceo/golden-arrow, cdb68bc): the quote's gift_card {code, name, nights,
+  // gift_cents, due_cents, due, after_window, includes} says what it covers on these dates, with
+  // `quote` and `total` still the stay's own all-in and `plans`, `summary` and `extend` on what is
+  // left; a refusal is a sentence (404 a code it cannot find, 422 one these dates cannot use, or
+  // used, void or held). Never a beacon, never the tag manager. Its words are
+  // scripts/site/pages/gift.py WORDS (awaiting Mick), written into the page as lf-gift-words.
+  var GIFT = KEYS.gift || '';
+  var GW = (function () {
+    try { var n = document.getElementById('lf-gift-words'); return (n && JSON.parse(n.textContent)) || {}; } catch (e) { return {}; }
+  })();
+  function gw(k) { return GW[k] || ''; }
 
   var state = {
     agreement: null,
@@ -452,7 +466,12 @@
     form: {},                // what the guest typed, kept across steps
     marker: { open: false, email: '', done: false, error: '' },
     pending: null,           // a checkout already opened for these exact details
-    credit: null             // {cents, expires_on} when spending one
+    credit: null,            // {cents, expires_on} when spending one
+    gift: null,              // the Golden Arrow on the link, while it is in play
+    giftWhy: '',             // why it is not: 'missing', 'used' or 'void'
+    giftSentence: '',        // the engine's own sentence for a code it cannot find
+    giftRefused: null,       // {key, sentence}: dates the engine said this gift cannot cover
+    quoteGift: false         // whether the quote on screen was asked with the gift
   };
   var cal = null, quoteFor = '';
 
@@ -540,7 +559,8 @@
     return { api: API, visit: VISIT, unit: UNIT, check_in: cal.checkIn, check_out: cal.checkOut,
       nights: state.quote.quote.nights, total_cents: state.quote.quote.total_cents,
       guests: /^[1-6]$/.test(String(state.form.guests || '')) ? +state.form.guests : 0,
-      marker_done: !!state.marker.done, held: !!HOLD };
+      // A stay the Golden Arrow covers in full has nothing to hold: the card asks for no marker either.
+      marker_done: !!state.marker.done || (giftUsed(state.quote) > 0 && !leftToPay(state.quote)), held: !!HOLD };
   };
   window.Gatehouse.leaveMarker = function (email) {
     if (!window.Gatehouse.booking()) return Promise.reject(new Error('no stay on screen'));
@@ -642,26 +662,44 @@
     var ci = cal.checkIn, co = cal.checkOut, key = ci + '/' + co;
     if (quoteFor === key && state.quote) { if (thenPay) toCheckout(true); else render(); return; }
     state.busy = true; state.quote = null; quoteFor = key; render();
+    var withGift = !!(state.gift && !(state.giftRefused && state.giftRefused.key === key));
     // With a credit held, the engine spends it in the quote: summary comes back net of it, and
-    // credit_cents says how much it actually used on these dates.
+    // credit_cents says how much it actually used on these dates. A gift comes off first.
     call('/v1/quote?unit=' + encodeURIComponent(UNIT) + '&check_in=' + ci + '&check_out=' + co +
-      (state.credit ? '&credit=' + encodeURIComponent(CREDIT) : '') + (HOLD ? '&hold=' + encodeURIComponent(HOLD) : '')).then(function (q) {
+      (state.credit ? '&credit=' + encodeURIComponent(CREDIT) : '') + (HOLD ? '&hold=' + encodeURIComponent(HOLD) : '') +
+      (withGift ? '&gift=' + encodeURIComponent(GIFT) : '')).then(function (q) {
       if (quoteFor !== key) return;
       state.quote = q;
+      state.quoteGift = withGift;
       if (!state.payMode || (q.modes || []).indexOf(state.payMode) < 0) state.payMode = (q.modes || [])[0];
       step('gh_dates_chosen', { gh_check_in: ci, gh_check_out: co, gh_nights: q.quote.nights, value: q.quote.total_cents / 100, currency: 'USD' });
     }).catch(function (e) {
       if (quoteFor !== key) return;
+      // The engine refused the gift, not the dates: say its sentence and quote them at full price.
+      if (withGift && giftRefusal(e, key)) return 'again';
       quoteFor = '';
       if (e.status === 409) refused(e.message, ci);   // the engine refused the dates; not a lost connection
       cal.set(ci, null);
       cal.note = e.message;
       writeUrl(false);
-    }).then(function () {
+    }).then(function (r) {
+      if (r === 'again') { quoteFor = ''; return getQuote(thenPay); }
       if (quoteFor !== key && quoteFor !== '') return;
       state.busy = false;
       if (thenPay && state.quote) toCheckout(true); else render();
     });
+  }
+
+  // A quote asked with the gift and refused for the gift's sake. 404: a code the engine cannot
+  // find, set aside for the visit. 422: a gift these dates cannot use (Valentine's nights, before
+  // January 4), or one used, void or held: set aside for these dates. The engine's bare "not
+  // found" is a door that is off, never a refusal of the gift.
+  function giftRefusal(e, key) {
+    var t = e && e.body && typeof e.body.error === 'string' ? e.body.error.trim() : '';
+    if (!t || t === 'not found') return false;
+    if (e.status === 404) { state.gift = null; state.giftWhy = 'missing'; state.giftSentence = t; return true; }
+    if (e.status === 422) { state.giftRefused = { key: key, sentence: t }; return true; }
+    return false;
   }
 
   // The quote's summary for a pay mode: {today_cents, balance_cents, balance_on, change_until}.
@@ -681,20 +719,30 @@
   // The credit the engine spends on these dates (the quote's credit_cents): never the key's
   // whole balance, which these dates may not be able to use.
   function creditUsed(q) { return Math.max(0, Number(q && q.credit_cents) || 0); }
-  // Nothing to pay today: only when a credit covers it.
-  function coveredToday(q, mode) { return creditUsed(q) > 0 && !summaryFor(q, mode).today_cents; }
+  // What the Golden Arrow covers on these dates: the quote's gift_card, the engine's own figures.
+  function giftUsed(q) { return q && q.gift_card ? Math.max(0, Number(q.gift_card.gift_cents) || 0) : 0; }
+  // What is left to pay: the engine's due_cents with a gift (any credit then comes off it), else the total.
+  function leftToPay(q) {
+    var due = q.gift_card ? Number(q.gift_card.due_cents) || 0 : q.quote.total_cents;
+    return Math.max(0, due - creditUsed(q));
+  }
+  // Nothing to pay today: only when a credit or the gift covers it.
+  function coveredToday(q, mode) { return creditUsed(q) + giftUsed(q) > 0 && !summaryFor(q, mode).today_cents; }
 
   function planLine(mode, q) {
-    var s = summaryFor(q, mode), pct = (q.promise || {}).retainer_pct, used = creditUsed(q);
-    if (used && !s.today_cents && !s.balance_cents) return { title: 'Covered by your credit', sub: 'Nothing to pay, today or later.' };
+    var s = summaryFor(q, mode), pct = (q.promise || {}).retainer_pct, used = creditUsed(q) + giftUsed(q);
+    var gift = giftUsed(q) > 0, by = gift ? gw('book_name') : 'your credit';
+    if (used && !s.today_cents && !s.balance_cents) {
+      return gift ? { title: gw('book_covered_title'), sub: gw('book_nothing_left') } : { title: 'Covered by your credit', sub: 'Nothing to pay, today or later.' };
+    }
     if (mode === 'deposit') {
       return { title: 'Reserve with ' + money(s.today_cents) + ' today',
                sub: (pct ? 'A ' + pct + '% retainer deposit, non-refundable. ' : 'A retainer deposit, non-refundable. ') +
-                    (s.balance_cents ? (used ? 'After your credit, the rest, ' : 'The rest, ') + money(s.balance_cents) + ', will be charged on ' + long(s.balance_on) + '.'
-                      : used ? 'Your credit covers the rest.' : '') };
+                    (s.balance_cents ? (used ? 'After ' + by + ', the rest, ' : 'The rest, ') + money(s.balance_cents) + ', will be charged on ' + long(s.balance_on) + '.'
+                      : used ? (gift ? gw('book_name') + ' covers the rest.' : 'Your credit covers the rest.') : '') };
     }
     if (mode === 'affirm') return { title: 'Pay monthly with Affirm', sub: 'Choose a plan at checkout. Subject to approval.' };
-    return { title: used ? 'Pay in full: ' + money(s.today_cents) + ' after your credit' : 'Pay in full, ' + money(q.quote.total_cents),
+    return { title: used ? 'Pay in full: ' + money(s.today_cents) + ' after ' + by : 'Pay in full, ' + money(q.quote.total_cents),
              sub: giftLine(q.gift_if_paid_in_full) || 'Nothing more to pay.' };
   }
 
@@ -718,18 +766,40 @@
         ' Choose other dates, or call or text ' + PHONE + ' before you book.' });
   }
 
+  // The Golden Arrow on the link, in plain words, as a credit is: what it covers on these dates
+  // and what is left, or why it cannot be used here. Never full price without being told.
+  var COUNT = { 1: 'one', 2: 'two', 3: 'three' };
+  function giftNotice(q) {
+    if (!GIFT) return null;
+    function off(t) { return el('p', { 'class': 'gh-credit gh-credit--off', role: 'status', text: t }); }
+    if (!state.gift) return off(state.giftSentence ? state.giftSentence + ' ' + gw('book_full_price') : gw('book_' + (state.giftWhy || 'missing')));
+    if (!q) return el('p', { 'class': 'gh-credit gh-gift', text: gw('book_with') });
+    if (state.giftRefused && state.giftRefused.key === cal.checkIn + '/' + cal.checkOut) return off(state.giftRefused.sentence + ' ' + gw('book_full_price'));
+    var c = q.gift_card;
+    // Asked with the gift and answered without it: the engine's redeem door is off.
+    if (!c) return state.quoteGift ? off(gw('book_off')) : null;
+    var n = Number(c.nights) || 0;
+    var say = [n && q.quote.nights > n ? gw('book_covers_some').replace('{n}', COUNT[n] || String(n)) : gw('book_covers')];
+    if (c.includes) say.push(gw('book_includes').replace('{x}', String(c.includes).charAt(0).toUpperCase() + String(c.includes).slice(1)));
+    if (c.after_window) say.push(gw('book_after_window'));
+    if (!leftToPay(q)) say.push(gw('book_nothing_left'));
+    return el('p', { 'class': 'gh-credit gh-gift', role: 'status', text: say.join(' ') });
+  }
+
   function ctaText(q, mode, forDetails) {
     var s = summaryFor(q, mode);
-    if (coveredToday(q, mode)) return 'Book with your credit';
+    if (coveredToday(q, mode)) return giftUsed(q) ? gw('book_cta') : 'Book with your credit';
     if (forDetails) return 'Continue to payment · ' + money(s.today_cents) + ' today';
     return mode === 'deposit' ? 'Reserve for ' + money(s.today_cents)
       : mode === 'affirm' ? 'Continue with Affirm' : 'Book for ' + money(s.today_cents);
   }
 
-  function forgetCredit() {
+  function forgetCredit() { forgetKey('credit'); }
+  function forgetGift() { forgetKey('gift'); }
+  function forgetKey(name) {
     try {
       var st = JSON.parse(sessionStorage.getItem('gh_keys') || '{}') || {};
-      if (st['/book']) { delete st['/book'].credit; sessionStorage.setItem('gh_keys', JSON.stringify(st)); }
+      if (st['/book']) { delete st['/book'][name]; sessionStorage.setItem('gh_keys', JSON.stringify(st)); }
     } catch (e) {}
   }
 
@@ -755,6 +825,13 @@
     });
     dl.appendChild(el('dt', { 'class': 'gh-total', text: 'Total' }));
     dl.appendChild(el('dd', { 'class': 'gh-total', text: money(q.quote.total_cents) }));
+    // The Golden Arrow: what it covers on these dates, and what remains due.
+    if (giftUsed(q)) {
+      dl.appendChild(el('dt', { 'class': 'gh-gift-line', text: gw('book_name') }));
+      dl.appendChild(el('dd', { 'class': 'gh-gift-line', text: money(-giftUsed(q)) }));
+      dl.appendChild(el('dt', { 'class': 'gh-total gh-left', text: gw('book_left') }));
+      dl.appendChild(el('dd', { 'class': 'gh-total gh-left', text: money(leftToPay(q)) }));
+    }
     return dl;
   }
 
@@ -771,9 +848,12 @@
     var x = q && q.extend, n = q && q.quote && q.quote.nights, words = EXTEND_WORDS[n];
     if (!x || typeof x !== 'object' || !words || !cal.checkIn || !cal.checkOut) return null;
     var add = extendCents(x), co = addDays(cal.checkOut, 1);
+    // With the Golden Arrow the engine prices the next night against the gift: a night it
+    // covers adds nothing, and is offered as covered.
+    var free = !!(q.gift_card && Number(x.add_cents) === 0);
     // The calendar must agree the next night is open, or the tap would only meet a refusal.
-    if (!add || cal.stayOk(cal.checkIn, co)) return null;
-    return el('button', { type: 'button', 'class': 'gh-extend', text: words + ': ' + plus(add),
+    if ((!add && !free) || cal.stayOk(cal.checkIn, co)) return null;
+    return el('button', { type: 'button', 'class': 'gh-extend', text: words + ': ' + (free ? gw('book_extend_free') : plus(add)),
       onclick: function () {
         track('gh_extend', { gh_unit: UNIT, gh_nights_from: n, gh_nights: n + 1 });
         state.pending = null;
@@ -797,7 +877,8 @@
       return el('div', { 'class': 'gh-summary gh-summary--empty' }, [
         el('p', { 'class': 'gh-eyebrow', text: 'Your stay' }),
         el('p', { 'class': 'gh-lead', text: 'Choose your nights on the calendar. You see the whole price, taxes included, before we ask for a thing.' }),
-        creditNotice(null)
+        creditNotice(null),
+        giftNotice(null)
       ]);
     }
     if (!cal.checkOut) {
@@ -837,20 +918,23 @@
     // goes here, under Pay in full, once data-stripe-key holds the publishable key.
     // A credit that covers every way to pay leaves nothing to choose: one plain line instead.
     var allCovered = (q.modes || []).length && (q.modes || []).every(function (m) {
-      var sm = summaryFor(q, m); return creditUsed(q) > 0 && !sm.today_cents && !sm.balance_cents;
+      var sm = summaryFor(q, m); return creditUsed(q) + giftUsed(q) > 0 && !sm.today_cents && !sm.balance_cents;
     });
     return el('div', { 'class': 'gh-summary', 'aria-live': 'polite' }, stayHead(q).concat([
       lines(q),
+      giftNotice(q),
       extendOffer(q),
       creditNotice(q),
       allCovered ? null : plansLine(q),
-      allCovered ? el('p', { 'class': 'gh-lead gh-covered', text: 'Your credit covers this stay. Nothing to pay, today or later.' }) : options,
+      // The gift's own line above already says nothing is left; a credit says it here.
+      allCovered ? (giftUsed(q) ? null : el('p', { 'class': 'gh-lead gh-covered', text: 'Your credit covers this stay. Nothing to pay, today or later.' })) : options,
       el('button', { type: 'button', 'class': 'lf-btn gh-cta', onclick: function () { toCheckout(false); }, text: ctaText(q, state.payMode) }),
       proof(),
       // Where js/talk.js sets its card on this step (2026-10-26): in the page's flow under the
       // Book button's row, so it never covers the total, the pay choice or the button.
       el('div', { 'class': 'gh-talk-slot' }),
-      markerBlock(q)
+      // A stay the gift covers in full has nothing to hold: no trail marker.
+      giftUsed(q) && !leftToPay(q) ? null : markerBlock(q)
     ]));
   }
 
@@ -1115,6 +1199,11 @@
       dl.insertBefore(el('dd', { text: money(-creditUsed(q)) }), dl.children[2]);
       dl.insertBefore(el('dt', { text: 'Credit applied' }), dl.children[2]);
     }
+    if (giftUsed(q)) {
+      // The same for the Golden Arrow: the summary is net of what it covers.
+      dl.insertBefore(el('dd', { text: money(-giftUsed(q)) }), dl.children[2]);
+      dl.insertBefore(el('dt', { text: gw('book_name') }), dl.children[2]);
+    }
     return el('section', { 'class': 'gh-booking', 'aria-labelledby': 'gh-booking-h' }, [
       el('h3', { 'class': 'gh-eyebrow', id: 'gh-booking-h', text: 'Your booking summary' }),
       el('p', { 'class': 'gh-dates', text: span(cal.checkIn, cal.checkOut) }),
@@ -1123,7 +1212,8 @@
       changePassed(s.change_until, cal.checkIn) ? null : el('p', { 'class': 'gh-change' }, [el('span', { text: 'Last moment to move or cancel' }),
         el('strong', { text: changeUntil(s.change_until, cal.checkIn) })]),
       mode === 'full' && q.gift_if_paid_in_full ? el('p', { 'class': 'gh-fine', text: giftLine(q.gift_if_paid_in_full) }) : null,
-      CREDIT && !creditUsed(q) ? creditNotice(q) : null
+      CREDIT && !creditUsed(q) ? creditNotice(q) : null,
+      GIFT && !giftUsed(q) ? giftNotice(q) : null
     ]);
   }
 
@@ -1232,14 +1322,15 @@
     // Optional: sent only when they tapped one of the seven.
     if (HEARD.some(function (h) { return h[0] === state.form.heard_from; })) body.heard_from = state.form.heard_from;
     if (CREDIT && state.credit && creditUsed(state.quote)) body.credit = CREDIT;
+    if (GIFT && giftUsed(state.quote)) body.gift = GIFT;
     if (HOLD) { body.hold = HOLD; body.visit = VISIT; }   // the engine matches a hold to its visit
     // Same details, same dates: reuse the checkout already opened, never a second claim
     // on the guest's own nights (a retry must not lock them out). heard_from and list_opt_in are
     // left out of the key on purpose: changing either after payment opened reuses the first
     // checkout, which keeps what was sent the first time.
-    var key =[cal.checkIn, cal.checkOut, state.payMode, v.email.toLowerCase(), v.guests, v.dogs, body.credit || ''].join('|');
+    var key =[cal.checkIn, cal.checkOut, state.payMode, v.email.toLowerCase(), v.guests, v.dogs, body.credit || '', body.gift || ''].join('|');
     btn.disabled = true;
-    btn.textContent = coveredToday(state.quote, state.payMode) ? 'Booking with your credit…' : 'Opening secure payment…';
+    btn.textContent = coveredToday(state.quote, state.payMode) ? (body.gift ? gw('book_booking') : 'Booking with your credit…') : 'Opening secure payment…';
     // The booking system keeps a checkout's nights for about 35 minutes; reuse it well inside that.
     var reuse = state.pending && state.pending.key === key && Date.now() - state.pending.at < 25 * 60 * 1000;
     var opened = reuse ? Promise.resolve(state.pending.res)
@@ -1250,8 +1341,10 @@
         // Nothing to pay today (a credit covered it): the stay is booked.
         if (res.manage_token) {
           forgetCredit();
-          step('gh_booked_with_credit', { value: (res.total_cents || 0) / 100, currency: 'USD' });
-          location.href = '/manage#token=' + encodeURIComponent(res.manage_token);
+          if (body.gift) forgetGift();
+          step(body.gift ? 'gh_booked_with_gift' : 'gh_booked_with_credit', { value: (res.total_cents || 0) / 100, currency: 'USD' });
+          // A stay the gift covers whole is confirmed with no card: straight to the welcome.
+          location.href = (body.gift ? '/booked#token=' : '/manage#token=') + encodeURIComponent(res.manage_token);
           return;
         }
         throw new Error('Your booking went through with nothing to pay today. Your confirmation email is on its way. Questions? Call or text ' + PHONE + '.');
@@ -1315,9 +1408,26 @@
     return st && st.credit && st.credit.cents > 0 ? st.credit : null;
   }).catch(function () { return null; }) : Promise.resolve(null);
 
-  Promise.all([availability(API, UNIT, HOLD ? '&hold=' + encodeURIComponent(HOLD) : ''), agreementCall, creditCall]).then(function (res) {
+  // The Golden Arrow on the link, looked up once: issued, it is in play; redeemed or void, it is
+  // set aside with a plain line; a code the engine cannot find, with the engine's own sentence.
+  // The lookup door off (the bare "not found"), a busy engine or no answer: it stays in play and
+  // the quote decides.
+  var giftCall = GIFT && !HANDOFF ? call('/v1/gift?code=' + encodeURIComponent(GIFT)).then(function (g) {
+    var st = String((g && g.status) || '').toLowerCase();
+    if (g && g.product === 'golden-arrow' && st === 'issued') return { gift: g };
+    return { why: st === 'redeemed' ? 'used' : st === 'void' ? 'void' : 'missing' };
+  }, function (e) {
+    var t = e && e.body && typeof e.body.error === 'string' ? e.body.error.trim() : '';
+    if (e && e.status === 404 && t && t !== 'not found') return { why: 'missing', sentence: t };
+    return { gift: {} };
+  }) : Promise.resolve(null);
+
+  Promise.all([availability(API, UNIT, HOLD ? '&hold=' + encodeURIComponent(HOLD) : ''), agreementCall, creditCall, giftCall]).then(function (res) {
     state.agreement = res[1];
     state.credit = res[2];
+    state.gift = (res[3] && res[3].gift) || null;
+    state.giftWhy = (res[3] && res[3].why) || '';
+    state.giftSentence = (res[3] && res[3].sentence) || '';
     cal = Calendar({ nights: res[0], onChange: onCalendar, onRefuse: refused });
     root.classList.remove('gh-loading');
     root.removeAttribute('aria-busy');
