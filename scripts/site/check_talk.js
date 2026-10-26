@@ -14,7 +14,14 @@
    (example.test).
 
    The card's email on /book runs in the mode js/talk.js ships with (CARD_EMAIL 'marker'); the
-   'hold' checks serve the same file with CARD_EMAIL set to 'hold', and say so. */
+   'hold' checks serve the same file with CARD_EMAIL set to 'hold', and say so.
+
+   The quote card (2026-10-26, the CEO's quote-card piece) is checked at 390 x 844 and 1440 x 900:
+   the card comes 30 s after the all-in total (timed in the page, from the total's first paint to
+   the card's), set into the page under the Book button's row, and never covers the total, the
+   pay choice or the Book button at any scroll; the 4.9, the five acorns and the guest line sit
+   directly under the button. With SHOTS set, quote-card-<w>x<h>-5s.png, -31s.png and
+   -31s-card.png are saved. */
 'use strict';
 const http = require('http');
 const fs = require('fs');
@@ -80,11 +87,21 @@ async function main() {
 
   async function open(opts) {
     const phone = opts.phone;
+    const size = opts.size ? { width: opts.size[0], height: opts.size[1] } : null;
     const ctx = await browser.newContext(phone
-      ? { viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: opts.reduced ? 'reduce' : 'no-preference' }
-      : { viewport: { width: 1280, height: 800 }, reducedMotion: opts.reduced ? 'reduce' : 'no-preference' });
+      ? { viewport: size || { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: opts.reduced ? 'reduce' : 'no-preference' }
+      : { viewport: size || { width: 1280, height: 800 }, reducedMotion: opts.reduced ? 'reduce' : 'no-preference' });
     const beacons = [], holds = [], markers = [], checkouts = [], avail = [], quotes = [];
     if (opts.cardSeen) await ctx.addInitScript(() => { try { sessionStorage.setItem('lf_talk', 'shown'); } catch (e) {} });
+    // The page's own clock (Playwright's) at the quote's first total and at the card's arrival,
+    // so the wait is measured from what the guest saw, not from when this check looked.
+    await ctx.addInitScript(() => {
+      const t = window.__lfT = {};
+      new MutationObserver(() => {
+        if (!t.total && document.querySelector('#gatehouse .gh-summary dd.gh-total')) t.total = Date.now();
+        if (!t.card && document.getElementById('lf-talk')) t.card = Date.now();
+      }).observe(document, { childList: true, subtree: true });
+    });
     await ctx.route('**/*', async (route) => {
       const u = new URL(route.request().url());
       if (u.hostname === '127.0.0.1') {
@@ -319,39 +336,157 @@ async function main() {
     await ctx.close();
   }
 
-  // 5. /book, phone: the all-in total on screen, checkout not begun for 10 s (was 60 s before
-  //    the date hold, 2026-10-24).
-  console.log('/book, phone 390');
-  {
-    const { ctx, page, beacons } = await open({ name: 'book-phone', phone: true });
+  // 5. /book, the quote card (2026-10-26, the CEO's quote-card piece; the wait was 10 s from
+  //    2026-10-24, 60 s before that). Mick's phone showed the card risen over the price. Now it
+  //    comes 30 s after the all-in total, set into the page under the Book button's row, and it
+  //    never covers the total, the pay choice or the Book button, at 390 x 844 and 1440 x 900.
+  //    Under the button: the 4.9 beside five acorns and one guest line, as build_v2.py writes them.
+  const QC = (() => {
+    const src = fs.readFileSync(path.join(ROOT, 'scripts/site/build_v2.py'), 'utf8');
+    const m = src.match(/^QUOTE_CARD = \('([^']+)', '([^']+)'\)/m);
+    if (!m) throw new Error('check_talk: QUOTE_CARD in scripts/site/build_v2.py moved');
+    return { line: m[1], by: m[2] };
+  })();
+  const GUARDS = [['the total', '#gatehouse .gh-summary dt.gh-total'], ['the total', '#gatehouse .gh-summary dd.gh-total'],
+    ['the pay choice', '#gatehouse .gh-options'], ['the Book button', '#gatehouse .gh-summary .gh-cta']];
+  // The quote card's first view: its top just under the header, as a guest scrolls to it.
+  async function toQuote(page) {
+    await page.evaluate(() => { const s = document.querySelector('#gatehouse .gh-summary'), h = document.querySelector('.lf-hdr').getBoundingClientRect().bottom;
+      window.scrollTo({ top: s.getBoundingClientRect().top + scrollY - h, behavior: 'instant' }); });
+    await page.clock.runFor(100); await page.waitForTimeout(150);
+  }
+  async function toCard(page) {
+    await page.evaluate(() => { const c = document.getElementById('lf-talk'), h = document.querySelector('.lf-hdr').getBoundingClientRect().bottom;
+      window.scrollTo({ top: c.getBoundingClientRect().top + scrollY - h - 16, behavior: 'instant' }); });
+    await page.clock.runFor(100); await page.waitForTimeout(150);
+  }
+  // Where the total, the pay choice and the Book button sit in the page (not the screen).
+  const guardsAt = (page) => page.evaluate((g) => g.map(([, s]) => { const r = document.querySelector(s).getBoundingClientRect(); return [Math.round(r.left), Math.round(r.top + scrollY), Math.round(r.width), Math.round(r.height)].join(); }), GUARDS);
+  // At this scroll: does the card overlap any of them, and does a tap at the middle of each one
+  // that is on the screen (below the header) land on it, not on the card?
+  const coverAt = (page) => page.evaluate((g) => {
+    const c = document.getElementById('lf-talk'), cr = c.getBoundingClientRect(), top = document.querySelector('.lf-hdr').getBoundingClientRect().bottom, out = [];
+    for (const [what, s] of g) {
+      const n = document.querySelector(s), r = n.getBoundingClientRect();
+      if (cr.left < r.right && cr.right > r.left && cr.top < r.bottom && cr.bottom > r.top) out.push(what + ' overlapped');
+      const x = r.left + r.width / 2, y = r.top + r.height / 2;
+      if (y > top + 2 && y < innerHeight - 2) { const hit = document.elementFromPoint(x, y); if (!hit || c.contains(hit) || !n.contains(hit)) out.push(what + ' covered at its middle'); }
+    }
+    return out;
+  }, GUARDS);
+  for (const [w, h] of [[390, 844], [1440, 900]]) {
+    const phone = w < 768, tag = `${w}x${h}`;
+    console.log(`/book, the quote card, ${w} x ${h}`);
+    const { ctx, page, beacons } = await open({ name: 'quote-' + w, phone, size: [w, h] });
     await bookReady(page, `/book?checkIn=${CI}&checkOut=${CO}`);
-    await page.clock.runFor(8500);
-    check(!(await card(page)), 'no card at 8.5 s with the total on screen');
-    await page.clock.runFor(2500); await settle(page);
-    check(await shown(page), 'card shown 10 s after the total, checkout not begun');
-    check(!!(await page.$('#lf-talk .lf-talk__ask #lf-talk-email')), 'it asks for an email (marker mode): one field');
-    check(await until(() => beacons.some((x) => x.step === 'card_shown' && x.path === '/book')), 'card_shown beacon with /book');
-    check((await overflow(page)) <= 0, 'no horizontal overflow at 390');
-    check(!(await overlapsAny(page, '#gatehouse .gh-cta')), 'card is clear of the checkout button');
-    await shot(page, 'phone-book-dates.png');
-    // Bring the checkout button to the card's place: the card moves up out of its way.
-    await page.evaluate(() => { const b = document.querySelector('#gatehouse .gh-cta'); const r = b.getBoundingClientRect(); window.scrollBy({ top: r.bottom - (innerHeight - 110), behavior: 'instant' }); });
-    await page.clock.runFor(100); await page.waitForTimeout(100);
-    check(!(await overlapsAny(page, '#gatehouse .gh-cta')), 'checkout button scrolled under it: still clear');
-    check(await page.evaluate(() => document.getElementById('lf-talk').classList.contains('is-top')), 'the card moved under the header');
-    await shot(page, 'phone-book-dates-cta-low.png');
+    await toQuote(page);
+    const pf = await page.evaluate(() => {
+      const b = document.querySelector('#gatehouse .gh-summary .gh-cta'), p = b.nextElementSibling;
+      if (!p || !p.classList.contains('gh-proof')) return null;
+      const rt = p.querySelector('.lf-rating'), br = b.getBoundingClientRect(), pr = p.getBoundingClientRect();
+      return { text: p.textContent, label: rt && rt.getAttribute('aria-label'), n: rt && rt.querySelector('.lf-rating__n').textContent,
+        fills: [...p.querySelectorAll('.lf-rating__acorns i')].map((i) => i.style.getPropertyValue('--f')).join(),
+        quote: p.querySelector('blockquote').textContent, by: p.querySelector('figcaption').textContent,
+        gap: Math.round(pr.top - br.bottom), h: Math.round(pr.height), bBottom: br.bottom, bTop: br.top, pBottom: pr.bottom, vh: innerHeight,
+        hdr: document.querySelector('.lf-hdr').getBoundingClientRect().bottom, size: parseFloat(getComputedStyle(p.querySelector('blockquote p')).fontSize),
+        carousel: (document.querySelector('.lf-reviews .lf-rating') || {}).outerHTML === rt.outerHTML };
+    });
+    check(!!pf, tag + ': directly under the Book button, the guest line and rating (.gh-proof)');
+    if (pf) {
+      check(pf.n === '4.9' && pf.label === 'Rated 4.9 out of 5' && pf.fills === '100%,100%,100%,100%,80.5%' && pf.carousel,
+        tag + ': 4.9 beside five acorns shaded to it, the very markup the reviews show');
+      check(pf.quote === '“' + QC.line + '”' && pf.by === QC.by, tag + ': the guest line and credit as build_v2.QUOTE_CARD has them: ' + pf.quote + ' ' + pf.by);
+      check(pf.text === '4.9' + '“' + QC.line + '”' + QC.by, tag + ': nothing else in it: no count, no platform, no other words');
+      check(pf.gap >= 8 && pf.gap <= 24 && pf.h <= 110 && pf.size <= 19, tag + ': small and quiet: ' + pf.gap + ' px under the button, ' + pf.h + ' px tall, ' + pf.size + ' px type');
+      check(pf.bTop >= pf.hdr && pf.bBottom <= pf.vh && (!phone || pf.pBottom <= pf.vh), tag + ': in the quote card\'s first view the Book button is whole on the screen' + (phone ? ', the guest line under it too' : ''));
+    }
+    const before = await guardsAt(page);
+    const since = await page.evaluate(() => Date.now() - window.__lfT.total);
+    await page.clock.runFor(5000 - since); await page.waitForTimeout(200);
+    check(!(await card(page)), tag + ': 5 s after the total: no card');
+    await shot(page, `quote-card-${tag}-5s.png`);
+    // Away from the quote (the top of the page) as the wait runs out: the card comes, unseen.
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+    const at = await page.evaluate(() => Date.now() - window.__lfT.total);
+    await page.clock.runFor(29900 - at);
+    check(!(await card(page)), tag + ': 29.9 s after the total: no card');
+    await page.clock.runFor(1500); await settle(page);
+    const waited = await page.evaluate(() => window.__lfT.card - window.__lfT.total);
+    check(await shown(page) && waited >= 30000 && waited <= 31000, tag + ': the card comes 30 s after the total (' + waited + ' ms, the page\'s clock)');
+    const place = await page.evaluate(() => {
+      const c = document.getElementById('lf-talk'), s = c.parentElement;
+      return { slot: s.classList.contains('gh-talk-slot') && !!s.closest('#gatehouse .gh-summary'), prev: s.previousElementSibling && s.previousElementSibling.className,
+        pos: getComputedStyle(c).position, inline: c.classList.contains('is-inline'), ask: !!c.querySelector('#lf-talk-email') };
+    });
+    check(place.slot && place.prev === 'gh-proof' && place.pos === 'relative' && place.inline && place.ask,
+      tag + ': set into the page, in the quote card under the Book button\'s row and the guest line (' + place.pos + '), asking for an email');
+    check((await guardsAt(page)).join('|') === before.join('|'), tag + ': the total, the pay choice and the Book button have not moved');
+    check(!beacons.some((x) => /^(card|marker)_shown$/.test(x.step)), tag + ': off the screen when it came: no card_shown, no marker_shown');
+    await toQuote(page);
+    await shot(page, `quote-card-${tag}-31s.png`);
+    const peek = await page.evaluate(() => { const r = document.querySelector('#lf-talk .lf-talk__h').getBoundingClientRect(); return r.bottom > innerHeight; });
+    await page.waitForTimeout(300);
+    if (peek) check(!beacons.some((x) => x.step === 'card_shown'), tag + ': the quote\'s first view shows the card\'s top edge only: not counted as seen');
+    // Every scroll from the first view down past the card, 40 px at a time.
+    const span = await page.evaluate(() => { const c = document.getElementById('lf-talk').getBoundingClientRect(); return { from: scrollY, to: c.bottom + scrollY - 200 }; });
+    let covered = [], steps = 0;
+    for (let y = span.from - 400; y <= span.to; y += 40) {
+      await page.evaluate((y) => window.scrollTo({ top: Math.max(0, y), behavior: 'instant' }), y);
+      await page.clock.runFor(20); steps++;
+      const c = await coverAt(page);
+      if (c.length) covered.push(Math.round(y) + ': ' + c.join(', '));
+    }
+    check(covered.length === 0, tag + `: at ${steps} scroll positions the card never covers the total, the pay choice or the Book button` + (covered.length ? ' (' + covered.slice(0, 3).join('; ') + ')' : ''));
+    await toCard(page);
+    await page.waitForTimeout(300);
+    check(await until(() => beacons.filter((x) => x.step === 'card_shown').length === 1 && beacons.filter((x) => x.step === 'marker_shown').length === 1),
+      tag + ': scrolled into view: card_shown and marker_shown, once each');
+    check((await overflow(page)) <= 0, tag + ': no horizontal overflow');
+    await shot(page, `quote-card-${tag}-31s-card.png`);
     await ctx.close();
   }
 
-  // 6. /book: starting checkout before the 10 s cancels the hold's wait.
+  // 5b. The quote card is drawn afresh when the stay changes: the card stays in it, a tap or a
+  //     finger landing to scroll does not close it, checkout floats it, coming back sets it in again.
+  console.log('/book, the card through the quote card\'s redraws');
+  {
+    const { ctx, page, beacons } = await open({ name: 'quote-redraw', phone: true });
+    await bookReady(page, `/book?checkIn=${CI}&checkOut=${CO}`);
+    await page.clock.runFor(31500); await settle(page);
+    await toCard(page);
+    const inSlot = () => page.evaluate(() => { const c = document.getElementById('lf-talk'); return !!c && c.isConnected && c.classList.contains('is-in') && !!c.closest('#gatehouse .gh-summary .gh-talk-slot'); });
+    check(await inSlot(), 'shown, in the quote card');
+    const spot = await page.evaluate(() => { const r = document.querySelector('#gatehouse .gh-marker__line').getBoundingClientRect(); return [Math.round(r.left + 20), Math.round(r.top + r.height / 2), r.top < innerHeight && r.bottom > 0]; });
+    check(spot[2], 'the line under the card is on the screen, to tap');
+    await page.touchscreen.tap(spot[0], spot[1]);
+    await page.clock.runFor(500); await page.waitForTimeout(450);
+    check(await inSlot(), 'a tap elsewhere in the page leaves it be (set into the page, it covers nothing)');
+    await page.click('#gatehouse .gh-option:last-of-type input');
+    await page.waitForTimeout(200);
+    check(await inSlot() && !(await page.$$('#lf-talk')).slice(1).length, 'pay choice changed, the quote card redrawn: the card is back in it, one card');
+    await page.click('#gatehouse .gh-summary .gh-cta');
+    await page.waitForSelector('#gatehouse .gh-form');
+    await page.waitForTimeout(200);
+    const onPay = await page.evaluate(() => { const c = document.getElementById('lf-talk'); return !!c && c.parentElement === document.body && !c.classList.contains('is-inline') && getComputedStyle(c).position === 'fixed'; });
+    check(onPay && !(await overlapsAny(page, '#gatehouse button[type="submit"]')), 'checkout begun: it floats, as on the payment step, clear of its button');
+    // Back by the browser's own back (a tap would close a floating card, as it always has).
+    await page.evaluate(() => history.back());
+    await page.waitForSelector('#gatehouse .gh-summary .gh-cta');
+    await page.waitForTimeout(200);
+    check(await inSlot(), 'back to the dates: set into the quote card again');
+    check(beacons.filter((x) => x.step === 'card_shown').length === 1, 'card_shown still once');
+    await ctx.close();
+  }
+
+  // 6. /book: starting checkout before the 30 s cancels the total's wait.
   {
     const { ctx, page } = await open({ name: 'book-begin', phone: true });
     await bookReady(page, `/book?checkIn=${CI}&checkOut=${CO}`);
-    await page.clock.runFor(6000);
+    await page.clock.runFor(25000);
     await page.click('#gatehouse .gh-cta');
     await page.waitForSelector('#gatehouse .gh-form');
     await page.clock.runFor(30000);
-    check(!(await card(page)), 'checkout begun at 6 s: no card at 36 s (idle wait starts over)');
+    check(!(await card(page)), 'checkout begun at 25 s: no card at 55 s (the idle wait starts over)');
     await ctx.close();
   }
 
@@ -459,7 +594,8 @@ async function main() {
   const cardText = (page) => page.evaluate(() => { const c = document.getElementById('lf-talk'); return c ? c.textContent.replace(/\s+/g, ' ').replace(/\s*(?=Mick built|Call or text)/g, '').trim() : ''; });
   async function askCard(page, url) {
     await bookReady(page, url || `/book?checkIn=${CI}&checkOut=${CO}`);
-    await page.clock.runFor(11000); await settle(page);
+    await page.clock.runFor(31500); await settle(page);
+    await toCard(page);   // set into the page under the Book button's row: scrolled to, it is seen
   }
   async function tapAsk(page) {
     await page.tap('#lf-talk-email');
@@ -521,10 +657,10 @@ async function main() {
     check(!(await page.$('#gatehouse dd.gh-total')) && !(await card(page)), 'dates in the link, total still adding up at 12 s: no card');
     release();
     await page.waitForSelector('#gatehouse dd.gh-total');
-    await page.clock.runFor(8500);
-    check(!(await card(page)), 'total on screen 8.5 s: no card yet');
-    await page.clock.runFor(2500); await settle(page);
-    check(await shown(page) && !!(await page.$('#lf-talk #lf-talk-email')), 'total on screen 10 s: the card, asking for an email');
+    await page.clock.runFor(29500);
+    check(!(await card(page)), 'total on screen 29.5 s: no card yet');
+    await page.clock.runFor(2000); await settle(page);
+    check(await shown(page) && !!(await page.$('#lf-talk #lf-talk-email')), 'total on screen 30 s: the card, asking for an email');
     await ctx.close();
   }
 
@@ -623,7 +759,7 @@ async function main() {
     await page.click('#gh-marker-form button[type="submit"]');
     await until(() => markers.length === 1);
     await page.waitForSelector('#gatehouse .gh-marker__done');
-    await page.clock.runFor(14000); await settle(page);
+    await page.clock.runFor(34000); await settle(page);
     check(await shown(page) && !(await page.$('#lf-talk input')) && (await cardText(page)) === TALK_ONLY, 'marker already left: the card without the email, only the call line');
     await ctx.close();
   }
@@ -635,8 +771,8 @@ async function main() {
     await page.click('#gatehouse .gh-marker .gh-link');
     await page.focus('#gh-marker-email');
     await page.keyboard.type('a');
-    await page.clock.runFor(20000);
-    check(!(await card(page)), 'cursor in the trail-marker field: no card at 20 s');
+    await page.clock.runFor(40000);
+    check(!(await card(page)), 'cursor in the trail-marker field: no card at 40 s');
     await page.evaluate(() => document.activeElement.blur());
     await page.clock.runFor(2500); await settle(page);
     check(await shown(page) && !!(await page.$('#lf-talk #lf-talk-email')), 'field left: the card, asking for an email');

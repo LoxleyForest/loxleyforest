@@ -8,8 +8,13 @@
 2. The reviews page: each entry in reviews_data.REVIEWS must be, paragraph for paragraph, the
    whole text of the review its id names in all.md, and that review must carry five stars.
    No entry may name a platform or repeat a carousel quote.
+3. The quote card on /book (2026-10-26): build_v2.QUOTE_CARD's line must sit word for word inside
+   one carousel quote, carry that quote's credit exactly, and be found verbatim in all.md; and
+   book.html's <template id="gh-proof"> must say the 4.9, that line and that credit, and nothing else.
 Exit 1 on any failure. Run it before every push that touches reviews.
 """
+import ast
+import html
 import os
 import re
 import sys
@@ -87,7 +92,30 @@ def main():
             print("REVIEWS PAGE %s (%s): %s" % (rid, credit, pr))
         page_bad += bool(problems)
     print("reviews page: %d reviews checked, %d failing" % (len(page), page_bad))
-    return 1 if bad or page_bad else 0
+
+    card_bad = []
+    src = open(os.path.join(HERE, "build_v2.py"), encoding="utf-8").read()
+    found = [n.value for n in ast.parse(src).body
+             if isinstance(n, ast.Assign) and any(getattr(t, "id", "") == "QUOTE_CARD" for t in n.targets)]
+    if len(found) != 1:
+        card_bad.append("QUOTE_CARD not found once in build_v2.py")
+    else:
+        line, credit = ast.literal_eval(found[0])
+        if not any(line in part and credit == by for q, by in carousel for part in q.split(" ... ")):
+            card_bad.append("not word for word inside a carousel quote with the credit %r" % credit)
+        if line not in text:
+            card_bad.append("not verbatim in all.md")
+        if PLATFORM.search(line + " " + credit):
+            card_bad.append("names a platform")
+        page_html = open(os.path.join(HERE, "..", "..", "book.html"), encoding="utf-8").read()
+        tpl = re.findall(r'<template id="gh-proof">(.*?)</template>', page_html, re.S)
+        said = html.unescape(re.sub(r"<[^>]+>", "", tpl[0])) if len(tpl) == 1 else None
+        if said != "4.9" + "“" + line + "”" + credit:
+            card_bad.append("book.html's quote card says %r" % said)
+    for pr in card_bad:
+        print("QUOTE CARD: " + pr)
+    print("quote card: 1 line checked, %d failing" % len(card_bad))
+    return 1 if bad or page_bad or card_bad else 0
 
 
 if __name__ == "__main__":

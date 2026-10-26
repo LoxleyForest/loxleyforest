@@ -126,6 +126,24 @@
 }
 .gh-option span span { display: block; font-size: 16px; color: var(--stone); margin-top: 2px; }
 .gh-cta { width: 100%; margin-top: 4px; }
+/* Under the Book button on /book (2026-10-26): the 4.9 beside five acorns, as the reviews show
+   it (css/v2.css .lf-rating, drawn smaller here), and one guest's line with their first name and
+   town. Small and quiet: it reassures, it does not shout. */
+.gh-proof { margin: 16px 0 0; text-align: center; }
+.gh-proof .lf-rating { margin: 0; gap: 8px; }
+.gh-proof .lf-rating__n { font-size: 1.3rem; }
+.gh-proof .lf-rating__acorns { gap: 4px; }
+.gh-proof .lf-rating__acorns i { width: 12px; height: 15px; }
+.gh-proof__q { margin: 6px 0 0; }
+.gh-proof__q blockquote { margin: 0; }
+.gh-proof__q p {
+  margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 400;
+  font-size: 18px; line-height: 1.35; color: var(--forest-deep); text-wrap: balance;
+}
+.gh-proof__q figcaption {
+  margin-top: 4px; font-family: 'Montserrat', Arial, sans-serif; font-size: 11px; font-weight: 500;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--stone);
+}
 .gh-cta:disabled { opacity: 0.55; cursor: default; transform: none; }
 /* the quiet button: never gold (gold is the Book button's alone) */
 .lf-btn.gh-btn--quiet { background: transparent; color: var(--forest-deep); border-color: var(--forest-deep); }
@@ -148,6 +166,10 @@
 .gh-booking .gh-credit--off { margin: 14px 0 0; }
 .gh-summary--empty .gh-credit { margin-top: 14px; }
 .gh-covered { margin: 0 0 18px; color: var(--forest-deep); }
+/* the Golden Arrow on /book#gift=: what it covers on these dates, and what is left (2026-10-25) */
+.gh-gift { margin-bottom: 20px; padding: 12px 14px; border: 1px solid var(--forest-deep); border-left-width: 4px; background: var(--cream); }
+.gh-lines .gh-gift-line { color: var(--forest-deep); }
+.gh-lines .gh-left { border-top: 0; padding-top: 2px; margin-top: 0; }
 
 /* ---- one more night: the quote's extend offer, one tap (never gold) ---- */
 .gh-extend {

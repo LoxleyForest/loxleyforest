@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
   <!-- Booking keys: out of the address bar before anything loads -->
   <meta name="referrer" content="strict-origin">
-  <script>(function(){var N=['token','credit','session_id','hold'],k={},f=!1,st={},p=location.pathname.replace(/\.html$/,'').replace(/(.)\/$/,'$1');
+  <script>(function(){var N=['token','credit','session_id','hold','gift','code'],k={},f=!1,st={},p=location.pathname.replace(/\.html$/,'').replace(/(.)\/$/,'$1');
   try{st=JSON.parse(sessionStorage.getItem('gh_keys')||'{}')||{}}catch(e){}
   var q=new URLSearchParams(location.search),hp=location.hash.indexOf('=')>0,h=new URLSearchParams(hp?location.hash.slice(1):'');
   N.forEach(function(n){var v=h.get(n)||q.get(n);if(q.has(n)||h.has(n)){f=!0;q.delete(n);h.delete(n)}if(v)k[n]=v});
   if(f){st[p]=k;try{sessionStorage.setItem('gh_keys',JSON.stringify(st))}catch(e){}
   var s=q.toString(),t=hp?h.toString():location.hash.slice(1);history.replaceState(history.state,'',location.pathname+(s?'?'+s:'')+(t?'#'+t:''))}
-  else{var nv=(performance.getEntriesByType&&performance.getEntriesByType('navigation')[0])||{};if(nv.type==='reload'||nv.type==='back_forward')k=st[p]||{};else if(st[p]&&st[p].credit)k={credit:st[p].credit}}
-  window.__ghKeys=k;addEventListener('hashchange',function(){if(/(^#|&)(token|credit|session_id|hold)=/.test(location.hash))location.reload()})})();</script>
+  else{var nv=(performance.getEntriesByType&&performance.getEntriesByType('navigation')[0])||{};if(nv.type==='reload'||nv.type==='back_forward')k=st[p]||{};else if(st[p]){if(st[p].credit)k.credit=st[p].credit;if(st[p].gift)k.gift=st[p].gift}}
+  window.__ghKeys=k;addEventListener('hashchange',function(){if(/(^#|&)(token|credit|session_id|hold|gift|code)=/.test(location.hash))location.reload()})})();</script>
   <!-- End booking keys -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Google Tag Manager -->
@@ -62,7 +62,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <button class="lf-menu-btn" type="button" aria-expanded="false" aria-controls="lf-menu" aria-label="Open menu"><span></span></button>
   </header>
   <div class="lf-menu" id="lf-menu" aria-hidden="true">
-    <nav aria-label="Menu"><a href="/treehouses">The Treehouse</a><a href="/experiences">Experiences</a><a href="/elopements">Elopements</a><a href="/our-story">Our Story</a><a href="/gallery">Gallery</a><a href="/local-guide">Local Guide</a><a href="/faq">Questions</a></nav>
+    <nav aria-label="Menu"><a href="/treehouses">The Treehouse</a><a href="/experiences">Experiences</a><a href="/elopements">Elopements</a><a href="/our-story">Our Story</a><a href="/gallery">Gallery</a><a href="/local-guide">Local Guide</a><a href="/faq">Questions</a><a href="/gift">The Golden Arrow</a></nav>
     <a href="#book" class="lf-btn"><svg viewBox="0 0 16 20" aria-hidden="true"><path fill="currentColor" d="M8 2.2C4.6 2.2 1.9 4.6 1.9 8H14.1C14.1 4.6 11.4 2.2 8 2.2ZM2.8 8.9H13.2C13.2 13.4 10.8 17.2 8 19.2C5.2 17.2 2.8 13.4 2.8 8.9ZM7.6 2.4C7.7 1.2 8.4 .4 9.6 .1L9.9 .7C9 1 8.5 1.6 8.5 2.4Z"/></svg>Book your dates</a>
     <p class="lf-menu__foot">Dahlonega, Georgia<br>Just over an hour from Atlanta</p>
   </div>
@@ -95,9 +95,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
            data-unit="loxley-forest-canopy-treehouse-dahlonega"
            data-stripe-key="pk_live_51RH1eh1A4HPU5uCq4EyPTq3QCk4GI5skATfj7Vy9R1irx769gSJDEuVKYFIGHkJBATGJe8xW5qomi5wqeXRWR1lz00PvCZlnNi"
            data-fallback="#gh-down"><div class="gh-wait" role="status"><div class="gh-wait__cal" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><p class="gh-wait__words">Opening the calendar: every open night and its price.</p></div><noscript><p class="lf-book__alt">The calendar needs JavaScript to run. <a href="/book#inquiry">Send us your dates</a>, or call or text <a href="tel:+17065024823">706-502-4823</a>.</p></noscript></div>
+      <template id="gh-proof"><div class="gh-proof"><p class="lf-rating" role="img" aria-label="Rated 4.9 out of 5"><span class="lf-rating__n" aria-hidden="true">4.9</span><span class="lf-rating__acorns" aria-hidden="true"><i style="--f:100%"></i><i style="--f:100%"></i><i style="--f:100%"></i><i style="--f:100%"></i><i style="--f:80.5%"></i></span></p><figure class="gh-proof__q"><blockquote><p>“This was easily one of our most memorable stays!”</p></blockquote><figcaption>James · Atlanta, GA</figcaption></figure></div></template>
       <div id="gh-down" class="lf-book__alt" hidden>
         <p>Our booking calendar isn't answering just now. Nothing is lost: <a href="#inquiry">send us your dates</a> and we'll write back within two hours, or call or text <a href="tel:+17065024823">706-502-4823</a>.</p>
       </div>
+      <script type="application/json" id="lf-gift-words">{"book_after_window": "These nights fall after May 31, 2027, so we ask only the difference.", "book_booking": "Booking with The Golden Arrow…", "book_covered_title": "Covered by The Golden Arrow", "book_covers": "The Golden Arrow covers these nights.", "book_covers_some": "The Golden Arrow covers {n} of these nights.", "book_cta": "Book with The Golden Arrow", "book_extend_free": "covered by The Golden Arrow", "book_full_price": "These dates are at full price. Call or text Mick at 706-502-4823 before you book.", "book_includes": "{x} comes with it.", "book_left": "Left to pay", "book_missing": "We could not find a Golden Arrow on your link, so these dates are at full price. If you expected one, call or text Mick at 706-502-4823 before you book.", "book_name": "The Golden Arrow", "book_nothing_left": "Nothing left to pay, today or later.", "book_off": "The Golden Arrow can’t be used online just yet, so these dates are at full price. To use it, call or text Mick at 706-502-4823.", "book_used": "The Golden Arrow on your link has been used already, so these dates are at full price. Questions? Call or text Mick at 706-502-4823.", "book_void": "The Golden Arrow on your link is no longer valid, so these dates are at full price. Questions? Call or text Mick at 706-502-4823.", "book_with": "The Golden Arrow is with you. Choose your nights, and you will see what it covers before you book.", "card_for": "For", "card_from": "With love from", "card_name": "The Golden Arrow"}</script>
       <p class="lf-bk-contact">Questions? Call or text <a href="tel:+17065024823">706-502-4823</a>, or write to <a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a>.</p>
     </section>
 
@@ -293,7 +295,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <img src="images/brand/logo/loxley-wordmark-on-dark.svg" alt="Loxley Forest" width="220" height="30" loading="lazy">
         <p style="margin-top:18px;font-size:1.1rem">Dahlonega, Georgia. Just over an hour from Atlanta.<br>42 acres of hardwood cove forest at 1,470 feet.</p>
       </div>
-      <nav aria-label="Footer"><a href="/treehouses">The Treehouse</a><a href="/experiences">Experiences</a><a href="/elopements">Elopements</a><a href="/our-story">Our Story</a><a href="/gallery">Gallery</a><a href="/local-guide">Local Guide</a><a href="/faq">Questions</a></nav>
+      <nav aria-label="Footer"><a href="/treehouses">The Treehouse</a><a href="/experiences">Experiences</a><a href="/elopements">Elopements</a><a href="/our-story">Our Story</a><a href="/gallery">Gallery</a><a href="/local-guide">Local Guide</a><a href="/faq">Questions</a><a href="/gift">The Golden Arrow</a></nav>
       <nav aria-label="Contact"><a href="https://instagram.com/loxleyforest" target="_blank" rel="noopener">Instagram</a><a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a><a href="tel:+17065024823">706-502-4823</a></nav>
       <div class="lf-foot__small"><span>&copy; 2026 Loxley Forest</span><a href="/privacy">Privacy</a><a href="/terms">Terms</a></div>
     </div>
