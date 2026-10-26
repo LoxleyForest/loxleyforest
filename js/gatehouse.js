@@ -840,8 +840,21 @@
       creditNotice(q),
       allCovered ? el('p', { 'class': 'gh-lead gh-covered', text: 'Your credit covers this stay. Nothing to pay, today or later.' }) : options,
       el('button', { type: 'button', 'class': 'lf-btn gh-cta', onclick: function () { toCheckout(false); }, text: ctaText(q, state.payMode) }),
+      proof(),
+      // Where js/talk.js sets its card on this step (2026-10-26): in the page's flow under the
+      // Book button's row, so it never covers the total, the pay choice or the button.
+      el('div', { 'class': 'gh-talk-slot' }),
       markerBlock(q)
     ]));
+  }
+
+  // Under the Book button (the CEO's quote-card piece, 2026-10-26): the 4.9 beside five acorns
+  // and one guest's line, copied from the page's own <template id="gh-proof">, which
+  // scripts/site/build_v2.py writes from the carousel's checked list (check_reviews.py proves
+  // it word for word). No template on the page, nothing shown.
+  var PROOF = document.getElementById('gh-proof');
+  function proof() {
+    return PROOF && PROOF.content ? PROOF.content.cloneNode(true) : null;
   }
 
   // ------------------------------------------------------- the trail marker

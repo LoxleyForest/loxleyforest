@@ -494,6 +494,13 @@ a[href^="tel:"] { white-space: nowrap; }
 @media (min-width: 768px) {
   .lf-talk { left: auto; right: 24px; bottom: 24px; width: 360px; }
 }
+/* is-inline (2026-10-26): on /book before checkout the card is set into the quote card, under
+   the Book button's row, in the page's flow (js/talk.js home()). Same look and words; it covers
+   nothing, so it needs no float, no shadow and no width of its own. */
+.lf-talk.is-inline {
+  position: relative; z-index: auto; inset: auto; width: auto; max-width: none;
+  margin: 20px 0 0; box-shadow: none;
+}
 @media (prefers-reduced-motion: reduce) {
   .lf-talk { transition: none; transform: none; }
 }

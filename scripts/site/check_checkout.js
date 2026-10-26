@@ -346,29 +346,31 @@ async function main() {
   }
 
   // The walk found card_shown sent while the card stood aside, hidden, because the Book button
-  // was under both of its places (js/talk.js guards()).
+  // was under both of its places (js/talk.js guards()). Since 2026-10-26 (the CEO's quote-card
+  // piece) the card comes 30 s after the total, set into the page under the Book button's row:
+  // still counted only once it can be seen, its heading whole on the screen.
   console.log('the talk card counts as shown only when it can be seen, phone 390');
   for (const close of [false, true]) {
     const { ctx, page, beacons } = await open(close ? 'card-closed' : 'card', AGREEMENT_TEXT, { clock: true });
     await page.goto(BASE + '/book?checkIn=' + CI + '&checkOut=' + CO);
     await page.waitForSelector('#gatehouse button.gh-cta', { timeout: 10000 });
-    // The Book button in the middle of the screen: under both of the card's places.
-    await page.evaluate(() => { const b = document.querySelector('#gatehouse .gh-cta').getBoundingClientRect(); window.scrollBy({ top: (b.top + b.bottom) / 2 - innerHeight / 2, behavior: 'instant' }); });
-    await page.clock.runFor(11500); await page.waitForTimeout(300); await page.clock.runFor(500); await page.waitForTimeout(300);
-    const st = await page.evaluate(() => { const c = document.getElementById('lf-talk'); return c ? { away: c.classList.contains('is-away'), in: c.classList.contains('is-in'), vis: getComputedStyle(c).visibility, ask: !!c.querySelector('.lf-talk__ask') } : null; });
+    // The Book button at the foot of the screen: the card, set in under it, is below the screen.
+    await page.evaluate(() => { const b = document.querySelector('#gatehouse .gh-cta').getBoundingClientRect(); window.scrollBy({ top: b.bottom - (innerHeight - 40), behavior: 'instant' }); });
+    await page.clock.runFor(31500); await page.waitForTimeout(300); await page.clock.runFor(500); await page.waitForTimeout(300);
+    const st = await page.evaluate(() => { const c = document.getElementById('lf-talk'); return c ? { inline: c.classList.contains('is-inline') && !!c.closest('#gatehouse .gh-talk-slot'), in: c.classList.contains('is-in'), below: c.getBoundingClientRect().top >= innerHeight, ask: !!c.querySelector('.lf-talk__ask') } : null; });
     const tag = close ? 'closed unseen: ' : '';
-    check(!!st && st.in && st.away && st.vis === 'hidden' && st.ask, tag + 'the card is up, standing aside, hidden (it asks for an email)');
+    check(!!st && st.in && st.inline && st.below && st.ask, tag + 'the card is up, set into the page under the Book button, below the screen (it asks for an email)');
     await page.waitForTimeout(400);
-    check(!beacons.some((b) => b.step === 'card_shown' || b.step === 'marker_shown'), tag + 'hidden: no card_shown and no marker_shown');
+    check(!beacons.some((b) => b.step === 'card_shown' || b.step === 'marker_shown'), tag + 'not yet seen: no card_shown and no marker_shown');
     if (close) { await page.keyboard.press('Escape'); await page.clock.runFor(500); await page.waitForTimeout(450); }
-    // The Book button scrolled off the top of the screen: the card can take its place at the foot.
-    await page.evaluate(() => { const b = document.querySelector('#gatehouse .gh-cta').getBoundingClientRect(); window.scrollBy({ top: b.bottom + 20, behavior: 'instant' }); });
+    // Scrolled down to it: its top just under the header.
+    await page.evaluate(() => { const c = document.getElementById('lf-talk') || document.querySelector('#gatehouse .gh-talk-slot'); const h = document.querySelector('.lf-hdr').getBoundingClientRect().bottom; window.scrollBy({ top: c.getBoundingClientRect().top - h - 16, behavior: 'instant' }); });
     await page.clock.runFor(200); await page.waitForTimeout(400);
     if (close) {
       check(!(await page.$('#lf-talk')) && !beacons.some((b) => b.step === 'card_shown' || b.step === 'marker_shown'), 'closed before it was ever seen: never counted as shown');
     } else {
       const seen = await page.evaluate(() => { const c = document.getElementById('lf-talk'); const r = c.getBoundingClientRect(); return !c.classList.contains('is-away') && getComputedStyle(c).visibility === 'visible' && r.top >= 0 && r.bottom <= innerHeight; });
-      check(seen, 'the Book button scrolled away: the card in view at the foot of the screen');
+      check(seen, 'scrolled down to it: the card in view under the Book button');
       check(await until(() => beacons.some((b) => b.step === 'marker_shown')), 'seen: marker_shown sent');
       const once = () => beacons.filter((b) => b.step === 'card_shown').length === 1 && beacons.filter((b) => b.step === 'marker_shown').length === 1;
       check(once(), 'seen: card_shown and marker_shown, one each');
