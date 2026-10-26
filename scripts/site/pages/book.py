@@ -42,10 +42,11 @@ DAY = [('3:00 PM', 'Turn off the paved road onto a gravel path through the fores
 
 
 # The hero's photograph (Mick, 2026-10-26: about 90 percent of visitors land on /book from Google
-# Ads; the top was plain, he wants it "super sexy ... super chic"). A phone held upright gets the lit
-# rope bridge leading to the glowing treehouse (images/EQ3A0943.webp); everything else, the glowing
-# canvas peak and the lit bridge at dusk (images/EQ3A0907.webp). The variants are made with
-# ImageMagick from those two (images/book-hero-*): webp at quality 78, a jpg for a browser without
+# Ads; the top was plain, he wants it "super sexy ... super chic"). The photograph is the one Mick
+# chose the same day: the treehouse lit at dusk at the end of the lit rope bridge (his upload,
+# 2576 x 1449). Everything but an upright phone gets the whole frame; an upright phone gets a 2:3
+# crop centred on the treehouse, the bridge coming in from the left. The variants are made with
+# ImageMagick (images/book-hero-*): webp at quality 78, a jpg for a browser without
 # webp, each under 180 KB. The phone one is preloaded as the page's largest paint; each preload's
 # media is its <source>'s, so a device fetches one photo. It is a backdrop behind the words, so
 # its alt is empty.
@@ -58,7 +59,7 @@ HERO_PHOTO = f'''<picture class="lf-bk-top__photo">
         <source media="{HERO_PHONE}" type="image/webp" srcset="{HERO_PHONE_SET}" sizes="100vw">
         <source media="{HERO_PHONE}" srcset="images/book-hero-phone-828.jpg">
         <source type="image/webp" srcset="{HERO_DESK_SET}" sizes="100vw">
-        <img src="images/book-hero-desk-1280.jpg" width="1280" height="853" alt="" fetchpriority="high">
+        <img src="images/book-hero-desk-1280.jpg" width="1280" height="720" alt="" fetchpriority="high">
       </picture>'''
 
 
@@ -273,11 +274,11 @@ CSS = '''
   }
   .lf-bk-top__photo { height: 100%; }
   .lf-bk-top__photo img { object-position: 50% 28%; }
-  .lf-bk-top .lf-wrap { width: min(36rem, 42%); margin: 0 0 0 auto; }
+  .lf-bk-top .lf-wrap { width: min(30rem, 33%); margin: 0 0 0 auto; }
   .lf-bk-top .lf-h1 { font-size: clamp(2.6rem, 5vw, 4.8rem); }
-  .lf-bk-top .lf-lead { font-size: clamp(1.25rem, 1.9vw, 1.5rem); }
+  .lf-bk-top .lf-lead { font-size: clamp(1.25rem, 1.9vw, 1.5rem); text-wrap: balance; }
   .lf-bk-top::before {
-    background: radial-gradient(ellipse 32% 46% at 77% 40%, rgba(20, 36, 24, 0.55) 0%, rgba(20, 36, 24, 0) 100%),
+    background: radial-gradient(ellipse 30% 46% at 81% 38%, rgba(20, 36, 24, 0.55) 0%, rgba(20, 36, 24, 0) 100%),
       linear-gradient(180deg, rgba(20, 36, 24, 0.6) 0%, rgba(20, 36, 24, 0) 18%, rgba(20, 36, 24, 0) 84%, rgba(20, 36, 24, 0.7) 95%, var(--ink) 100%);
   }
 }
