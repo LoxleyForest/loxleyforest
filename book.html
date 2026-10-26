@@ -45,6 +45,8 @@
   <link rel="stylesheet" href="css/gatehouse.css">
   <link rel="stylesheet" href="css/v2.css">
   <link rel="stylesheet" href="css/v2-pages.css">
+  <link rel="preload" as="image" type="image/webp" imagesrcset="images/book-hero-phone-640.webp 640w, images/book-hero-phone-828.webp 828w, images/book-hero-phone-1080.webp 1080w" imagesizes="100vw" media="(max-width: 767px) and (orientation: portrait)" fetchpriority="high">
+  <link rel="preload" as="image" type="image/webp" imagesrcset="images/book-hero-desk-960.webp 960w, images/book-hero-desk-1280.webp 1280w, images/book-hero-desk-1620.webp 1620w" imagesizes="100vw" media="not all and (max-width: 767px) and (orientation: portrait)" fetchpriority="high">
 </head>
 <body class="v2" data-lf-path="/book" data-lf-api="https://book.loxleyforest.com">
 <!-- Google Tag Manager (noscript) -->
@@ -67,8 +69,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <main id="main">
 
-    <!-- ========== BOOK DIRECT ========== -->
+    <!-- ========== BOOK DIRECT: the bridge at night behind the words ========== -->
     <section class="lf-sec lf-dark lf-center lf-bk-top" aria-labelledby="bk-h">
+      <picture class="lf-bk-top__photo">
+        <source media="(max-width: 767px) and (orientation: portrait)" type="image/webp" srcset="images/book-hero-phone-640.webp 640w, images/book-hero-phone-828.webp 828w, images/book-hero-phone-1080.webp 1080w" sizes="100vw">
+        <source media="(max-width: 767px) and (orientation: portrait)" srcset="images/book-hero-phone-828.jpg">
+        <source type="image/webp" srcset="images/book-hero-desk-960.webp 960w, images/book-hero-desk-1280.webp 1280w, images/book-hero-desk-1620.webp 1620w" sizes="100vw">
+        <img src="images/book-hero-desk-1280.jpg" width="1280" height="720" alt="" fetchpriority="high">
+      </picture>
       <div class="lf-wrap">
         <p class="lf-eyebrow">Dahlonega, Georgia</p>
         <h1 class="lf-h1" id="bk-h">Book your stay</h1>

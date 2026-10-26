@@ -13,7 +13,7 @@
      - the full agreement is in the page and identical to agreement.md, before and after the tap
        on "Read the full agreement";
      - the short version is the agreement's own "In short" section, nothing added;
-     - the bold release beside the tick, the tick's words and the typed-name label are unchanged;
+     - the bold release lives in the full agreement only, Mick's warm opener sits above the tick (2026-10-26), the tick's words and the typed-name label are as ruled;
      - an agreement without "In short" still shows in full, as before;
      - the email is the first field; leaving it sends one lead to our own server (visit, dates,
        nights, total), once per dates and address, again for new dates at begin_checkout; and
@@ -23,7 +23,12 @@
        the pay-in-full window and a December stay (its balance line added), and focuses
        nothing; on a desktop that already showed the email box the landing is as before;
      - the talk card (js/talk.js) counts card_shown and marker_shown only once it can be seen:
-       not while it stands aside, hidden, because the Book button is under both its places.
+       not while it stands aside, hidden, because the Book button is under both its places;
+     - the pay step's five steps reach our own server once a visit a day, through the scrub:
+       pay_step_10s, pay_scrolled_summary, pay_saw_waiver, pay_field_touched (not a focus the
+       page moved) and pay_stopped with the code of the check alone; nothing typed in any of
+       them and none in the tag manager; and while the engine refuses them (400), checkout
+       still opens.
    Nothing leaves this machine: the booking API is answered here, everything else gets an empty
    answer, Stripe is never reached. */
 'use strict';
@@ -48,7 +53,8 @@ const TYPES = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascrip
   '.png': 'image/png', '.jpg': 'image/jpeg', '.json': 'application/json', '.mp4': 'video/mp4', '.webm': 'video/webm', '.woff2': 'font/woff2' };
 
 // The words exactly as they stand on the pay step today (js/gatehouse.js), never to change here.
-const TICK = 'I have read the stay agreement above and agree to it, including the release in bold.';
+const TICK = 'I have read the stay agreement above and agree to it, including the liability waiver.';
+const OPENER = "A simple liability waiver. You'll be sleeping sixty feet up in living trees, so we ask every guest to sign one. It's in the full agreement above. Tick the box to sign.";
 const TYPED = 'Type your full name to sign';
 
 function serve() {
@@ -136,7 +142,11 @@ async function main() {
         const json = (o, s) => route.fulfill({ status: s || 200, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type' }, body: JSON.stringify(o) });
         if (route.request().method() === 'OPTIONS') return json({});
         let b = {}; try { b = JSON.parse(route.request().postData() || '{}'); } catch (e) {}
-        if (u.pathname === '/v1/funnel') { beacons.push(b); return json({ ok: true }); }
+        if (u.pathname === '/v1/funnel') {
+          beacons.push(b);
+          // The engine before the pay-step deploy: an unknown step is refused.
+          return opts.refusePay && /^pay_/.test(b.step) ? json({ error: 'unknown step' }, 400) : json({ ok: true });
+        }
         if (u.pathname === '/v1/lead') { leads.push(b); return json({ ok: true }); }
         if (u.pathname === '/v1/checkout') { checkouts.push(b); return json({ error: 'not in this check' }, 503); }
         if (u.pathname === '/v1/availability') return json(NIGHTS);
@@ -149,9 +159,18 @@ async function main() {
     });
     const page = await ctx.newPage();
     page.on('pageerror', (e) => errors.push(name + ': ' + e.message));
-    page.on('console', (m) => { if (m.type() === 'error') errors.push(name + ': ' + m.text()); });
+    // Chrome itself writes a refused beacon's 400 to the console, whatever the page does: those
+    // lines, from /v1/funnel only and only where the check refuses on purpose, are kept apart.
+    const refusedLines = [], mockedLines = [];
+    page.on('console', (m) => {
+      if (m.type() !== 'error') return;
+      const from = (m.location() && m.location().url) || '';
+      if (opts.refusePay && /\/v1\/funnel$/.test(from) && /status of 400/.test(m.text())) refusedLines.push(from);
+      else if (/\/v1\/checkout$/.test(from) && /status of 503/.test(m.text())) mockedLines.push(from);   // refused here on purpose
+      else errors.push(name + ': ' + m.text());
+    });
     if (opts.clock) await page.clock.install();
-    return { ctx, page, beacons, leads, checkouts };
+    return { ctx, page, beacons, leads, checkouts, refusedLines };
   }
   // Where the page rests after a tap: scrolled until it holds still, then what is in view
   // between the bottom of the fixed header and the bottom of the screen.
@@ -201,7 +220,9 @@ async function main() {
       return { short: s ? s.innerText : null, open: d ? d.open : null, summary: d ? d.querySelector('summary').textContent : null,
         fullDom: full ? full.textContent : null, closedH: d ? d.getBoundingClientRect().height : -1,
         summaryH: d ? d.querySelector('summary').getBoundingClientRect().height : -1,
-        release: [...document.querySelectorAll('.gh-sign .gh-release strong')].map((n) => n.textContent),
+        release: [...document.querySelectorAll('.gh-sign .gh-release')].length,
+        opener: (document.querySelector('.gh-sign .gh-waiver-intro') || {}).textContent,
+        fullBold: full ? [...full.querySelectorAll('strong')].map((n) => n.textContent) : [],
         tick: (document.querySelector('label.gh-agree span') || {}).textContent,
         typed: (document.querySelector('label[for="gh-typed_name"]') || {}).textContent,
         fine: [...document.querySelectorAll('.gh-terms .gh-fine')].map((n) => n.textContent),
@@ -212,7 +233,9 @@ async function main() {
     check(view.fullDom !== null && squash(view.fullDom) === squash(words(AGREEMENT_TEXT)), 'closed, the full agreement is in the page, every word of agreement.md');
     check(view.closedH > 0 && view.closedH <= view.summaryH + 1, 'closed, the full text takes no room (' + Math.round(view.closedH) + ' px, the tap line alone)');
     check(view.summaryH >= 44, 'the tap line is a 44 px target (' + Math.round(view.summaryH) + ' px)');
-    check(view.release.length === 1 && view.release[0] === releaseOf(AGREEMENT_TEXT) && view.release[0].length > 200, 'the bold release beside the tick, word for word');
+    check(view.release === 0, 'no bold release beside the tick (Mick, 2026-10-26: only in the full agreement)');
+    check(view.fullBold.some((b) => squash(b) === squash(releaseOf(AGREEMENT_TEXT))) && releaseOf(AGREEMENT_TEXT).length > 200, 'the release, bold and word for word, inside the full agreement');
+    check(view.opener === OPENER, 'Mick\'s waiver opener above the tick, word for word');
     check(view.tick === TICK, 'the tick\'s words unchanged');
     check(view.typed === TYPED, 'the typed-name label unchanged');
     check(view.fine.length === 1 && view.fine[0] === "In short, in the agreement's own words. The full text covers payment, changes, cancellations and the risks of the forest.", 'the line under the heading no longer says "Shown in full"');
@@ -357,6 +380,124 @@ async function main() {
       await page.clock.runFor(200); await page.waitForTimeout(300);
       check(once(), 'scrolled about after: still one each');
     }
+    await ctx.close();
+  }
+
+  // Why a guest leaves the pay step was not measured (2026-10-26): five steps, counts only.
+  console.log('the pay step\'s counts, phone 390 (a December stay)');
+  {
+    const { ctx, page, beacons, checkouts } = await open('pay-steps', AGREEMENT_TEXT, { clock: true, quote: stayQuote });
+    const pays = () => beacons.filter((b) => /^pay_/.test(b.step));
+    const n = (s, r) => beacons.filter((b) => b.step === s && (r === undefined || b.reason === r)).length;
+    const tick = async (ms) => { await page.clock.runFor(ms || 100); await page.waitForTimeout(250); };
+    await page.goto(BASE + '/book?checkIn=' + DEC_IN + '&checkOut=' + DEC_OUT);
+    await page.waitForSelector('#gatehouse button.gh-cta', { timeout: 10000 });
+    await page.tap('#gatehouse button.gh-cta');
+    await page.waitForSelector('#gatehouse form.gh-form', { timeout: 5000 });
+    await landing(page); await tick();
+    check(pays().length === 0, 'landed: no pay step yet (' + (pays().map((b) => b.step).join(', ') || 'none') + ')');
+    await tick(8000);
+    check(n('pay_step_10s') === 0, 'open 8 s: no pay_step_10s');
+    await tick(2500);
+    check(await until(() => n('pay_step_10s') === 1), 'open 10 s: pay_step_10s');
+
+    await page.evaluate(() => { const r = document.querySelector('.gh-booking').getBoundingClientRect(), top = document.querySelector('.lf-hdr').getBoundingClientRect().bottom; window.scrollBy({ top: r.bottom - top - 30, behavior: 'instant' }); });
+    await tick();
+    check(n('pay_scrolled_summary') === 0, 'the summary\'s foot still under the header: no pay_scrolled_summary');
+    await page.evaluate(() => window.scrollBy({ top: 40, behavior: 'instant' }));
+    await tick();
+    check(await until(() => n('pay_scrolled_summary') === 1), 'scrolled past the booking summary: pay_scrolled_summary');
+    check(n('pay_saw_waiver') === 0, 'the release still below: no pay_saw_waiver');
+    await page.evaluate(() => { const r = document.querySelector('.gh-sign .gh-waiver-intro').getBoundingClientRect(); window.scrollBy({ top: r.top - innerHeight + 20, behavior: 'instant' }); });
+    await tick();
+    check(n('pay_saw_waiver') === 0, 'the release\'s first 20 px in view: not yet');
+    await page.evaluate(() => window.scrollBy({ top: 60, behavior: 'instant' }));
+    await tick();
+    check(await until(() => n('pay_saw_waiver') === 1), 'the release in view: pay_saw_waiver');
+
+    // Continue to payment, every check in its turn; the focus each stop moves is the page's, not a touch.
+    const go = async () => { await page.tap('#gatehouse form.gh-form button[type=submit]'); await tick(); };
+    await go();
+    check(await until(() => n('pay_stopped', 'name') === 1), 'stopped by the name: pay_stopped, reason name');
+    const moved = await page.evaluate(() => document.activeElement && document.activeElement.id);
+    check(moved === 'gh-first_name' && n('pay_field_touched') === 0, 'the page moved the focus to the name: no pay_field_touched');
+    await page.fill('#gh-first_name', 'Seed'); await tick();
+    check(await until(() => n('pay_field_touched') === 1), 'the guest types in it: pay_field_touched');
+    await page.fill('#gh-last_name', 'Test'); await go();
+    check(await until(() => n('pay_stopped', 'email') === 1), 'stopped by the email: reason email');
+    await page.fill('#gh-email', EMAIL); await go();
+    check(await until(() => n('pay_stopped', 'phone') === 1), 'stopped by the phone: reason phone');
+    await page.fill('#gh-phone', '706 555 0100'); await go();
+    check(await until(() => n('pay_stopped', 'guests') === 1), 'stopped by the guests: reason guests');
+    await page.selectOption('#gh-guests', '2');
+    await page.evaluate(() => { document.getElementById('gh-dogs').value = 'none'; });   // no option: the check's own case
+    await go();
+    check(await until(() => n('pay_stopped', 'dogs') === 1), 'stopped by the dogs: reason dogs');
+    await page.selectOption('#gh-dogs', '0'); await go();
+    check(await until(() => n('pay_stopped', 'agree') === 1), 'stopped by the tick: reason agree');
+    await page.check('#gh-agree'); await go();
+    check(await until(() => n('pay_stopped', 'typed_name') === 1), 'stopped by the typed name: reason typed_name');
+    await page.fill('#gh-typed_name', 'Seed Test'); await go();
+    check(await until(() => checkouts.length === 1), 'every check met: the checkout is asked for');
+    await page.fill('#gh-first_name', ''); await go(); await page.waitForTimeout(300);
+    check(n('pay_stopped', 'name') === 1 && n('pay_stopped') === 7, 'the name again: not sent twice (seven stops, one each)');
+    check(n('pay_field_touched') === 1, 'more fields touched: still one pay_field_touched');
+
+    const visit = await page.evaluate(() => window.lfFunnel.visit);
+    const shapes = pays().every((b) => b.visit === visit && Object.keys(b).every((k) => ['visit', 'step', 'unit', 'reason'].includes(k)) && ('reason' in b) === (b.step === 'pay_stopped'));
+    check(shapes, 'each carries the visit, the step and the unit; a stop its code; nothing else');
+    const text = JSON.stringify(pays());
+    check(!/@|Seed|Test|706|555|0100/.test(text), 'nothing typed in any of them');
+    const dl = await page.evaluate(() => JSON.stringify(window.dataLayer || []));
+    check(!/pay_(step|scrolled|saw|field|stopped)/.test(dl), 'none of them in the tag manager');
+
+    // A reload in the same visit: the pay step again, from the link; nothing is sent twice today.
+    const before = pays().length;
+    await page.reload();
+    await page.waitForSelector('#gatehouse form.gh-form', { timeout: 10000 });
+    await tick(11000);
+    await page.evaluate(() => { const r = document.querySelector('.gh-sign .gh-waiver-intro').getBoundingClientRect(); window.scrollBy({ top: r.top - 100, behavior: 'instant' }); });
+    await tick(); await page.waitForTimeout(300);
+    check(pays().length === before, 'reloaded, open 11 s, scrolled to the release: nothing sent again (' + (pays().length - before) + ' more)');
+    await ctx.close();
+  }
+
+  console.log('a phone on its side (667 x 340): too short for the summary above "Who is coming"');
+  {
+    const { ctx, page, beacons } = await open('land-side', AGREEMENT_TEXT, { quote: stayQuote, viewport: { width: 667, height: 340 } });
+    await page.goto(BASE + '/book?checkIn=' + WITHIN_IN + '&checkOut=' + WITHIN_OUT);
+    await page.waitForSelector('#gatehouse button.gh-cta', { timeout: 10000 });
+    await page.tap('#gatehouse button.gh-cta');
+    await page.waitForSelector('#gatehouse form.gh-form', { timeout: 5000 });
+    const l = await landing(page);
+    await page.waitForTimeout(1700);
+    const past = await page.evaluate(() => document.querySelector('.gh-booking').getBoundingClientRect().bottom <= document.querySelector('.lf-hdr').getBoundingClientRect().bottom);
+    check(l.legend.seen && l.email.seen && !/INPUT|SELECT|TEXTAREA/.test(l.focused), '"Who is coming" and the email box in view, nothing focused (' + l.email.top + ' to ' + l.email.bottom + ' of ' + l.h + ' px)');
+    check(past && !beacons.some((b) => b.step === 'pay_scrolled_summary'), 'the page left the summary above the header: not counted as the guest scrolling past it');
+    await page.evaluate(() => window.scrollBy({ top: 120, behavior: 'instant' }));
+    check(await until(() => beacons.some((b) => b.step === 'pay_scrolled_summary')), 'the guest scrolls on: pay_scrolled_summary');
+    await ctx.close();
+  }
+
+  console.log('the engine refuses the pay steps (before its deploy): checkout still opens');
+  {
+    const { ctx, page, beacons, checkouts, refusedLines } = await open('pay-refused', AGREEMENT_TEXT, { quote: stayQuote, refusePay: true });
+    await page.goto(BASE + '/book?checkIn=' + WITHIN_IN + '&checkOut=' + WITHIN_OUT);
+    await page.waitForSelector('#gatehouse button.gh-cta', { timeout: 10000 });
+    await page.tap('#gatehouse button.gh-cta');
+    await page.waitForSelector('#gatehouse form.gh-form', { timeout: 5000 });
+    await page.tap('#gh-phone');
+    check(await until(() => beacons.some((b) => b.step === 'pay_field_touched')), 'a tap into a field, nothing typed: pay_field_touched sent (refused)');
+    await page.tap('#gatehouse form.gh-form button[type=submit]');
+    check(await until(() => beacons.some((b) => b.step === 'pay_stopped')), 'a stop sent, and refused with a 400');
+    const msg = await page.textContent('#gh-error');
+    check(msg === 'Please add your first and last name.', 'the guest still reads the check\'s own words');
+    await page.fill('#gh-first_name', 'Seed'); await page.fill('#gh-last_name', 'Test'); await page.fill('#gh-email', EMAIL);
+    await page.fill('#gh-phone', '706 555 0100'); await page.selectOption('#gh-guests', '2');
+    await page.check('#gh-agree'); await page.fill('#gh-typed_name', 'Seed Test');
+    await page.tap('#gatehouse form.gh-form button[type=submit]');
+    check(await until(() => checkouts.length === 1), 'every check met: the checkout is asked for, as before');
+    check(await until(() => refusedLines.length > 0) || beacons.some((b) => b.step === 'pay_field_touched'), 'the refused beacons were sent (' + refusedLines.length + ' 400 lines from Chrome, kept apart)');
     await ctx.close();
   }
 
