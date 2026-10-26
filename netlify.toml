@@ -1,0 +1,68 @@
+# Netlify configuration for loxleyforest.com (static multi-page site).
+#
+# The build step runs scripts/ensure_gtm.py, which guarantees the Google Tag
+# Manager container snippet is present on every HTML page of the DEPLOYED site,
+# even if a future content edit accidentally strips it from a page's source.
+# The snippet itself is defined in ONE place: scripts/ensure_gtm.py.
+# Then scripts/publish.py copies only the site into _site/, which Netlify publishes.
+
+[build]
+  # ensure_gtm.py heals the pages; publish.py copies only the site into _site/
+  # (working notes, documents and scripts are never published: 2026-10-20).
+  # check_forms.py fails the deploy if an inquiry form would not count in Google Ads (2026-10-23).
+  command = "python3 scripts/ensure_gtm.py && python3 scripts/site/check_forms.py && python3 scripts/publish.py"
+  publish = "_site"
+
+# The Canopy Club is retired (Mick, 2026-10-13); old links land on the home page.
+[[redirects]]
+  from = "/canopy-club"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/canopy-club.html"
+  to = "/"
+  status = 301
+
+# Our own checkout replaces Hostfully (Mick, 2026-10-19). The old preview checkout and the
+# cancellation page land on /book; Netlify carries the query string along, so a link that
+# held dates (?checkIn=...&checkOut=...) still opens checkout on them.
+[[redirects]]
+  from = "/stay"
+  to = "/book"
+  status = 301
+
+[[redirects]]
+  from = "/stay.html"
+  to = "/book"
+  status = 301
+
+# The terms live in the booking agreement, shown in full at checkout (Mick, 2026-10-19).
+[[redirects]]
+  from = "/cancellation"
+  to = "/book"
+  status = 301
+
+[[redirects]]
+  from = "/cancellation.html"
+  to = "/book"
+  status = 301
+
+# The Golden Arrow's card (2026-10-25): /gift/card#code=... is gift-card.html, kept at the root
+# so ensure_gtm.py and the root checks see it. A rewrite (200), so the address stays /gift/card.
+[[redirects]]
+  from = "/gift/card"
+  to = "/gift-card.html"
+  status = 200
+
+# Where Stripe returns a gift's buyer (the engine's success_url): /gift/thanks?session_id=...
+[[redirects]]
+  from = "/gift/thanks"
+  to = "/gift-thanks.html"
+  status = 200
+
+# The buyer's change page for a card emailed on a day they chose: /gift/manage#token=...
+[[redirects]]
+  from = "/gift/manage"
+  to = "/gift-manage.html"
+  status = 200
