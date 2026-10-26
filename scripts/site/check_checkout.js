@@ -32,7 +32,12 @@
        tick in view), pay_field_touched (not a focus the
        page moved) and pay_stopped with the code of the check alone; nothing typed in any of
        them and none in the tag manager; and while the engine refuses them (400), checkout
-       still opens.
+       still opens;
+     - (pending Mick's yes, 2026-10-26) the quote card at 390 x 844 puts Mick's terms first,
+       above the pay choices: a stay paid in full only reads "Paid in full today. Plans
+       change? ..." in place of the 30-day line; a deposit stay reads "Plans change? ..." with
+       its retainer line as before; a stay inside 7 days, its last moment to move gone, reads
+       "Paid in full today." and makes no move offer.
    Nothing leaves this machine: the booking API is answered here, everything else gets an empty
    answer, Stripe is never reached. */
 'use strict';
@@ -118,6 +123,15 @@ function stayQuote(ci) {
   if (!within) q.summary.deposit = { today_cents: retainer, balance_cents: total - retainer, balance_on: isoDay(bal), change_until: isoDay(bal) };
   return q;
 }
+// The quote with the engine's own change_until (gatehouse/promise.py: 11:59 PM Eastern, 7 days
+// before arrival, with its offset) on every way to pay.
+function engineQuote(ci) {
+  const q = stayQuote(ci), by = new Date(ci + 'T12:00:00Z'); by.setUTCDate(by.getUTCDate() - 7);
+  const m = by.getUTCMonth(), off = m >= 2 && m <= 9 ? '-04:00' : '-05:00';
+  Object.keys(q.summary).forEach((k) => { q.summary[k].change_until = isoDay(by) + 'T23:59:00' + off; });
+  return q;
+}
+const PLANS_CHANGE = 'Plans change? Up to 7 days out, move once, free, or keep every dollar as credit for 12 months.';
 // A December stay at least five weeks out (the walk's: a balance line on the pay step).
 const [DEC_IN, DEC_OUT] = (() => {
   const now = new Date(day(0) + 'T12:00:00Z');
@@ -203,6 +217,11 @@ async function main() {
     });
   }
   async function until(fn) { for (let i = 0; i < 30 && !fn(); i++) await new Promise((r) => setTimeout(r, 100)); return fn(); }
+  // Scrolls until the element's top sits just under the fixed header (for a screenshot).
+  async function underHeader(page, sel) {
+    await page.evaluate((s) => { const n = document.querySelector(s), h = document.querySelector('.lf-hdr').getBoundingClientRect().bottom; window.scrollBy({ top: n.getBoundingClientRect().top - h - 12, behavior: 'instant' }); }, sel);
+    await page.waitForTimeout(250);
+  }
   async function shot(page, name) { if (SHOTS) { fs.mkdirSync(SHOTS, { recursive: true }); await page.screenshot({ path: path.join(SHOTS, name), fullPage: true }); } }
   async function toPay(page, ci, co) {
     await page.goto(BASE + '/book?checkIn=' + ci + '&checkOut=' + co);
@@ -261,11 +280,8 @@ async function main() {
     check(view.fine.length === 1 && view.fine[0] === "In short, in the agreement's own words. The full text covers payment, changes, cancellations and the risks of the forest.", 'the line under the heading no longer says "Shown in full"');
     check(view.overflow <= 0, 'no sideways scroll at 390');
     await shot(page, 'pay-closed.png');
-    if (SHOTS) {
-      const box = await page.evaluate(() => { const a = document.querySelector('.gh-terms').getBoundingClientRect(), b = document.querySelector('.gh-sign').getBoundingClientRect();
-        return { x: 0, y: Math.round(a.top + window.scrollY) - 8, width: window.innerWidth, height: Math.round(b.bottom - a.top) + 16 }; });
-      await page.screenshot({ path: path.join(SHOTS, 'pay-box.png'), clip: box, fullPage: true });
-    }
+    // The pay step's box as a phone shows it: the agreement's heading just under the header.
+    if (SHOTS) { await underHeader(page, '.gh-terms'); await page.screenshot({ path: path.join(SHOTS, 'pay-box.png') }); }
     await page.tap('details.gh-agreement-full > summary');
     const opened = await page.evaluate(() => {
       const d = document.querySelector('details.gh-agreement-full'), full = d.querySelector('.gh-agreement');
@@ -367,6 +383,42 @@ async function main() {
     const l = await landing(page);
     check(l.email.seen && l.legend.seen && l.dates.seen && l.total.seen && !/INPUT|SELECT|TEXTAREA/.test(l.focused),
       '1280 x 800, December (the old landing hid the email box): "Who is coming", the email box, the dates and the total in view, nothing focused');
+    await ctx.close();
+  }
+
+  // Mick's terms first on the quote card (the book-path table, 2026-10-26; pending his yes).
+  console.log('the quote card: Mick\'s terms first, above the pay choices, phone 390 x 844');
+  for (const [what, ci, co, want, tap] of [
+    ['paid in full only (10 days out)', day(10), day(12), 'Paid in full today. ' + PLANS_CHANGE, /^Book for \$/],
+    ['deposit (December)', DEC_IN, DEC_OUT, PLANS_CHANGE, /^Reserve for \$/],
+    ['inside 7 days (5 days out)', day(5), day(7), 'Paid in full today.', /^Book for \$/]]) {
+    const { ctx, page } = await open('plans-' + what, AGREEMENT_TEXT, { quote: engineQuote });
+    await page.goto(BASE + '/book?checkIn=' + ci + '&checkOut=' + co);
+    await page.waitForSelector('#gatehouse button.gh-cta', { timeout: 10000 });
+    const c = await page.evaluate(() => {
+      const card = document.querySelector('#gatehouse .gh-summary'), line = card.querySelectorAll('.gh-plans'), opts = card.querySelector('fieldset.gh-options');
+      const legend = opts && opts.querySelector('legend'), l = line[0];
+      return { n: line.length, text: l ? l.textContent : null, next: l ? l.nextElementSibling === opts : false,
+        above: l && legend ? l.getBoundingClientRect().bottom <= legend.getBoundingClientRect().top : false,
+        firstOfPay: l ? [...card.children].indexOf(l) < [...card.children].indexOf(opts) : false,
+        modes: [...card.querySelectorAll('input[name="gh-pay"]')].map((i) => i.value).join(),
+        subs: [...card.querySelectorAll('.gh-option > span > span')].map((n) => n.textContent),
+        card: card.innerText, cta: card.querySelector('button.gh-cta').textContent,
+        shown: l ? l.getBoundingClientRect().height > 0 && getComputedStyle(l).visibility === 'visible' : false,
+        overflow: document.documentElement.scrollWidth - window.innerWidth };
+    });
+    check(tap.test(c.cta), what + ': the Book button reads "' + c.cta + '"');
+    check(c.n === 1 && c.text === want && c.shown, what + ': the line reads "' + c.text + '"');
+    check(c.next && c.above && c.firstOfPay, what + ': first, just above the pay choices ("How would you like to pay?")');
+    check(!/Stays within \d+ days of arrival are paid in full when you book\./.test(c.card), what + ': no 30-day line');
+    if (/deposit/.test(what)) {
+      check(c.modes === 'deposit,full' && c.subs.some((s) => /^A 25% retainer deposit, non-refundable\. The rest, \$[\d,.]+, will be charged on /.test(s)), what + ': the retainer line as before ("' + (c.subs[0] || '') + '")');
+    } else {
+      check(c.modes === 'full', what + ': pay in full is the only choice');
+    }
+    if (/inside 7/.test(what)) check(!/Up to 7 days out|Plans change\?/.test(c.card), what + ': the move date has passed, so no move offer anywhere on the card');
+    check(c.overflow <= 0, what + ': no sideways scroll at 390');
+    if (SHOTS) { fs.mkdirSync(SHOTS, { recursive: true }); await underHeader(page, '#gatehouse .gh-summary'); await page.screenshot({ path: path.join(SHOTS, 'card-' + what.replace(/\W+/g, '-').replace(/-+$/, '') + '.png') }); }
     await ctx.close();
   }
 

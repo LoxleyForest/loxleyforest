@@ -835,9 +835,6 @@
     });
     // TODO(cutover, Architect): Stripe's Payment Method Messaging Element ("as low as $X/month")
     // goes here, under Pay in full, once data-stripe-key holds the publishable key.
-    if ((q.modes || []).indexOf('deposit') < 0 && q.promise && q.promise.balance_days) {
-      options.appendChild(el('p', { 'class': 'gh-fine', text: 'Stays within ' + q.promise.balance_days + ' days of arrival are paid in full when you book.' }));
-    }
     // A credit that covers every way to pay leaves nothing to choose: one plain line instead.
     var allCovered = (q.modes || []).length && (q.modes || []).every(function (m) {
       var sm = summaryFor(q, m); return creditUsed(q) > 0 && !sm.today_cents && !sm.balance_cents;
@@ -846,6 +843,7 @@
       lines(q),
       extendOffer(q),
       creditNotice(q),
+      allCovered ? null : plansLine(q),
       allCovered ? el('p', { 'class': 'gh-lead gh-covered', text: 'Your credit covers this stay. Nothing to pay, today or later.' }) : options,
       el('button', { type: 'button', 'class': 'lf-btn gh-cta', onclick: function () { toCheckout(false); }, text: ctaText(q, state.payMode) }),
       proof(),
@@ -854,6 +852,19 @@
       el('div', { 'class': 'gh-talk-slot' }),
       markerBlock(q)
     ]));
+  }
+
+  // Mick's terms first on the quote card, above the pay choices (the book-path table, 2026-10-26;
+  // pending his yes). A stay paid in full only says so first, in place of the old line "Stays
+  // within 30 days of arrival are paid in full when you book." Once the last moment to move or
+  // cancel has passed (a stay inside 7 days) the move offer is not made: nothing in its place.
+  var PLANS_CHANGE = 'Plans change? Up to 7 days out, move once, free, or keep every dollar as credit for 12 months.';
+  function plansLine(q) {
+    var modes = q.modes || [], deposit = modes.indexOf('deposit') >= 0;
+    if (!deposit && modes.indexOf('full') < 0) return null;
+    var passed = changePassed(summaryFor(q, deposit ? 'deposit' : 'full').change_until, cal.checkIn);
+    var words = [deposit ? '' : 'Paid in full today.', passed ? '' : PLANS_CHANGE].filter(Boolean).join(' ');
+    return words ? el('p', { 'class': 'gh-plans', text: words }) : null;
   }
 
   // Under the Book button (the CEO's quote-card piece, 2026-10-26): the 4.9 beside five acorns

@@ -162,6 +162,8 @@
 .gh-center { text-align: center; }
 /* a credit: what it takes off, or, boxed, why these dates cannot use it */
 .gh-credit { margin: 0 0 16px; font-size: 16px; line-height: 1.5; color: var(--forest-deep); }
+/* Mick's terms, first, above the pay choices on the quote card */
+.gh-plans { margin: 0 0 14px; font-size: 16px; line-height: 1.5; color: var(--forest-deep); }
 .gh-credit--off { padding: 12px 14px; border: 1px solid #c7a27b; border-left-width: 4px; background: #fbf4ea; color: #5c3418; }
 .gh-booking .gh-credit--off { margin: 14px 0 0; }
 .gh-summary--empty .gh-credit { margin-top: 14px; }
