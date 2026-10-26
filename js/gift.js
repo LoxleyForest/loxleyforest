@@ -171,12 +171,12 @@
 
     function show(nodes) { root.replaceChildren.apply(root, nodes); }
 
-    function off(kind) {
+    function off(kind, sentence) {
       // The lead above promises a price before paying; with no way to pay here, it steps aside.
       var lead = document.querySelector('.ga-give__lead');
       if (lead) lead.hidden = true;
       show([el('div', { 'class': 'ga-panel', role: 'status' }, [
-        el('p', { 'class': 'ga-panel__lead', text: w(kind) }), callLine()])]);
+        el('p', { 'class': 'ga-panel__lead', text: sentence || w(kind) }), callLine()])]);
     }
 
     function field(id, key, label, opts) {
@@ -211,7 +211,7 @@
 
     function form() {
       var err = el('p', { 'class': 'gh-error', id: 'ga-error', role: 'alert', text: error });
-      var mail = el('input', { type: 'checkbox', id: 'ga-mail', name: 'mail', checked: f.mail ? 'checked' : null,
+      var mail = el('input', { type: 'checkbox', id: 'ga-mail', name: 'mail', checked: f.mail ? 'checked' : null, 'aria-describedby': 'ga-mail-hint',
         onchange: function (e) { f.mail = e.target.checked; ship.hidden = !f.mail; } });
       var ship = el('fieldset', { 'class': 'ga-ship', hidden: f.mail ? null : 'hidden' }, [
         el('legend', { 'class': 'gh-eyebrow', text: w('mail_label') }),
@@ -229,7 +229,8 @@
         field('ga-from', 'giver_name', w('from_label'), { hint: w('from_hint'), auto: 'name', max: 80 }),
         field('ga-email', 'email', w('email_label'), { type: 'email', auto: 'email', mode: 'email' }),
         canDeliver ? deliverBlock() : null,
-        el('label', { 'class': 'gh-optin', 'for': 'ga-mail' }, [mail, el('span', { text: w('mail_label') })]),
+        el('div', {}, [el('label', { 'class': 'gh-optin', 'for': 'ga-mail' }, [mail, el('span', { text: w('mail_label') })]),
+          el('p', { 'class': 'ga-mail-hint', id: 'ga-mail-hint', text: w('mail_hint') })]),
         ship, err, btn]);
     }
 
@@ -285,6 +286,8 @@
         confirm(res, b);
       }).catch(function (e) {
         if (routeOff(e)) return off('off');
+        // Spoken for this season (409, the engine's sales cap): its sentence, as is, in place of the panel.
+        if (e && e.status === 409 && e.body && typeof e.body.error === 'string' && e.body.error.trim()) return off('', e.body.error.trim());
         error = e && e.body && e.body.error ? said(e) : (e && e.message) || w('no_payment');
         err.textContent = error; btn.disabled = false; btn.textContent = w('continue');
       });
@@ -316,15 +319,26 @@
         pay.disabled = true; pay.textContent = w('leaving');
         // For /gift/thanks to read back how the card arrives: the choice and its moment only,
         // never an email or the note, in this tab alone.
-        try { sessionStorage.setItem('ga_deliver', JSON.stringify(b.deliver ? { to: 'them', date: b.deliver.date, hour: b.deliver.hour } : { to: 'me' })); } catch (e) {}
+        // The buyer's email rides along so the thank-you can say where it went; this tab only,
+        // never a beacon or the tag manager, and the thank-you clears it once shown.
+        var keep = b.deliver ? { to: 'them', date: b.deliver.date, hour: b.deliver.hour } : { to: 'me' };
+        keep.email = b.email; keep.printed = !!b.ship_to;
+        try { sessionStorage.setItem('ga_deliver', JSON.stringify(keep)); } catch (e) {}
         location.assign(res.url);
       } });
       var d = b.deliver, them = !!d;
       var head = el('p', { 'class': 'gh-eyebrow', tabindex: '-1', text: w('confirm_eyebrow') });
+      // The buyer's own email, seen before paying, one tap from the field to fix it.
+      var mine = el('p', { 'class': 'gh-fine ga-mine' }, [w(them ? 'confirm_to_you' : 'confirm_to_me').replace('{email}', b.email) + ' ',
+        el('button', { type: 'button', 'class': 'ga-inline', 'aria-label': w('confirm_change') + ': ' + w('email_label'), text: w('confirm_change'), onclick: function () {
+          show([form()]);
+          var x = document.getElementById('ga-email'); if (x) { x.focus(); x.select && x.select(); }
+        } })]);
       show([el('div', { 'class': 'ga-confirm' }, [
         head,
         el('p', { 'class': 'ga-confirm__names' }, [w('card_for') + ' ' + b.recipient_names, el('span', { text: w('card_from') + ' ' + b.giver_name })]),
-        el('p', { 'class': 'gh-fine', text: them ? w('confirm_them').replace('{email}', d.email).replace('{when}', whenWords(d.date, d.hour)) : w('confirm_link') }),
+        mine,
+        them ? el('p', { 'class': 'gh-fine', text: w('confirm_them').replace('{email}', d.email).replace('{when}', whenWords(d.date, d.hour)) }) : null,
         them && d.message ? el('p', { 'class': 'ga-confirm__note', 'aria-label': w('confirm_note') }, [d.message]) : null,
         b.ship_to ? el('p', { 'class': 'gh-fine', text: w('confirm_mail') + ' ' + where + '.' }) : null,
         el('div', {}, amount),
@@ -548,11 +562,18 @@
     var d = null;
     try { d = JSON.parse(sessionStorage.getItem('ga_deliver') || 'null'); } catch (e) {}
     if (!d) return;
-    var lead = root.querySelector('[data-ga-thanks-lead]'), me = root.querySelector('[data-ga-thanks-me]'), them = root.querySelector('[data-ga-thanks-them]');
+    // Shown once, then cleared: a refresh shows the general lines.
+    try { sessionStorage.removeItem('ga_deliver'); } catch (e) {}
+    var lead = root.querySelector('[data-ga-thanks-lead]'), me = root.querySelector('[data-ga-thanks-me]');
+    var you = root.querySelector('[data-ga-thanks-you]'), printed = root.querySelector('[data-ga-thanks-printed]');
+    var email = typeof d.email === 'string' && /^\S+@\S+\.\S+$/.test(d.email) ? d.email : '';
     if (d.to === 'them' && /^\d{4}-\d{2}-\d{2}$/.test(d.date || '') && d.hour >= 0 && d.hour <= 23) {
       lead.textContent = w('thanks_them').replace('{when}', whenWords(d.date, d.hour));
-      me.hidden = true; them.hidden = false;
-    } else if (d.to === 'me') lead.textContent = w('thanks_me');
+      me.hidden = true;
+      if (email) { you.textContent = w('thanks_you_at').replace('{email}', email); you.hidden = false; }
+    } else if (d.to === 'me') lead.textContent = email ? w('thanks_me').replace('{email}', email) : w('thanks_me_inbox');
+    else return;
+    if (d.printed) printed.textContent = w('thanks_printed'); else printed.hidden = true;
   }
 
   var buy = document.getElementById('ga-buy');

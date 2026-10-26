@@ -101,6 +101,7 @@ WORDS = {
     'from_hint': 'The card reads “With love from” and then this.',
     'email_label': 'Your email',
     'mail_label': 'Mail me the printed card as well',
+    'mail_hint': 'Mick hand-writes it and mails it within two business days.',      # the Critic's line, 2026-10-25
     'ship_name': 'Name on the envelope',
     'ship_line1': 'Street address',
     'ship_line2': 'Apartment or suite',
@@ -118,7 +119,9 @@ WORDS = {
     'adding': 'Adding it up…',
     'confirm_eyebrow': 'Your gift',
     'confirm_mail': 'The printed card goes to',
-    'confirm_link': 'The card and its link come to you by email once you pay.',    # LETTER
+    'confirm_to_me': 'Your card goes to {email}.',                                   # the Critic's words; LETTER
+    'confirm_to_you': 'We write to you at {email}, with a link to change the day.',  # LETTER
+    'confirm_change': 'Change',
     'total_label': 'Total',
     'all_in': 'Taxes and fees included.',
     'total_at_stripe': 'Stripe shows the whole price, taxes and fees included, before you pay.',
@@ -156,10 +159,13 @@ WORDS = {
     'thanks_eyebrow': 'The Golden Arrow',
     'thanks_h1': 'Thank you.',
     'thanks_lead': 'Your card and its link are on their way by email.',     # the CEO's words; LETTER
-    'thanks_me': 'Your card is on its way to your inbox.',                   # the CEO's words; LETTER
+    'thanks_me': 'Your card is on its way to {email}.',                     # the Critic's words; LETTER
+    'thanks_me_inbox': 'Your card is on its way to your inbox.',             # the CEO's words; LETTER
     'thanks_them': 'We\u2019ll email it to them on {when}.',                # the CEO's words; LETTER
-    'thanks_body_me': 'Send them the link when the moment is right, or print the card at home. If you asked for the printed card, we will mail it to you.',
-    'thanks_body_them': 'If you asked for the printed card as well, we will mail it to you.',
+    'thanks_you_at': 'We have written to you at {email}, with a link to change the day.',   # LETTER
+    'thanks_body_me': 'Send them the link when the moment is right, or print the card at home.',
+    'thanks_printed': 'Mick hand-writes your printed card and mails it within two business days.',
+    'thanks_printed_if': 'If you asked for the printed card, Mick hand-writes it and mails it within two business days.',
     'thanks_choose': 'When they know their dates, they call or text Mick at ' + PHONE + ', and he books them in.',
     'thanks_help': 'Anything at all, call or text Mick at ' + PHONE + '.',
 
@@ -238,9 +244,9 @@ WORDS = {
 
 # Which words each page's script reads (the JSON block the builder writes into the page).
 PANEL_KEYS = ('opening', 'off', 'down', 'call_mick', 'text_mick', 'for_label', 'for_hint', 'from_label', 'from_hint',
-              'email_label', 'mail_label', 'ship_name', 'ship_line1', 'ship_line2', 'ship_city', 'ship_state', 'ship_zip',
+              'email_label', 'mail_label', 'mail_hint', 'confirm_to_me', 'confirm_to_you', 'confirm_change', 'ship_name', 'ship_line1', 'ship_line2', 'ship_city', 'ship_state', 'ship_zip',
               'optional', 'need_for', 'need_from', 'need_email', 'need_address', 'need_state', 'need_zip', 'continue',
-              'adding', 'confirm_eyebrow', 'confirm_mail', 'confirm_link', 'total_label', 'all_in', 'total_at_stripe',
+              'adding', 'confirm_eyebrow', 'confirm_mail', 'total_label', 'all_in', 'total_at_stripe',
               'pay', 'leaving', 'change', 'pay_fine', 'no_payment', 'questions', 'deliver_legend', 'deliver_me',
               'deliver_them', 'their_email_label', 'their_email_hint', 'day_label', 'hour_label', 'picks_label',
               'pick_christmas', 'pick_valentine', 'note_label', 'note_hint', 'note_count', 'need_their_email', 'need_day',
@@ -252,7 +258,8 @@ MANAGE_KEYS = ('manage_opening', 'manage_goes', 'manage_went', 'manage_note_h', 
                'manage_save', 'manage_saving', 'manage_saved', 'manage_none', 'manage_off', 'manage_down',
                'their_email_label', 'day_label', 'hour_label', 'picks_label', 'pick_christmas', 'pick_valentine',
                'need_their_email', 'need_day', 'need_future', 'questions', 'when_christmas', 'when_valentine', 'when_at')
-THANKS_KEYS = ('thanks_lead', 'thanks_me', 'thanks_them', 'when_christmas', 'when_valentine', 'when_at')
+THANKS_KEYS = ('thanks_lead', 'thanks_me', 'thanks_me_inbox', 'thanks_them', 'thanks_you_at', 'thanks_printed',
+               'when_christmas', 'when_valentine', 'when_at')
 BOOK_KEYS = tuple(k for k in WORDS if k.startswith('book_'))
 STAY_KEYS = ('book_name', 'stay_gift_includes', 'stay_gift_move', 'stay_booked_now')
 
@@ -434,9 +441,10 @@ def page_gift_card():
 def page_gift_thanks():
     """/gift/thanks?session_id=...: where Stripe returns the buyer (the engine's success_url). The
     session id is lifted out of the address bar by the keys script before Tag Manager loads; this
-    page never reads it. js/gift.js reads back how the card arrives from this tab's sessionStorage
-    (ga_deliver {to, at}: kept by the purchase panel before Stripe, never an email or a message);
-    with none, the general line stands. Here is where a Google Ads conversion for a gift bought
+    page never reads it. js/gift.js reads back how the card arrives, the buyer's email and the
+    printed card from this tab's sessionStorage (ga_deliver: kept by the purchase panel before
+    Stripe, never the note, never sent anywhere) and clears it once shown; with none, the general
+    lines stand. Here is where a Google Ads conversion for a gift bought
     would fire (a page view of /gift/thanks): NOT added, the account's changes are Mick's clicks.
     Noindex."""
     W = WORDS
@@ -451,7 +459,8 @@ def page_gift_thanks():
           <p class="lf-lead" data-ga-thanks-lead>{e(W["thanks_lead"])}</p>
           <div class="lf-body">
           <p data-ga-thanks-me>{e(W["thanks_body_me"])}</p>
-          <p data-ga-thanks-them hidden>{e(W["thanks_body_them"])}</p>
+          <p data-ga-thanks-you hidden></p>
+          <p data-ga-thanks-printed>{e(W["thanks_printed_if"])}</p>
           <p>{e(W["thanks_choose"])}</p>
           <p>{e(W["thanks_help"])}</p>
           </div>
@@ -622,6 +631,12 @@ CSS = '''
 .ga-form .gh-field textarea:focus { outline: 2px solid var(--gold); border-color: var(--gold); }
 .ga-count { display: block; margin-top: 6px; text-align: right; font: 13px/1.3 'Montserrat', Arial, sans-serif; color: var(--stone); font-variant-numeric: tabular-nums; }
 .ga-confirm__note { margin: 0; padding: 12px 14px; border-left: 2px solid var(--gold); background: var(--cream); font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 1.15rem; line-height: 1.5; color: var(--bark); white-space: pre-line; overflow-wrap: anywhere; }
+
+.ga-mail-hint { margin: 6px 0 0 34px; font-size: 15px; line-height: 1.45; color: var(--stone); }
+.ga-mine { overflow-wrap: anywhere; }
+.ga-inline { display: inline; padding: 12px 6px; margin: -12px -6px; border: 0; background: none; cursor: pointer;
+  font: inherit; color: var(--forest-deep); text-decoration: underline; text-underline-offset: 3px; }
+.ga-inline:focus-visible { outline: 2px solid var(--forest-deep); outline-offset: 0; }
 
 /* ---- round two: the card page ---- */
 .ga-message { display: block; margin: 0; padding: 22px 24px 26px; background: var(--linen); border-top: 1px solid rgba(196, 162, 101, 0.6);

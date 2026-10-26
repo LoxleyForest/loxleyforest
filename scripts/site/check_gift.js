@@ -102,6 +102,8 @@ const RATIFIED_GIFT = 'Three nights in the treehouse, and the Dawn Table: breakf
 const NOT_FOUND = 'We could not find that gift. Please check the code on the card.';
 const BLACKOUT = 'The Golden Arrow covers any nights but Valentine\'s weekend, the nights of February 12, 13 and 14, 2027. Please choose other dates.';
 const PAY_503 = 'Payments are unavailable for a moment; nothing was charged, so please try again.';
+// The engine's sales cap (coming): its own sentence, 409.
+const SOLD = 'The Golden Arrow is spoken for this season. Call or text Mick at 706-502-4823.';
 
 // ---- made-up data
 function day(n) { const d = new Date(); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); }
@@ -215,6 +217,11 @@ async function main() {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true,
       reducedMotion: engine.reducedMotion ? 'reduce' : 'no-preference' });
     await ctx.addInitScript(() => {
+      // What the panel keeps for the thank-you, seen as it is written (it is cleared once shown).
+      try {
+        const set = Storage.prototype.setItem;
+        Storage.prototype.setItem = function (k, v) { if (k === 'ga_deliver') { try { set.call(localStorage, '__ga_kept', v); } catch (e) {} } return set.call(this, k, v); };
+      } catch (e) {}
       try { Object.defineProperty(navigator, 'share', { configurable: true, value: (d) => { window.__shared = d; return Promise.resolve(); } }); } catch (e) {}
       window.__printed = 0;
       window.print = () => { window.__printed++; };
@@ -252,6 +259,7 @@ async function main() {
           if (!b.product) { rec.probes++; return json({ error: 'A product is needed.' }, 400); }
           rec.sales.push(b);
           if (engine.sale503) return json({ error: PAY_503 }, 503);
+          if (engine.soldOut) return json({ error: SOLD }, 409);
           if (b.deliver && engine.delivery === 'off') return json({ error: DELIVERY_OFF }, 400);
           return json({ url: engine.checkoutUrl, total_cents: 254580 });
         }
@@ -493,13 +501,15 @@ async function main() {
     check(has(conf, 'Total $2,545.80') && has(conf, PANEL.all_in), 'the purchase step shows the engine\'s all-in amount (' + (conf.match(/Total \$[\d,.]+/) || [''])[0] + ')');
     check(has(conf, 'For ' + BUYER.names) && has(conf, 'With love from ' + BUYER.giver), 'and the names as the card will read');
     check(has(conf, PANEL.confirm_mail + ' ' + SHIP.name), 'and where the printed card goes');
+    check(has(conf, 'Your card goes to ' + BUYER.email + '. ' + PANEL.confirm_change), 'the buyer\'s own email, seen before paying: "Your card goes to ' + BUYER.email + '." with "Change"');
     check(!(await page.$('#ga-buy a[href*="stripe"]')), 'Stripe is reached by a button, never a link a tag could read');
     check(await overflow(page) <= 0, 'no sideways scroll at 390');
     await page.locator('#ga-buy .ga-confirm').scrollIntoViewIfNeeded();
     await shot(page, 'gift-purchase-step.png', false);
 
-    await press(page, '#ga-buy .gh-back');
+    await press(page, '#ga-buy .ga-inline');
     await page.waitForSelector('#ga-buy form');
+    check(await page.evaluate(() => document.activeElement && document.activeElement.id) === 'ga-email', '"Change": back to the form, the email field in focus');
     check(await page.inputValue('#ga-for') === BUYER.names && await page.inputValue('#ga-ship-zip') === SHIP.zip, 'back: everything typed is still there');
     await press(page, '#ga-buy button[type=submit]');
     await page.waitForSelector('#ga-buy .ga-confirm');
@@ -509,7 +519,14 @@ async function main() {
     check(rec.stripePages[0] === PAY_URL, 'pay: the buyer goes to the engine\'s Stripe page');
     await page.goto(BASE + '/gift/thanks?session_id=' + SESSION);
     await page.waitForSelector('[data-ga-thanks-lead]');
-    check(await text(page, '[data-ga-thanks-lead]') === 'Your card is on its way to your inbox.', 'back from Stripe: "Your card is on its way to your inbox."');
+    check(await text(page, '[data-ga-thanks-lead]') === 'Your card is on its way to ' + BUYER.email + '.', 'back from Stripe: "Your card is on its way to ' + BUYER.email + '."');
+    check(await text(page, '[data-ga-thanks-printed]') === 'Mick hand-writes your printed card and mails it within two business days.', 'the printed card ticked: "Mick hand-writes your printed card and mails it within two business days."');
+    check(await page.evaluate(() => sessionStorage.getItem('ga_deliver') === null), 'shown once, then cleared from the tab');
+    const kept = await page.evaluate(() => localStorage.getItem('__ga_kept') || '');
+    check(has(kept, BUYER.email) && !has(kept, BUYER.names) && !has(kept, 'Test Lane'), 'what was kept for it: the choice, the email and the printed tick, no names, no address');
+    await page.reload();
+    await page.waitForSelector('[data-ga-thanks-lead]');
+    check(await text(page, '[data-ga-thanks-lead]') === 'Your card and its link are on their way by email.' && !has(await page.evaluate(() => document.body.innerText), BUYER.email), 'a refresh: the general lines, no email');
     leaks(rec, dl, 'the purchase');
     await ctx.close();
   }
@@ -552,6 +569,8 @@ async function main() {
     const labelled = await page.evaluate(() => [...document.querySelectorAll('#ga-buy input, #ga-buy select, #ga-buy textarea')]
       .filter((n) => !(n.labels && n.labels.length) && !n.getAttribute('aria-label')).map((n) => n.id || n.name));
     await press(page, '#ga-mail');
+    check(await page.evaluate(() => { const b = document.getElementById('ga-mail'), h = document.getElementById('ga-mail-hint');
+      return !!h && b.getAttribute('aria-describedby') === 'ga-mail-hint' && h.textContent; }) === PANEL.mail_hint, 'next to "Mail me the printed card as well": "' + PANEL.mail_hint + '"');
     const labelled2 = await page.evaluate(() => [...document.querySelectorAll('#ga-buy input, #ga-buy select, #ga-buy textarea')]
       .filter((n) => !(n.labels && n.labels.length) && !n.getAttribute('aria-label')).map((n) => n.id || n.name));
     check(!labelled.length && !labelled2.length, 'every field has its label' + (labelled.concat(labelled2).length ? ': ' + labelled.concat(labelled2).join(', ') : ''));
@@ -580,7 +599,10 @@ async function main() {
     await page.goto(BASE + '/gift/thanks?session_id=' + SESSION);
     await page.waitForSelector('[data-ga-thanks-lead]');
     check(await text(page, '[data-ga-thanks-lead]') === 'We\u2019ll email it to them on Christmas morning at 7 AM.', 'the thank-you: "We\'ll email it to them on Christmas morning at 7 AM."');
-    check(await page.evaluate(() => { const v = sessionStorage.getItem('ga_deliver') || ''; return v.indexOf('@') < 0 && v.indexOf('sleep') < 0; }), 'what the thank-you reads holds no email and no note');
+    check(await text(page, '[data-ga-thanks-you]') === 'We have written to you at ' + BUYER.email + ', with a link to change the day.' &&
+      await page.evaluate(() => document.querySelector('[data-ga-thanks-printed]').hidden), 'where the buyer\'s letter went; no printed line when none was asked for');
+    const kept2 = await page.evaluate(() => localStorage.getItem('__ga_kept') || '');
+    check(!has(kept2, 'sleep') && !has(kept2, THEM) && await page.evaluate(() => sessionStorage.getItem('ga_deliver') === null), 'never the note or their email in it, and cleared once shown');
     const covT = await covered(page, '#ga-thanks');
     check(!covT.length, 'no fixed element over the thank-you\'s links' + (covT.length ? ': ' + covT.join('; ') : ''));
     await shot(page, 'gift-thanks-them.png');
@@ -598,6 +620,22 @@ async function main() {
     await press(page, '#ga-buy button[type=submit]');
     await page.waitForSelector('#ga-buy .ga-confirm', { timeout: 5000 });
     check(rec.sales.length === 1 && !('deliver' in rec.sales[0]), 'and nothing about a day is sent');
+    await ctx.close();
+  }
+
+  console.log('/gift: spoken for this season (409)');
+  {
+    const { ctx, page, rec } = await open('gift-sold', { soldOut: true });
+    await page.goto(BASE + '/gift');
+    await page.waitForSelector('#ga-buy form', { timeout: 10000 });
+    await page.fill('#ga-for', BUYER.names); await page.fill('#ga-from', BUYER.giver); await page.fill('#ga-email', BUYER.email);
+    await press(page, '#ga-buy button[type=submit]');
+    await page.waitForSelector('#ga-buy .ga-panel', { timeout: 5000 });
+    check(await text(page, '#ga-buy .ga-panel__lead') === SOLD && !(await page.$('#ga-buy form')) && !(await page.$('#ga-buy .ga-confirm')) && rec.sales.length === 1,
+      'the engine\'s sentence, as is, in place of the panel');
+    check(await page.evaluate(() => document.querySelector('.ga-give__lead').hidden), 'and the line promising a price steps aside');
+    await page.locator('#give').scrollIntoViewIfNeeded();
+    await shot(page, 'gift-sold-out.png', false);
     await ctx.close();
   }
 
