@@ -20,7 +20,12 @@
      GET  /v1/gift?code=LF-XXXX-XXXX -> {code, product, name, status
           (issued, redeemed or void), recipient_names, giver_name,
           covers, never_expires, includes, state (unused, booked or
-          used), month ("January 2027" or null)}; 404 {error}.
+          used), month ("January 2027" or null)}; 404 {error}. A gift
+          Mick gave its own window (loxley-rescue forge/gift-window,
+          `gifts extend`) also reads window {from, to, whole, line}:
+          the card's January-to-May line is not true for it, so the
+          card shows `line` in its place, or no dates line while that
+          is "" (its words wait for Mick).
      POST /v1/gift/resend {email} -> {ok, message}: one sentence,
           the same whatever the email.
      GET  /v1/gift/delivery?token= and POST /v1/gift/delivery {token,
@@ -412,6 +417,12 @@
       // reads to Mick when they call, and what the link carries.
       var no = card.querySelector('[data-ga-giftno]'), num = String(g.code || '').trim();
       if (no && num) { no.querySelector('[data-fill="giftno"]').textContent = num; no.hidden = false; }
+      // A gift with its own window: the engine's dates line for it, or none (never January to May).
+      var nights = card.querySelector('.ga-nights');
+      if (nights && g.window) {
+        var line = String(g.window.line || '').trim();
+        if (line) nights.textContent = line; else nights.hidden = true;
+      }
       wait.hidden = true; note.hidden = true;
       fig.hidden = false;
       fit(card);
