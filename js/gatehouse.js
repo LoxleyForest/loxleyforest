@@ -247,13 +247,14 @@
         // A night nobody may arrive on (the holidays): say so at the tap, not at the price.
         if (c.nights[day].no_arrival && (!c.checkIn || c.checkOut || day <= c.checkIn)) {
           c.note = 'No check-in on ' + short(day) + '. Arrive an earlier day and stay through.';
+          if (opts.onRefuse) opts.onRefuse(c.note, day);
           opts.onChange(c); return;
         }
         c.checkIn = day; c.checkOut = null;
         c.note = 'Arriving ' + short(day) + '. Now choose your check-out day.';
       } else {
         var why = c.stayOk(c.checkIn, day);
-        if (why) { c.note = why; opts.onChange(c); return; }
+        if (why) { c.note = why; if (opts.onRefuse) opts.onRefuse(why, c.checkIn); opts.onChange(c); return; }
         c.checkOut = day; c.note = '';
       }
       opts.onChange(c);
@@ -451,7 +452,9 @@
     } catch (e) { return Math.random().toString(36).slice(2); }
   })();
   var STEP_FOR = { gh_view: 'view', gh_dates_chosen: 'dates_chosen', gh_payment_mode: 'payment_mode',
-    begin_checkout: 'begin_checkout', add_payment_info: 'add_payment_info', gh_fallback_shown: 'fallback_shown' };
+    begin_checkout: 'begin_checkout', add_payment_info: 'add_payment_info', gh_fallback_shown: 'fallback_shown',
+    // 2026-10-26 (the CEO's funnel piece): the "Book these nights" tap, and dates refused, by a code.
+    gh_handoff: 'handoff', gh_quote_refused: 'quote_refused' };
 
   // Where this guest came from: a letter or trail marker (src, card), an ad (gclid and
   // friends), a campaign (utm_*). Kept for the visit, sent with the booking.
@@ -482,7 +485,22 @@
 
   // The check-in date rides on these three (the flywheel contract, 2026-10-20), so weekends and
   // weeknights can be told apart.
-  var WITH_CHECK_IN = { dates_chosen: 1, begin_checkout: 1, add_payment_info: 1 };
+  var WITH_CHECK_IN = { dates_chosen: 1, begin_checkout: 1, add_payment_info: 1, handoff: 1 };
+
+  // Why dates were refused, as one of the engine's codes (gatehouse/counts.py REFUSE_REASONS), never
+  // the sentence: taken, min_stay, no_arrival, too_far (past the last open night), other.
+  function refusedCode(why, ci) {
+    why = String(why || '');
+    if (/already taken/.test(why)) return 'taken';
+    if (/No check-in/.test(why)) return 'no_arrival';
+    if (/at least/.test(why)) return 'min_stay';
+    if (/not open/.test(why)) {
+      var last = Object.keys((cal && cal.nights) || {}).sort().pop();
+      return !last || (ci && ci > last) ? 'too_far' : 'other';
+    }
+    return 'other';
+  }
+  function refused(why, ci) { step('gh_quote_refused', { gh_reason: refusedCode(why, ci) }); }
 
   function step(event, data) {
     data = data || {};
@@ -492,7 +510,7 @@
     if (STEP_FOR[event]) {
       beacon(STEP_FOR[event], { mode: data.gh_mode || '', nights: data.gh_nights || '',
         value_cents: data.value ? Math.round(data.value * 100) : '',
-        check_in: WITH_CHECK_IN[STEP_FOR[event]] ? data.gh_check_in || '' : '' });
+        check_in: WITH_CHECK_IN[STEP_FOR[event]] ? data.gh_check_in || '' : '', reason: data.gh_reason || '' });
     }
   }
 
@@ -578,6 +596,7 @@
     if (!u.checkOut || u.checkOut <= u.checkIn) { cal.set(u.checkIn, null); if (!cal.nights[u.checkIn]) cal.set(null, null); return; }
     var why = cal.stayOk(u.checkIn, u.checkOut);
     if (why) {
+      refused(why, u.checkIn);
       cal.set(null, null);
       cal.month = parse(u.checkIn.slice(0, 8) + '01');
       cal.note = 'The dates in your link, ' + span(u.checkIn, u.checkOut) + ", can't be booked now. " + why + ' Choose other nights, or call or text ' + PHONE + '.';
@@ -620,6 +639,7 @@
     }).catch(function (e) {
       if (quoteFor !== key) return;
       quoteFor = '';
+      if (e.status === 409) refused(e.message, ci);   // the engine refused the dates; not a lost connection
       cal.set(ci, null);
       cal.note = e.message;
       writeUrl(false);
@@ -785,7 +805,7 @@
         lines(q),
         extendOffer(q),
         el('a', { 'class': 'lf-btn gh-cta', href: href, text: 'Book these nights',
-          onclick: function () { step('gh_handoff', { gh_nights: q.quote.nights, value: q.quote.total_cents / 100, currency: 'USD' }); } })
+          onclick: function () { step('gh_handoff', { gh_check_in: cal.checkIn, gh_nights: q.quote.nights, value: q.quote.total_cents / 100, currency: 'USD' }); } })
       ]));
     }
 
@@ -1137,7 +1157,7 @@
   Promise.all([availability(API, UNIT, HOLD ? '&hold=' + encodeURIComponent(HOLD) : ''), agreementCall, creditCall]).then(function (res) {
     state.agreement = res[1];
     state.credit = res[2];
-    cal = Calendar({ nights: res[0], onChange: onCalendar });
+    cal = Calendar({ nights: res[0], onChange: onCalendar, onRefuse: refused });
     root.classList.remove('gh-loading');
     root.removeAttribute('aria-busy');
     applyUrl();
