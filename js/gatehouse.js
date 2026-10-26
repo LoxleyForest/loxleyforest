@@ -908,6 +908,8 @@
   // focus: on iOS that opens the keyboard over the summary. Where the old landing (the
   // section's top) already shows the email box, as on a tall desktop, it is kept as it was.
   function landOnPay() {
+    payLanded = null;
+    payLandUntil = 0;
     var sec = root.closest('section') || root;
     if (!sec.scrollIntoView) return;
     var legend = root.querySelector('.gh-fields legend'), email = document.getElementById('gh-email');
@@ -920,14 +922,94 @@
     var view = window.innerHeight, max = Math.max(0, document.documentElement.scrollHeight - view);
     var from = docTop(legend), to = email.getBoundingClientRect().bottom + window.pageYOffset + FOOT;
     var old = Math.min(max, Math.max(0, docTop(sec) - margin));
-    if (from - old >= top && to - old <= view) { sec.scrollIntoView({ block: 'start' }); return; }
+    if (from - old >= top && to - old <= view) {
+      payLanded = Math.round(old); payLandUntil = Date.now() + 1500;
+      sec.scrollIntoView({ block: 'start' });
+      return;
+    }
     var y = from - GAP - top;      // nothing above fits: "Who is coming" just under the header
     var above = [root.querySelector('.gh-form > .gh-back'), document.getElementById('gh-booking-h'),
       root.querySelector('.gh-booking .gh-dates'), root.querySelector('.gh-booking dt.gh-total')];
     for (var i = 0; i < above.length; i++) {
       if (above[i] && to - (docTop(above[i]) - GAP) <= view - top) { y = docTop(above[i]) - GAP - top; break; }
     }
-    window.scrollTo(0, Math.min(max, Math.max(0, Math.round(y))));
+    payLanded = Math.min(max, Math.max(0, Math.round(y)));
+    payLandUntil = Date.now() + 1500;
+    window.scrollTo(0, payLanded);
+  }
+
+  // ---- the pay step, measured (2026-10-26, the CEO's pay-step piece) ----
+  // Why a guest leaves the pay step before the first field was not measured. Five steps go to
+  // our own booking server through the page beacon's scrub, each once a visit a day (and the
+  // engine counts each visit once a day, gatehouse/counts.py STEP_KEYS): pay_step_10s (the step
+  // open 10 s, the tab in front), pay_scrolled_summary (the booking summary scrolled above the
+  // header), pay_saw_waiver (the release or the tick in view), pay_field_touched (the guest's
+  // first focus on a field, or the first thing typed or chosen in one; a focus this page moves
+  // is not a touch), pay_stopped (a "Continue to payment" tap a check stopped, with the field's
+  // code alone). Never a word or a value the guest typed, never
+  // the tag manager. A server that does not know a step refuses it and the beacon never looks
+  // at the answer, so nothing here can stand in the way of a booking.
+  var PAY_OPEN_S = 10, PAY_SEEN_PX = 40;
+  var STOP_CODE = { first_name: 'name', last_name: 'name', email: 'email', phone: 'phone',
+    guests: 'guests', dogs: 'dogs', agree: 'agree', typed_name: 'typed_name' };
+  // payLanded: where landOnPay put the page, and payLandUntil the end of its (smooth) scroll
+  // there. The way there and the spot itself are the page's doing, not the guest scrolling
+  // past the summary (on a screen too short for anything above "Who is coming" the summary
+  // sits just above the header there), so neither is counted.
+  var paySent = {}, payWatch = null, ownFocus = false, payLanded = null, payLandUntil = 0;
+  function payStep(name, reason) {
+    try {
+      var d = new Date(), on = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+      var key = name + (reason ? ':' + reason : '');
+      if (paySent[key] === on) return;
+      var kept = {};
+      try { kept = JSON.parse(sessionStorage.getItem('gh_pay_steps') || '{}') || {}; } catch (e) {}
+      paySent[key] = on;
+      if (kept[key] === on) return;   // this visit sent it today, before a reload
+      kept[key] = on;
+      try { sessionStorage.setItem('gh_pay_steps', JSON.stringify(kept)); } catch (e) {}
+      beacon(name, reason ? { reason: reason } : {});
+    } catch (e) {}
+  }
+  // Some of it on screen below the header: all of it, or PAY_SEEN_PX of a taller one.
+  function inView(n) {
+    if (!n) return false;
+    var r = n.getBoundingClientRect(), top = headerBottom() || 0;
+    if (!r.height) return false;
+    return Math.min(r.bottom, window.innerHeight) - Math.max(r.top, top) >= Math.min(r.height, PAY_SEEN_PX);
+  }
+  function unwatchPay() {
+    if (!payWatch) return;
+    clearInterval(payWatch.timer);
+    window.removeEventListener('scroll', payWatch.look);
+    window.removeEventListener('resize', payWatch.look);
+    payWatch = null;
+  }
+  function watchPay() {
+    unwatchPay();
+    var secs = 0;
+    function look() {
+      if (state.step !== 'pay') return;
+      var sum = root.querySelector('.gh-booking'), top = headerBottom() || 0;
+      var at = payLanded !== null && Math.abs(window.pageYOffset - payLanded) <= 2;
+      var going = payLanded !== null && !at && Date.now() < payLandUntil;
+      if (!at && !going && sum && sum.getClientRects().length && sum.getBoundingClientRect().bottom <= top) payStep('pay_scrolled_summary');
+      if (inView(root.querySelector('.gh-sign .gh-release')) || inView(root.querySelector('label.gh-agree'))) payStep('pay_saw_waiver');
+    }
+    payWatch = { look: look, timer: setInterval(function () {
+      if (state.step !== 'pay') { unwatchPay(); return; }
+      if (document.visibilityState === 'visible' && ++secs >= PAY_OPEN_S) { clearInterval(payWatch.timer); payStep('pay_step_10s'); }
+    }, 1000) };
+    window.addEventListener('scroll', look, { passive: true });
+    window.addEventListener('resize', look, { passive: true });
+    setTimeout(look, 0);           // once the Book tap's landing has begun (toCheckout)
+  }
+  // A focus the guest gave a field, or anything they typed or chose in one (a field this page
+  // focused after a stop, then typed in, is touched).
+  function fieldTouched(e) {
+    var t = e.target;
+    if (e.type === 'focusin' && ownFocus) return;
+    if (t && /^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName)) payStep('pay_field_touched');
   }
 
   function backToDates() {
@@ -1066,6 +1148,7 @@
       submitBtn,
       el('p', { 'class': 'gh-fine gh-center', text: 'Payment is by Stripe, on this page. Questions? Call or text ' + PHONE + '.' })
     ]);
+    ['focusin', 'input', 'change'].forEach(function (t) { form.addEventListener(t, fieldTouched); });
     return el('div', { 'class': 'gh-checkout' }, [form,
       el('div', { 'class': 'gh-paying', id: 'gh-paying', hidden: 'hidden' }),
       el('div', { id: 'gh-pay', 'class': 'gh-pay' })]);
@@ -1094,7 +1177,9 @@
     if (problem) {
       err.textContent = problem;
       var f = form.elements[focus];
-      if (f && f.focus) f.focus();
+      ownFocus = true;               // this page moves the focus, not the guest: not a touch
+      try { if (f && f.focus) f.focus(); } finally { ownFocus = false; }
+      payStep('pay_stopped', STOP_CODE[focus] || '');
       return;
     }
     err.textContent = '';
@@ -1166,6 +1251,7 @@
     var wrap = el('div', { 'class': 'gh-wrap' + (state.step === 'pay' && state.quote ? ' is-checkout' : '') },
       [state.step === 'pay' && state.quote ? null : cal.render(), side]);
     root.replaceChildren(wrap);
+    if (state.step === 'pay' && state.quote) watchPay(); else unwatchPay();
   }
 
   // ------------------------------------------------------------------- boot
