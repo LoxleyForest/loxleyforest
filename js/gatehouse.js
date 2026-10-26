@@ -1023,6 +1023,9 @@
         agreement
       ]),
       el('div', { 'class': 'gh-sign' }, [
+        // Mick's opener above the release (2026-10-26, by ear: "I like that waiver opener"); the
+        // release's own words stay as they are, bold and in view (Georgia's prominence test).
+        release ? el('p', { 'class': 'gh-waiver-intro', text: "A simple liability waiver. You'll be sleeping sixty feet up in living trees, so we ask every guest to sign one. Here it is. Tick the box to sign." }) : null,
         release ? el('p', { 'class': 'gh-release' }, [el('strong', { text: release })]) : null,
         agreeLine,
         typed
