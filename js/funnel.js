@@ -21,7 +21,7 @@
 (function () {
   var body = document.body;
   var API = ((body && body.getAttribute('data-lf-api')) || '').replace(/\/$/, '');
-  var FIELDS = ['visit', 'step', 'unit', 'src', 'path', 'referrer', 'check_in', 'mode', 'nights', 'value_cents', 'ms'];
+  var FIELDS = ['visit', 'step', 'unit', 'src', 'path', 'referrer', 'check_in', 'mode', 'nights', 'value_cents', 'ms', 'reason'];
   var PLAIN = /^[A-Za-z0-9 ._:\/-]{1,120}$/;          // no = ? & # %: nothing that carries a key
   var KEYISH = /token|session|secret|credit|cs_(test|live)_/i;
   var OURS = /(^|\.)loxleyforest\.com$/i;
