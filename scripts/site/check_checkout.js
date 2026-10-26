@@ -17,7 +17,13 @@
      - an agreement without "In short" still shows in full, as before;
      - the email is the first field; leaving it sends one lead to our own server (visit, dates,
        nights, total), once per dates and address, again for new dates at begin_checkout; and
-       no beacon and no tag-manager entry ever carries the address.
+       no beacon and no tag-manager entry ever carries the address;
+     - (2026-10-26, the CEO's pay-step piece) the Book tap lands with "Who is coming" and the
+       email box in view at 390 x 844, the dates and the total above them, for a stay inside
+       the pay-in-full window and a December stay (its balance line added), and focuses
+       nothing; on a desktop that already showed the email box the landing is as before;
+     - the talk card (js/talk.js) counts card_shown and marker_shown only once it can be seen:
+       not while it stands aside, hidden, because the Book button is under both its places.
    Nothing leaves this machine: the booking API is answered here, everything else gets an empty
    answer, Stripe is never reached. */
 'use strict';
@@ -80,13 +86,33 @@ const norm = (s) => String(s).replace(/\s+/g, ' ').trim();
 
 // ---- made-up booking data (the agreement alone is real)
 function day(n) { const d = new Date(); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); }
-const NIGHTS = { nights: Array.from({ length: 150 }, (_, i) => ({ night: day(i + 1), rate_cents: 39900, min_stay: 2 })) };
+const NIGHTS = { nights: Array.from({ length: 430 }, (_, i) => ({ night: day(i + 1), rate_cents: 39900, min_stay: 2 })) };
 const CI = day(14), CO = day(16), CI2 = day(17), CO2 = day(19);
 const QUOTE = { quote: { nights: 2, total_cents: 98765, lines: [{ label: '2 nights', cents: 79800 }, { label: 'Cleaning and taxes', cents: 18965 }] },
   modes: ['deposit', 'full'], promise: { retainer_pct: 25, balance_days: 30 },
   plans: { deposit: [{ amount_cents: 24691 }, { amount_cents: 74074, due_on: day(14 - 30 + 30) }], full: [{ amount_cents: 98765 }] },
   summary: {} };
 const EMAIL = 'seed@example.net';
+// The quote in the engine's shape for its dates (gatehouse/api.py _quote_payload): inside 30
+// days, pay in full only; beyond, the retainer first, with the balance and its day.
+function isoDay(d) { return d.toISOString().slice(0, 10); }
+function stayQuote(ci) {
+  const total = 98765, retainer = 24691, within = (new Date(ci + 'T12:00:00Z') - new Date(day(0) + 'T12:00:00Z')) / 864e5 <= 30;
+  const bal = new Date(ci + 'T12:00:00Z'); bal.setUTCDate(bal.getUTCDate() - 30);
+  const q = { quote: QUOTE.quote, modes: within ? ['full'] : ['deposit', 'full'], promise: QUOTE.promise, plans: {},
+    gift_if_paid_in_full: within ? '' : 'pastry flight, first morning',
+    summary: { full: { today_cents: total, balance_cents: 0, balance_on: null, change_until: within ? null : isoDay(bal) } } };
+  if (!within) q.summary.deposit = { today_cents: retainer, balance_cents: total - retainer, balance_on: isoDay(bal), change_until: isoDay(bal) };
+  return q;
+}
+// A December stay at least five weeks out (the walk's: a balance line on the pay step).
+const [DEC_IN, DEC_OUT] = (() => {
+  const now = new Date(day(0) + 'T12:00:00Z');
+  let d = new Date(Date.UTC(now.getUTCFullYear(), 11, 11, 12));
+  if ((d - now) / 864e5 < 35) d = new Date(Date.UTC(now.getUTCFullYear() + 1, 11, 11, 12));
+  const o = new Date(d); o.setUTCDate(o.getUTCDate() + 2);
+  return [isoDay(d), isoDay(o)];
+})();
 
 let failures = 0, passes = 0;
 function check(ok, what) { if (ok) { passes++; console.log('  ok   ' + what); } else { failures++; console.log('  FAIL ' + what); } }
@@ -97,8 +123,10 @@ async function main() {
   const browser = await chromium.launch({ executablePath: EXE, args: ['--no-sandbox'] });
   const errors = [];
 
-  async function open(name, agreementText) {
-    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  async function open(name, agreementText, opts) {
+    opts = opts || {};
+    const vp = opts.viewport || { width: 390, height: 844 };
+    const ctx = await browser.newContext(vp.width < 768 ? { viewport: vp, deviceScaleFactor: 2, isMobile: true, hasTouch: true } : { viewport: vp });
     const beacons = [], leads = [], checkouts = [];
     await ctx.route('**/*', (route) => {
       const u = new URL(route.request().url());
@@ -112,7 +140,7 @@ async function main() {
         if (u.pathname === '/v1/lead') { leads.push(b); return json({ ok: true }); }
         if (u.pathname === '/v1/checkout') { checkouts.push(b); return json({ error: 'not in this check' }, 503); }
         if (u.pathname === '/v1/availability') return json(NIGHTS);
-        if (u.pathname === '/v1/quote') return json(QUOTE);
+        if (u.pathname === '/v1/quote') return json(opts.quote ? opts.quote(u.searchParams.get('check_in')) : QUOTE);
         if (u.pathname === '/v1/agreement') return json({ version: 'check', text: agreementText });
         return json({ error: 'not found' }, 404);
       }
@@ -122,7 +150,31 @@ async function main() {
     const page = await ctx.newPage();
     page.on('pageerror', (e) => errors.push(name + ': ' + e.message));
     page.on('console', (m) => { if (m.type() === 'error') errors.push(name + ': ' + m.text()); });
+    if (opts.clock) await page.clock.install();
     return { ctx, page, beacons, leads, checkouts };
+  }
+  // Where the page rests after a tap: scrolled until it holds still, then what is in view
+  // between the bottom of the fixed header and the bottom of the screen.
+  async function landing(page) {
+    let last = -1;
+    for (let i = 0; i < 40; i++) {
+      const y = await page.evaluate(() => window.scrollY);
+      if (y === last) break;
+      last = y; await page.waitForTimeout(120);
+    }
+    return page.evaluate(() => {
+      const top = document.querySelector('.lf-hdr').getBoundingClientRect().bottom, bottom = window.innerHeight;
+      const box = (s) => { const n = document.querySelector(s); if (!n) return { seen: false }; const r = n.getBoundingClientRect(); return { seen: r.height > 0 && r.top >= top && r.bottom <= bottom, top: Math.round(r.top), bottom: Math.round(r.bottom) }; };
+      const sec = document.getElementById('gatehouse').closest('section');
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const a = document.activeElement;
+      return { y: Math.round(window.scrollY), hdr: Math.round(top), h: bottom,
+        email: box('#gh-email'), legend: box('.gh-fields legend'), dates: box('.gh-booking .gh-dates'), total: box('.gh-booking dd.gh-total'),
+        legendText: (document.querySelector('.gh-fields legend') || {}).textContent,
+        balance: [...document.querySelectorAll('.gh-booking dt')].some((n) => /^Balance, will be charged on /.test(n.textContent)),
+        focused: a && a !== document.body ? a.tagName + '#' + a.id : '',
+        oldY: Math.round(Math.min(max, Math.max(0, sec.getBoundingClientRect().top + window.scrollY - parseFloat(getComputedStyle(sec).scrollMarginTop)))) };
+    });
   }
   async function until(fn) { for (let i = 0; i < 30 && !fn(); i++) await new Promise((r) => setTimeout(r, 100)); return fn(); }
   async function shot(page, name) { if (SHOTS) { fs.mkdirSync(SHOTS, { recursive: true }); await page.screenshot({ path: path.join(SHOTS, name), fullPage: true }); } }
@@ -223,6 +275,88 @@ async function main() {
     check(!v.details && !v.short, 'no short version and no tap: the full text, open');
     check(norm(v.text) === words(plain), 'every word of it shown');
     check(v.fine === 'Shown in full. It covers payment, changes, cancellations and the risks of the forest.', 'the line under the heading as before');
+    await ctx.close();
+  }
+
+  // The walk (2026-10-26): after the tap a phone landed on the section's heading and the
+  // summary, the email box at the fold (a stay inside 30 days) or below it (December).
+  console.log('the Book tap lands on "Who is coming", phone 390 x 844');
+  const WITHIN_IN = day(10), WITHIN_OUT = day(12);
+  for (const [what, ci, co, tap] of [['inside 30 days', WITHIN_IN, WITHIN_OUT, /^Book for \$/], ['December', DEC_IN, DEC_OUT, /^Reserve for \$/]]) {
+    const { ctx, page } = await open('land-' + what, AGREEMENT_TEXT, { quote: stayQuote });
+    await page.goto(BASE + '/book?checkIn=' + ci + '&checkOut=' + co);
+    await page.waitForSelector('#gatehouse button.gh-cta', { timeout: 10000 });
+    const cta = await page.textContent('#gatehouse button.gh-cta');
+    await page.tap('#gatehouse button.gh-cta');
+    await page.waitForSelector('#gatehouse form.gh-form', { timeout: 5000 });
+    const l = await landing(page);
+    check(tap.test(cta), what + ': the tap was "' + cta + '"');
+    check(what === 'December' ? l.balance : !l.balance, what === 'December' ? 'December: the summary carries its balance line' : what + ': paid in full, no balance line');
+    check(l.legend.seen && l.legendText === 'Who is coming', what + ': "Who is coming" in view (' + l.legend.top + ' px, under the header at ' + l.hdr + ')');
+    check(l.email.seen, what + ': the email box in view (' + l.email.top + ' to ' + l.email.bottom + ' of ' + l.h + ' px)');
+    check(l.dates.seen && l.total.seen && l.dates.top < l.legend.top && l.total.top < l.legend.top, what + ': the dates and the total in view above it (' + l.dates.top + ', ' + l.total.top + ' px)');
+    check(!/INPUT|SELECT|TEXTAREA/.test(l.focused), what + ': no field focused, so no keyboard opens (' + (l.focused || 'nothing') + ')');
+    await shot(page, 'land-' + what.replace(/\W+/g, '-') + '.png');
+    await ctx.close();
+  }
+  console.log('the Book tap on a desktop');
+  {
+    const { ctx, page } = await open('land-desk-tall', AGREEMENT_TEXT, { quote: stayQuote, viewport: { width: 1280, height: 1000 } });
+    await page.goto(BASE + '/book?checkIn=' + WITHIN_IN + '&checkOut=' + WITHIN_OUT);
+    await page.waitForSelector('#gatehouse button.gh-cta', { timeout: 10000 });
+    await page.click('#gatehouse button.gh-cta');
+    await page.waitForSelector('#gatehouse form.gh-form', { timeout: 5000 });
+    const l = await landing(page);
+    check(l.email.seen && Math.abs(l.y - l.oldY) <= 1, '1280 x 1000, the email box already in view: the landing as before, the section at the top (' + l.y + ' px, was ' + l.oldY + ')');
+    await ctx.close();
+  }
+  {
+    const { ctx, page } = await open('land-desk-dec', AGREEMENT_TEXT, { quote: stayQuote, viewport: { width: 1280, height: 800 } });
+    await page.goto(BASE + '/book?checkIn=' + DEC_IN + '&checkOut=' + DEC_OUT);
+    await page.waitForSelector('#gatehouse button.gh-cta', { timeout: 10000 });
+    await page.click('#gatehouse button.gh-cta');
+    await page.waitForSelector('#gatehouse form.gh-form', { timeout: 5000 });
+    const l = await landing(page);
+    check(l.email.seen && l.legend.seen && l.dates.seen && l.total.seen && !/INPUT|SELECT|TEXTAREA/.test(l.focused),
+      '1280 x 800, December (the old landing hid the email box): "Who is coming", the email box, the dates and the total in view, nothing focused');
+    await ctx.close();
+  }
+
+  // The walk found card_shown sent while the card stood aside, hidden, because the Book button
+  // was under both of its places (js/talk.js guards()).
+  console.log('the talk card counts as shown only when it can be seen, phone 390');
+  for (const close of [false, true]) {
+    const { ctx, page, beacons } = await open(close ? 'card-closed' : 'card', AGREEMENT_TEXT, { clock: true });
+    await page.goto(BASE + '/book?checkIn=' + CI + '&checkOut=' + CO);
+    await page.waitForSelector('#gatehouse button.gh-cta', { timeout: 10000 });
+    // The Book button in the middle of the screen: under both of the card's places.
+    await page.evaluate(() => { const b = document.querySelector('#gatehouse .gh-cta').getBoundingClientRect(); window.scrollBy({ top: (b.top + b.bottom) / 2 - innerHeight / 2, behavior: 'instant' }); });
+    await page.clock.runFor(11500); await page.waitForTimeout(300); await page.clock.runFor(500); await page.waitForTimeout(300);
+    const st = await page.evaluate(() => { const c = document.getElementById('lf-talk'); return c ? { away: c.classList.contains('is-away'), in: c.classList.contains('is-in'), vis: getComputedStyle(c).visibility, ask: !!c.querySelector('.lf-talk__ask') } : null; });
+    const tag = close ? 'closed unseen: ' : '';
+    check(!!st && st.in && st.away && st.vis === 'hidden' && st.ask, tag + 'the card is up, standing aside, hidden (it asks for an email)');
+    await page.waitForTimeout(400);
+    check(!beacons.some((b) => b.step === 'card_shown' || b.step === 'marker_shown'), tag + 'hidden: no card_shown and no marker_shown');
+    if (close) { await page.keyboard.press('Escape'); await page.clock.runFor(500); await page.waitForTimeout(450); }
+    // The Book button scrolled off the top of the screen: the card can take its place at the foot.
+    await page.evaluate(() => { const b = document.querySelector('#gatehouse .gh-cta').getBoundingClientRect(); window.scrollBy({ top: b.bottom + 20, behavior: 'instant' }); });
+    await page.clock.runFor(200); await page.waitForTimeout(400);
+    if (close) {
+      check(!(await page.$('#lf-talk')) && !beacons.some((b) => b.step === 'card_shown' || b.step === 'marker_shown'), 'closed before it was ever seen: never counted as shown');
+    } else {
+      const seen = await page.evaluate(() => { const c = document.getElementById('lf-talk'); const r = c.getBoundingClientRect(); return !c.classList.contains('is-away') && getComputedStyle(c).visibility === 'visible' && r.top >= 0 && r.bottom <= innerHeight; });
+      check(seen, 'the Book button scrolled away: the card in view at the foot of the screen');
+      check(await until(() => beacons.some((b) => b.step === 'marker_shown')), 'seen: marker_shown sent');
+      const once = () => beacons.filter((b) => b.step === 'card_shown').length === 1 && beacons.filter((b) => b.step === 'marker_shown').length === 1;
+      check(once(), 'seen: card_shown and marker_shown, one each');
+      const b = beacons.find((x) => x.step === 'card_shown') || {};
+      check(Object.keys(b).sort().join() === 'path,step,visit' && b.path === '/book', 'card_shown carries the visit, the step and the page, nothing else');
+      await page.evaluate(() => window.scrollBy({ top: -300, behavior: 'instant' }));
+      await page.clock.runFor(200); await page.waitForTimeout(200);
+      await page.evaluate(() => window.scrollBy({ top: 300, behavior: 'instant' }));
+      await page.clock.runFor(200); await page.waitForTimeout(300);
+      check(once(), 'scrolled about after: still one each');
+    }
     await ctx.close();
   }
 
