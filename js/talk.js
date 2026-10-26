@@ -9,13 +9,18 @@
    Loaded on /book, /elopements and /proposals by the builder
    (scripts/site/build_v2.py, TALK_PAGES). Styles at the end of
    css/v2.css. When it shows, in seconds the page is in view:
-     /book         10 s after the all-in total is on screen with
-                   checkout not begun, and then it asks for an email
-                   (2026-10-24, CARD_EMAIL below); or 90 s with no
-                   touch, key, scroll or pointer on the payment step
-                   (?step=pay), without the email (it is taken first
-                   there); it never covers a checkout button or the
-                   bottom of Stripe's form
+     /book         30 s after the all-in total is on screen with
+                   checkout not begun (2026-10-26, TOTAL_WAIT), and
+                   then it asks for an email (2026-10-24, CARD_EMAIL
+                   below); or 90 s with no touch, key, scroll or
+                   pointer on the payment step (?step=pay), without
+                   the email (it is taken first there). While the
+                   quote is on screen the card is set into the page,
+                   under the Book button's row (2026-10-26, home()),
+                   so it never covers the total, the pay choice or
+                   the button; on the payment step it floats, and
+                   never covers a checkout button or the bottom of
+                   Stripe's form
      /elopements   45 s on the page, or 60% of the way down; on a
      /proposals    desktop, also when the pointer leaves the top of
                    the window (after the first 5 s). Stands down
@@ -93,7 +98,10 @@
     '/elopements': { after: 45, depth: 0.6, exit: true },
     '/proposals': { after: 45, depth: 0.6, exit: true }
   };
-  var TOTAL_WAIT = 10;     // s with the all-in total on screen and checkout not begun (Mick, 2026-10-24)
+  // s with the all-in total on screen and checkout not begun. Was 10 (Mick, 2026-10-24); 30 from
+  // 2026-10-26: Mick gave the number to the CEO seat ("45 seconds is fine ... or maybe split the
+  // difference and do 30 seconds ... you tell me"), and the seat chose 30.
+  var TOTAL_WAIT = 30;
   var PAY_IDLE = 90;       // s idle on the payment step
   var EXIT_ARM = 5;        // s on the page before exit intent counts
   var KEY_QUIET = 2000;    // ms since the last key before "not typing"
@@ -188,7 +196,9 @@
     if (cfg.book) {
       var s = bookState();
       totalFor = s === 'dates' && totalShown() && stay() ? totalFor + 1 : 0;
-      totalDue = totalFor >= TOTAL_WAIT;
+      // Past TOTAL_WAIT, not at it (2026-10-26): the first second that finds the total may have
+      // had it on screen for a moment only, so this is TOTAL_WAIT whole seconds at the least.
+      totalDue = totalFor > TOTAL_WAIT;
       if (s === 'pay' && idle >= PAY_IDLE) due = true;
     } else {
       if (wroteInForm) { stop(); return; }
@@ -377,6 +387,9 @@
     if (!EMAIL_OK.test(email)) { input.setAttribute('aria-invalid', 'true'); input.focus(); return; }
     var s = stay();
     if (!asks(s)) { askLeaves(); return; }
+    // Set into the quote card, the card leaves the page for a moment when the page redraws it
+    // (a marker left redraws the quote card), and focus falls to the page: kept here to give back.
+    var focusWas = askBox.contains(document.activeElement);
     askBusy = true;
     // Busy, but never disabled: a disabled button drops the focus it holds.
     btn.setAttribute('aria-disabled', 'true');
@@ -386,14 +399,16 @@
     Promise.resolve(sent).then(function (line) {
       if (!line) { askLeaves(); return; }
       tell(ASK.made);
-      asked(line);
+      asked(line, focusWas);
     }, askLeaves).then(free, free);
   }
 
   // Done: the line and the field give way to the done line, read out where focus was.
-  function asked(line) {
+  function asked(line, focusWas) {
     if (!card || !askBox || !card.contains(askBox)) return;
-    var had = askBox.contains(document.activeElement);
+    if (!card.isConnected) home();
+    var a = document.activeElement;
+    var had = askBox.contains(a) || (focusWas && (!a || a === body));
     var d = document.createElement('p');
     d.className = 'lf-talk__p lf-talk__done';
     d.id = 'lf-talk-ad';
@@ -451,7 +466,7 @@
     noteSeen();
   }
   function arrange() {
-    if (!card || writingHere()) return;
+    if (!card || inline || writingHere()) return;
     var list = guards();
     card.classList.remove('is-top', 'is-away');
     if (!list.length) return;
@@ -462,6 +477,45 @@
     card.classList.add('is-away');   // a button under both places: step aside until it scrolls on
   }
   function queuePlace() { if (!raf) raf = requestAnimationFrame(place); }
+
+  // ---- where the card lives (2026-10-26, the CEO's quote-card piece). Mick's phone showed the
+  // card risen over the price: only the Book button was kept clear. Now, on /book before checkout,
+  // the card is not laid over the page but set into it: in the quote card, in the slot
+  // js/gatehouse.js leaves under the Book button's row (after the guest line). It moves nothing
+  // above it and covers nothing, on any screen. While there is no quote card (new dates being
+  // chosen) it waits out of the page, and comes back with the quote. On the payment step, and on
+  // the other pages, it floats as before (fixed, kept clear of the buttons by arrange()).
+  // The quote card is drawn afresh whenever the stay changes, which takes the card out with it:
+  // a watch on the Gatehouse puts it back.
+  var inline = false, redraws = null;
+  function onBookDates() { return !!cfg.book && bookState() !== 'pay'; }
+  function home() {
+    if (!card) return;
+    if (onBookDates()) {
+      inline = true;
+      card.classList.add('is-inline');
+      card.classList.remove('is-top', 'is-away');
+      var s = document.querySelector('#gatehouse .gh-talk-slot');
+      if (s && card.parentNode !== s) s.appendChild(card);
+      else if (!s && card.parentNode) card.remove();
+    } else {
+      inline = false;
+      card.classList.remove('is-inline');
+      if (card.parentNode !== body) body.appendChild(card);
+    }
+    queuePlace();
+  }
+  function watchRedraws() {
+    var gh = document.getElementById('gatehouse');
+    if (!cfg.book || !gh || redraws || !window.MutationObserver) return;
+    redraws = new MutationObserver(function () { if (card) home(); });
+    redraws.observe(gh, { childList: true });
+  }
+  // Below the site's fixed header, or 0: what a visitor sees starts there.
+  function headerBottom() {
+    var h = document.querySelector('.lf-hdr');
+    return h && window.getComputedStyle && getComputedStyle(h).position === 'fixed' ? Math.max(0, h.getBoundingClientRect().bottom) : 0;
+  }
 
   // card_shown and the ask's marker_shown count only once they can be seen (2026-10-26, the
   // CEO's pay-step piece: a phone walk found card_shown sent while the card stood aside,
@@ -476,17 +530,29 @@
     var cs = window.getComputedStyle ? getComputedStyle(n) : null;
     return !cs || (cs.visibility === 'visible' && cs.display !== 'none');
   }
+  // Set into the page (2026-10-26), a card whose top edge peeks above the fold has not been
+  // seen: it counts once its heading is whole on the screen, below the header. Floating, a card
+  // on the screen is seen, as before.
+  function seenNow(n) {
+    if (!onScreen(n)) return false;
+    var h = inline && n.querySelector('.lf-talk__h');
+    if (!h) return true;
+    var r = h.getBoundingClientRect();
+    return r.top >= headerBottom() && r.bottom <= window.innerHeight;
+  }
   function noteSeen() {
-    if (!card || !card.classList.contains('is-in') || card.classList.contains('is-away') || !onScreen(card)) return;
+    if (!card || !card.classList.contains('is-in') || card.classList.contains('is-away') || !seenNow(card)) return;
     if (!toldCard) { toldCard = true; tell('card_shown'); }
-    if (!toldAsk && askBox && card.contains(askBox) && onScreen(askBox)) { toldAsk = true; tell(ASK.shown); }
+    if (!toldAsk && askBox && card.contains(askBox) && seenNow(askBox)) { toldAsk = true; tell(ASK.shown); }
   }
 
   function onKey(e) {
     if ((e.key === 'Escape' || e.key === 'Esc') && card && !menuOpen()) dismiss();
   }
+  // A tap elsewhere closes a floating card. Set into the page it is in no one's way, and a
+  // finger that lands to scroll down to it must not close it.
   function onPointer(e) {
-    if (card && !card.contains(e.target)) dismiss();
+    if (card && !inline && !card.contains(e.target)) dismiss();
   }
 
   function show(withAsk) {
@@ -494,7 +560,8 @@
     markSeen();
     back = document.activeElement;
     card = build(!!withAsk);
-    body.appendChild(card);
+    home();
+    watchRedraws();
     place();
     // The next frame, so the rise plays (none under reduced motion); seen from then, if on screen.
     requestAnimationFrame(function () { if (card) { card.classList.add('is-in'); noteSeen(); } });
@@ -514,6 +581,7 @@
     if (!card) return;
     var c = card, hadFocus = c.contains(document.activeElement);
     card = null;
+    if (redraws) { redraws.disconnect(); redraws = null; }
     document.removeEventListener('keydown', onKey);
     document.removeEventListener('pointerdown', onPointer, true);
     window.removeEventListener('scroll', queuePlace);

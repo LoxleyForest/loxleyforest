@@ -25,6 +25,7 @@ GATEHOUSE = f'''<div id="gatehouse"
            data-unit="{B.UNIT}"
            data-stripe-key="{B.STRIPE_KEY}"
            data-fallback="#gh-down">{B.GH_WAIT}</div>
+      {B.quote_card()}
       <div id="gh-down" class="lf-book__alt" hidden>
         <p>Our booking calendar isn't answering just now. Nothing is lost: <a href="#inquiry">send us your dates</a> and we'll write back within two hours, or call or text <a href="tel:+17065024823">706-502-4823</a>.</p>
       </div>'''

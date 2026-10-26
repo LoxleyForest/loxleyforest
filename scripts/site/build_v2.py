@@ -254,6 +254,12 @@ REVIEW_LIST = [
      'Chris'),  # G2
 ]
 
+# The one guest line under the Book button on /book's quote card (the CEO's quote-card piece,
+# 2026-10-26: the 4.9 beside five acorns and one checked guest line beside Book). A sentence of
+# one carousel quote above, word for word, credited as the carousel credits it; no count, no
+# platform. scripts/site/check_reviews.py proves it against REVIEW_LIST and docs/reviews/all.md.
+QUOTE_CARD = ('This was easily one of our most memorable stays!', 'James · Atlanta, GA')  # A9
+
 # The average, as Mick gave it (2026-10-21). Shown as the number and five acorns shaded to it.
 RATING = 4.9
 # The acorn's body spans x 1.9 to 14.1 of its 16-wide box, so a part acorn is shaded across that
@@ -270,6 +276,16 @@ def _rating():
     return (f'<p class="lf-rating" role="img" aria-label="Rated {RATING:g} out of 5">'
             f'<span class="lf-rating__n" aria-hidden="true">{RATING:g}</span>'
             f'<span class="lf-rating__acorns" aria-hidden="true">{cells}</span></p>')
+
+
+def quote_card():
+    """/book's quote card, under the Book button: the rating as the reviews show it, and the one
+    guest line (QUOTE_CARD). An inert <template>; js/gatehouse.js sets a copy under the button."""
+    from html import escape
+    line, by = QUOTE_CARD
+    return (f'<template id="gh-proof"><div class="gh-proof">{_rating()}'
+            f'<figure class="gh-proof__q"><blockquote><p>“{escape(line, quote=False)}”</p></blockquote>'
+            f'<figcaption>{escape(by, quote=False)}</figcaption></figure></div></template>')
 
 
 def _reviews():
