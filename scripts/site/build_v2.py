@@ -30,6 +30,10 @@ ACORN = ('<svg viewBox="0 0 16 20" aria-hidden="true"><path fill="currentColor" 
          '.7C9 1 8.5 1.6 8.5 2.4Z"/></svg>')
 NAV = [('/treehouses', 'The Treehouse'), ('/experiences', 'Experiences'), ('/elopements', 'Elopements'),
        ('/our-story', 'Our Story'), ('/gallery', 'Gallery'), ('/local-guide', 'Local Guide')]
+# The one way to reach /gift (the CEO's piece, 2026-10-26): beside "Questions", in the menu and the
+# footer only, never the desktop header row (its six links are measured to fit). The words are the
+# card's ratified title (scripts/site/pages/gift.py CARD); the link itself awaits Mick's yes.
+GIFT_LINK = '<a href="/gift">The Golden Arrow</a>'
 FONTS = ('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500'
          '&family=Montserrat:wght@300;400;500;600;700&display=swap')
 
@@ -87,7 +91,7 @@ def header(book):
     <button class="lf-menu-btn" type="button" aria-expanded="false" aria-controls="lf-menu" aria-label="Open menu"><span></span></button>
   </header>
   <div class="lf-menu" id="lf-menu" aria-hidden="true">
-    <nav aria-label="Menu">{links}<a href="/faq">Questions</a></nav>
+    <nav aria-label="Menu">{links}<a href="/faq">Questions</a>{GIFT_LINK}</nav>
     <a href="{book}" class="lf-btn">{ACORN}Book your dates</a>
     <p class="lf-menu__foot">Dahlonega, Georgia<br>Just over an hour from Atlanta</p>
   </div>
@@ -107,7 +111,7 @@ def footer(book, gatehouse):
         <img src="images/brand/logo/loxley-wordmark-on-dark.svg" alt="Loxley Forest" width="220" height="30" loading="lazy">
         <p style="margin-top:18px;font-size:1.1rem">Dahlonega, Georgia. Just over an hour from Atlanta.<br>42 acres of hardwood cove forest at 1,470 feet.</p>
       </div>
-      <nav aria-label="Footer">{links}<a href="/faq">Questions</a></nav>
+      <nav aria-label="Footer">{links}<a href="/faq">Questions</a>{GIFT_LINK}</nav>
       <nav aria-label="Contact"><a href="https://instagram.com/loxleyforest" target="_blank" rel="noopener">Instagram</a><a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a><a href="tel:+17065024823">706-502-4823</a></nav>
       <div class="lf-foot__small"><span>&copy; 2026 Loxley Forest</span><a href="/privacy">Privacy</a><a href="/terms">Terms</a></div>
     </div>

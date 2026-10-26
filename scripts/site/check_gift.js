@@ -196,9 +196,22 @@ function statics() {
   check(!has(gift, 'noindex'), '/gift is indexable');
   check(/'gift','code'\]/.test(book) && /'gift','code'\]/.test(card), 'the keys script lifts gift and code');
   check(REWRITES['/gift/card'] === '/gift-card.html' && REWRITES['/gift/thanks'] === '/gift-thanks.html' && REWRITES['/gift/manage'] === '/gift-manage.html', 'netlify.toml serves /gift/card, /gift/thanks and /gift/manage');
-  const linking = fs.readdirSync(ROOT).filter((n) => n.endsWith('.html') && !/^gift/.test(n))
-    .filter((n) => /href="\/?gift(?:[\/"#?.-])/i.test(read(n)));
-  check(linking.length === 0, 'no other page links to the gift pages yet' + (linking.length ? ': ' + linking.join(', ') : ''));
+  // The one way in (2026-10-26, the CEO's piece): "The Golden Arrow" beside "Questions" in the menu
+  // and the footer of every page that has them (build_v2.GIFT_LINK). Anything else that links to a
+  // gift page is still a failure: the card, the thank-you and the change page are reached by their
+  // own links, never from the site.
+  const ONE_WAY = '<a href="/faq">Questions</a><a href="/gift">The Golden Arrow</a></nav>';
+  const pages = fs.readdirSync(ROOT).filter((n) => n.endsWith('.html'));
+  const navved = pages.filter((n) => /aria-label="(?:Menu|Footer)"/.test(read(n)));
+  const missing = navved.filter((n) => {
+    const h = read(n);
+    return !(/<nav aria-label="Menu">[^]*?<\/nav>/.exec(h) || [''])[0].endsWith(ONE_WAY)
+      || !(/<nav aria-label="Footer">[^]*?<\/nav>/.exec(h) || [''])[0].endsWith(ONE_WAY);
+  });
+  check(navved.length > 0 && missing.length === 0, 'every page\'s menu and footer link to /gift as "The Golden Arrow"' + (missing.length ? ': not on ' + missing.join(', ') : ''));
+  const linking = pages.filter((n) => !/^gift/.test(n))
+    .filter((n) => /href="\/?gift(?:[\/"#?.-])/i.test(read(n).split(ONE_WAY).join('</nav>')));
+  check(linking.length === 0, 'no other link to the gift pages' + (linking.length ? ': ' + linking.join(', ') : ''));
   check(!/\/gift/.test(read('sitemap.xml')), 'not in sitemap.xml');
   check(has(gift, RATIFIED), '/gift carries the card\'s ratified terms line');
   check(BOOK_W.book_covers === 'The Golden Arrow covers these nights.' && STAY_W.stay_gift_move === 'To move or change a gift stay, call or text Mick at 706-502-4823.', 'the CEO\'s two lines, word for word');

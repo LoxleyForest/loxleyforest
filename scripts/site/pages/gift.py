@@ -21,7 +21,9 @@ on a desk and on paper.
              Tag Manager like every key): a thank-you, the card and its link on their way by email,
              Mick's number. Noindex. Served by a rewrite like the card.
 
-Not linked from the menu or any page until Mick says so. Not in sitemap.xml.
+Linked once, "The Golden Arrow" beside "Questions" in the menu and the footer of every page
+(build_v2.GIFT_LINK, 2026-10-26); that link goes live only with Mick's yes to these words.
+Nothing else links to the gift pages. Not in sitemap.xml.
 
 Every sentence on both pages, and the Golden Arrow's lines on /book, lives in WORDS below and
 only there. js/gift.js and js/gatehouse.js read their part from a JSON block the builder writes
