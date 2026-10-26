@@ -166,6 +166,10 @@
 .gh-booking .gh-credit--off { margin: 14px 0 0; }
 .gh-summary--empty .gh-credit { margin-top: 14px; }
 .gh-covered { margin: 0 0 18px; color: var(--forest-deep); }
+/* the Golden Arrow on /book#gift=: what it covers on these dates, and what is left (2026-10-25) */
+.gh-gift { margin-bottom: 20px; padding: 12px 14px; border: 1px solid var(--forest-deep); border-left-width: 4px; background: var(--cream); }
+.gh-lines .gh-gift-line { color: var(--forest-deep); }
+.gh-lines .gh-left { border-top: 0; padding-top: 2px; margin-top: 0; }
 
 /* ---- one more night: the quote's extend offer, one tap (never gold) ---- */
 .gh-extend {
