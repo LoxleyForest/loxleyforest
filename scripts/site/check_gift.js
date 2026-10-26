@@ -541,7 +541,7 @@ async function main() {
     await page.goto(BASE + '/gift/thanks?session_id=' + SESSION);
     await page.waitForSelector('[data-ga-thanks-lead]');
     check(await text(page, '[data-ga-thanks-lead]') === 'Your card is on its way to ' + BUYER.email + '.', 'back from Stripe: "Your card is on its way to ' + BUYER.email + '."');
-    check(await text(page, '[data-ga-thanks-printed]') === 'Mick hand-writes your printed card and mails it within two business days.', 'the printed card ticked: "Mick hand-writes your printed card and mails it within two business days."');
+    check(await text(page, '[data-ga-thanks-printed]') === 'Mick hand-writes your printed card and mails it to you.', 'the printed card ticked: "Mick hand-writes your printed card and mails it to you."');
     check(await page.evaluate(() => sessionStorage.getItem('ga_deliver') === null), 'shown once, then cleared from the tab');
     const kept = await page.evaluate(() => localStorage.getItem('__ga_kept') || '');
     check(has(kept, BUYER.email) && !has(kept, BUYER.names) && !has(kept, 'Test Lane'), 'what was kept for it: the choice, the email and the printed tick, no names, no address');

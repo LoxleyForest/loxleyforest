@@ -103,7 +103,7 @@ WORDS = {
     'from_hint': 'The card reads “With love from” and then this.',
     'email_label': 'Your email',
     'mail_label': 'Mail me the printed card as well',
-    'mail_hint': 'Mick hand-writes it and mails it within two business days.',      # the Critic's line, 2026-10-25
+    'mail_hint': 'Mick hand-writes it and mails it to you.',      # no time promised until the printing is set up (Mick, 2026-10-26)
     'ship_name': 'Name on the envelope',
     'ship_line1': 'Street address',
     'ship_line2': 'Apartment or suite',
@@ -166,8 +166,8 @@ WORDS = {
     'thanks_them': 'We\u2019ll email it to them on {when}.',                # the CEO's words; LETTER
     'thanks_you_at': 'We have written to you at {email}, with a link to change the day.',   # LETTER
     'thanks_body_me': 'Send them the link when the moment is right, or print the card at home.',
-    'thanks_printed': 'Mick hand-writes your printed card and mails it within two business days.',
-    'thanks_printed_if': 'If you asked for the printed card, Mick hand-writes it and mails it within two business days.',
+    'thanks_printed': 'Mick hand-writes your printed card and mails it to you.',
+    'thanks_printed_if': 'If you asked for the printed card, Mick hand-writes it and mails it to you.',
     'thanks_choose': 'When they know their dates, they book their nights from the card’s link, or call or text Mick at ' + PHONE + '.',
     'thanks_help': 'Anything at all, call or text Mick at ' + PHONE + '.',
 
