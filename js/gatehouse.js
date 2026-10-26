@@ -975,8 +975,43 @@
       gh_mode: state.payMode, gh_check_in: cal.checkIn, gh_check_out: cal.checkOut });
     sendLead(state.form.email);
     render();
+    if (!fromUrl) landOnPay();
+  }
+
+  // The bottom of the site's fixed header, or null: what a visitor sees starts below it.
+  function headerBottom() {
+    var hdr = document.querySelector('.lf-hdr');
+    return hdr && window.getComputedStyle && getComputedStyle(hdr).position === 'fixed' ? Math.max(0, hdr.getBoundingClientRect().bottom) : null;
+  }
+
+  // Where the Book tap lands (2026-10-26, the CEO's pay-step piece). Since the ads began, 8
+  // visits tapped Book and none typed an email: on a phone the tap landed on the section's
+  // heading, with the email box at the fold, or below it when a balance line is added. Now
+  // "Who is coming" and the email box are in view, with as much as fits above them, in this
+  // order: the way back to the dates, the summary's heading, the dates, the total. Never a
+  // focus: on iOS that opens the keyboard over the summary. Where the old landing (the
+  // section's top) already shows the email box, as on a tall desktop, it is kept as it was.
+  function landOnPay() {
     var sec = root.closest('section') || root;
-    if (!fromUrl && sec.scrollIntoView) sec.scrollIntoView({ block: 'start' });
+    if (!sec.scrollIntoView) return;
+    var legend = root.querySelector('.gh-fields legend'), email = document.getElementById('gh-email');
+    if (!legend || !email || !window.getComputedStyle || !window.scrollTo) { sec.scrollIntoView({ block: 'start' }); return; }
+    var GAP = 12, FOOT = 16;
+    function docTop(n) { return n.getBoundingClientRect().top + window.pageYOffset; }
+    var margin = parseFloat(getComputedStyle(sec).scrollMarginTop) || 0;
+    var top = headerBottom();
+    if (top === null) top = margin;
+    var view = window.innerHeight, max = Math.max(0, document.documentElement.scrollHeight - view);
+    var from = docTop(legend), to = email.getBoundingClientRect().bottom + window.pageYOffset + FOOT;
+    var old = Math.min(max, Math.max(0, docTop(sec) - margin));
+    if (from - old >= top && to - old <= view) { sec.scrollIntoView({ block: 'start' }); return; }
+    var y = from - GAP - top;      // nothing above fits: "Who is coming" just under the header
+    var above = [root.querySelector('.gh-form > .gh-back'), document.getElementById('gh-booking-h'),
+      root.querySelector('.gh-booking .gh-dates'), root.querySelector('.gh-booking dt.gh-total')];
+    for (var i = 0; i < above.length; i++) {
+      if (above[i] && to - (docTop(above[i]) - GAP) <= view - top) { y = docTop(above[i]) - GAP - top; break; }
+    }
+    window.scrollTo(0, Math.min(max, Math.max(0, Math.round(y))));
   }
 
   function backToDates() {

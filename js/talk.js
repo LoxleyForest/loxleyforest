@@ -31,7 +31,8 @@
 
    It tells our own booking server card_shown and card_click, and
    on /book marker_shown and marker_card (or hold_shown and
-   hold_made), through the page beacon (window.lfFunnel,
+   hold_made); the two _shown steps only once the card can be seen
+   on screen (2026-10-26), through the page beacon (window.lfFunnel,
    js/funnel.js): the visit's random id (the engine needs it), the
    step and the page's path. Nothing else, nothing about the
    person. Until the engine knows these steps it refuses them, and
@@ -446,6 +447,10 @@
   }
   function place() {
     raf = 0;
+    arrange();
+    noteSeen();
+  }
+  function arrange() {
     if (!card || writingHere()) return;
     var list = guards();
     card.classList.remove('is-top', 'is-away');
@@ -457,6 +462,25 @@
     card.classList.add('is-away');   // a button under both places: step aside until it scrolls on
   }
   function queuePlace() { if (!raf) raf = requestAnimationFrame(place); }
+
+  // card_shown and the ask's marker_shown count only once they can be seen (2026-10-26, the
+  // CEO's pay-step piece: a phone walk found card_shown sent while the card stood aside,
+  // hidden, because a Book button was under both its places). Seen: risen in, not standing
+  // aside, on the screen, the tab in front. Each is told once, the first time; a card closed
+  // before it was ever seen is never counted as shown.
+  var toldCard = false, toldAsk = false;
+  function onScreen(n) {
+    if (!n || !n.isConnected || document.visibilityState !== 'visible') return false;
+    var r = n.getBoundingClientRect();
+    if (!r.width || !r.height || r.bottom <= 0 || r.right <= 0 || r.top >= window.innerHeight || r.left >= window.innerWidth) return false;
+    var cs = window.getComputedStyle ? getComputedStyle(n) : null;
+    return !cs || (cs.visibility === 'visible' && cs.display !== 'none');
+  }
+  function noteSeen() {
+    if (!card || !card.classList.contains('is-in') || card.classList.contains('is-away') || !onScreen(card)) return;
+    if (!toldCard) { toldCard = true; tell('card_shown'); }
+    if (!toldAsk && askBox && card.contains(askBox) && onScreen(askBox)) { toldAsk = true; tell(ASK.shown); }
+  }
 
   function onKey(e) {
     if ((e.key === 'Escape' || e.key === 'Esc') && card && !menuOpen()) dismiss();
@@ -472,8 +496,8 @@
     card = build(!!withAsk);
     body.appendChild(card);
     place();
-    // The next frame, so the rise plays (none under reduced motion).
-    requestAnimationFrame(function () { if (card) card.classList.add('is-in'); });
+    // The next frame, so the rise plays (none under reduced motion); seen from then, if on screen.
+    requestAnimationFrame(function () { if (card) { card.classList.add('is-in'); noteSeen(); } });
     card.addEventListener('transitionend', queuePlace);   // measured again where the rise ends
     // Focus moves to the card (nothing is being typed: maybeShow waited for that) and goes back on close.
     try { card.focus({ preventScroll: true }); } catch (e) { card.focus(); }
@@ -482,8 +506,8 @@
     window.addEventListener('scroll', queuePlace, { passive: true });
     window.addEventListener('resize', queuePlace);
     card.addEventListener('focusout', queuePlace);   // out of the card's field: measured again
-    tell('card_shown');
-    if (askBox) tell(ASK.shown);
+    document.addEventListener('visibilitychange', queuePlace);   // back in front: seen now, if on screen
+    // card_shown and marker_shown are told by noteSeen(), when the card can be seen.
   }
 
   function dismiss() {
@@ -494,6 +518,7 @@
     document.removeEventListener('pointerdown', onPointer, true);
     window.removeEventListener('scroll', queuePlace);
     window.removeEventListener('resize', queuePlace);
+    document.removeEventListener('visibilitychange', queuePlace);
     c.classList.remove('is-in');
     var gone = false;
     function remove() { if (!gone) { gone = true; c.remove(); } }
