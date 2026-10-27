@@ -49,8 +49,10 @@ CARD = {
     'from': 'With love from',
     'giftno': 'Gift no.',
     'gift': 'Three nights in the treehouse, and the Dawn Table: breakfast carried across the bridge to your door.',
-    'nights': ('Good for any three nights, weekends included, January 4 to May 31, 2027, Valentine’s weekend aside. '
-               'It never expires; for later dates, we ask only the difference if rates have risen.'),
+    # Mick, 2026-10-26: "eliminate the whole until May 31st and make it 12 months from date of purchase
+    # for everyone"; the CEO kept "never expires" behind it (gift-card law), the difference only after.
+    'nights': ('Good for any three nights, weekends included, within twelve months of purchase. '
+               'After that it never expires; we ask only the difference if rates have risen.'),
     'call': 'To choose your dates, call or text Mick at',
     'foot': 'loxleyforest.com · Dahlonega, Georgia',
 }

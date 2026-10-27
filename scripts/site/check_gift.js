@@ -96,7 +96,7 @@ const read = (n) => fs.readFileSync(path.join(ROOT, n), 'utf8');
 const wordsOf = (n) => JSON.parse(/<script type="application\/json" id="lf-gift-words">([\s\S]*?)<\/script>/.exec(read(n))[1]);
 const PANEL = wordsOf('gift.html'), CARD_W = wordsOf('gift-card.html'), BOOK_W = wordsOf('book.html'), STAY_W = wordsOf('manage.html');
 // The card's ratified words (loxley-rescue docs/gift-card/golden-arrow/card.html).
-const RATIFIED = 'Good for any three nights, weekends included, January 4 to May 31, 2027, Valentine’s weekend aside. It never expires; for later dates, we ask only the difference if rates have risen.';
+const RATIFIED = 'Good for any three nights, weekends included, within twelve months of purchase. After that it never expires; we ask only the difference if rates have risen.';
 const RATIFIED_GIFT = 'Three nights in the treehouse, and the Dawn Table: breakfast carried across the bridge to your door.';
 // The engine's own sentences (gatehouse/gifts.py, gatehouse/api.py at cdb68bc).
 const NOT_FOUND = 'We could not find that gift. Please check the code on the card.';
