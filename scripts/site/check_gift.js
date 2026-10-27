@@ -96,8 +96,9 @@ const read = (n) => fs.readFileSync(path.join(ROOT, n), 'utf8');
 const wordsOf = (n) => JSON.parse(/<script type="application\/json" id="lf-gift-words">([\s\S]*?)<\/script>/.exec(read(n))[1]);
 const PANEL = wordsOf('gift.html'), CARD_W = wordsOf('gift-card.html'), BOOK_W = wordsOf('book.html'), STAY_W = wordsOf('manage.html');
 // The card's ratified words (loxley-rescue docs/gift-card/golden-arrow/card.html).
-const RATIFIED = 'Good for any three nights, weekends included, January 4 to May 31, 2027, Valentine’s weekend aside. It never expires; for later dates, we ask only the difference if rates have risen.';
-const RATIFIED_GIFT = 'Three nights in the treehouse, and the Dawn Table: breakfast carried across the bridge to your door.';
+const RATIFIED = 'Good for any three nights, weekends included, within twelve months of purchase. After that it never expires; we ask only the difference if rates have risen.';
+// Mick, 2026-10-27: brunch, not breakfast; "Champagne brunch across the bridge" approved by ear.
+const RATIFIED_GIFT = 'Three nights in the treehouse, and the Dawn Table: champagne brunch carried across the bridge to your door.';
 // The engine's own sentences (gatehouse/gifts.py, gatehouse/api.py at cdb68bc).
 const NOT_FOUND = 'We could not find that gift. Please check the code on the card.';
 const BLACKOUT = 'The Golden Arrow covers any nights but Valentine\'s weekend, the nights of February 12, 13 and 14, 2027. Please choose other dates.';
@@ -111,6 +112,10 @@ const NIGHTS = { nights: Array.from({ length: 150 }, (_, i) => ({ night: day(i +
 const CI = day(20), CO2 = day(22), CO3 = day(23), CO4 = day(24), CI_NO = day(40), CO_NO = day(43);
 const NIGHT_ALL_IN = 64439;
 const CODE = 'LF-TEST-7Q2X', CODE_USED = 'LF-TEST-USED', CODE_VOID = 'LF-TEST-VOID', CODE_LONG = 'LF-TEST-LONG', CODE_BOOKED = 'LF-TEST-BOOK';
+// A gift Mick gave its own window (loxley-rescue forge/gift-window, `gifts extend`): the engine's
+// window {from, to, whole, line}, line "" until Mick has heard its words, and a made-up line after.
+const CODE_OWN = 'LF-TEST-OWN1', CODE_OWN_LINE = 'LF-TEST-OWN2';
+const OWN_LINE = 'A made-up dates line for a gift with its own window.';
 const NOTE = 'For the anniversary you keep talking about.\nGo slow, sleep late, and stay in the trees.';
 const RESEND = 'If that email bought a Golden Arrow, its card is on its way.';
 const DELIVERY_OFF = 'Emailing the card on a day you pick is not open yet.';
@@ -128,6 +133,10 @@ const GIFTS = {
   [CODE_BOOKED]: giftRow(CODE_BOOKED, 'redeemed', 'Ana & Luis', 'Aunt June', { state: 'booked', month: 'February 2027' }),
   [CODE_VOID]: giftRow(CODE_VOID, 'void', 'Ana & Luis', 'Aunt June'),
   [CODE_LONG]: giftRow(CODE_LONG, 'issued', 'Elizabeth Anne Whitfield & Christopher James Okonkwo-Brennan', 'Grandmother Josephine and Grandfather Bartholomew Whitfield'),
+  [CODE_OWN]: giftRow(CODE_OWN, 'issued', 'Ana & Luis', 'Aunt June', { covers: 'December 5, 2026 to December 5, 2027',
+    window: { from: '2026-12-05', to: '2027-12-05', whole: true, line: '' } }),
+  [CODE_OWN_LINE]: giftRow(CODE_OWN_LINE, 'issued', 'Ana & Luis', 'Aunt June', { covers: 'December 5, 2026 to December 5, 2027',
+    window: { from: '2026-12-05', to: '2027-12-05', whole: true, line: OWN_LINE } }),
 };
 // Eastern time and the quick picks, worked out here as the page must.
 function nowEastern() {
@@ -533,7 +542,7 @@ async function main() {
     await page.goto(BASE + '/gift/thanks?session_id=' + SESSION);
     await page.waitForSelector('[data-ga-thanks-lead]');
     check(await text(page, '[data-ga-thanks-lead]') === 'Your card is on its way to ' + BUYER.email + '.', 'back from Stripe: "Your card is on its way to ' + BUYER.email + '."');
-    check(await text(page, '[data-ga-thanks-printed]') === 'Mick hand-writes your printed card and mails it within two business days.', 'the printed card ticked: "Mick hand-writes your printed card and mails it within two business days."');
+    check(await text(page, '[data-ga-thanks-printed]') === 'Mick hand-writes your printed card and mails it to you.', 'the printed card ticked: "Mick hand-writes your printed card and mails it to you."');
     check(await page.evaluate(() => sessionStorage.getItem('ga_deliver') === null), 'shown once, then cleared from the tab');
     const kept = await page.evaluate(() => localStorage.getItem('__ga_kept') || '');
     check(has(kept, BUYER.email) && !has(kept, BUYER.names) && !has(kept, 'Test Lane'), 'what was kept for it: the choice, the email and the printed tick, no names, no address');
@@ -798,6 +807,25 @@ async function main() {
       keep: document.querySelector('[data-ga-keep]').hidden, msg: document.querySelector('[data-ga-message]').hidden }));
     check(v.status === want && v.dates && v.keep && v.msg, '"' + want + '": the card to keep, no "Book your nights", no note when none was written');
     if (code === CODE_BOOKED) await shot(page, 'card-booked.png');
+    await ctx.close();
+  }
+
+  console.log('/gift/card: a gift with its own window (Mick, 2026-10-26)');
+  for (const [code, line] of [[CODE_OWN, ''], [CODE_OWN_LINE, OWN_LINE]]) {
+    const { ctx, page } = await open('card-own', {});
+    await page.goto(BASE + '/gift/card#code=' + code);
+    await page.waitForSelector('[data-ga-card]:not([hidden])', { timeout: 10000 });
+    const v = await page.evaluate(() => {
+      const n = document.querySelector('.ga-nights');
+      return { shown: getComputedStyle(n).display !== 'none' && n.getBoundingClientRect().height > 0, nights: n.textContent,
+        card: document.querySelector('.ga-card').innerText, call: document.querySelector('.ga-call').innerText,
+        dates: !document.querySelector('[data-ga-dates]').hidden };
+    });
+    const wrong = ['January 4', 'May 31', 'difference', 'Valentine'].filter((w) => v.card.indexOf(w) >= 0);
+    check(!wrong.length, (line ? 'with its line' : 'its line not yet heard') + ': the card never says January to May or the difference (' + (wrong.join(', ') || 'none') + ')');
+    check(line ? v.shown && v.nights === line : !v.shown, line ? 'the engine\'s dates line in the January-to-May line\'s place' : 'no dates line at all until Mick has heard its words');
+    check(/^To choose your dates, call or text Mick at 706-502-4823\.$/.test(v.call || '') && v.dates, 'the call line and "Book your nights" stay');
+    if (!line) await shot(page, 'card-own-window.png');
     await ctx.close();
   }
 

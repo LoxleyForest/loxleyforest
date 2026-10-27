@@ -48,9 +48,11 @@ CARD = {
     'for': 'For',
     'from': 'With love from',
     'giftno': 'Gift no.',
-    'gift': 'Three nights in the treehouse, and the Dawn Table: breakfast carried across the bridge to your door.',
-    'nights': ('Good for any three nights, weekends included, January 4 to May 31, 2027, Valentine’s weekend aside. '
-               'It never expires; for later dates, we ask only the difference if rates have risen.'),
+    'gift': 'Three nights in the treehouse, and the Dawn Table: champagne brunch carried across the bridge to your door.',
+    # Mick, 2026-10-26: "eliminate the whole until May 31st and make it 12 months from date of purchase
+    # for everyone"; the CEO kept "never expires" behind it (gift-card law), the difference only after.
+    'nights': ('Good for any three nights, weekends included, within twelve months of purchase. '
+               'After that it never expires; we ask only the difference if rates have risen.'),
     'call': 'To choose your dates, call or text Mick at',
     'foot': 'loxleyforest.com · Dahlonega, Georgia',
 }
@@ -70,7 +72,7 @@ WORDS = {
     'title': 'The Golden Arrow | Loxley Forest',
     'description': 'A gift of three nights in the treehouse at Loxley Forest, and the Dawn Table.',
     'eyebrow': 'A gift from Loxley Forest',
-    'lead': 'Three nights in the treehouse, and the Dawn Table: breakfast carried across the bridge to their door.',
+    'lead': 'Three nights in the treehouse, and the Dawn Table: champagne brunch carried across the bridge to their door.',
     'to_give': 'Give it',
     'sample_names': 'Sarah & Tom',          # the sample card's names, plainly an example
     'sample_giver': 'Mom & Dad',
@@ -80,7 +82,8 @@ WORDS = {
     'what': [
         'A hand-built treehouse with a canvas peak, sixty feet up in the forest above Dahlonega, Georgia. '
         'The way in is a hundred-foot bridge strung with small warm lights.',
-        'And the Dawn Table: champagne and fresh-squeezed orange juice first, then a table made from scratch in our kitchen, carried across the bridge to their door.',
+        'And the Dawn Table: champagne and fresh-squeezed orange juice first, then a table made from scratch, carried across the bridge to their door.',
+        'One evening is pizza night: we bring fresh dough, made from scratch, to their door, and the oven on the Sky Deck is ready to fire. They make their own, sixty feet up in the trees.',
     ],
     'when_h': 'When',
     'choose_h': 'Choosing their nights',
@@ -103,7 +106,7 @@ WORDS = {
     'from_hint': 'The card reads “With love from” and then this.',
     'email_label': 'Your email',
     'mail_label': 'Mail me the printed card as well',
-    'mail_hint': 'Mick hand-writes it and mails it within two business days.',      # the Critic's line, 2026-10-25
+    'mail_hint': 'Mick hand-writes it and mails it to you.',      # no time promised until the printing is set up (Mick, 2026-10-26)
     'ship_name': 'Name on the envelope',
     'ship_line1': 'Street address',
     'ship_line2': 'Apartment or suite',
@@ -166,8 +169,8 @@ WORDS = {
     'thanks_them': 'We\u2019ll email it to them on {when}.',                # the CEO's words; LETTER
     'thanks_you_at': 'We have written to you at {email}, with a link to change the day.',   # LETTER
     'thanks_body_me': 'Send them the link when the moment is right, or print the card at home.',
-    'thanks_printed': 'Mick hand-writes your printed card and mails it within two business days.',
-    'thanks_printed_if': 'If you asked for the printed card, Mick hand-writes it and mails it within two business days.',
+    'thanks_printed': 'Mick hand-writes your printed card and mails it to you.',
+    'thanks_printed_if': 'If you asked for the printed card, Mick hand-writes it and mails it to you.',
     'thanks_choose': 'When they know their dates, they book their nights from the card’s link, or call or text Mick at ' + PHONE + '.',
     'thanks_help': 'Anything at all, call or text Mick at ' + PHONE + '.',
 

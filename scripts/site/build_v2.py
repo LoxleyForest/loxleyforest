@@ -141,18 +141,20 @@ def footer(book, gatehouse):
 # so a guest who wanders off and comes back by any Book button keeps it), and the card page's own
 # code, /gift/card#code=, and the payment session Stripe returns to /gift/thanks?session_id= are
 # lifted the same way before Tag Manager can read the address, as is the buyer's change key
-# (/gift/manage#token=).
-KEYS_PAGES = ('book.html', 'booked.html', 'manage.html', 'gift-card.html', 'gift-thanks.html', 'gift-manage.html')
+# (/gift/manage#token=). An elopement package offer's private link (2026-10-27) carries its key
+# the same way, /elopement/offer#offer=, and Stripe returns the couple there with ?session_id=.
+KEYS_PAGES = ('book.html', 'booked.html', 'manage.html', 'gift-card.html', 'gift-thanks.html', 'gift-manage.html',
+              'elopement-offer.html')
 KEYS_SCRIPT = r"""  <!-- Booking keys: out of the address bar before anything loads -->
   <meta name="referrer" content="strict-origin">
-  <script>(function(){var N=['token','credit','session_id','hold','gift','code'],k={},f=!1,st={},p=location.pathname.replace(/\.html$/,'').replace(/(.)\/$/,'$1');
+  <script>(function(){var N=['token','credit','session_id','hold','gift','code','offer'],k={},f=!1,st={},p=location.pathname.replace(/\.html$/,'').replace(/(.)\/$/,'$1');
   try{st=JSON.parse(sessionStorage.getItem('gh_keys')||'{}')||{}}catch(e){}
   var q=new URLSearchParams(location.search),hp=location.hash.indexOf('=')>0,h=new URLSearchParams(hp?location.hash.slice(1):'');
   N.forEach(function(n){var v=h.get(n)||q.get(n);if(q.has(n)||h.has(n)){f=!0;q.delete(n);h.delete(n)}if(v)k[n]=v});
   if(f){st[p]=k;try{sessionStorage.setItem('gh_keys',JSON.stringify(st))}catch(e){}
   var s=q.toString(),t=hp?h.toString():location.hash.slice(1);history.replaceState(history.state,'',location.pathname+(s?'?'+s:'')+(t?'#'+t:''))}
   else{var nv=(performance.getEntriesByType&&performance.getEntriesByType('navigation')[0])||{};if(nv.type==='reload'||nv.type==='back_forward')k=st[p]||{};else if(st[p]){if(st[p].credit)k.credit=st[p].credit;if(st[p].gift)k.gift=st[p].gift}}
-  window.__ghKeys=k;addEventListener('hashchange',function(){if(/(^#|&)(token|credit|session_id|hold|gift|code)=/.test(location.hash))location.reload()})})();</script>
+  window.__ghKeys=k;addEventListener('hashchange',function(){if(/(^#|&)(token|credit|session_id|hold|gift|code|offer)=/.test(location.hash))location.reload()})})();</script>
   <!-- End booking keys -->
 """
 KEYS_RE = re.compile(r'  <!-- Booking keys: out of the address bar before anything loads -->\n.*?<!-- End booking keys -->\n', re.S)
@@ -702,7 +704,8 @@ def page_path(name):
 
 
 # Pages served at a path other than their file's (a rewrite in netlify.toml).
-PATHS = {'gift-card.html': '/gift/card', 'gift-thanks.html': '/gift/thanks', 'gift-manage.html': '/gift/manage'}
+PATHS = {'gift-card.html': '/gift/card', 'gift-thanks.html': '/gift/thanks', 'gift-manage.html': '/gift/manage',
+         'elopement-offer.html': '/elopement/offer'}
 
 
 # The talk-to-Mick card (js/talk.js, styles at the end of css/v2.css): offered to a visitor who is
@@ -712,6 +715,9 @@ TALK_PAGES = ('book.html', 'elopements.html', 'proposals.html')
 
 # The Golden Arrow's pages (scripts/site/pages/gift.py): the purchase panel and the card.
 GIFT_PAGES = ('gift.html', 'gift-card.html', 'gift-thanks.html', 'gift-manage.html')
+
+# An elopement package offer's private page (scripts/site/pages/offer.py, 2026-10-27).
+OFFER_PAGES = ('elopement-offer.html',)
 
 
 def build(page):
@@ -725,6 +731,7 @@ def build(page):
             + footer(book, gatehouse) + ('  <script src="js/crossing.js" defer></script>\n' if 'data-crossing' in body else '')
             + ('  <script src="js/talk.js" defer></script>\n' if name in TALK_PAGES else '')
             + ('  <script src="js/gift.js" defer></script>\n' if name in GIFT_PAGES else '')
+            + ('  <script src="js/offer.js" defer></script>\n' if name in OFFER_PAGES else '')
             + '</body>\n</html>\n')
     if name in ROOTED_PAGES:
         html = rooted(html)
@@ -737,7 +744,7 @@ def build(page):
 # lose the logo and every script. These pages get root paths throughout.
 # The gift's card, thank-you and change page are served at /gift/card, /gift/thanks and
 # /gift/manage (netlify.toml), one folder deep, so they are rooted too.
-ROOTED_PAGES = ('404.html', 'gift-card.html', 'gift-thanks.html', 'gift-manage.html')
+ROOTED_PAGES = ('404.html', 'gift-card.html', 'gift-thanks.html', 'gift-manage.html', 'elopement-offer.html')
 
 
 def rooted(html):
@@ -753,6 +760,8 @@ def page_modules():
         name = 'lfpage_' + os.path.basename(path)[:-3]
         spec = importlib.util.spec_from_file_location(name, path)
         mod = importlib.util.module_from_spec(spec)
+        # Registered, so a page may use an earlier module's parts (pages/offer.py: /book's hero).
+        sys.modules[name] = mod
         spec.loader.exec_module(mod)
         mods.append(mod)
     return mods
