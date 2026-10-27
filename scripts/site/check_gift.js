@@ -97,7 +97,8 @@ const wordsOf = (n) => JSON.parse(/<script type="application\/json" id="lf-gift-
 const PANEL = wordsOf('gift.html'), CARD_W = wordsOf('gift-card.html'), BOOK_W = wordsOf('book.html'), STAY_W = wordsOf('manage.html');
 // The card's ratified words (loxley-rescue docs/gift-card/golden-arrow/card.html).
 const RATIFIED = 'Good for any three nights, weekends included, within twelve months of purchase. After that it never expires; we ask only the difference if rates have risen.';
-const RATIFIED_GIFT = 'Three nights in the treehouse, and the Dawn Table: breakfast carried across the bridge to your door.';
+// Mick, 2026-10-27: brunch, not breakfast; "Champagne brunch across the bridge" approved by ear.
+const RATIFIED_GIFT = 'Three nights in the treehouse, and the Dawn Table: champagne brunch carried across the bridge to your door.';
 // The engine's own sentences (gatehouse/gifts.py, gatehouse/api.py at cdb68bc).
 const NOT_FOUND = 'We could not find that gift. Please check the code on the card.';
 const BLACKOUT = 'The Golden Arrow covers any nights but Valentine\'s weekend, the nights of February 12, 13 and 14, 2027. Please choose other dates.';
