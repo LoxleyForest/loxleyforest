@@ -52,7 +52,7 @@ PACKAGES = [
 
 FAQ = [
     ('How many guests can attend?',
-     'Our elopement experiences are designed for 2 to 20 people. Intimate by design. The bridge ceremony accommodates the couple, officiant, photographer, and up to 6 witnesses. Every guest is part of your private celebration: your closest people, sharing your night in the canopy. Because Loxley Forest is our home and yours during your stay, all ceremony guests are welcomed as part of your booking party.'),
+     'Our elopement experiences are designed for 2 to 20 people. Intimate by design. The bridge is rated for eight people at one time, everyone counted: on the bridge that is the two of you, your officiant, and up to five more, your photographer among them. Every guest is part of your private celebration: your closest people, sharing your night in the canopy. Because Loxley Forest is our home and yours during your stay, all ceremony guests are welcomed as part of your booking party.'),
     ('Do you provide an officiant?',
      'We keep a curated list of officiants who know this property and understand how to hold a ceremony in the canopy.'),
     ('What about photography?',

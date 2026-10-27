@@ -530,7 +530,14 @@ body:has(#ga-buy, #ga-card-page, #ga-manage, #ga-thanks) .book-fab { display: no
 .lf-off__more a:hover { color: var(--on-dark); }
 
 /* ---- offer ---- */
-/* The invitation's top: /book's dusk photograph (lf-bk-top), their names over it. */
+/* The invitation's top: /book's dusk photograph (lf-bk-top), their names over it. It carries more
+   words than /book's, so it stands taller and its dark band begins higher: the words sit below the
+   lit canopy, never on it. */
+.eo-top { min-height: clamp(620px, 112svh, 920px); }
+.eo-top::before {
+  background: linear-gradient(180deg, rgba(20, 36, 24, 0.62) 0%, rgba(20, 36, 24, 0) 14%, rgba(20, 36, 24, 0) 34%,
+    rgba(20, 36, 24, 0.8) 50%, rgba(20, 36, 24, 0.93) 66%, var(--ink) 100%);
+}
 .eo-top .lf-h1 { font-size: clamp(2.3rem, 8.4vw, 4.4rem); overflow-wrap: anywhere; }
 .eo-top .lf-lead { white-space: pre-line; }
 .eo { padding-top: 40px; }

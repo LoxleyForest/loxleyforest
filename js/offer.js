@@ -220,7 +220,7 @@
       var missing = typed.replace(/[^A-Za-zÀ-ɏ]/g, '').length < 2 ? name
         : !tick.checked ? tick
         : (o.agreement.choices || []).some(function (c) { return !answers[c.id]; }) ? box : null;
-      if (missing) { error.textContent = w('need_sign'); missing.focus(); return; }
+      if (missing) { error.textContent = w((o.agreement.choices || []).length ? 'need_sign' : 'need_sign_plain'); missing.focus(); return; }
       error.textContent = '';
       payBtn.disabled = true;
       G.api(API, '/v1/offer/checkout', { token: token, mode: mode, typed_name: typed, accepted: true,

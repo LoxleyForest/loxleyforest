@@ -41,34 +41,43 @@ URL = 'https://loxleyforest.com/elopement/offer'
 NOT_READY = 'Questions? Call or text 706-502-4823, or write to stay@loxleyforest.com.'
 
 # =============================================================================================
-# WORDS · AWAITING MICK (the Writer's slots, 2026-10-27). Every value below is a placeholder or a
-# draft: [WRITER] marks a slot the Writer fills; DRAFT marks the Writer's pick, still for Mick's
-# ear. None is approved; the page shows none of them until APPROVED_SHA256 matches.
+# WORDS · AWAITING MICK. The Writer's final words (2026-10-27, the CEO seat's batch), for Mick's
+# ear and eye in one sitting. None is approved yet: the page shows none of them until
+# APPROVED_SHA256 matches. need_sign_plain is need_sign without its photo question, for an offer
+# whose couple brings their own photographer (the agreement then asks no "May we?").
 # =============================================================================================
 WORDS = {
-    'title': '[WRITER: the page title] | Loxley Forest',
-    'headline': '{{first_names}}, that bridge is your front door.',                  # DRAFT (the Writer's pick)
-    'opening': '[WRITER: the opening, under the headline]',
-    'package_h': 'Your day',                                                         # DRAFT
-    'extras_h': 'And on us',                                                         # DRAFT
-    'total_label': 'All in',                                                         # DRAFT
-    'total_sub': '[WRITER: the total\'s sub-line]',
-    'half_label': 'Half today',                                                      # DRAFT
-    'half_line': '[WRITER: the half-today line; {{today_amount}} today, {{balance}} on {{balance_date}}]',
-    'whole_label': 'All of it today',                                                # DRAFT, pending Mick
-    'whole_line': '[WRITER: the all-of-it-today line]',
-    'agreement_lead': '[WRITER: the agreement\'s lead-in]',
-    'sign_label': '[WRITER: the label for the typed name]',
-    'tick': '[WRITER: the tick]',
-    'pay': 'Sign and pay {{today_amount}}',                                          # DRAFT
-    'need_sign': '[WRITER: the line when the name, the tick or the answer is missing]',
-    'loading': '[WRITER: the opening line, while the page reads the offer]',
-    'failure': '[WRITER: the failure line]',
-    'questions': '[WRITER: the questions line]',
-    'thanks_h': '[WRITER: the thank-you heading]',
-    'thanks': '[WRITER: the thank-you]',
-    'clearing': '[WRITER: the clearing state: their bank payment is on its way]',
-    'expired': '[WRITER: the expired-offer line]',
+    'title': 'Your day in the trees | Loxley Forest',
+    'headline': '{{first_names}}, that bridge is your front door.',
+    'opening': ('Mick here. You\'ll walk in the way everyone does, ten minutes under the trees, until the laurel '
+                'opens up and the bridge is there. Everything for your day is below. When it reads right, sign at '
+                'the bottom, and the date is yours.'),
+    'package_h': 'Your day',
+    'extras_h': 'And on us',
+    'total_label': 'All in',
+    'total_sub': 'Taxes and fees included.',
+    'half_label': 'Half today',
+    'half_line': ('{{today_amount}} by card holds the date, and it does not come back. The rest, {{balance}}, comes '
+                  'off the same card on {{balance_date}}.'),
+    'whole_label': 'All of it today',
+    'whole_line': '{{today_amount}} by card, Link or Klarna, and no balance later.',
+    'agreement_lead': ('Last, the agreement. It\'s in plain words, and it says what happens if plans change or the '
+                       'weather turns.'),
+    'sign_label': 'Type your full name to sign',
+    'tick': 'I\'m 18 or older and have read and agree to the elopement agreement, liability waiver included.',
+    'pay': 'Sign and pay {{today_amount}}',
+    'need_sign': 'Please type your full name, tick the box, and answer the photo question to sign.',
+    'need_sign_plain': 'Please type your full name and tick the box to sign.',
+    'loading': 'One moment…',
+    'failure': 'Something went wrong just now. Please try again in a moment.',
+    'questions': 'Questions? Call or text Mick at 706-502-4823.',
+    'thanks_h': 'The date is yours.',
+    'thanks': ('{{package}}, {{dates}}.\nYour confirmation comes by email, with what happens next.\n'
+               'See you at the bridge.'),
+    'clearing': ('Your bank payment is on its way. It can take a few days to clear, and your dates stay held for you '
+                 'until it does. Your confirmation comes by email once it\'s through.'),
+    'expired': ('This offer has closed, and its dates are no longer held. That happens, and it\'s alright. Mick will '
+                'tell you exactly where the dates stand.'),
 }
 # The SHA-256 of WORDS (words_sha256) once Mick has approved every word. None: not yet.
 APPROVED_SHA256 = None
@@ -132,7 +141,14 @@ def page_offer():
 PAGES = [page_offer]
 
 CSS = '''
-/* The invitation's top: /book's dusk photograph (lf-bk-top), their names over it. */
+/* The invitation's top: /book's dusk photograph (lf-bk-top), their names over it. It carries more
+   words than /book's, so it stands taller and its dark band begins higher: the words sit below the
+   lit canopy, never on it. */
+.eo-top { min-height: clamp(620px, 112svh, 920px); }
+.eo-top::before {
+  background: linear-gradient(180deg, rgba(20, 36, 24, 0.62) 0%, rgba(20, 36, 24, 0) 14%, rgba(20, 36, 24, 0) 34%,
+    rgba(20, 36, 24, 0.8) 50%, rgba(20, 36, 24, 0.93) 66%, var(--ink) 100%);
+}
 .eo-top .lf-h1 { font-size: clamp(2.3rem, 8.4vw, 4.4rem); overflow-wrap: anywhere; }
 .eo-top .lf-lead { white-space: pre-line; }
 .eo { padding-top: 40px; }

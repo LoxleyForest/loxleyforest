@@ -1,3 +1,14 @@
+# IN FLIGHT · 2026-10-27 · an elopement package offer's private page (branch forge/elopement-offer)
+
+/elopement/offer (elopement-offer.html, scripts/site/pages/offer.py, js/offer.js): the page a couple
+opens from the private link Mick makes on the droplet (loxley-rescue forge/elopement-offer,
+gatehouse/offers.py, GATEHOUSE-SPEC.md 16). Noindex, not in the sitemap, linked from nowhere. Its
+words are the Writer's slots, placeholders until Mick approves them: until APPROVED_SHA256 in
+offer.py matches, the page shows only /book's "Questions?" line. Check: node scripts/site/check_offer.js.
+Not merged: it goes to main with the engine, after the proof run and Mick's words.
+
+---
+
 # START HERE FIRST · 2026-10-19 night (next-level now books on our own engine: launch IS the switchover)
 
 **Mick's ruling 2026-10-19: no Hostfully anywhere.** next-level now carries the cutover
