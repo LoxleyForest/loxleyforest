@@ -73,7 +73,8 @@
     nodes.forEach(function (n) { if (n) body.appendChild(n); });
     body.hidden = false;
   }
-  function dates(a, b) { return G.long(a) + ' to ' + G.long(b); }
+  // "Friday, December 11 to Sunday, December 13, 2026": the year once when it is one year.
+  function dates(a, b) { return (a.slice(0, 4) === b.slice(0, 4) ? G.longNoYear(a) : G.long(a)) + ' to ' + G.long(b); }
 
   // Until Mick has approved every word, nothing of the offer shows.
   if (W.ready !== true) { say(W.not_ready || ''); return; }
@@ -161,7 +162,7 @@
     function today() { return G.money(mode === 'deposit' ? o.retainer_cents : o.total_cents); }
     vars.today_amount = today();
 
-    top.eyebrow.textContent = vars.package + ' · ' + vars.dates;
+    top.eyebrow.textContent = vars.package;
     top.h1.textContent = w('headline');
     top.lead.textContent = w('opening');
     top.lead.hidden = !top.lead.textContent;

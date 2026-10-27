@@ -214,7 +214,7 @@ async function main() {
     fs.mkdirSync(SHOTS, { recursive: true });
     await page.screenshot({ path: path.join(SHOTS, file), fullPage: true });
   }
-  const text = (page, sel) => page.evaluate((s) => { const n = document.querySelector(s); return n ? n.innerText : ''; }, sel);
+  const text = (page, sel) => page.evaluate((s) => { const n = document.querySelector(s); return n ? n.textContent : ''; }, sel);
   const visible = (page, sel) => page.evaluate((s) => { const n = document.querySelector(s); return !!n && !n.closest('[hidden]') && n.getClientRects().length > 0; }, sel);
   const noSideways = (page) => page.evaluate(() => document.scrollingElement.scrollWidth <= window.innerWidth);
   const fill = (s) => s.replace(/\{\{(\w+)\}\}/g, (m, n) => ({ first_names: GREETING }[n] || m));
@@ -245,7 +245,9 @@ async function main() {
     check(rec.reads.length === 1 && rec.reads[0].token === TOKEN && Object.keys(rec.reads[0]).join() === 'token', 'reads the offer by posting its token, and nothing else');
     check(!has(page.url(), TOKEN), 'the token is out of the address bar (the keys script runs before Tag Manager)');
     check((await text(page, '[data-eo-h1]')) === fill(WORDS.headline), 'the headline greets them by name');
-    check(has(await text(page, '[data-eo-eyebrow]'), 'The Vow') && (await text(page, '[data-eo-lead]')) === WORDS.opening, 'the package, its dates and the opening over the photograph');
+    check((await text(page, '[data-eo-eyebrow]')) === 'The Vow' && (await text(page, '[data-eo-lead]')) === WORDS.opening, 'the package and the opening over the photograph');
+    check(/^[A-Z][a-z]+day, [A-Z][a-z]+ \d+ to [A-Z][a-z]+day, [A-Z][a-z]+ \d+, \d{4}$/.test(await text(page, '.eo-dates')), 'their dates under Your day, the year once');
+    check(!(await visible(page, '.book-fab')), 'one action on the page: the floating "Book your dates" steps aside');
     check(await page.evaluate(() => { const i = document.querySelector('.lf-bk-top__photo img'); return !!i && i.complete && i.naturalWidth > 0; }), 'the dusk photograph is shown');
     const day = await text(page, '#eo-day-h');
     check(day === 'Your day' && (await page.$$eval('.eo-list li', (l) => l.length)) === 9, 'the day: its six lines, then the three gifts');

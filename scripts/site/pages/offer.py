@@ -172,4 +172,6 @@ CSS = '''
 .eo-done p { margin: 0; font-size: 18px; line-height: 1.55; color: var(--bark); white-space: pre-line; }
 .eo-call { margin: 0; font-size: 16px; color: var(--stone); text-align: center; }
 .eo-call a { color: var(--forest-deep); }
+/* The invitation has one action, Sign and pay: the site's floating "Book your dates" steps aside. */
+.v2[data-lf-path="/elopement/offer"] .book-fab { display: none; }
 '''
