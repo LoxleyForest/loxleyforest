@@ -48,7 +48,7 @@ CARD = {
     'for': 'For',
     'from': 'With love from',
     'giftno': 'Gift no.',
-    'gift': 'Three nights in the treehouse, and the Dawn Table: breakfast carried across the bridge to your door.',
+    'gift': 'Three nights in the treehouse, and the Dawn Table: champagne brunch carried across the bridge to your door.',
     # Mick, 2026-10-26: "eliminate the whole until May 31st and make it 12 months from date of purchase
     # for everyone"; the CEO kept "never expires" behind it (gift-card law), the difference only after.
     'nights': ('Good for any three nights, weekends included, within twelve months of purchase. '
@@ -72,7 +72,7 @@ WORDS = {
     'title': 'The Golden Arrow | Loxley Forest',
     'description': 'A gift of three nights in the treehouse at Loxley Forest, and the Dawn Table.',
     'eyebrow': 'A gift from Loxley Forest',
-    'lead': 'Three nights in the treehouse, and the Dawn Table: breakfast carried across the bridge to their door.',
+    'lead': 'Three nights in the treehouse, and the Dawn Table: champagne brunch carried across the bridge to their door.',
     'to_give': 'Give it',
     'sample_names': 'Sarah & Tom',          # the sample card's names, plainly an example
     'sample_giver': 'Mom & Dad',
