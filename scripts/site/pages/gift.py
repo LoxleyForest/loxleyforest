@@ -82,7 +82,7 @@ WORDS = {
     'what': [
         'A hand-built treehouse with a canvas peak, sixty feet up in the forest above Dahlonega, Georgia. '
         'The way in is a hundred-foot bridge strung with small warm lights.',
-        'And the Dawn Table: champagne and fresh-squeezed orange juice first, then a table made from scratch in our kitchen, carried across the bridge to their door.',
+        'And the Dawn Table: champagne and fresh-squeezed orange juice first, then a table made from scratch, carried across the bridge to their door.',
     ],
     'when_h': 'When',
     'choose_h': 'Choosing their nights',
