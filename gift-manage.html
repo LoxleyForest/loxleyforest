@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
   <!-- Booking keys: out of the address bar before anything loads -->
   <meta name="referrer" content="strict-origin">
-  <script>(function(){var N=['token','credit','session_id','hold','gift','code'],k={},f=!1,st={},p=location.pathname.replace(/\.html$/,'').replace(/(.)\/$/,'$1');
+  <script>(function(){var N=['token','credit','session_id','hold','gift','code','offer'],k={},f=!1,st={},p=location.pathname.replace(/\.html$/,'').replace(/(.)\/$/,'$1');
   try{st=JSON.parse(sessionStorage.getItem('gh_keys')||'{}')||{}}catch(e){}
   var q=new URLSearchParams(location.search),hp=location.hash.indexOf('=')>0,h=new URLSearchParams(hp?location.hash.slice(1):'');
   N.forEach(function(n){var v=h.get(n)||q.get(n);if(q.has(n)||h.has(n)){f=!0;q.delete(n);h.delete(n)}if(v)k[n]=v});
   if(f){st[p]=k;try{sessionStorage.setItem('gh_keys',JSON.stringify(st))}catch(e){}
   var s=q.toString(),t=hp?h.toString():location.hash.slice(1);history.replaceState(history.state,'',location.pathname+(s?'?'+s:'')+(t?'#'+t:''))}
   else{var nv=(performance.getEntriesByType&&performance.getEntriesByType('navigation')[0])||{};if(nv.type==='reload'||nv.type==='back_forward')k=st[p]||{};else if(st[p]){if(st[p].credit)k.credit=st[p].credit;if(st[p].gift)k.gift=st[p].gift}}
-  window.__ghKeys=k;addEventListener('hashchange',function(){if(/(^#|&)(token|credit|session_id|hold|gift|code)=/.test(location.hash))location.reload()})})();</script>
+  window.__ghKeys=k;addEventListener('hashchange',function(){if(/(^#|&)(token|credit|session_id|hold|gift|code|offer)=/.test(location.hash))location.reload()})})();</script>
   <!-- End booking keys -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Google Tag Manager -->

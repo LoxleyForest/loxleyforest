@@ -203,7 +203,7 @@ function statics() {
     check(has(h, 'noindex') && /src="\/js\//.test(h) && /href="\/css\/v2-pages\.css"/.test(h), n + ': noindex, root paths (served one folder deep)');
   }
   check(!has(gift, 'noindex'), '/gift is indexable');
-  check(/'gift','code'\]/.test(book) && /'gift','code'\]/.test(card), 'the keys script lifts gift and code');
+  check(/'gift','code'[,\]]/.test(book) && /'gift','code'[,\]]/.test(card), 'the keys script lifts gift and code');
   check(REWRITES['/gift/card'] === '/gift-card.html' && REWRITES['/gift/thanks'] === '/gift-thanks.html' && REWRITES['/gift/manage'] === '/gift-manage.html', 'netlify.toml serves /gift/card, /gift/thanks and /gift/manage');
   // The one way in (2026-10-26, the CEO's piece): "The Golden Arrow" beside "Questions" in the menu
   // and the footer of every page that has them (build_v2.GIFT_LINK). Anything else that links to a

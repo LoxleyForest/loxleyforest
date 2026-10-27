@@ -529,6 +529,50 @@ body:has(#ga-buy, #ga-card-page, #ga-manage, #ga-thanks) .book-fab { display: no
 .lf-off__more a { display: inline-flex; align-items: center; min-height: 44px; color: var(--on-dark-muted); font-size: 1.15rem; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
 .lf-off__more a:hover { color: var(--on-dark); }
 
+/* ---- offer ---- */
+/* The invitation's top: /book's dusk photograph (lf-bk-top), their names over it. */
+.eo-top .lf-h1 { font-size: clamp(2.3rem, 8.4vw, 4.4rem); overflow-wrap: anywhere; }
+.eo-top .lf-lead { white-space: pre-line; }
+.eo { padding-top: 40px; }
+.eo__in { width: min(640px, 100%); margin: 0 auto; padding: 0 16px; }
+.eo-wait, .eo-note { margin: 0; font-size: 18px; line-height: 1.55; color: var(--bark); text-align: center; }
+.eo-body { display: grid; gap: 34px; }
+.eo-part { display: grid; gap: 12px; }
+.eo-part > h2 { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: clamp(1.7rem, 6vw, 2.2rem); line-height: 1.15; color: var(--forest-deep); }
+.eo-dates { margin: 0; font-family: 'Montserrat', Arial, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--forest); }
+.eo-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.eo-list li { position: relative; padding-left: 26px; font-size: 18px; line-height: 1.45; color: var(--bark); overflow-wrap: anywhere; }
+.eo-list li::before { content: ''; position: absolute; left: 4px; top: 0.62em; width: 8px; height: 8px; border-radius: 50%; background: var(--gold, #b8955a); }
+.eo-total { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 16px 18px; background: var(--cream); border: 1px solid var(--parchment); }
+.eo-total__label { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 24px; color: var(--forest-deep); }
+.eo-total__sum { font-family: 'Montserrat', Arial, sans-serif; font-size: 22px; font-weight: 600; color: var(--forest-deep); }
+.eo-sub { margin: 0; font-size: 16px; line-height: 1.5; color: var(--stone); }
+.eo-ways { border: 0; margin: 0; padding: 0; display: grid; gap: 10px; min-width: 0; }
+.eo-way { display: grid; grid-template-columns: 26px 1fr; gap: 4px 14px; align-items: start; padding: 14px 16px; min-height: 56px; cursor: pointer;
+  background: var(--cream); border: 1px solid var(--driftwood); }
+.eo-way input { margin: 3px 0 0; width: 22px; height: 22px; accent-color: var(--forest-deep); grid-row: span 2; }
+.eo-way:has(input:checked) { border-color: var(--forest-deep); background: var(--white); }
+.eo-way:has(input:focus-visible) { outline: 2px solid var(--gold); outline-offset: 2px; }
+.eo-way__label { font-size: 18px; font-weight: 600; color: var(--forest-deep); }
+.eo-way__line { font-size: 16px; line-height: 1.45; color: var(--bark); }
+.eo-lead-in { margin: 0; font-size: 17px; line-height: 1.55; color: var(--bark); }
+.eo .gh-agreement { overflow-wrap: anywhere; }
+.eo-choice { border: 0; margin: 0.4em 0 1em; padding: 0; display: grid; gap: 8px; min-width: 0; }
+.eo-choice legend { padding: 0; margin-bottom: 4px; font-weight: 600; color: var(--forest-deep); }
+.eo-choice label { display: flex; gap: 10px; align-items: flex-start; min-height: 44px; cursor: pointer; line-height: 1.4; }
+.eo-choice input { flex: none; width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--forest-deep); }
+.eo-sign { display: grid; gap: 12px; }
+.eo-sign .lf-btn { width: 100%; justify-content: center; min-height: 56px; font-size: 16px; }
+.eo-pay { min-height: 0; }
+.eo-pay:empty { display: none; }
+.eo-done { text-align: center; display: grid; gap: 14px; }
+.eo-done h2 { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: clamp(1.9rem, 7vw, 2.6rem); color: var(--forest-deep); }
+.eo-done p { margin: 0; font-size: 18px; line-height: 1.55; color: var(--bark); white-space: pre-line; }
+.eo-call { margin: 0; font-size: 16px; color: var(--stone); text-align: center; }
+.eo-call a { color: var(--forest-deep); }
+/* The invitation has one action, Sign and pay: the site's floating "Book your dates" steps aside. */
+.v2[data-lf-path="/elopement/offer"] .book-fab { display: none; }
+
 /* ---- our_story ---- */
 /* the fog photograph is pale at the top: shade it under the header so the menu reads on desktop */
 @media (min-width: 900px) { .st-hero .hero__media::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 180px; z-index: 1; background: linear-gradient(180deg, rgba(20, 36, 24, 0.8), rgba(20, 36, 24, 0)); } }
