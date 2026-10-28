@@ -11,15 +11,15 @@
    post_offer, offer_checkout and get_booked). Stripe is a stub; Tag Manager and everything else get
    an empty answer. Every name and email is made up (example.test).
 
-   The page's words wait for Mick (scripts/site/pages/offer.py WORDS, APPROVED_SHA256 None): as
-   built, the page must show only /book's own "Questions?" line. To check the page a couple will
-   see, this serves it with made-up words of a real length in place of the placeholders and
-   "ready" true; the made-up words never reach the repository.
+   The page's words are Mick's, approved by hash (scripts/site/pages/offer.py APPROVED_SHA256, his
+   yes to all, 2026-10-27): as built the page is ready, and it is checked in his words. Words that
+   do not match the approved hash must close it: that is checked by serving the page with "ready"
+   false, when it must show only /book's own "Questions?" line.
 
    It proves:
      - as built: Tag Manager, the keys script before it, noindex, root paths, the rewrite, not in
-       sitemap.xml, linked from no page; every slot of the Writer's in WORDS; not ready, so the page
-       shows only /book's line and never asks the engine;
+       sitemap.xml, linked from no page; every slot of the Writer's in WORDS; ready on Mick's
+       approved words; not ready, the page shows only /book's line and never asks the engine;
      - ready: the invitation (their names in the headline, the package and dates over the dusk
        photograph), the day, the gifts, one total, half today or all of it today (the whole only
        inside 30 days), the pay button's amount following the choice, the agreement in its own
@@ -59,23 +59,8 @@ const BLOCK = /<script type="application\/json" id="lf-offer-words">([\s\S]*?)<\
 const BUILT = JSON.parse(BLOCK.exec(read('elopement-offer.html'))[1]);
 const NOT_READY = 'Questions? Call or text 706-502-4823, or write to stay@loxleyforest.com.';
 
-// Made-up words of a real length, for the page as a couple will see it. Never written to the repo.
-const WORDS = Object.assign({}, BUILT, {
-  ready: true,
-  title: 'Your day in the trees | Loxley Forest',
-  headline: '{{first_names}}, that bridge is your front door.',
-  opening: 'A made-up opening of a real length: two sentences about the forest at dusk and the day ahead, for the check only.',
-  package_h: 'Your day', extras_h: 'And on us', total_label: 'All in',
-  total_sub: 'A made-up sub-line: the package, the taxes and the fees, nothing more to come.',
-  half_label: 'Half today', half_line: '{{today_amount}} today to hold your date; {{balance}} on {{balance_date}}, on its own.',
-  whole_label: 'All of it today', whole_line: '{{today_amount}} today, and nothing more to pay.',
-  agreement_lead: 'A made-up lead-in to the agreement, in one sentence.',
-  sign_label: 'Your full name', tick: 'A made-up tick line: I have read the agreement and agree to it.',
-  pay: 'Sign and pay {{today_amount}}', need_sign: 'A made-up line: your name, the tick and the answer, please.',
-  loading: 'A made-up opening line…', failure: 'A made-up failure line.', questions: 'A made-up questions line, 706-502-4823.',
-  thanks_h: 'A made-up thank-you heading', thanks: 'A made-up thank-you for {{package}}, {{dates}}.',
-  clearing: 'A made-up clearing line: your bank payment is on its way.', expired: 'A made-up expired-offer line.',
-});
+// Mick's approved words, as built (scripts/site/pages/offer.py WORDS; his yes to all, 2026-10-27).
+const WORDS = BUILT;
 const SLOTS = ['headline', 'opening', 'package_h', 'extras_h', 'total_label', 'total_sub', 'half_label', 'half_line', 'whole_label',
   'whole_line', 'agreement_lead', 'tick', 'pay', 'loading', 'failure', 'questions', 'thanks', 'clearing', 'expired'];
 
@@ -123,7 +108,7 @@ function statics() {
     .filter((n) => /elopement\/offer|elopement-offer/.test(read(n)));
   check(linking.length === 0, 'linked from no page' + (linking.length ? ': ' + linking.join(', ') : ''));
   check(SLOTS.every((k) => typeof BUILT[k] === 'string' && BUILT[k]), 'every slot of the Writer\'s is in WORDS');
-  check(BUILT.ready === false, 'as built, its words wait for Mick (ready false)');
+  check(BUILT.ready === true && /Your day in the trees/.test(h), 'as built, ready on Mick\'s approved words, its title his');
   check(BUILT.not_ready === NOT_READY && has(read('book.html'), 'Questions? Call or text <a href="tel:+17065024823">706-502-4823</a>, or write to'),
     'while they wait, /book\'s own live line');
   check(has(h, 'book-hero-phone-828') && has(h, 'lf-bk-top'), 'the dusk photograph from /book');
@@ -162,10 +147,10 @@ async function main() {
     const rec = { reads: [], checkouts: [], booked: [], outside: [], beacons: [], addresses: [] };
     await ctx.route('**/*', async (route) => {
       const req = route.request(), u = new URL(req.url());
-      if (u.hostname === '127.0.0.1' && u.pathname === '/elopement/offer' && engine.ready) {
-        // The page a couple will see: made-up words in place of the placeholders, ready.
+      if (u.hostname === '127.0.0.1' && u.pathname === '/elopement/offer' && !engine.ready) {
+        // Words that are not the approved ones: the page as it must then stand, not ready.
         const res = await route.fetch();
-        const words = JSON.stringify(WORDS).replace(/<\//g, '<\\/');
+        const words = JSON.stringify(Object.assign({}, WORDS, { ready: false })).replace(/<\//g, '<\\/');
         return route.fulfill({ response: res, body: (await res.text()).replace(BLOCK,
           () => '<script type="application/json" id="lf-offer-words">' + words + '</script>') });
       }
@@ -255,8 +240,10 @@ async function main() {
     check(!/\$\s?\d/.test(await text(page, '.eo-list')), 'no price or value beside a gift (Letter Law 1)');
     check(has(await text(page, '.eo-total'), '$5,230.00') && has(await text(page, '.eo-total'), 'All in'), 'one total, all in');
     check((await page.$$eval('.eo-way', (l) => l.length)) === 2 && (await page.isChecked('#eo-way-deposit')), 'half today or all of it today, half chosen');
-    check(has(await text(page, '.eo-way:first-child .eo-way__line'), '$2,615.00 today') && has(await text(page, '.eo-way:last-child .eo-way__line'), '$5,230.00 today'),
-      'each way names its own amount today');
+    const halfLine = await text(page, '.eo-way:first-child .eo-way__line'), wholeLine = await text(page, '.eo-way:last-child .eo-way__line');
+    check(halfLine.startsWith('$2,615.00 by card holds the date') && has(halfLine, 'The rest, $2,615.00, comes off the same card on ')
+      && wholeLine.startsWith('$5,230.00 by card, Link or Klarna'), 'each way names its own amount today, and half today its balance and date');
+    check(!/\{\{|\[WRITER|\[MICK/.test(await page.evaluate(() => document.body.innerText)), 'no merge field or placeholder left on the page');
     check((await text(page, '#eo-paybtn')) === 'Sign and pay $2,615.00', 'the button: Sign and pay $2,615.00');
     await page.click('label[for="eo-way-full"]');
     check((await text(page, '#eo-paybtn')) === 'Sign and pay $5,230.00', 'all of it today: Sign and pay $5,230.00');

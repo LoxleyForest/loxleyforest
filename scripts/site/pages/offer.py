@@ -41,8 +41,8 @@ URL = 'https://loxleyforest.com/elopement/offer'
 NOT_READY = 'Questions? Call or text 706-502-4823, or write to stay@loxleyforest.com.'
 
 # =============================================================================================
-# WORDS · AWAITING MICK. The Writer's final words (2026-10-27, the CEO seat's batch), for Mick's
-# ear and eye in one sitting. None is approved yet: the page shows none of them until
+# WORDS · APPROVED. The Writer's final words (2026-10-27, the CEO seat's batch); Mick's yes to all,
+# by sight and ear, the same day (APPROVED_SHA256 below). The page shows them only while
 # APPROVED_SHA256 matches. need_sign_plain is need_sign without its photo question, for an offer
 # whose couple brings their own photographer (the agreement then asks no "May we?").
 # =============================================================================================
@@ -80,7 +80,9 @@ WORDS = {
                 'tell you exactly where the dates stand.'),
 }
 # The SHA-256 of WORDS (words_sha256) once Mick has approved every word. None: not yet.
-APPROVED_SHA256 = None
+# Mick, 2026-10-27, on the review page by sight and ear: "yes to all" (relayed by the CEO seat;
+# https://claude.ai/artifact/8ofANdGu5jtkrGdqtLFcSx). Any change to a word closes the page again.
+APPROVED_SHA256 = '399359d8dec17d8d98fef291a59c90813d605abc9e11b3be94f60518ce7c45b6'
 
 
 def words_sha256(words=None):
