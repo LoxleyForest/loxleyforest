@@ -309,10 +309,13 @@ async function main() {
     await ctx.close();
   }
   {
-    const { ctx, page } = await open('no key');
+    // No offer in the address: nothing to try again, so the page stands closed on /book's line
+    // (never "Something went wrong", which is for an offer that fails to load).
+    const { ctx, page, rec } = await open('no key');
     await page.goto(BASE + '/elopement/offer');
     await until(() => text(page, '[data-eo-wait]'));
-    check(has(await text(page, '[data-eo-wait]'), WORDS.failure), 'no key: the failure line, the engine never asked');
+    check((await text(page, '[data-eo-wait]')) === NOT_READY && rec.reads.length === 0 && rec.booked.length === 0
+      && !(await visible(page, '[data-eo-body]')), 'no key: the page closed on /book\'s line, the engine never asked');
     await ctx.close();
   }
 
