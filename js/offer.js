@@ -242,7 +242,9 @@
     });
   }
 
+  // No offer and no payment in the address: there is nothing to try again, so the page stands
+  // closed, as it does when the words are not the approved ones (/book's own "Questions?" line).
   if (keys.session_id) returned(keys.session_id);
   else if (keys.offer) load(keys.offer);
-  else failed();
+  else say(W.not_ready || '');
 })();

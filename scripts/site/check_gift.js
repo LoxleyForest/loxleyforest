@@ -283,7 +283,7 @@ async function main() {
           if (engine.sale503) return json({ error: PAY_503 }, 503);
           if (engine.soldOut) return json({ error: SOLD }, 409);
           if (b.deliver && engine.delivery === 'off') return json({ error: DELIVERY_OFF }, 400);
-          return json({ url: engine.checkoutUrl, total_cents: 254580 });
+          return json({ url: engine.checkoutUrl, total_cents: 200000 });
         }
         if (u.pathname === '/v1/gift/resend') {
           if (engine.resend === 'off') return json({ error: 'not found' }, 404);
@@ -520,7 +520,7 @@ async function main() {
     check(sent.product === 'golden-arrow' && sent.email === BUYER.email && sent.giver_name === BUYER.giver && sent.recipient_names === BUYER.names, 'product, email, giver and their names as typed');
     check(JSON.stringify(sent.ship_to) === JSON.stringify(SHIP), 'ship_to {name, line1, line2, city, state, zip}, the state in capitals');
     const conf = await text(page, '#ga-buy .ga-confirm');
-    check(has(conf, 'Total $2,545.80') && has(conf, PANEL.all_in), 'the purchase step shows the engine\'s all-in amount (' + (conf.match(/Total \$[\d,.]+/) || [''])[0] + ')');
+    check(has(conf, 'Total $2,000.00') && has(conf, PANEL.all_in), 'the purchase step shows the engine\'s all-in amount (' + (conf.match(/Total \$[\d,.]+/) || [''])[0] + ')');
     check(has(conf, 'For ' + BUYER.names) && has(conf, 'With love from ' + BUYER.giver), 'and the names as the card will read');
     check(has(conf, PANEL.confirm_mail + ' ' + SHIP.name), 'and where the printed card goes');
     check(has(conf, 'Your card goes to ' + BUYER.email + '. ' + PANEL.confirm_change), 'the buyer\'s own email, seen before paying: "Your card goes to ' + BUYER.email + '." with "Change"');

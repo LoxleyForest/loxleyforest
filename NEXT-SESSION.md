@@ -3,9 +3,10 @@
 /elopement/offer (elopement-offer.html, scripts/site/pages/offer.py, js/offer.js): the page a couple
 opens from the private link Mick makes on the droplet (loxley-rescue forge/elopement-offer,
 gatehouse/offers.py, GATEHOUSE-SPEC.md 16). Noindex, not in the sitemap, linked from nowhere. Its
-words are the Writer's slots, placeholders until Mick approves them: until APPROVED_SHA256 in
-offer.py matches, the page shows only /book's "Questions?" line. Check: node scripts/site/check_offer.js.
-Not merged: it goes to main with the engine, after the proof run and Mick's words.
+words are the Writer's, approved by Mick 2026-10-27 ("yes to all") by hash: APPROVED_SHA256 in
+offer.py; change a word and the page closes (shows only /book's "Questions?" line) until he approves
+again. Check: node scripts/site/check_offer.js. The page itself reached main before its words were
+approved (it showed only /book's line); the approval goes to main after the Critic's last pass.
 
 ---
 
