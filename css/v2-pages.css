@@ -121,13 +121,14 @@
 .lf-pkgs { display: grid; gap: 22px; margin-top: 48px; }
 .lf-pkg { position: relative; background: var(--cream, #fff); border: 1px solid rgba(61, 50, 40, 0.14); padding: 34px 26px 28px; display: flex; flex-direction: column; }
 .lf-pkg--featured { background: var(--forest-deep); color: var(--on-dark); border-color: var(--forest-deep); }
-.lf-pkg--featured .lf-eyebrow, .lf-pkg--featured .lf-pkg__lead { color: var(--on-dark-muted); }
+.lf-pkg--featured .lf-pkg__lead, .lf-pkg--featured .lf-pkg__note { color: var(--on-dark-muted); }
 .lf-pkg--featured .lf-acorns b, .lf-pkg--featured .lf-pkg__name { color: var(--on-dark); }
-.lf-pkg__badge { position: absolute; top: -12px; left: 26px; margin: 0; padding: 4px 12px; background: var(--linen); color: var(--forest-deep); border: 1px solid var(--forest-deep); font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 0.625rem; letter-spacing: 0.2em; text-transform: uppercase; }
-.lf-pkg .lf-eyebrow { margin-bottom: 8px; }
+.lf-pkg--featured .lf-pkg__gift { color: var(--on-dark); border-top-color: rgba(247, 243, 237, 0.24); }
 .lf-pkg__name { font-size: 2.2rem; color: var(--forest-deep); }
 .lf-pkg__price { margin: 14px 0 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 300; font-size: 2.4rem; line-height: 1; font-variant-numeric: lining-nums; }
-.lf-pkg__price span { display: block; margin-bottom: 6px; font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 0.6875rem; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.75; }
+.lf-pkg__price span { display: block; margin-top: 8px; font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 0.6875rem; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.75; }
+.lf-pkg__when { margin: 18px 0 0; font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 1.35rem; line-height: 1.3; }
+.lf-pkg__gift { margin: 20px 0 0; padding-top: 16px; border-top: 1px solid rgba(61, 50, 40, 0.16); font-size: 1.05rem; line-height: 1.55; }
 .lf-pkg__lead { margin: 24px 0 0; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--stone); }
 .lf-pkg__list { margin-top: 18px; gap: 10px; }
 .lf-pkg__list li { font-size: 1.08rem; }
