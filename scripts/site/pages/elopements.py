@@ -19,7 +19,7 @@ ACORN = B.ACORN
 # The waterfall package's name, said once: its card, the form's option and the option's value all
 # read it, so Mick's pick swaps in this one edit. [MICK RATIFIES] the name ("What the owner decides"
 # 3: The Seventh Season, the table's candidate; Canopy Green; or his own).
-SEASON = 'The Seventh Season'
+SEASON = 'The Seventh Season'  # [MICK RATIFIES] the seven seasons by name, or another package name; the FAQ names four.
 
 
 def slug(name):
@@ -34,7 +34,7 @@ SPACES = [
     ('img_1717', 'The stone fire pit on the forest floor, ringed with ferns', 'The Fire Circle', 'Fire as witness',
      'A boulder fire pit that looks like it emerged from the earth centuries ago, set at the four compass points. It echoes traditions that have existed for thousands of years.',
      'With every package.'),
-    ('img_2546', 'The treehouse deck with chairs, above the forest', 'The Canopy Deck', 'Privacy measured in altitude',
+    ('img_2546', 'The treehouse deck with chairs, above the forest', 'The Sky Deck', 'Privacy measured in altitude',
      'An intimate ceremony on the private deck of your treehouse, sixty feet in the air. Just you, your partner, your officiant, and the sky.',
      'With every package.'),
 ]
@@ -69,14 +69,16 @@ PACKAGES = [
 ]
 
 # The line under the cards (agreement: the two of you plus up to six guests; half reserves the date,
-# the balance thirty days before arrival).
-UNDER_CARDS = 'Each is for the two of you and up to six guests. Half reserves your date; the rest is due thirty days before you arrive.'
+# the balance thirty days before arrival). The waterfall card takes no retainer until its agreement
+# words exist and Counsel has read them, so the retainer sentence names the two tiers it is true for.
+UNDER_CARDS = 'Each is for the two of you and up to six guests. For The Vow and The Crossing, half reserves your date; the rest is due thirty days before you arrive.'
 
 FAQ = [
     ('How many guests can attend?',
      'Each package is for the two of you and up to six guests. Intimate by design. The bridge is rated for eight people at one time, everyone counted: on the bridge that is the two of you, your officiant, and up to five more, your photographer among them. Every guest is part of your private celebration: your closest people, sharing your night in the canopy. Because Loxley Forest is our home and yours during your stay, all ceremony guests are welcomed as part of your booking party.'),
+    # No officiant is named in the record: the answer says only what the agreement does.
     ('Do you provide an officiant?',
-     'We keep a curated list of officiants who know this property and understand how to hold a ceremony in the canopy.'),
+     'We arrange your officiant.'),
     # "Our preferred photographers have shot at Loxley before" is off: no photographer is named in
     # the record, and "They know the light" leaned on it. What every card says stands in its place.
     ('What about photography?',
