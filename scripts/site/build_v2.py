@@ -720,7 +720,9 @@ GIFT_PAGES = ('gift.html', 'gift-card.html', 'gift-thanks.html', 'gift-manage.ht
 OFFER_PAGES = ('elopement-offer.html',)
 
 
-def build(page):
+def render(page):
+    """The page's whole file, (name, html). build() writes it; scripts/site/check_pseo.py
+    compares it with the file on disk."""
     name, head, gtm, body, book, gatehouse = page()
     if name in KEYS_PAGES:
         head = set_keys(head)
@@ -735,6 +737,11 @@ def build(page):
             + '</body>\n</html>\n')
     if name in ROOTED_PAGES:
         html = rooted(html)
+    return name, html
+
+
+def build(page):
+    name, html = render(page)
     open(os.path.join(ROOT, name), 'w').write(html)
     print('wrote', name, len(html))
 
@@ -776,3 +783,8 @@ if __name__ == '__main__':
     open(os.path.join(ROOT, 'css', 'v2-pages.css'), 'w').write(css)
     for p in [page_index, page_treehouses] + [fn for m in mods for fn in m.PAGES]:
         build(p)
+    # A module's steps after every page is written (pages/pseo.py: the search landing pages'
+    # entries in sitemap.xml, and the removal of a landing page its data no longer lists).
+    for m in mods:
+        for fn in getattr(m, 'AFTER', ()):
+            fn()
