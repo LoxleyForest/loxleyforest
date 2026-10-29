@@ -1,3 +1,17 @@
+# IN FLIGHT · 2026-10-29 · the Golden Arrow's sale for Google Ads (branch ceo/gift-conversion)
+
+/gift/thanks (js/gift.js Sold) pushes `gift_purchase` {value, currency USD, transaction_id (a hash
+of the Stripe session), item golden-arrow} once per session, and only when the engine's
+GET /v1/gift/sold?session_id= answers paid (Stripe also returns a buyer whose bank payment is still
+clearing). That engine read is the Forge's (loxley-rescue) and goes live with Mick's next deploy
+paste; until then it answers 404, so the page pushes nothing and nothing counts, which is right.
+The Google Ads action "Gift - Golden Arrow" and its tag wait on Mick's clicks (the list in
+loxley-rescue docs/site-tags.md); then its label goes in GIFT_LABEL in
+scripts/site/check_conversions.js, which says "awaiting Mick's label" until it does. Checks:
+node scripts/site/check_gift.js; node scripts/site/check_conversions.js.
+
+---
+
 # IN FLIGHT · 2026-10-29 · the interior film on /treehouses (branch ceo/interior-video)
 
 Mick approved the interior rough cut by voice (2026-10-28). It sits beside "The original" on

@@ -34,6 +34,9 @@
        amount shown only in the purchase step, the payment page reused for the same details, Stripe
        reached by script, a non-Stripe answer refused, the engine's refusal shown as it wrote it;
      - /gift/thanks: the payment session out of the address bar before Tag Manager, the thank-you;
+       the sale for Google Ads, gift_purchase {value, currency, transaction_id, item}, only on the
+       engine's paid answer (GET /v1/gift/sold), once per session, its id a hash; nothing on paid
+       false, a 404, no answer, a bare load or a session that is not Stripe's;
      - /gift/card: the code lifted out of the address bar before Tag Manager, the card filled from
        GET /v1/gift with the card's ratified words and its gift number, long names stepped down
        beside the photo, one printed page, the share link, "Choose your dates" into /book#gift=, and
@@ -249,7 +252,7 @@ async function main() {
       window.print = () => { window.__printed++; };
     });
     const rec = { beacons: [], health: 0, lookups: [], probes: 0, sales: [], resends: [], deliveries: [],
-      dv: { recipient_names: 'Ana & Luis', giver_name: 'Aunt June', email: THEM, date: nextMorning('12-25').slice(0, 10), hour: 8, message: NOTE, sent: !!engine.sent }, quotes: [], checkouts: [], stays: [], outside: [], stripePages: [] };
+      dv: { recipient_names: 'Ana & Luis', giver_name: 'Aunt June', email: THEM, date: nextMorning('12-25').slice(0, 10), hour: 8, message: NOTE, sent: !!engine.sent }, quotes: [], checkouts: [], stays: [], outside: [], stripePages: [], solds: [] };
     await ctx.route('**/*', (route) => {
       const req = route.request(), u = new URL(req.url());
       if (u.hostname === '127.0.0.1') return route.continue();
@@ -304,6 +307,13 @@ async function main() {
           if (b.date) dv.date = b.date;
           if (b.hour !== undefined) dv.hour = +b.hour;
           return json(view());
+        }
+        // The sale's proof (the Forge, 2026-10-29): {paid, cents} for a gift session, 404 for anything else.
+        if (u.pathname === '/v1/gift/sold') {
+          const sid = u.searchParams.get('session_id') || '';
+          rec.solds.push(sid);
+          if (engine.sold === 'none' || sid !== SESSION) return json({ error: 'not found' }, 404);
+          return json(engine.sold === 'unpaid' ? { paid: false, cents: 0 } : { paid: true, cents: 200000 });
         }
         if (u.pathname === '/v1/availability') return json(NIGHTS);
         if (u.pathname === '/v1/agreement') return json(AGREEMENT);
@@ -364,6 +374,9 @@ async function main() {
       (outside.length + beacon.length + tags.length ? ' (' + outside.concat(beacon, tags).join(' | ').slice(0, 300) + ')' : ''));
   }
   const dataLayer = (page) => page.evaluate(() => JSON.stringify(window.dataLayer || []));
+  // The sale for Google Ads (2026-10-29): gift_purchase, pushed by the page itself on Stripe's return.
+  const sold = (page) => page.evaluate(() => (window.dataLayer || []).filter((x) => x && (x.event === 'gift_purchase' || x.event === 'purchase')));
+  const settle = () => new Promise((r) => setTimeout(r, 600));
   const text = (page, sel) => page.evaluate((s) => { const n = document.querySelector(s); return n ? n.innerText.replace(/\s+/g, ' ').trim() : null; }, sel);
   // A button's own words (its CSS sets them in capitals, which innerText would report).
   const label = (page, sel) => page.evaluate((s) => { const n = document.querySelector(s); return n ? n.textContent.replace(/\s+/g, ' ').trim() : null; }, sel);
@@ -544,11 +557,22 @@ async function main() {
     check(await text(page, '[data-ga-thanks-lead]') === 'Your card is on its way to ' + BUYER.email + '.', 'back from Stripe: "Your card is on its way to ' + BUYER.email + '."');
     check(await text(page, '[data-ga-thanks-printed]') === 'Mick hand-writes your printed card and mails it to you.', 'the printed card ticked: "Mick hand-writes your printed card and mails it to you."');
     check(await page.evaluate(() => sessionStorage.getItem('ga_deliver') === null), 'shown once, then cleared from the tab');
+    await until(async () => (await sold(page)).length > 0);
+    const sale = await sold(page);
+    const one = sale[0] || {};
+    check(sale.length === 1 && one.event === 'gift_purchase' && Object.keys(one).sort().join() === 'currency,event,item,transaction_id,value',
+      'the sale for Google Ads: one gift_purchase {event, value, currency, transaction_id, item}, never a purchase (the booking tag\'s event)');
+    check(rec.solds.length >= 1 && rec.solds.every((x) => x === SESSION), 'counted only after the engine was asked about this session (GET /v1/gift/sold)');
+    check(one.value === 2000 && one.currency === 'USD' && one.item === 'golden-arrow', 'its value the engine\'s paid amount, in dollars (2000), USD, the card the engine names (golden-arrow)');
+    check(/^lf-[0-9a-f]{16}$/.test(String(one.transaction_id)) && !has(JSON.stringify(sale), SESSION), 'its transaction_id a one-way hash of the session, never the session (' + one.transaction_id + ')');
+    leaks(rec, await dataLayer(page), 'the sale');
     const kept = await page.evaluate(() => localStorage.getItem('__ga_kept') || '');
     check(has(kept, BUYER.email) && !has(kept, BUYER.names) && !has(kept, 'Test Lane'), 'what was kept for it: the choice, the email and the printed tick, no names, no address');
     await page.reload();
     await page.waitForSelector('[data-ga-thanks-lead]');
     check(await text(page, '[data-ga-thanks-lead]') === 'Your card and its link are on their way by email.' && !has(await page.evaluate(() => document.body.innerText), BUYER.email), 'a refresh: the general lines, no email');
+    await settle();
+    check((await sold(page)).length === 0, 'a refresh: the sale is not counted twice');
     leaks(rec, dl, 'the purchase');
     await ctx.close();
   }
@@ -686,9 +710,29 @@ async function main() {
     check(!has(page.url(), SESSION) && new URL(page.url()).pathname === '/gift/thanks', 'the payment session is out of the address bar');
     const t = await page.evaluate(() => document.querySelector('main').innerText.replace(/\s+/g, ' '));
     check(has(t, 'Thank you.') && has(t, 'Your card and its link are on their way by email.') && has(t, '706-502-4823'), 'a thank-you, the card and its link by email, Mick\'s number');
+    await until(async () => (await sold(page)).length > 0);
+    const bare = await sold(page);
+    check(bare.length === 1 && bare[0].event === 'gift_purchase' && bare[0].value === 2000 && /^lf-[0-9a-f]{16}$/.test(String(bare[0].transaction_id)),
+      'no purchase step in this tab: the engine\'s paid answer alone counts the sale, at its amount');
     check(await overflow(page) <= 0, 'no sideways scroll at 390');
     leaks(rec, await dataLayer(page), 'the thank-you');
     await shot(page, 'gift-thanks.png');
+    for (const [q, what] of [['', 'no session'], ['?session_id=not-a-stripe-session', 'a session that is not Stripe\'s']]) {
+      const asked = rec.solds.length;
+      await page.goto(BASE + '/gift/thanks' + q);
+      await page.waitForSelector('h1');
+      await settle();
+      check((await sold(page)).length === 0 && rec.solds.length === asked, 'the thank-you with ' + what + ': the engine not asked, no sale counted');
+    }
+    await ctx.close();
+  }
+  for (const [what, engine] of [['paid false (a bank payment still clearing)', { sold: 'unpaid' }], ['404 (not a gift session)', { sold: 'none' }], ['nothing (unreachable)', { down: true }]]) {
+    const { ctx, page, rec } = await open('thanks-unpaid', engine);
+    await page.goto(BASE + '/gift/thanks?session_id=' + SESSION);
+    await page.waitForSelector('h1');
+    await until(async () => engine.down || rec.solds.length > 0, 30);
+    await settle();
+    check((await sold(page)).length === 0 && (engine.down || rec.solds[0] === SESSION), 'the engine answers ' + what + ': nothing pushed');
     await ctx.close();
   }
 
