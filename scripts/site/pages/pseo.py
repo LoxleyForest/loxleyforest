@@ -33,14 +33,18 @@ each and shows it refused):
   - two pages of one set sharing more than 40 percent of their sentences, read with each page's own
     place, month or occasion masked, so a page that is its sibling with one word swapped is caught;
   - an em-dash anywhere; "ravine"; "private chef"; "I answer everything myself" and its family;
-    "wedding venue"; a claim of ceremonies hosted; the names awaiting Mick (the Ember Board, the
+    "wedding venue"; a claim of ceremonies hosted; Counsel's "must not say" for marriage law (a
+    license's expiry, a friend ordained online, no witnesses needed or marrying the day you apply as
+    promises, the house getting the license, a license "free", "no fee" or "waived", appearing in
+    person, an officiant "licensed", "authorized" outside a statute's quoted words, any witness line
+    but "the license law names none"); the names awaiting Mick (the Ember Board, the
     Evening Fire, the Anniversary Key); an exclamation mark outside a guest's words; an emoji; a
     count of open nights;
   - a drive time or distance in miles or minutes anywhere on the page, unless it is a fact row
     whose source's own words carry the same number;
   - a missing field, a slug another page or a redirect already owns, a title over 70 characters or
-    a meta line over 160, a block or answer without sources, a missing photograph, a link to a page
-    or an anchor that does not exist;
+    a meta line over 160, a block or answer without sources, a missing photograph or one shown twice
+    on a page, a link to a page or an anchor that does not exist;
   - as written: the Tag Manager snippet (from scripts/ensure_gtm.py, the one source), no noindex,
     the canonical, and the page's form with the hidden field "page" naming it.
 A link to a landing page that is held is left off until that page is written. The sitemap's
@@ -95,7 +99,7 @@ HELD = ('slot', 'heard', 'recheck')
 
 # ------------------------------------------------------------------ the rules for words
 
-SLOT = re.compile(r'\[[A-Z][A-Z ]{2,}(?::[^\]]*)?\]|\{\{|\}\}|\bTODO\b')
+SLOT = re.compile(r'\[[A-Z][A-Z ]{2,}(?::[^\]]*)?\]|\[(?i:date|tbd|tk|todo|name|place|month)\]|\{\{|\}\}|\bTODO\b')
 BANNED = [
     (r'\bravine', 'say "holler", never "ravine" (canon/voice.md, letter law 5)'),
     (r'\bprivate chef', 'never "private chef"'),
@@ -107,7 +111,26 @@ BANNED = [
     (r'\bcompass fire pit', 'it is the Fire Circle (canon/voice.md, law 7)'),
     (r'\bwedding venue', '"ceremony", never "wedding venue": the house is not a licensed venue (the elopement hosting agreement)'),
     (r'\bwe(?:\'ve| have) hosted\b', 'no ceremony or count is claimed as hosted that the record does not show'),
+    # Counsel's "must not say" for the marriage-law lines (docs/briefs/2026-10-29-counsel-elope-in-georgia.md):
+    (r'licen[cs]e[^.]{0,80}\b(?:expir\w*|valid for|good for)\b|\b(?:expir\w*|valid for|good for)\b[^.]{0,80}licen[cs]e',
+     'gives a marriage license an expiry; the law read sets none (Counsel, 2026-10-29)'),
+    (r'\bordain\w*\s+online|\bonline[- ]ordain\w*|\bonline ordination|\buniversal life church',
+     'says a friend ordained online can marry them; unsettled in Georgia law, an attorney signs first (Counsel, 2026-10-29)'),
+    (r'\bno witness(?:es)? (?:needed|required|necessary)|\b(?:don\'?t|do not|won\'?t) need (?:any )?witness',
+     'promises that no witnesses are needed; a reading, not a promise (Counsel, 2026-10-29)'),
+    (r'\b(?:marry|married|wed)\b[^.]{0,40}\b(?:same day|the day you apply)\b|\bsame[- ]day (?:license|marriage|wedding|elopement)',
+     'promises marrying the day they apply; the court\'s hours decide (Counsel, 2026-10-29)'),
+    (r'\bwe (?:can )?(?:get|obtain|handle|file|pick up|arrange) (?:the |your )?(?:marriage )?licen[cs]e',
+     'says the house gets or handles the license; it does not (the elopement hosting agreement)'),    (r'licen[cs]e[^.]{0,60}\b(?:free|no fee|waived?|waiver)\b|\b(?:free|no fee|waived?|waiver)\b[^.]{0,60}licen[cs]e',
+     'speaks of a license as free, with no fee or waived; the fee is the court\'s page\'s to state (Counsel, after the Critic, 2026-10-29)'),
+    (r'(?:licen[cs]e|court|appl(?:y|ication))[^.]{0,80}\bin person\b|\bin person\b[^.]{0,80}(?:licen[cs]e|court|appl(?:y|ication))|\bappear\w*\b[^.]{0,40}\bcourt\b',
+     'says something about appearing in person; nothing either way (Counsel, 2026-10-29)'),
+    (r'\blicensed (?:officiant|minister|celebrant|clergy)|\bofficiant[^.]{0,40}\blicensed\b',
+     'calls an officiant "licensed"; never (Counsel, 2026-10-29)'),
 ]
+UNQUOTED = re.compile(r'"[^"]*"|“[^”]*”')   # a statute's quoted words, set aside for the next two rules
+AUTHORIZED = re.compile(r'\bauthori[sz]\w*', re.I)
+WITNESS = re.compile(r'\bwitnesses\b|\bwitness (?:rule|requirement)s?\b|\bno witness\b', re.I)
 FAMILY = re.compile(r'\bI\b[^.?!]{0,40}\bmyself\b')   # the family of "I answer everything myself"
 AWAITING = [('Ember Board', 'awaiting Mick (canon/voice.md)'), ('Evening Fire', 'awaiting Mick (canon/voice.md)'),
             ('Anniversary Key', 'on Mick\'s yes only')]
@@ -143,6 +166,14 @@ def text_rules(s, kind='copy', fact=None):
         if m:
             out.append(('banned', f'says "{m.group(0)}": {why}'))
     if kind != 'quote':
+        bare = UNQUOTED.sub(' ', t)
+        m = AUTHORIZED.search(bare)
+        if m:
+            out.append(('banned', f'says "{m.group(0)}" outside a statute\'s quoted words (Counsel, 2026-10-29)'))
+        for sent in re.split(r'(?<=[.?!])\s+', bare):
+            m = WITNESS.search(sent)
+            if m and 'license law names none' not in sent.lower():
+                out.append(('banned', f'says "{m.group(0)}"; on witnesses the most a page says is that the license law names none (Counsel, 2026-10-29)'))
         m = FAMILY.search(t)
         if m:
             out.append(('banned', f'says "{m.group(0)}": the family of "I answer everything myself"'))
@@ -446,6 +477,9 @@ def check_schema(data, p, slugs):
             out.append(('schema', f'block "{name_}" has no sources'))
         if b.get('photo') and not os.path.exists(os.path.join(B.ROOT, f'images/v2/{b["photo"]}-800.webp')):
             out.append(('schema', f'block "{name_}": no photograph images/v2/{b["photo"]}-800.webp'))
+    photos = [hero] + [data['blocks'].get(n, {}).get('photo') for n in p['blocks'] if data['blocks'].get(n, {}).get('photo')]
+    for ph in sorted({x for x in photos if photos.count(x) > 1}):
+        out.append(('schema', f'shows the photograph {ph} twice'))
     for i, qa in enumerate(p['faq'], 1):
         if not (qa.get('q') and qa.get('a') and qa.get('sources')):
             out.append(('schema', f'question {i} needs q, a and sources'))
@@ -592,12 +626,17 @@ def attr(s):
     return html.escape(s, quote=True)
 
 
+def tie(s):
+    """A section mark stays with its number at the end of a line."""
+    return s.replace('§ ', '§\u00a0')
+
+
 def heading(text, em):
-    return esc(text) + (f' <em>{esc(em)}</em>' if em else '')
+    return esc(tie(text)) + (f' <em>{esc(tie(em))}</em>' if em else '')
 
 
 def paras(text):
-    return ''.join(f'<p>{esc(x.strip())}</p>' for x in re.split(r'\n\s*\n', text.strip()) if x.strip())
+    return ''.join(f'<p>{esc(tie(x.strip()))}</p>' for x in re.split(r'\n\s*\n', text.strip()) if x.strip())
 
 
 def photo_size(name):

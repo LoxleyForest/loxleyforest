@@ -17,6 +17,7 @@ still to fill, a fact row to read again), when a page on disk is not what the da
 The review list is loxley-rescue docs/reviews/all.md beside this repository (or LOXLEY_REVIEWS).
 """
 import copy
+import re
 import os
 import sys
 
@@ -111,7 +112,7 @@ def _heard(d, slug):
 
 def _quote_word(d, slug):
     q = _page(d, slug)['quote']
-    q['text'] = q['text'].replace('beautiful', 'lovely', 1) if 'beautiful' in q['text'] else 'Lovely ' + q['text']
+    q['text'] = 'Truly ' + q['text'][0].lower() + q['text'][1:]
 
 
 def _quote_credit(d, slug):
@@ -126,11 +127,15 @@ def _thin(d, slug):
 
 
 def _twin(d, slug):
-    """A sibling of the same set: the page again with its month swapped, its blocks copied under new names."""
+    """A sibling of the same set: the page again with its own word (its crumb) swapped for another,
+    its blocks copied under new names. Masked, the two read the same."""
     p = copy.deepcopy(_page(d, slug))
-    swap = lambda s: s.replace('October', 'November').replace('october', 'november')
-    p['slug'], p['crumb'] = swap(p['slug']), swap(p['crumb'])
-    p['title'], p['meta'], p['h1'], p['h1_em'] = swap(p['title']), swap(p['meta']), swap(p['h1']), swap(p.get('h1_em', ''))
+    word = p['crumb'].split()[0]
+    swap = lambda x: re.sub(re.escape(word), 'Zebulon', x, flags=re.I)
+    p['slug'], p['crumb'] = slug + '-twin', swap(p['crumb'])
+    for k in ('title', 'meta', 'h1', 'h1_em'):
+        p[k] = swap(p.get(k, ''))
+    p['lead']['text'] = swap(p['lead']['text'])
     names = []
     for name in p['blocks']:
         b = copy.deepcopy(d['blocks'][name])
@@ -145,8 +150,9 @@ def _twin(d, slug):
 
 
 def _shared_blocks(d, slug):
-    others = [q for q in d['pages'] if q['slug'] != slug]
-    _page(d, slug)['blocks'] += others[0]['blocks'][:3]
+    mine = _page(d, slug)['blocks']
+    theirs = [b for q in d['pages'] if q['slug'] != slug for b in q['blocks'] if b not in mine]
+    mine += list(dict.fromkeys(theirs))[:3]
 
 
 def _link(target):
@@ -164,6 +170,12 @@ def _no_sources(d, slug):
     _first_block(d, slug)['sources'] = []
 
 
+def _hero_twice(d, slug):
+    p = _page(d, slug)
+    named = [n for n in p['blocks'] if d['blocks'][n].get('photo')]
+    d['blocks'][named[0]]['photo'] = p['hero']['photo']
+
+
 def _drive_fact_ok(d, slug):
     d['facts']['proof-drive'] = {'text': 'Dahlonega is approximately 70 miles north of Atlanta.', 'source': 'City of Dahlonega',
                                  'url': 'https://www.dahlonega.gov/community/about-our-town/',
@@ -172,40 +184,46 @@ def _drive_fact_ok(d, slug):
 
 
 PROOFS = [
-    ('slot', 'a block holds "[MICK RATIFIES]"', _say('block', '[MICK RATIFIES]'), 'elope-in-dahlonega'),
-    ('slot', 'a block holds "[SCOUT: Dec sunset]"', _say('block', 'Sunset is at [SCOUT: Dec sunset].'), 'elope-in-october'),
-    ('slot', 'an answer holds "{{month}}"', _say('answer', 'Write to us about {{month}}.'), 'anniversary-getaway-north-georgia'),
-    ('heard', 'a block is marked "heard": false', _heard, 'elope-in-october'),
-    ('facts', 'a fact row with no url', _fact('url', ''), 'elope-in-dahlonega'),
-    ('facts', 'a fact row with no quote', _fact('quote', ''), 'elope-in-dahlonega'),
-    ('facts', 'a fact row with no read date', _fact('checked', ''), 'elope-in-dahlonega'),
-    ('facts', 'a page cites a fact facts.json lacks', _cite_unknown, 'elope-in-october'),
-    ('recheck', 'a fact row marked "recheck": true', _fact('recheck', True), 'elope-in-dahlonega'),
-    ('price', 'an answer says "$395 a night"', _say('answer', 'Nights are $395 a night.'), 'anniversary-getaway-north-georgia'),
-    ('price', 'the lead says "price"', _say('lead', 'Ask us the price.'), 'elope-in-dahlonega'),
-    ('price', 'a block says "rate"', _say('block', 'The weekday rate is lower.'), 'elope-in-october'),
-    ('price', 'an answer says "from $4,500"', _say('answer', 'Packages from $4,500.'), 'elope-in-dahlonega'),
-    ('price', 'a block offers "ten percent off"', _say('block', 'Ten percent off in January.'), 'anniversary-getaway-north-georgia'),
-    ('quote', 'the guest\'s words with one word changed', _quote_word, 'elope-in-october'),
-    ('quote', 'a credit the site has never shown', _quote_credit, 'anniversary-getaway-north-georgia'),
-    ('thin', 'a page cut to one block and one answer', _thin, 'elope-in-october'),
-    ('similar', 'a sibling that is the October page with "November" swapped in', _twin, 'elope-in-october'),
-    ('shared', 'a page carrying three blocks another page carries', _shared_blocks, 'elope-in-dahlonega'),
-    ('em-dash', 'the lead holds an em-dash', _say('lead', 'The bridge — a hundred feet.'), 'elope-in-dahlonega'),
-    ('banned', 'a block says "ravine"', _say('block', 'The bridge crosses a ravine.'), 'elope-in-dahlonega'),
-    ('banned', 'an answer says "private chef"', _say('answer', 'A private chef cooks dinner.'), 'elope-in-october'),
-    ('banned', 'a block says "I answer everything myself"', _say('block', 'Write any time; I answer everything myself.'), 'anniversary-getaway-north-georgia'),
-    ('banned', 'the lead says "wedding venue"', _say('lead', 'The best wedding venue in Georgia.'), 'elope-in-october'),
-    ('banned', 'an answer claims "We\'ve hosted hundreds"', _say('answer', "We've hosted hundreds."), 'anniversary-getaway-north-georgia'),
-    ('banned', 'a block counts "only three nights left"', _say('block', 'Only three nights left in December.'), 'elope-in-october'),
-    ('drive', 'a block says "about 10 minutes from the square"', _say('block', 'The square is about 10 minutes away.'), 'elope-in-dahlonega'),
-    ('drive', 'an answer says "five miles"', _say('answer', 'Town is five miles off.'), 'elope-in-october'),
-    ('exclaim', 'the lead ends "!"', _say('lead', 'Come up!'), 'anniversary-getaway-north-georgia'),
-    ('emoji', 'a block holds an emoji', _say('block', 'Fire tonight \U0001F525'), 'elope-in-dahlonega'),
-    ('links', 'a link to a page that does not exist', _link('/no-such-page'), 'elope-in-dahlonega'),
-    ('links', 'a link to /elopements#inquire (the page\'s anchor is #inquiry)', _link('/elopements#inquire'), 'elope-in-october'),
-    ('schema', 'a slug that is an existing page (/elopements)', _slug, 'elope-in-dahlonega'),
-    ('schema', 'a block with no sources', _no_sources, 'anniversary-getaway-north-georgia'),
+    ('slot', 'a block holds "[MICK RATIFIES]"', _say('block', '[MICK RATIFIES]'), 0),
+    ('slot', 'a block holds "[SCOUT: Dec sunset]"', _say('block', 'Sunset is at [SCOUT: Dec sunset].'), 1),
+    ('slot', 'an answer holds "{{month}}"', _say('answer', 'Write to us about {{month}}.'), 2),
+    ('heard', 'a block is marked "heard": false', _heard, 1),
+    ('facts', 'a fact row with no url', _fact('url', ''), 0),
+    ('facts', 'a fact row with no quote', _fact('quote', ''), 0),
+    ('facts', 'a fact row with no read date', _fact('checked', ''), 0),
+    ('facts', 'a page cites a fact facts.json lacks', _cite_unknown, 1),
+    ('recheck', 'a fact row marked "recheck": true', _fact('recheck', True), 0),
+    ('price', 'an answer says "$395 a night"', _say('answer', 'Nights are $395 a night.'), 2),
+    ('price', 'the lead says "price"', _say('lead', 'Ask us the price.'), 0),
+    ('price', 'a block says "rate"', _say('block', 'The weekday rate is lower.'), 1),
+    ('price', 'an answer says "from $4,500"', _say('answer', 'Packages from $4,500.'), 0),
+    ('price', 'a block offers "ten percent off"', _say('block', 'Ten percent off in January.'), 2),
+    ('quote', 'the guest\'s words with one word changed', _quote_word, 1),
+    ('quote', 'a credit the site has never shown', _quote_credit, 2),
+    ('thin', 'a page cut to one block and one answer', _thin, 1),
+    ('similar', 'a sibling: the page again with its own word swapped for another', _twin, 1),
+    ('shared', 'a page carrying three blocks another page carries', _shared_blocks, 0),
+    ('em-dash', 'the lead holds an em-dash', _say('lead', 'The bridge — a hundred feet.'), 0),
+    ('banned', 'a block says "ravine"', _say('block', 'The bridge crosses a ravine.'), 0),
+    ('banned', 'an answer says "private chef"', _say('answer', 'A private chef cooks dinner.'), 1),
+    ('banned', 'a block says "I answer everything myself"', _say('block', 'Write any time; I answer everything myself.'), 2),
+    ('banned', 'the lead says "wedding venue"', _say('lead', 'The best wedding venue in Georgia.'), 1),
+    ('banned', 'an answer claims "We\'ve hosted hundreds"', _say('answer', "We've hosted hundreds."), 2),
+    ('banned', 'a block counts "only three nights left"', _say('block', 'Only three nights left in December.'), 1),
+    ('banned', 'a block gives the license "valid for 60 days"', _say('block', 'The license is valid for 60 days.'), 0),
+    ('banned', 'an answer says a friend "ordained online" can marry them', _say('answer', 'A friend ordained online can marry you.'), 1),
+    ('banned', 'a block promises "no witnesses needed"', _say('block', 'No witnesses needed.'), 1),
+    ('banned', 'the lead says "we get your license"', _say('lead', 'We get your license for you.'), 0),
+    ('slot', 'a block holds "[date]"', _say('block', 'Read on [date].'), 2),
+    ('drive', 'a block says "about 10 minutes from the square"', _say('block', 'The square is about 10 minutes away.'), 0),
+    ('drive', 'an answer says "five miles"', _say('answer', 'Town is five miles off.'), 1),
+    ('exclaim', 'the lead ends "!"', _say('lead', 'Come up!'), 2),
+    ('emoji', 'a block holds an emoji', _say('block', 'Fire tonight \U0001F525'), 0),
+    ('links', 'a link to a page that does not exist', _link('/no-such-page'), 0),
+    ('links', 'a link to /elopements#inquire (the page\'s anchor is #inquiry)', _link('/elopements#inquire'), 1),
+    ('schema', 'a slug that is an existing page (/elopements)', _slug, 0),
+    ('schema', 'a block with no sources', _no_sources, 2),
+    ('schema', 'a block showing the hero\'s photograph again', _hero_twice, 0),
 ]
 
 
@@ -214,7 +232,12 @@ def prove():
     failing = 0
     clean = all(status(s, real) != 'REFUSED' for s in real)
     print('the data as it stands: %s' % ('no page refused' if clean else 'REFUSED pages, see check_pseo.py'))
-    for code, what, mutate, slug in PROOFS:
+    written = [p['slug'] for p in P.BUILT if p.get('quote')]
+    if len(written) < 3:
+        print('check_pseo --prove needs three written pages with a guest\'s words; %d are' % len(written))
+        return 1
+    for code, what, mutate, at in PROOFS:
+        slug = written[at]
         d = copy.deepcopy(P.DATA)
         target = mutate(d, slug) or slug
         verdict, _ = P.judge(d)
@@ -236,14 +259,14 @@ def prove():
             verdict, _ = P.judge(copy.deepcopy(P.DATA))
         finally:
             P.head, P.GTM.HEAD = saved_head, saved_gtm
-        hits = [m for c, m in verdict['elope-in-dahlonega'] if c == code]
-        print(('REFUSED  [%-7s] %-62s /%s: %s' % (code, what, 'elope-in-dahlonega', hits[0])) if hits else 'NOT REFUSED [%s] %s' % (code, what))
+        hits = [m for c, m in verdict[written[0]] if c == code]
+        print(('REFUSED  [%-7s] %-62s /%s: %s' % (code, what, written[0], hits[0])) if hits else 'NOT REFUSED [%s] %s' % (code, what))
         failing += not hits
     # And the exception: a drive distance in a fact row whose source's own words carry it is allowed.
     d = copy.deepcopy(P.DATA)
-    _drive_fact_ok(d, 'elope-in-dahlonega')
+    _drive_fact_ok(d, written[0])
     verdict, _ = P.judge(d)
-    drive = [m for c, m in verdict['elope-in-dahlonega'] if c == 'drive']
+    drive = [m for c, m in verdict[written[0]] if c == 'drive']
     print(('ALLOWED  [drive  ] a fact row, "approximately 70 miles north of Atlanta" from the city\'s own page'
            if not drive else 'WRONGLY REFUSED [drive] the fact row: %s' % drive))
     failing += bool(drive)
