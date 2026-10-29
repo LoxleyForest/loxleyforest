@@ -618,6 +618,33 @@ body:has(#ga-buy, #ga-card-page, #ga-manage, #ga-thanks) .book-fab { display: no
 .st-values p { margin: 12px 0 0; color: var(--on-dark-muted); font-size: 1.15rem; line-height: 1.65; }
 @media (min-width: 900px) { .st-values { grid-template-columns: repeat(3, 1fr); gap: 48px; } }
 
+/* ---- pseo ---- */
+.ps-crumbs { background: var(--linen); border-bottom: 1px solid rgba(61, 50, 40, 0.12); padding: 0 var(--pad-x); }
+.ps-crumbs ol { list-style: none; max-width: 1200px; margin: 0 auto; padding: 10px 0; display: flex; flex-wrap: wrap; align-items: center; gap: 0 10px; font-family: 'Montserrat', sans-serif; font-size: 0.6875rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--stone); }
+.ps-crumbs li + li::before { content: '/'; margin-right: 10px; opacity: 0.5; }
+.ps-crumbs a { display: inline-block; padding: 12px 0; color: var(--forest-deep); text-decoration: none; }
+.ps-crumbs a:hover { text-decoration: underline; }
+.ps-crumbs a:focus-visible { outline: 2px solid var(--forest-deep); outline-offset: 2px; }
+.ps-block .lf-body, .ps-prose .lf-body { margin-top: 26px; }
+.ps-prose { max-width: 46rem; }
+.ps-quote { margin: 0 auto; max-width: 42rem; }
+.ps-quote blockquote { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 300; font-style: italic; font-size: clamp(1.6rem, 4.6vw, 2.4rem); line-height: 1.35; color: var(--forest-deep); }
+.ps-quote blockquote p { margin: 0; }
+.ps-quote figcaption { margin-top: 22px; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--stone); }
+.ps-facts { list-style: none; margin: 34px 0 0; padding: 0; }
+.ps-fact { padding: 20px 0; border-top: 1px solid rgba(26, 46, 26, 0.16); }
+.ps-fact p { margin: 0; font-size: 1.15rem; line-height: 1.6; color: var(--bark); }
+.ps-fact .ps-fact__src { margin-top: 8px; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; letter-spacing: 0.04em; line-height: 1.5; color: var(--stone); }
+.ps-fact__src a { color: var(--forest-deep); }
+.ps-intro p + p { margin-top: 0.6em; }
+.ps-related { list-style: none; margin: 26px 0 0; padding: 0; display: grid; gap: 14px; }
+@media (min-width: 900px) { .ps-related { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; } }
+.ps-related a { display: block; height: 100%; padding: 22px 22px 24px; border: 1px solid rgba(247, 243, 237, 0.22); color: var(--on-dark); text-decoration: none; transition: background 0.2s; }
+.ps-related a:hover { background: rgba(247, 243, 237, 0.06); }
+.ps-related a:focus-visible { outline: 2px solid var(--on-dark); outline-offset: 2px; }
+.ps-related span { display: block; font-family: 'Montserrat', sans-serif; font-size: 0.6875rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--on-dark-muted); }
+.ps-related b { display: block; margin-top: 10px; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 400; font-size: 1.6rem; line-height: 1.2; }
+
 /* ---- reviews ---- */
 .lf-gr-top { padding-top: calc(var(--hdr-h) + clamp(44px, 8vw, 96px)); padding-bottom: clamp(48px, 7vw, 80px); }
 .lf-gr-top .lf-wrap { max-width: 40rem; }
