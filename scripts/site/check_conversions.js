@@ -8,8 +8,8 @@ const { chromium } = require(PW);
 const SITE = process.env.SITE || 'https://loxleyforest.com';
 const SITE_HOST = new URL(SITE).hostname;
 // The Golden Arrow sold (2026-10-29): js/gift.js pushes gift_purchase on /gift/thanks, once per
-// Stripe session, from the all-in the purchase step kept in the tab (ga_sale). The check plays that
-// tab with a made-up session id and amount; the page itself must push. Its Google Ads action does
+// Stripe session, only when the engine's GET /v1/gift/sold answers paid. The check answers that read
+// itself, paid, for a made-up session id and amount; the page itself must push. Its Google Ads action does
 // not exist yet: Mick creates "Gift - Golden Arrow" by his own click (loxley-rescue
 // docs/site-tags.md, [MICK RATIFIES]). Until its label is written here the line says "awaiting
 // Mick's label" and does not fail; the push's shape is checked either way.
@@ -43,14 +43,16 @@ function giftShape(dl, g) {
     await p.route('**/*', r => { const u = r.request().url(); const h = new URL(u).hostname;
       if (/google-analytics\.com|analytics\.google\.com|facebook|fbcdn|clarity\.ms/.test(h) || /\/g\/collect/.test(u)) return r.abort();
       if (/pagead\/(conversion|1p-conversion|viewthroughconversion)/.test(u)) { const m = u.match(/label=([^&]*)/); if (m) seen.push(m[1]); return r.fulfill({ status: 204, body: '' }); }
-      if (h === 'book.loxleyforest.com') return r.fulfill({ status: 404, body: '{}' });
+      if (h === 'book.loxleyforest.com') {
+        if (w.gift && new URL(u).pathname === '/v1/gift/sold') return r.fulfill({ status: 200, contentType: 'application/json',
+          headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify({ paid: true, cents: w.gift.cents }) });
+        return r.fulfill({ status: 404, body: '{}' });
+      }
       // Everything else outside the site, Tag Manager and the fonts is answered here, never sent
       // (2026-10-29: Google's ccm/collect and rmkt/collect hits went out before, from the live
       // site and from a local render alike).
       if (h !== SITE_HOST && !/(^|\.)googletagmanager\.com$|^fonts\.(googleapis|gstatic)\.com$/.test(h)) return r.fulfill({ status: 204, body: '' });
       return r.continue(); });
-    // The tab that paid: the purchase step's record, as js/gift.js writes it at "pay".
-    if (w.gift) await p.addInitScript(c => { try { sessionStorage.setItem('ga_sale', JSON.stringify({ cents: c })); } catch (e) {} }, w.gift.cents);
     await p.goto(SITE + w.path, { waitUntil: 'load' }); await p.waitForTimeout(4000);
     if (w.push) { await p.evaluate(x => { (window.dataLayer = window.dataLayer || []).push(x); }, w.push); await p.waitForTimeout(4000); }
     const where = w.path.split('?')[0];

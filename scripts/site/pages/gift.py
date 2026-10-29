@@ -449,15 +449,16 @@ def page_gift_thanks():
     page uses it only as a one-way hash. js/gift.js reads back how the card arrives, the buyer's email and the
     printed card from this tab's sessionStorage (ga_deliver: kept by the purchase panel before
     Stripe, never the note, never sent anywhere) and clears it once shown; with none, the general
-    lines stand. It also pushes the sale for Google Ads, once per session (js/gift.js Sold:
-    gift_purchase, value from ga_sale, transaction_id a hash of the session); the conversion
-    action and its tag are Mick's clicks (loxley-rescue docs/site-tags.md, "Gift - Golden Arrow").
+    lines stand. It also pushes the sale for Google Ads, once per session and only on the engine's
+    paid answer (js/gift.js Sold: GET /v1/gift/sold, the session sent to our own booking server and
+    nowhere else; gift_purchase, transaction_id a hash of the session); the conversion action and
+    its tag are Mick's clicks (loxley-rescue docs/site-tags.md, "Gift - Golden Arrow").
     Noindex."""
     W = WORDS
     h, gtm = head_for(W['thanks_title'], W['description'], URL + '/thanks', noindex=True)
     e = lambda t: escape(t, quote=False)
     body = f'''
-    <section class="lf-sec lf-dark lf-note ga-thanks" id="ga-thanks" aria-labelledby="nt-h">
+    <section class="lf-sec lf-dark lf-note ga-thanks" id="ga-thanks" data-api="{B.API}" aria-labelledby="nt-h">
       <div class="lf-wrap lf-split">
         <div>
           <p class="lf-eyebrow">{W["thanks_eyebrow"]}</p>
