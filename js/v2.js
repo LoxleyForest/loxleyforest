@@ -60,3 +60,50 @@
     });
   });
 })();
+
+/* A film in the page (the interior on /treehouses, 2026-10-29): the hero's loop (js/global.js),
+   for a clip below the fold. Its still is what paints first. The clip gets a source only once the
+   page has loaded and the film is on screen, so the first load carries the still and nothing more;
+   it plays only while on screen, and never loads on reduced motion, Save-Data, a slow connection
+   or an old browser. */
+(function () {
+  var vids = document.querySelectorAll('.lf-loop__video[data-ready]');
+  if (!vids.length || !('IntersectionObserver' in window)) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  if (c && (c.saveData || /(^|-)2g$/.test(c.effectiveType || ''))) return;
+  var phone = window.matchMedia('(max-width: 767px)').matches;
+  var loaded = document.readyState === 'complete';
+  if (!loaded) window.addEventListener('load', function () { loaded = true; vids.forEach(function (v) { if (v._lfOn) v._lfShow(); }); }, { once: true });
+  vids.forEach(function (v) {
+    var btn = v.parentNode.querySelector('.lf-loop__pause');
+    var tryPlay = function () { var p = v.play(); if (p && p.catch) p.catch(function () {}); };
+    v._lfShow = function () {
+      if (!loaded) return;
+      if (!v.src) {
+        // iPhones want these set as properties, not only as attributes, before the source arrives
+        v.muted = true; v.defaultMuted = true; v.playsInline = true;
+        v.setAttribute('muted', ''); v.setAttribute('playsinline', '');
+        var webm = !phone && v.dataset.deskWebm && v.canPlayType('video/webm; codecs="vp9"');
+        v.src = phone ? v.dataset.phone : (webm ? v.dataset.deskWebm : v.dataset.desk);
+        v.load();
+        v.addEventListener('playing', function () { v.classList.add('is-playing'); if (btn) btn.hidden = false; }, { once: true });
+        // An iPhone in Low Power Mode refuses autoplay; the first touch starts the loop instead.
+        ['touchstart', 'pointerdown', 'keydown'].forEach(function (ev) {
+          window.addEventListener(ev, function () { if (v._lfOn && v.paused && !v.dataset.userPaused) tryPlay(); }, { once: true, passive: true });
+        });
+      }
+      if (!v.dataset.userPaused) tryPlay();
+    };
+    new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        v._lfOn = e.isIntersecting;
+        if (e.isIntersecting) v._lfShow(); else if (v.src) v.pause();
+      });
+    }).observe(v.parentNode);
+    if (btn) btn.addEventListener('click', function () {
+      if (v.paused) { delete v.dataset.userPaused; tryPlay(); btn.setAttribute('aria-label', 'Pause the video'); btn.classList.remove('is-paused'); }
+      else { v.dataset.userPaused = '1'; v.pause(); btn.setAttribute('aria-label', 'Play the video'); btn.classList.add('is-paused'); }
+    });
+  });
+})();
