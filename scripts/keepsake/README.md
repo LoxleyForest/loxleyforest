@@ -19,11 +19,15 @@ is `keepsake-2027-04-17-card-<random>`) with the date stamped in long form,
 
 | `--site` | The line on the sheet |
 |---|---|
-| `bridge` | out on the rope bridge, a hundred feet over the holler |
+| `bridge` | out on the hundred-foot rope bridge, over the holler |
 | `fire` | at the Fire Circle |
-| `deck` | on the Sky Deck, with the rope bridge as the aisle |
+| `deck` | on the treehouse deck |
 
-The waterfall is refused until Mick has said yes to its words.
+The waterfall is refused until Mick has said yes to its words. The bridge is a
+hundred feet long and sixty feet up; `new.py` refuses a sheet that says "a
+hundred feet" over or up. The deck line is the engine's own words for The
+Vow's site; canon also calls it the Sky Deck, and which one the sheet says is
+Mick's call by ear.
 
 `--size letter` (the default) is US Letter portrait, for framing. `--size card`
 is 5 by 7 inches. Each prints on exactly one page of its own size.
@@ -43,7 +47,9 @@ where the names go, for a pen.
 
 ## Print it, or send it
 
-Open the link with their names in Chrome, then Print.
+Make the link with `--for "Her and Him"`, never by typing the names into it:
+`new.py` encodes an "&" as `%26`, and a hand-typed "&" after `#for=` drops the
+second name. Open that link in Chrome, then Print.
 
 - **To send:** Save as PDF, Background graphics **on**. The PDF carries the
   cream of the paper.

@@ -11,12 +11,13 @@ share link. Refuses to overwrite. Standard library only.
 
   date          YYYY-MM-DD, the wedding day.
   --site        where the vows were, in the house's own words:
-                  bridge  out on the rope bridge, a hundred feet over the holler
+                  bridge  out on the hundred-foot rope bridge, over the holler
                   fire    at the Fire Circle
-                  deck    on the Sky Deck, with the rope bridge as the aisle
+                  deck    on the treehouse deck
                 The waterfall is refused: its words wait for Mick.
   --size        letter (US Letter portrait, the default) or card (5 by 7 inches).
-  --for         their names, used ONLY to print the share link. Never written.
+  --for         their names, used ONLY to print the share link. Never written. Make every link
+                this way: it encodes an "&" (%26), and a hand-typed "&" drops the second name.
   --out DIR     the folder to make the page's folder in. Default: private/.
 
 No name goes in the file, ever: this repository is public. The page reads the names from the link
@@ -33,6 +34,7 @@ A thing given, never sold: no price, no package name, nothing a couple did not d
 """
 import argparse
 import datetime as dt
+import html as entities
 import pathlib
 import re
 import secrets
@@ -46,13 +48,21 @@ WORDMARK = ROOT / "images" / "brand" / "logo" / "loxley-wordmark-on-light.svg"
 PRIVATE = ROOT / "private"
 SITE = "https://loxleyforest.com/private/"
 
-# Where the vows were, in the house's own words (canon/voice.md and the elopement replies in
-# loxley-rescue). Each clause is a line on the page.
+# Where the vows were, in the house's own words. Each clause is a line on the page. The bridge is
+# a hundred feet long and sixty feet up, never a hundred feet high (canon/voice.md: "a hundred-foot
+# suspended bridge", "60 feet up"); its words are canon/letters/purple-room.md's ("a hundred-foot
+# rope bridge ... hanging over the holler"). The deck is The Vow's site in the engine's words
+# (gatehouse/offers.py: "the treehouse deck"); a deck couple did not take the bridge as their aisle,
+# which is The Crossing's (the Critic, 2026-10-29). Canon also calls it the Sky Deck: Mick's call.
 SITES = {
-    "bridge": ("out on the rope bridge,", "a hundred feet over the holler"),
+    "bridge": ("out on the hundred-foot rope bridge,", "over the holler"),
     "fire": ("at the Fire Circle",),
-    "deck": ("on the Sky Deck,", "with the rope bridge as the aisle"),
+    "deck": ("on the treehouse deck",),
 }
+# Both slots in the template, each of which every page must carry with words in it.
+SLOTS = ("closing", "signature")
+# The bridge's length read as its height: never on a sheet Mick signs.
+HEIGHT = re.compile(r"hundred feet (over|above|up|high)", re.I)
 REFUSED_SITES = {
     "waterfall": "the waterfall's words wait for Mick (every waterfall line in loxley-rescue "
                  "gatehouse/offers.py is unheard); no keepsake names it until he has said yes",
@@ -153,12 +163,25 @@ def make(day, site, size, template=None):
 
 
 def guard(html):
-    """Refuse a page that could carry a token, a note, a dash the house does not use, a form, a
-    request beyond Google Fonts, or Tag Manager, or that lost its noindex."""
+    """Refuse a page that could carry a token, a note, an unheard or missing slot, the bridge's
+    length as its height, a dash the house does not use, a form, a request beyond Google Fonts, or
+    Tag Manager, or that lost its noindex."""
     if "{{" in html or "}}" in html:
         raise Refused("a {{token}} is left in the page")
-    if "MICK RATIFIES" in html.upper() or html.count("<!--") != 1:
+    plain = re.sub(r"\s+", " ", entities.unescape(html))  # entities decoded, so no marker hides as &#91;
+    if "RATIFIES" in plain.upper():
+        raise Refused("an unheard line ([MICK RATIFIES]) is in the page")
+    if html.count("<!--") != 1:
         raise Refused("a note beyond the page's header is in the page")
+    slots = dict(re.findall(r'data-slot="(\w+)"[^>]*>(.*?)</', html, re.S))
+    for k in SLOTS:
+        if k not in slots:
+            raise Refused(f"the {k} slot is missing from the page")
+        if not re.sub(r"<[^>]*>", "", entities.unescape(slots[k])).strip():
+            raise Refused(f"the {k} slot holds no words")
+    if HEIGHT.search(re.sub(r"\s+", " ", re.sub(r"<[^>]*>", " ", plain))):
+        raise Refused("the page says \"a hundred feet\" over or up: the bridge is a hundred feet long and "
+                      "sixty feet up")
     if re.search("[\u2013\u2014]", html):
         raise Refused("an en or em dash is in the page")
     if 'name="robots" content="noindex' not in html:
@@ -202,7 +225,7 @@ def main(argv):
     if a.names:  # used for this line only; never written to disk
         print(f"link  {url}#for={urllib.parse.quote(a.names.strip())}")
     else:
-        print(f"link  {url}  (add #for=Her%20and%20Him to set their names on it)")
+        print(f"link  {url}  (make it again with --for \"Her and Him\" to set their names on it)")
     print("print open the link with their names, then Print. Save as PDF with Background graphics on")
     print("      for the paper's cream; on cream card stock, leave Background graphics off.")
     return 0
