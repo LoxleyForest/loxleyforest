@@ -135,7 +135,7 @@ def page_experiences():
           <figure class="lf-photo lf-photo--tall lf-rise">{B.pic('img_2546', 'A treehouse deck with chairs above the forest', '(min-width: 900px) 50vw, 100vw')}</figure>
           <div class="lf-body lf-xp__how lf-rise">
             <p>Every experience is for guests, during their stay. Book your dates first. Your full experience guide arrives seven days before you do, and you choose from there.</p>
-            <p>On the horizon: private chef dinners, full moon ceremonies, seasonal fire rituals, guided foraging walks. The menu grows with every season, and so does the forest.</p>
+            <p>On the horizon: private dinners, full moon ceremonies, seasonal fire rituals, guided foraging walks. The menu grows with every season, and so does the forest.</p>
             <p>Questions? <a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a> or <a href="tel:+17065024823">706-502-4823</a>.</p>
           </div>
         </div>
