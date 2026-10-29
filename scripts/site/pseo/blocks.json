@@ -332,7 +332,7 @@
     "eyebrow": "Vow renewals",
     "heading": "Say them again",
     "heading_em": "with no one but the trees",
-    "text": "You said them once in front of everyone. Say them again with no one but the trees.\n\nPick the place. Out on the bridge, a hundred feet long and sixty feet up, with the holler under you. On the deck, in the canopy, level with the hawks. Or beside the Fire Circle, the boulder fire pit on the forest floor, with the fire going. Say the old words, or the ones you know now.\n\nTell us what you're celebrating when you write, and we'll make it right.\n\nAfterward the night is yours: dinner by the fire, the bridge lights small and warm behind you, and a bed sixty feet up.",
+    "text": "Pick the place. Out on the bridge, a hundred feet long and sixty feet up, with the holler under you. On the deck, in the canopy, level with the hawks. Or beside the Fire Circle, the boulder fire pit on the forest floor, with the fire going. Say the old words, or the ones you know now.\n\nTell us what you're celebrating when you write, and we'll make it right.\n\nAfterward the night is yours: dinner by the fire, the bridge lights small and warm behind you, and a bed sixty feet up.",
     "sources": [
       "loxley-rescue/docs/briefs/2026-10-29-writer-pseo-copy.md:170-175 (the Writer's vow renewal block: new words; the officiant and the places for a renewal are Mick's call)",
       "loxleyforest/scripts/site/pages/elopements.py:15",
@@ -406,14 +406,12 @@
     "eyebrow": "The other day",
     "heading": "A threshold,",
     "heading_em": "not a gimmick",
-    "text": "The hundred-foot rope bridge isn't a gimmick. It's a threshold. The moment you step onto it, you leave the ground behind. By the time you reach the other side, something in your chest has shifted.\n\nMost elopement couples bring their closest people. The bridge is rated for eight people at one time, everyone counted: on the bridge that is the two of you, your officiant, and up to five more, your photographer among them.\n\nNot included: hair and makeup, though we are glad to point you toward artists we trust; your marriage license; and food and drink beyond the champagne toast.",
+    "text": "The hundred-foot rope bridge isn't a gimmick. It's a threshold. The moment you step onto it, you leave the ground behind. By the time you reach the other side, something in your chest has shifted.\n\nThe bridge is rated for eight people at one time, everyone counted: on the bridge that is the two of you, your officiant, and up to five more, your photographer among them.\n\nNot included: hair and makeup, though we are glad to point you toward artists we trust; your marriage license; and food and drink beyond the champagne toast.",
     "sources": [
       "loxleyforest/scripts/site/build_v2.py:674",
       "loxleyforest/scripts/site/pages/elopements.py:55",
-      "loxley-rescue/canon/agreements/elopement-hosting.md:17",
-      "new words: \"Most elopement couples bring their closest people.\""
-    ],
-    "heard": false
+      "loxley-rescue/canon/agreements/elopement-hosting.md:17"
+    ]
   },
   "courthouse-season": {
     "eyebrow": "A season of your own",
