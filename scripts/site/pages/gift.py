@@ -445,12 +445,13 @@ def page_gift_card():
 
 def page_gift_thanks():
     """/gift/thanks?session_id=...: where Stripe returns the buyer (the engine's success_url). The
-    session id is lifted out of the address bar by the keys script before Tag Manager loads; this
-    page never reads it. js/gift.js reads back how the card arrives, the buyer's email and the
+    session id is lifted out of the address bar by the keys script before Tag Manager loads; the
+    page uses it only as a one-way hash. js/gift.js reads back how the card arrives, the buyer's email and the
     printed card from this tab's sessionStorage (ga_deliver: kept by the purchase panel before
     Stripe, never the note, never sent anywhere) and clears it once shown; with none, the general
-    lines stand. Here is where a Google Ads conversion for a gift bought
-    would fire (a page view of /gift/thanks): NOT added, the account's changes are Mick's clicks.
+    lines stand. It also pushes the sale for Google Ads, once per session (js/gift.js Sold:
+    gift_purchase, value from ga_sale, transaction_id a hash of the session); the conversion
+    action and its tag are Mick's clicks (loxley-rescue docs/site-tags.md, "Gift - Golden Arrow").
     Noindex."""
     W = WORDS
     h, gtm = head_for(W['thanks_title'], W['description'], URL + '/thanks', noindex=True)

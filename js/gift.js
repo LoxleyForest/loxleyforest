@@ -299,9 +299,8 @@
     }
 
     // The purchase step: the whole amount, from the engine, right before Stripe. Never in the
-    // page's prose (Mick, 2026-10-19). A Google Ads conversion for a gift bought is NOT here: it
-    // would fire on Stripe's return, a page view of /gift/thanks, as an Ads account change
-    // (Mick's clicks).
+    // page's prose (Mick, 2026-10-19). The Google Ads conversion for a gift bought is not here: it
+    // fires on Stripe's return to /gift/thanks (Sold, below), from the amount kept at "pay".
     function confirm(res, b) {
       var total = Number(res.total_cents);
       var amount = [];
@@ -329,6 +328,12 @@
         var keep = b.deliver ? { to: 'them', date: b.deliver.date, hour: b.deliver.hour } : { to: 'me' };
         keep.email = b.email; keep.printed = !!b.ship_to;
         try { sessionStorage.setItem('ga_deliver', JSON.stringify(keep)); } catch (e) {}
+        // For the sale on /gift/thanks: the engine's all-in for this card and nothing of the
+        // buyer's, this tab only. No amount from the engine: none kept, so none is guessed.
+        try {
+          if (total > 0) sessionStorage.setItem('ga_sale', JSON.stringify({ cents: total }));
+          else sessionStorage.removeItem('ga_sale');
+        } catch (e) {}
         location.assign(res.url);
       } });
       var d = b.deliver, them = !!d;
@@ -587,12 +592,48 @@
     if (d.printed) printed.textContent = w('thanks_printed'); else printed.hidden = true;
   }
 
+  // ============================================ /gift/thanks: the sale, for the tag manager
+
+  // Stripe sends the buyer here only from a paid page (the engine's success_url; card or Link,
+  // gatehouse/stripe_io.py gift_session). The engine has no read of a gift's payment session, as
+  // /v1/booked is for a stay, so the proof of the sale is Stripe's return with its session id.
+  // Counted as /booked counts a stay (js/gatehouse-stay.js purchase): once per session in this
+  // tab, the id a one-way hash of the session so no tag ever holds a key, the value the all-in
+  // the purchase step showed. Never a name, an email or the note. The event is gift_purchase, not
+  // purchase: the booking engine's Ads tag fires on every purchase event, on any page (container
+  // version 7), so a purchase here would count a card as a booked stay. Google Ads counts it once
+  // Mick's action "Gift - Golden Arrow" and its tag exist (loxley-rescue docs/site-tags.md).
+  var SOLD_EVENT = 'gift_purchase';
+  var SESSION_ID = /^cs_(live|test)_\w{1,250}$/;
+  function saleId(s) {
+    if (!(window.crypto && crypto.subtle && window.TextEncoder)) return Promise.resolve('');
+    return crypto.subtle.digest('SHA-256', new TextEncoder().encode('loxley-gift:' + s)).then(function (b) {
+      return 'lf-' + Array.prototype.map.call(new Uint8Array(b).slice(0, 8), function (x) { return ('0' + x.toString(16)).slice(-2); }).join('');
+    }).catch(function () { return ''; });
+  }
+  function Sold() {
+    var sid = String((window.__ghKeys || {}).session_id || '');
+    if (!SESSION_ID.test(sid)) return;
+    var sale = null;
+    try { sale = JSON.parse(sessionStorage.getItem('ga_sale') || 'null'); } catch (e) {}
+    saleId(sid).then(function (id) {
+      var seen = 'ga_purchase_' + (id || 'x');
+      try { if (sessionStorage.getItem(seen)) return; sessionStorage.setItem(seen, '1'); sessionStorage.removeItem('ga_sale'); } catch (e) {}
+      var cents = sale ? Number(sale.cents) : 0, data = {};
+      if (isFinite(cents) && cents > 0) data.value = Math.round(cents) / 100;
+      data.currency = 'USD';
+      if (id) data.transaction_id = id;
+      data.item = PRODUCT;
+      G.track(SOLD_EVENT, data);
+    });
+  }
+
   var buy = document.getElementById('ga-buy');
   if (buy) Buy(buy);
   var page = document.getElementById('ga-card-page');
   if (page) Card(page);
   var thanks = document.getElementById('ga-thanks');
-  if (thanks) Thanks(thanks);
+  if (thanks) { Sold(); Thanks(thanks); }
   var manage = document.getElementById('ga-manage');
   if (manage) Manage(manage);
 })();
