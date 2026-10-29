@@ -15,8 +15,7 @@ The stay (the arrival day is --check-in):
                             ("April 16 to 18, 2027") and closes "See you in the trees on the
                             sixteenth."
   --ceremony                YYYY-MM-DD, a night of the stay. Default: the second day of a stay of
-                            two nights or more, else the arrival. Pizza night is that night, and
-                            The Morning After the morning after it.
+                            two nights or more, else the arrival. The Morning After is the morning after it.
 The package (the contents of loxley-rescue gatehouse/offers.py PACKAGES):
   --package                 the-vow or the-crossing. The Crossing brings its dinner, The Morning
                             After and its cake. The waterfall package (the-seventh-season) is
