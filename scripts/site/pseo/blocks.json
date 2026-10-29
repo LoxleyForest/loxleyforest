@@ -1,0 +1,180 @@
+{
+  "dahlonega-found": {
+    "eyebrow": "How we found it",
+    "heading": "A small town with wineries",
+    "heading_em": "and mountains",
+    "photo": "eq3a0107",
+    "alt": "Fog lifting through tall hardwoods, morning light coming through the trunks",
+    "text": "There's a place in the North Georgia foothills where the road drops through a tunnel of mountain laurel so thick the branches nearly meet overhead.\n\nSome of Livy's friends had been to a wedding in a small town with wineries and mountains, a place called Dahlonega. “What about there?” she said. Mick had never heard of it. Dahlonega was supposed to be a weekend away, not a life change.\n\nSo on a cold January morning, with fog still burning off the valley, they drove down a driveway lined with mountain laurel. Two hundred feet in, through the laurel tunnel, through the fog, Livy said it: “This is it. Come on.” They hadn't even seen the house yet.\n\nThey live here now: Mick, Livy, Aurora and Tilly Mac. When you arrive, the people who designed and built your treehouse are the same people handing you a welcome basket.",
+    "sources": [
+      "loxleyforest/scripts/site/pages/our_story.py:32 (eyebrow)",
+      "loxleyforest/scripts/site/pages/our_story.py:35 (the laurel tunnel; 'just over an hour from Atlanta' left out, a drive time with no fact row)",
+      "loxleyforest/scripts/site/pages/our_story.py:37",
+      "loxleyforest/scripts/site/pages/our_story.py:43",
+      "loxleyforest/scripts/site/pages/our_story.py:47",
+      "loxleyforest/scripts/site/pages/our_story.py:49",
+      "loxleyforest/scripts/site/pages/our_story.py:51",
+      "loxleyforest/scripts/site/build_v2.py:573",
+      "loxleyforest/scripts/site/pages/our_story.py:40 (photo and alt)"
+    ]
+  },
+  "dahlonega-town": {
+    "eyebrow": "Downtown Dahlonega",
+    "heading": "Gold rush history",
+    "heading_em": "and small-town character",
+    "text": "Dahlonega sits at the heart of Georgia's wine country. The square still has its courthouse with the gold-leaf steeple, surrounded by local shops, restaurants and places that have nothing to do with a chain.\n\nFor the night before, Spirits Tavern on the square is our default dinner recommendation: elevated American fare, good cocktails, a solid menu. Call ahead on weekends.\n\nCoffee at Jethro's on the square, then the easy, scenic loop around Lake Zwerner. The perfect easy morning. Everyone stops at the Dahlonega Fudge Factory. It's part of the trip.\n\nFor the last light, Kaya Vineyard has 270-degree mountain views from a hilltop, the most dramatic vista of any winery in the area. Get there an hour before sunset with a glass in hand.",
+    "sources": [
+      "loxleyforest/scripts/site/pages/local_guide.py:53 (eyebrow and heading)",
+      "loxleyforest/scripts/site/pages/local_guide.py:12",
+      "loxleyforest/scripts/site/pages/local_guide.py:54-55 (the 1828 date left out: the fact rows carry the gold rush with a source)",
+      "loxleyforest/scripts/site/pages/local_guide.py:57-59",
+      "loxleyforest/scripts/site/pages/local_guide.py:49-51",
+      "loxleyforest/scripts/site/pages/local_guide.py:70-72",
+      "loxleyforest/scripts/site/pages/local_guide.py:73-76",
+      "loxleyforest/scripts/site/pages/local_guide.py:22-24"
+    ]
+  },
+  "dahlonega-aisle": {
+    "eyebrow": "The aisle",
+    "heading": "The bridge becomes the aisle.",
+    "heading_em": "The canopy becomes the cathedral.",
+    "photo": "aerial-bridge",
+    "alt": "From above: the hundred-foot rope bridge through the canopy at golden hour",
+    "text": "Your ceremony begins on solid ground. You walk together toward the rope bridge: a hundred feet of suspended pathway over the forest floor, swaying gently between two ancient white oaks. Every step is a choice. Every step is toward each other. By the time you reach the other side, the ordinary world is behind you, and you're standing in the canopy, sixty feet above the earth.\n\nSay your vows on the deck of a treehouse a family built with their own hands. Let the forest witness it. Let the silence hold it.\n\nThen stay the night. Wake up married in the sky.",
+    "sources": [
+      "loxleyforest/scripts/site/pages/elopements.py:108 (eyebrow)",
+      "loxleyforest/scripts/site/pages/elopements.py:15 (heading)",
+      "loxleyforest/scripts/site/pages/elopements.py:111",
+      "loxleyforest/scripts/site/pages/elopements.py:112",
+      "loxleyforest/scripts/site/pages/elopements.py:114",
+      "loxleyforest/scripts/site/pages/elopements.py:95 (photo and alt)"
+    ]
+  },
+  "dahlonega-way-in": {
+    "eyebrow": "The way in",
+    "heading": "That bridge is",
+    "heading_em": "the front door",
+    "photo": "eq3a0943",
+    "alt": "The rope bridge at night, strung with warm lights",
+    "text": "The road turns to dirt and carves through the forest until it runs out. From there you hike, under a canopy that closes over the trail behind you. Around the last curve the laurel opens up and there it is: a hundred feet of suspended bridge strung with warm lights, swaying over the holler, with a creek running somewhere below. Treehouse glowing at the far end.\n\nThe bridge is rated for eight people at one time, everyone counted: on the bridge that is the two of you, your officiant, and up to five more, your photographer among them.",
+    "sources": [
+      "loxley-rescue/canon/voice.md:350 (heading)",
+      "loxley-rescue/canon/voice.md:348 ('ten minutes' left out, a time with no fact row)",
+      "loxley-rescue/canon/voice.md:144-148",
+      "loxleyforest/scripts/site/pages/elopements.py:55 (the bridge count, Mick's yes 2026-10-27)",
+      "loxleyforest/scripts/site/build_v2.py:556 (photo and alt)"
+    ]
+  },
+  "october-color": {
+    "eyebrow": "The color",
+    "heading": "A cathedral of",
+    "heading_em": "gold and crimson",
+    "photo": "eq3a0160",
+    "alt": "The rope bridge running through fall leaves to the treehouse canvas",
+    "text": "We have seven seasons, and every one is dramatic. Color Turn is a cathedral of gold and crimson.\n\nColor at elevation arrives earlier and lasts longer. Loxley Forest sits at 1,470 feet, in the foothills above Dahlonega.\n\nWatch the sun drop behind the ridgeline from your private deck. The forest turns gold, then amber, then blue.\n\nIt is the most dramatic season, and the most popular. Book early.",
+    "sources": [
+      "loxleyforest/scripts/site/pages/elopements.py:61",
+      "loxleyforest/scripts/site/pages/local_guide.py:107-108",
+      "loxleyforest/scripts/site/build_v2.py:112 (42 acres at 1,470 feet)",
+      "loxley-rescue/canon/voice.md:78-79 (1,470 feet, Mick 2026-10-13)",
+      "loxleyforest/scripts/site/build_v2.py:599 (the foothills above Dahlonega)",
+      "loxleyforest/scripts/site/pages/book.py:50",
+      "loxleyforest/scripts/site/pages/gallery.py:29 (photo and alt)"
+    ]
+  },
+  "october-fire": {
+    "eyebrow": "Fire as witness",
+    "heading": "Exchange rings",
+    "heading_em": "by the fire",
+    "photo": "img_1717",
+    "alt": "The stone fire pit on the forest floor, ringed with ferns",
+    "text": "The Fire Circle is a boulder fire pit that looks like it emerged from the earth centuries ago, set at the four compass points. It echoes traditions that have existed for thousands of years. Exchange rings beside it.\n\nAfterward the same fire cooks dinner. A stainless steel grill sits over the Fire Circle, for steak, burgers or whatever you fancy.\n\nUp on the sky deck, the fire table keeps you out there longer.",
+    "sources": [
+      "loxleyforest/scripts/site/pages/elopements.py:17 (eyebrow, photo and alt)",
+      "loxleyforest/scripts/site/pages/elopements.py:18",
+      "loxleyforest/scripts/site/pages/elopements.py:112 (exchange rings beside a fire pit set at the four compass points)",
+      "loxley-rescue/canon/voice.md:126 (the grill over the Fire Circle, the same fire an elopement couple is married by)",
+      "loxley-rescue/canon/voice.md:121 (the fire table on the deck)",
+      "loxleyforest/scripts/site/pages/experiences.py:72"
+    ]
+  },
+  "october-crossing": {
+    "eyebrow": "The crossing",
+    "heading": "The most dramatic aisle",
+    "heading_em": "in the Southeast",
+    "photo": "eq3a2008",
+    "alt": "The rope bridge stretching through the trees toward the treehouse in fall",
+    "text": "Cross a hundred-foot rope bridge to say your vows. In October it runs through fall leaves to the treehouse canvas, strung with small warm lights.\n\nThe hundred-foot rope bridge isn't a gimmick. It's a threshold. The moment you step onto it, you leave the ground behind. By the time you reach the other side, something in your chest has shifted.",
+    "sources": [
+      "loxleyforest/scripts/site/build_v2.py:585 (heading)",
+      "loxleyforest/scripts/site/build_v2.py:586",
+      "loxleyforest/scripts/site/pages/gallery.py:29 (the rope bridge running through fall leaves to the treehouse canvas)",
+      "loxleyforest/scripts/site/pages/gallery.py:58 (the forest floor in October, in fall colour)",
+      "loxley-rescue/canon/voice.md:75-76 (strung with small warm lights)",
+      "loxleyforest/scripts/site/build_v2.py:674",
+      "loxleyforest/scripts/site/pages/gallery.py:32 (photo and alt)"
+    ]
+  },
+  "anniversary-home": {
+    "eyebrow": "The treehouse",
+    "heading": "A home",
+    "heading_em": "in the sky",
+    "photo": "img_0831",
+    "alt": "The bed beneath the treehouse windows",
+    "text": "This is not a cabin with a view. This is a home in the sky, suspended in a canopy of white oak and beech that has stood for over a century.\n\nA queen bed framed by panoramic windows that turn every morning into a painting you've never seen before. A private deck suspended above the forest floor. A pizza oven on your sky deck, because even pizza is better in the canopy.\n\nWhat we don't include: televisions. You won't need one.",
+    "sources": [
+      "loxleyforest/scripts/site/build_v2.py:629 (heading)",
+      "loxleyforest/scripts/site/build_v2.py:512",
+      "loxleyforest/scripts/site/build_v2.py:640",
+      "loxleyforest/scripts/site/build_v2.py:532",
+      "loxleyforest/scripts/site/build_v2.py:527 (photo and alt)"
+    ]
+  },
+  "anniversary-evening": {
+    "eyebrow": "The evening",
+    "heading": "Your stay is a story,",
+    "heading_em": "not a checklist",
+    "photo": "eq3a0222",
+    "alt": "The pizza oven on the sky deck",
+    "text": "Unpack. Step onto the deck. Realize you're sixty feet in the air and there isn't a single sound except wind through leaves.\n\nFire up the pizza oven on the sky deck. Open the bottle you brought. Burn the first pizza. Laugh about it. Nail the second one.\n\nBuild a fire. Roast marshmallows. Look up.\n\nFall asleep to absolute silence, sixty feet above the forest floor. Wake up to birdsong. Check the TreeMail box at the entrance to your bridge. Something is waiting inside.",
+    "sources": [
+      "loxleyforest/scripts/site/build_v2.py:554 (heading)",
+      "loxleyforest/scripts/site/pages/book.py:48",
+      "loxleyforest/scripts/site/pages/book.py:49",
+      "loxleyforest/scripts/site/pages/book.py:51 ('The Milky Way is right there' left out: the site puts the clearest stars November to early spring, experiences.py:71)",
+      "loxleyforest/scripts/site/pages/book.py:52",
+      "loxleyforest/scripts/site/pages/book.py:54",
+      "loxleyforest/scripts/site/build_v2.py:558 (photo and alt)"
+    ]
+  },
+  "anniversary-crossing": {
+    "eyebrow": "The crossing",
+    "heading": "Your heart",
+    "heading_em": "beats faster",
+    "photo": "eq3a0337",
+    "alt": "The start of the rope bridge in fall",
+    "text": "The thirty-foot bridge is the warm-up. Next come your first steps across the hundred-footer. The ground drops away. The trees rise to meet you. Your hands grip the ropes and your heart beats faster. Halfway across, you stop noticing the height and start noticing the silence.\n\nSit with the person you love and hear nothing but the creek and the wind in the canopy. Sound works differently up here: the wind moves through the leaves like a living thing, and the silence between gusts is the deepest quiet you've heard in years.",
+    "sources": [
+      "loxleyforest/scripts/site/pages/experiences.py:61",
+      "loxleyforest/scripts/site/pages/our_story.py:77",
+      "loxleyforest/scripts/site/build_v2.py:667",
+      "loxleyforest/scripts/site/build_v2.py:671 (photo and alt)"
+    ]
+  },
+  "anniversary-built": {
+    "eyebrow": "Built by hand",
+    "heading": "Built,",
+    "heading_em": "not bought",
+    "photo": "eq3a2149",
+    "alt": "The steel and wood frame beneath the treehouse, in fall colour",
+    "text": "The treehouse is a tetrahedron frame, steel sandwiched between wood, suspended from living oaks by specialized hardware. Every piece was carried down four hundred feet of mountain without a single machine touching the forest. It took nine months, three times longer than planned.\n\nThe deck planks are white oak, salvaged and milled from standing dead trees on the property. Wood that was already here, given a second life.\n\nHow many people can say they've spent the night hanging from five oak trees, sixty feet in the air, with nothing between them and the stars but canvas and canopy?",
+    "sources": [
+      "loxleyforest/scripts/site/build_v2.py:652 (heading)",
+      "loxleyforest/scripts/site/build_v2.py:658",
+      "loxleyforest/scripts/site/build_v2.py:659",
+      "loxleyforest/scripts/site/pages/our_story.py:117",
+      "loxleyforest/scripts/site/pages/our_story.py:85",
+      "loxleyforest/scripts/site/build_v2.py:654 (photo and alt)"
+    ]
+  }
+}
