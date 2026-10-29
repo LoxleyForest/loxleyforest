@@ -30,8 +30,8 @@ each and shows it refused):
     already published (so this generator never adds a guest's name to the public repository);
   - under 350 words of copy that are the page's own, found on no other landing page; shared words
     outnumbering the page's own; more than two shared blocks;
-  - two pages of one set sharing more than 40 percent of their sentences, read with each page's own
-    place, month or occasion masked, so a page that is its sibling with one word swapped is caught;
+  - any two landing pages sharing more than 40 percent of their sentences, read with each page's own
+    place, month or occasion masked, so a page that is another with one word swapped is caught;
   - an em-dash anywhere; "ravine"; "private chef"; "I answer everything myself" and its family;
     "wedding venue"; a claim of ceremonies hosted; Counsel's "must not say" for marriage law (a
     license's expiry, a friend ordained online, no witnesses needed or marrying the day you apply as
@@ -558,11 +558,10 @@ def judge(data, render=True):
         if shared_words > unique:
             verdict[s].append(('shared', f'its shared words ({shared_words}) outnumber its own ({unique})'))
 
-    # Siblings: two pages of one set may share at most 40 percent of their sentences.
+    # Any two landing pages, of one set or not, may share at most 40 percent of their sentences
+    # (the Critic, 2026-10-29: the Atlanta pair sat in two sets and shared 44 percent).
     for i, p in enumerate(data['pages']):
         for q in data['pages'][i + 1:]:
-            if p.get('set') != q.get('set'):
-                continue
             a, b = seen[slug_of(p)], seen[slug_of(q)]
             if not a or not b:
                 continue
@@ -571,8 +570,8 @@ def judge(data, render=True):
                 stats[slug_of(x)]['sibling'] = max(stats[slug_of(x)].get('sibling', 0), share)
             if share > MAX_SHARED_SENTENCES:
                 for x, y in ((p, q), (q, p)):
-                    verdict[slug_of(x)].append(('similar', f'shares {share:.0%} of its sentences with /{slug_of(y)}, a page of '
-                                                           f'the same set; {MAX_SHARED_SENTENCES:.0%} at most'))
+                    verdict[slug_of(x)].append(('similar', f'shares {share:.0%} of its sentences with /{slug_of(y)}, another '
+                                                           f'landing page; {MAX_SHARED_SENTENCES:.0%} at most'))
 
     if render:
         for p in data['pages']:
@@ -714,7 +713,13 @@ def _forms():
 
 
 def form_html(p):
+    """The form, its hidden "page" field naming this page. /elopements' form carries the field itself
+    (Netlify reads forms that share a name as one, from the first it meets), so its value is set; a
+    form without one gets it after form-name."""
     name, form = _forms()[p['form']]
+    field = re.compile(r'<input type="hidden" name="page" value="[^"]*">')
+    if field.search(form):
+        return field.sub(f'<input type="hidden" name="page" value="/{p["slug"]}">', form, count=1)
     tag = f'<input type="hidden" name="form-name" value="{name}">'
     assert tag in form, f'the {name} form changed shape; pseo.py looks for {tag}'
     return form.replace(tag, tag + f'\n            <input type="hidden" name="page" value="/{p["slug"]}">', 1)

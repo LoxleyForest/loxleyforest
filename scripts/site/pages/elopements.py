@@ -5,6 +5,10 @@ same Netlify form: name "elopement-inquiry", the honeypot, the hidden form-name,
 and option value, and the action "/elopements?submitted=1" with its thank-you script. Only the
 visible option labels lost their dashes. The crossing walk (js/crossing.js) is not on this page
 by ruling; it is a later decision.
+
+A hidden "page" field (2026-10-29) names the page the form was sent from. The search landing pages
+(pages/pseo.py) carry this same form, and Netlify reads forms sharing a name as one definition, from
+the first it meets, so the field is here for theirs to be kept.
 """
 import build_v2 as B
 
@@ -160,6 +164,7 @@ def page_elopements():
         <div class="lf-inq__wrap lf-rise">
           <form class="lf-form lf-form--light" name="elopement-inquiry" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" action="/success.html">
             <input type="hidden" name="form-name" value="elopement-inquiry">
+            <input type="hidden" name="page" value="/elopements">
             <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
 
             <div class="lf-form__row">
