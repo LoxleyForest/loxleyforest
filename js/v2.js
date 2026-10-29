@@ -84,8 +84,10 @@
         // iPhones want these set as properties, not only as attributes, before the source arrives
         v.muted = true; v.defaultMuted = true; v.playsInline = true;
         v.setAttribute('muted', ''); v.setAttribute('playsinline', '');
-        var webm = !phone && v.dataset.deskWebm && v.canPlayType('video/webm; codecs="vp9"');
-        v.src = phone ? v.dataset.phone : (webm ? v.dataset.deskWebm : v.dataset.desk);
+        // the file follows the film's own width, not the screen's: a desktop column takes the 720 file
+        var small = phone || v.parentNode.clientWidth <= 400;
+        var webm = !small && v.dataset.deskWebm && v.canPlayType('video/webm; codecs="vp9"');
+        v.src = small ? v.dataset.phone : (webm ? v.dataset.deskWebm : v.dataset.desk);
         v.load();
         v.addEventListener('playing', function () { v.classList.add('is-playing'); if (btn) btn.hidden = false; }, { once: true });
         // An iPhone in Low Power Mode refuses autoplay; the first touch starts the loop instead.

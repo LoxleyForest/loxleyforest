@@ -3,8 +3,11 @@
 Mick approved the interior rough cut by voice (2026-10-28). It sits beside "The original" on
 /treehouses, the gallery under it, every photo kept. Files: images/interior/ (desk mp4 and webm,
 phone mp4, poster jpg), encoded on the workshop from ~/footage-in/cuts/interior-rough.mp4 by
-~/footage-in/cuts/make_web.sh (real frames only, no grade; each file under the hero's matching one).
-The still paints first; js/v2.js gives the clip a source only after load and once it is on screen;
+~/footage-in/cuts/make_web.sh (real frames only, no grade; each video under the hero's matching one;
+the poster is a 118,107-byte jpg against the hero's 85,110-byte webp, a webp near 90 KB is a later nit).
+The film's width follows the screen's height, so all of it shows under the header at any shape.
+The still paints first; js/v2.js gives the clip a source only after load and once it is on screen
+(the 720 phone file whenever the film is 400 px wide or less, so a desktop column takes it too);
 reduced motion, Save-Data and slow connections keep the still. Re-encode: run make_web.sh, copy
 web/interior-* into images/interior/ (mp4s need git add -f: .gitignore has *.mp4, as for the hero).
 

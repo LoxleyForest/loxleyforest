@@ -41,7 +41,7 @@ PACKAGES = [
         'Celebration cake'],
      None),
     ('Ultimate', 'The Elevation', '$10,500', 'Everything in The Crossing, plus', [
-        'Private chef dinner',
+        'Private dinner',
         "Photography timed to the day's best moments",
         'Floral ceremony arch',
         'Premium welcome hamper',
@@ -60,7 +60,7 @@ FAQ = [
     ("What's the best season?",
      'We have seven seasons, and every one is dramatic. Wildflower brings soft light and mountain laurel. Canopy Green brings fireflies. Color Turn is a cathedral of gold and crimson. Frost Season strips the canopy to its bones and reveals views you can\'t see the rest of the year.'),
     ('What about weather?',
-     'Rain in the mountains is its own kind of magic, and your photographer will love it. Every couple receives a weather contingency plan. The canopy provides natural protection. We\'ve hosted ceremonies in every kind of weather.'),
+     'Rain in the mountains is its own kind of magic, and your photographer will love it. Every couple receives a weather contingency plan. The canopy provides natural protection.'),
     ('Can we elope on a weekday?',
      "Absolutely, and we'll love you for it. Weekday ceremonies get the best light, the quietest forest, and preferred pricing."),
 ]

@@ -47,8 +47,8 @@ QA = [
     ('Is there WiFi?',
      'Yes. But we encourage you not to use it.'),
     # Cut (the CEO, 2026-10-29, on the record): "We've hosted guests in every kind of weather, and the
-    # reviews always say the same thing: worth it." No ceremony has been hosted yet, and "always" is no
-    # fact in docs/reviews/all.md. The weather plan (heated, the canopy's cooling and cover) stays.
+    # reviews always say the same thing: worth it." "Always" was false: "worth it" is on only 6 lines of
+    # loxley-rescue docs/reviews/all.md. The weather plan (heated, the canopy's cooling and cover) stays.
     ('What about weather?',
      'Rain in the mountains is its own kind of magic. The treehouse is heated, with the canopy\'s natural cooling '
      'in summer, and the canopy gives the deck natural protection.'),
