@@ -1,3 +1,9 @@
+# IN FLIGHT · 2026-10-29 · the gift checkout carries its visit's source (merged, ceo/gift-source c720d77)
+
+js/gift.js body() adds src and referrer from sessionStorage gh_entry (the visit's own; never gh_attr or loxley_attribution) inside a try/catch; the engine's forge/gift-counts records the word on the sale once deployed; until then the live engine ignores the two fields. Checks: node scripts/site/check_gift.js (227).
+
+---
+
 # IN FLIGHT · 2026-10-29 · the Golden Arrow's sale for Google Ads (branch ceo/gift-conversion)
 
 /gift/thanks (js/gift.js Sold) pushes `gift_purchase` {value, currency USD, transaction_id (a hash
