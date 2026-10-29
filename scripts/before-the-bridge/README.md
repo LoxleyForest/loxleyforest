@@ -17,7 +17,7 @@ and prints the path and one line saying what the page holds: the package, the da
 day and site, the children, the drink, the photography, the gifts, the print pages, the questions
 and the lines held for Mick. Then it prints a `held` line for each line it left out, and the share
 link. `--help` lists every flag. Look at the page at phone width and in print preview, then push
-to `main`.
+to `main`. The first page made from this template waits for Mick's yes on its words, read to him by ear, starting with the lines its notes mark as new. Log his yes; a changed word goes back to him.
 
 Send the link from Mick's own Gmail, in an email they can reply to: the page asks for it back as
 a photo of the pages or a reply with the numbers.
