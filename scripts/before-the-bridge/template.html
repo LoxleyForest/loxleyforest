@@ -1,7 +1,7 @@
 <!doctype html>
 <!--t:
   THE TEMPLATE FOR BEFORE THE BRIDGE. new.py reads this file and writes one page per couple.
-  Never served: scripts/ is never published (scripts/publish.py). Edit the words here, run new.py.
+  Never served on the site (publish.py leaves scripts/ out), but this repository is public: nothing here may name a stay. Edit the words here, run new.py.
 
   The design and the words are the model page's, the first made this way, built on Mick's own
   pages. Where a variant needs words the model page does not have, a note like this one says so
@@ -44,7 +44,7 @@
 <link rel="icon" href="/favicon.svg">
 <!--
   Before the Bridge, for the stay of {{dates_label}} ({{package_name}}).
-  Made by scripts/before-the-bridge/new.py from template.html. Hidden: noindex, a random folder
+  Made by scripts/before-the-bridge/new.py from template.html. Unlisted on the site: noindex, a random folder
   name, and robots.txt keeps /private/ out of search. No Tag Manager, as with every private page.
   No guest name, email or phone is in this file. The page reads the couple's first names from
   the link after the # (#for=Amy%20and%20Jon) for the greeting and questions 3 and 4.
@@ -241,7 +241,7 @@
        [MICK RATIFIES] ok_pizza_house: what the house brings for pizza night. canon/voice.md says
        guests bring the sauce and toppings, and the house the dough on request; the held sentence
        says the dough, the sauce and the cheese are ours and the toppings will be waiting. -->
-  <div class="q"><span class="ask"><span class="n">#</span><b>What do the two of you love on a pizza?</b></span><span class="hint">{{ceremony_day}} night is pizza on the Sky Deck, sixty feet up.<!--if ok_pizza_house--> The dough, the sauce and the cheese are ours, and the toppings you love will be waiting.<!--endif--></span><div class="rule-line"></div></div>
+  <div class="q"><span class="ask"><span class="n">#</span><b>What do the two of you love on a pizza?</b></span><span class="hint">One evening is pizza night, on the Sky Deck sixty feet up.<!--if ok_pizza_house--> The dough, the sauce and the cheese are ours, and the toppings you love will be waiting.<!--endif--></span><div class="rule-line"></div></div>
 <!--endif-->
 <!--if children-->
 
@@ -250,14 +250,14 @@
   <div class="q"><span class="ask"><span class="n">#</span><b>{{Pr_pos}} name{{plural_s}}, and how old {{pr_subj_be}}.</b></span><span class="hint">First names are plenty.</span><div class="rule-line"></div></div>
 <!--if pizza-->
   <!--t: [MICK RATIFIES] ok_pizza_house, as above. -->
-  <div class="q"><span class="ask"><span class="n">#</span><b>What does everyone love on a pizza, and what {{kids_do}} {{the_kids}} like to drink?</b></span><span class="hint">{{ceremony_day}} night is pizza on the Sky Deck, sixty feet up.<!--if ok_pizza_house--> The dough, the sauce and the cheese are ours, and the toppings you love will be waiting.<!--endif--> One line each, the two of you included.</span><div class="rule-line"></div><div class="rule-line"></div><div class="rule-line"></div></div>
+  <div class="q"><span class="ask"><span class="n">#</span><b>What does everyone love on a pizza, and what {{kids_do}} {{the_kids}} like to drink?</b></span><span class="hint">One evening is pizza night, on the Sky Deck sixty feet up.<!--if ok_pizza_house--> The dough, the sauce and the cheese are ours, and the toppings you love will be waiting.<!--endif--> One line each, the two of you included.</span><div class="rule-line"></div><div class="rule-line"></div><div class="rule-line"></div></div>
 <!--endif-->
   <div class="q"><span class="ask"><span class="n">#</span><b>Is there anything about the woods {{pr_subj_be}} afraid of?</b></span><span class="hint">The dark, the height, a bridge that sways because it is built to. Nothing is silly out here, and knowing ahead helps.</span><div class="rule-line"></div><div class="rule-line"></div></div>
   <!--t: [MICK RATIFIES] ok_children_overnight: whether the children may stay the night. The record
        says the treehouse sleeps four comfortably, with an air mattress for families (log,
        2026-10-26). "or head home after the ceremony" (no pizza night) is new. -->
 <!--if ok_children_overnight-->
-  <div class="q"><span class="ask"><span class="n">#</span><b>Will {{pr_subj}} stay the night on {{ceremony_day}}, or head home after <!--if pizza-->pizza<!--endif--><!--if !pizza-->the ceremony<!--endif-->?</b></span><span class="hint">Either way is a good night. Tell us, and we will plan the evening around it.</span><div class="rule-line"></div></div>
+  <div class="q"><span class="ask"><span class="n">#</span><b>Will {{pr_subj}} stay the night on {{ceremony_day}}, or head home after the ceremony?</b></span><span class="hint">Either way is a good night. Tell us, and we will plan the evening around it.</span><div class="rule-line"></div></div>
 <!--endif-->
   <!--t: The going, asked of every family: the CEO seat's words, 2026-10-29. Anything specific about
        one child goes in Mick's own cover note, never on the page. -->
@@ -273,7 +273,7 @@
   <div class="part">{{care_part}} · So We Can Take Care of You</div>
   <p class="partnote">This is the one part we do need. It takes two minutes<!--if children-->, and it covers {{the_kids}} too<!--endif-->.</p>
   <div class="q"><span class="ask"><span class="n">#</span><b>Does <!--if children-->anyone<!--endif--><!--if !children-->either of you<!--endif--> have a food allergy or intolerance?</b></span><span class="hint">Please be thorough, and include the mild-but-real ones. If you list one, we will call so we understand how serious it is and whether a trace or a shared surface matters. We would rather ask twice than guess once.</span><div class="rule-line"></div><div class="rule-line"></div><div class="rule-line"></div></div>
-  <div class="q"><span class="ask"><span class="n">#</span><b>Anything <!--if children-->anyone simply does<!--endif--><!--if !children-->you simply do<!--endif--> not like?</b></span><span class="hint">This matters to us nearly as much.<!--if morning_after--> Nobody should be polite about breakfast the morning after their wedding.<!--endif--></span><div class="rule-line"></div></div>
+  <div class="q"><span class="ask"><span class="n">#</span><b>Anything <!--if children-->anyone simply does<!--endif--><!--if !children-->you simply do<!--endif--> not like?</b></span><span class="hint">This matters to us nearly as much.<!--if morning_after--> Nobody should be polite about brunch the morning after their wedding.<!--endif--></span><div class="rule-line"></div></div>
   <div class="q"><span class="ask"><span class="n">#</span><b>Is there anything that would make the trail or the bridge harder for either of you, or for anyone else coming?</b></span><span class="hint">A knee, a fear of heights, a recent surgery<!--if own_photo-->, a heavy bag of camera gear<!--endif-->. We would far rather know and plan the walk around it.</span><div class="rule-line"></div><div class="rule-line"></div></div>
   <!--t: Check in from 3:00 pm (Mick's ruling, log 2863); the way in the day before (package_confirmed.md). -->
   <div class="q"><span class="ask"><span class="n">#</span><b>Roughly what time will you arrive on {{arrival_phrase}}?</b></span><span class="hint">Your treehouse is ready from 3:00 pm. The day before, we will send the drive, the walk and the crossing, step by step.</span><div class="rule-line"></div></div>
