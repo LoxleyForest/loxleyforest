@@ -3,54 +3,48 @@
     "set": "A",
     "slug": "elope-in-dahlonega",
     "title": "Elope in Dahlonega, Georgia | Loxley Forest",
-    "meta": "Elope in Dahlonega, Georgia: walk a hundred-foot rope bridge to your vows, sixty feet up in the canopy, then stay the night and wake up married in the sky.",
+    "meta": "Eloping in Dahlonega: the town, the day, where to eat after, and a treehouse sixty feet up with a hundred-foot rope bridge for your aisle.",
     "eyebrow": "Dahlonega, Georgia · 1,470 feet",
-    "h1": "Elope in Dahlonega,",
-    "h1_em": "on a hundred-foot rope bridge",
+    "h1": "Elope in Dahlonega",
+    "h1_em": "",
     "crumb": "Dahlonega",
     "hero": {
       "photo": "eq3a0154",
       "alt": "The rope bridge from the side, an oak trunk in the foreground"
     },
     "lead": {
-      "text": "In the foothills above Dahlonega: Georgia's wine country, the southern tip of the Appalachian Trail, and 42 acres of forest where the only schedule is sunrise and sunset.",
+      "text": "We're in Dahlonega, Georgia, on forty-two acres of forest, with a hand-built treehouse sixty feet up in it. The hundred-foot rope bridge to its door becomes your aisle.",
       "sources": [
-        "loxleyforest/scripts/site/build_v2.py:599",
-        "loxleyforest/scripts/site/build_v2.py:498 (eyebrow)",
-        "loxleyforest/scripts/site/pages/elopements.py:14 (hero photo and alt)"
+        "loxley-rescue/docs/briefs/2026-10-29-writer-pseo-copy.md:185 (frame A, its first line, for the town the house is in)",
+        "loxley-rescue/canon/voice.md:74-77",
+        "loxleyforest/scripts/site/pages/elopements.py:15",
+        "loxleyforest/scripts/site/build_v2.py:498 (eyebrow)"
       ]
     },
     "hub": "/elopements",
     "links_to": [
-      "/elope-in-october",
-      "/anniversary-getaway-north-georgia",
+      "/elopements#inquiry",
+      "/how-to-elope-in-georgia",
+      "/eloping-from-atlanta",
       "/local-guide"
     ],
     "blocks": [
       "dahlonega-found",
       "dahlonega-aisle",
       "dahlonega-town",
-      "dahlonega-way-in"
+      "treehouse",
+      "how-it-works"
     ],
     "facts": [
+      "dahlonega-county-seat",
+      "dahlonega-gold-1828",
       "dahlonega-first-gold-rush",
-      "dahlonega-courthouse-1836"
+      "dahlonega-courthouse-1836",
+      "dahlonega-mint",
+      "dahlonega-wineries",
+      "dahlonega-amicalola-at"
     ],
     "faq": [
-      {
-        "q": "Do you provide an officiant?",
-        "a": "We keep a curated list of officiants who know this property and understand how to hold a ceremony in the canopy.",
-        "sources": [
-          "loxleyforest/scripts/site/pages/elopements.py:56-57"
-        ]
-      },
-      {
-        "q": "What about photography?",
-        "a": "Our preferred photographers have shot at Loxley before. They know the light. They know that the rope bridge at golden hour produces images that will stop anyone mid-scroll.",
-        "sources": [
-          "loxleyforest/scripts/site/pages/elopements.py:58-59"
-        ]
-      },
       {
         "q": "Where can we say our vows?",
         "a": "On the rope bridge, beside the Fire Circle on the forest floor, or on the private deck of your treehouse, sixty feet in the air. The Crossing and The Elevation include our signature rope bridge ceremony.",
@@ -60,127 +54,757 @@
         ]
       },
       {
-        "q": "Where do we spend the night?",
-        "a": "In the treehouse, sixty feet up in the canopy: a queen bed framed by panoramic windows, a private deck above the forest floor, and fresh dough and a wood-fired oven on your sky deck.",
+        "q": "Where do we eat after?",
+        "a": "Up top, the pizza oven on the Sky Deck with its cast iron pan, the stainless steel grill over the Fire Circle, and a big cooler on the deck; bring the ice. For a nice dinner in town, Montaluce, the best food in wine country, where the restaurant is the real draw. For a burger, Spirits Tavern on the square. Call ahead on weekends.",
         "sources": [
-          "loxleyforest/scripts/site/build_v2.py:365-367",
-          "loxleyforest/scripts/site/build_v2.py:500"
+          "loxley-rescue/canon/voice.md:125-128 (Mick, 2026-10-28: Montaluce for a nice dinner; the local guide still says Spirits Tavern, a contradiction for Mick)",
+          "loxleyforest/scripts/site/pages/local_guide.py:19-21",
+          "loxleyforest/scripts/site/pages/local_guide.py:57-59"
+        ]
+      },
+      {
+        "q": "What is there to do the next day?",
+        "a": "The Consolidated Gold Mine is 200 feet underground at a constant 60 degrees, with a guided tour through the original tunnels and gold panning included. Underground means weatherproof. Or Wolf Mountain Vineyards, for a Sunday brunch that books up fast.",
+        "sources": [
+          "loxleyforest/scripts/site/pages/local_guide.py:66-69 (\"a 40-minute guided tour\" said without its minutes)",
+          "loxleyforest/scripts/site/pages/local_guide.py:15-18"
+        ]
+      },
+      {
+        "q": "How many people can be on the bridge?",
+        "a": "The bridge is rated for eight people at one time, everyone counted: on the bridge that is the two of you, your officiant, and up to five more, your photographer among them.",
+        "sources": [
+          "loxleyforest/scripts/site/pages/elopements.py:55",
+          "loxley-rescue/canon/agreements/elopement-hosting.md:23"
+        ]
+      },
+      {
+        "q": "What should we bring?",
+        "a": "Comfortable shoes for the trails. Layers, because mountain weather changes. Groceries if you plan to cook, and ice for the cooler. A book you've been meaning to read.",
+        "sources": [
+          "loxleyforest/scripts/site/pages/faq.py:40-42",
+          "loxley-rescue/canon/voice.md:125"
         ]
       }
     ],
     "quote": {
-      "id": "A116",
-      "text": "It’s beautiful. It’s adventurous. From the twisted tree trunk-lined path to the gorgeous treehouse, you felt like you’ve stepped into a place they write stories about.",
-      "credit": "Amy · Sidney, OH"
+      "id": "A96",
+      "text": "This property is private and intimate, but very close to amazing wineries and restaurants.",
+      "credit": "Kristin · Dawsonville, GA"
     },
     "form": "elopement",
+    "form_intro": "form-intro",
     "updated": "2026-10-29"
   },
   {
-    "set": "B",
-    "slug": "elope-in-october",
-    "title": "Elope in October in North Georgia | Loxley Forest",
-    "meta": "An October elopement in the North Georgia canopy: the forest turns gold, then crimson, then amber, and you exchange rings beside the Fire Circle.",
-    "eyebrow": "Color Turn",
-    "h1": "Elope in October,",
-    "h1_em": "when the canopy turns",
-    "crumb": "October",
+    "set": "E",
+    "slug": "how-to-elope-in-georgia",
+    "title": "How to Elope in Georgia: License, Officiant, Timing",
+    "meta": "How to elope in Georgia: the marriage license, who may officiate and when, in Georgia law's own words with its sources, and what we arrange for you.",
+    "eyebrow": "Georgia marriage law",
+    "h1": "How to elope in Georgia",
+    "h1_em": "",
+    "crumb": "How to elope",
     "hero": {
-      "photo": "aerial-fall",
-      "alt": "From above in fall: the treehouse canvas showing through a canopy of orange, red and gold"
+      "photo": "eq3a1541",
+      "alt": "The treehouse deck seen through falling leaves and fall colour"
     },
     "lead": {
-      "text": "Fall is the good one out here. The color comes in, the air turns, and the treehouse doesn't look at it. It sits inside it.",
+      "text": "A couple marrying here gets the license from a Georgia probate court, Lumpkin County's if neither of you lives in Georgia, swears to the application with proof of age, waits for nothing, and needs no blood test. Your officiant returns the signed license to the court within 30 days of the ceremony.",
       "sources": [
-        "loxley-rescue/canon/voice.md:295",
-        "loxley-rescue/canon/voice.md:82-83",
-        "loxleyforest/scripts/site/pages/elopements.py:61 (eyebrow: the season's name)",
-        "loxleyforest/scripts/site/pages/gallery.py:66 (hero photo and alt)"
+        "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:16-17 (The answer)",
+        "loxleyforest/scripts/site/pages/gallery.py:48 (hero photo and alt)"
       ]
     },
     "hub": "/elopements",
     "links_to": [
-      "/elope-in-dahlonega",
-      "/anniversary-getaway-north-georgia",
-      "/gallery"
+      "/elopements#inquiry",
+      "/what-an-elopement-costs-in-georgia",
+      "/elopement-or-courthouse",
+      "/elope-in-dahlonega"
     ],
     "blocks": [
-      "october-color",
-      "october-fire",
-      "october-crossing"
+      "law-license",
+      "law-asks",
+      "law-officiant",
+      "law-house",
+      "how-it-works"
     ],
-    "facts": [],
+    "facts": [
+      "lumpkin-probate-court",
+      "georgia-license-county",
+      "georgia-license-oath",
+      "georgia-blood-test",
+      "georgia-age-18"
+    ],
     "faq": [
       {
-        "q": "What does the forest look like in October?",
-        "a": "The canopy turns gold, then crimson, then amber. From above, the treehouse canvas shows through a canopy of orange, red and gold.",
+        "q": "Is there a waiting period in Georgia?",
+        "a": "The statute says a license “may be issued immediately and without any waiting period” (§ 19-3-35).",
         "sources": [
-          "loxleyforest/scripts/site/pages/local_guide.py:107",
-          "loxleyforest/scripts/site/pages/gallery.py:66"
+          "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:25 (P4)"
         ]
       },
       {
-        "q": "What if it rains on our day?",
-        "a": "Rain in the mountains is its own kind of magic, and your photographer will love it. Every couple receives a weather contingency plan. The canopy provides natural protection.",
+        "q": "Who can marry us?",
+        "a": "The statute names officials, among them judges and magistrates, and a “minister, or other person of any religious society or sect authorized by the rules of such society to perform the marriage ceremony” (§ 19-3-30(c)). We arrange your officiant.",
         "sources": [
-          "loxleyforest/scripts/site/pages/elopements.py:62-63"
+          "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:30 (P9)",
+          "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:35 (P14)"
         ]
       },
       {
-        "q": "Can we elope on a weekday?",
+        "q": "Does the house get the license for us?",
+        "a": "Your license is yours: we do not handle licenses and cannot get one for you.",
+        "sources": [
+          "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:35 (P14)",
+          "loxley-rescue/canon/agreements/elopement-hosting.md:55"
+        ]
+      },
+      {
+        "q": "Is this legal advice?",
+        "a": "No. It is general information. For your own situation, ask the court or a lawyer.",
+        "sources": [
+          "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:36 (P15)"
+        ]
+      }
+    ],
+    "quote": null,
+    "form": "elopement",
+    "form_intro": "form-intro",
+    "heard": false,
+    "updated": "2026-10-29"
+  },
+  {
+    "set": "E",
+    "slug": "what-an-elopement-costs-in-georgia",
+    "title": "What an Elopement Costs in Georgia | Loxley Forest",
+    "meta": "What an elopement in Georgia asks for, line by line: the license, an officiant, photographs and the nights, and what our three packages hold.",
+    "eyebrow": "Elopements in Georgia",
+    "h1": "What an elopement costs in Georgia",
+    "h1_em": "",
+    "crumb": "What it costs",
+    "hero": {
+      "photo": "eq3a0337",
+      "alt": "The start of the rope bridge in fall"
+    },
+    "lead": {
+      "text": "Four things: the license, an officiant, photographs and the nights. The court says what the license costs; what our packages come to, we send by reply.",
+      "sources": [
+        "new words (the answer in the first paragraph)",
+        "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:28 (P7)",
+        "loxleyforest/scripts/site/build_v2.py:671 (hero photo and alt)"
+      ]
+    },
+    "hub": "/elopements",
+    "links_to": [
+      "/elopements#packages",
+      "/how-to-elope-in-georgia",
+      "/elopement-or-courthouse"
+    ],
+    "blocks": [
+      "cost-shape",
+      "cost-packages",
+      "how-it-works"
+    ],
+    "facts": [
+      "lumpkin-probate-court",
+      "georgia-license-county"
+    ],
+    "faq": [
+      {
+        "q": "What isn't included?",
+        "a": "Hair and makeup, though we are glad to point you toward artists we trust; your marriage license; and food and drink beyond the champagne toast.",
+        "sources": [
+          "loxley-rescue/canon/agreements/elopement-hosting.md:17"
+        ]
+      },
+      {
+        "q": "Can we bring our own photographer?",
+        "a": "Yes. Anyone you bring to work, a hair and makeup artist or your own photographer, is your guest and your responsibility and follows our safety rules.",
+        "sources": [
+          "loxley-rescue/canon/agreements/elopement-hosting.md:55"
+        ]
+      },
+      {
+        "q": "Is the champagne toast in every package?",
+        "a": "Yes: The Vow holds a champagne toast, and The Crossing and The Elevation hold everything in The Vow.",
+        "sources": [
+          "loxleyforest/scripts/site/pages/elopements.py:26-44"
+        ]
+      },
+      {
+        "q": "Can we ask for something not on the list?",
+        "a": "Custom packages available: tell us your vision.",
+        "sources": [
+          "loxleyforest/scripts/site/pages/elopements.py:137"
+        ]
+      }
+    ],
+    "quote": null,
+    "form": "elopement",
+    "form_intro": "form-intro",
+    "updated": "2026-10-29"
+  },
+  {
+    "set": "B",
+    "slug": "christmas-new-years-elopement",
+    "title": "A Christmas or New Year's Elopement in North Georgia",
+    "meta": "Elope between Christmas and New Year's in the North Georgia mountains: frost on the rope bridge, the bare canopy's long views, and the fire.",
+    "eyebrow": "Christmas and New Year's",
+    "h1": "A Christmas or New Year's elopement",
+    "h1_em": "",
+    "crumb": "Christmas",
+    "hero": {
+      "photo": "eq3a8862",
+      "alt": "The treehouse canvas in thick fog among bare trees"
+    },
+    "lead": {
+      "text": "Frost on the rope bridge, the bare canopy's long views, and the fire: an elopement between Christmas and New Year's in the North Georgia mountains.",
+      "sources": [
+        "loxleyforest/scripts/site/pages/local_guide.py:110 (frost, the bare canopy, the fire)",
+        "loxleyforest/scripts/site/pages/gallery.py:21 (hero photo and alt)"
+      ]
+    },
+    "hub": "/elopements",
+    "links_to": [
+      "/elopements#inquiry",
+      "/elope-in-dahlonega",
+      "/how-to-elope-in-georgia"
+    ],
+    "blocks": [
+      "december",
+      "christmas-fire",
+      "christmas-sky",
+      "way-in"
+    ],
+    "facts": [
+      "dahlonega-sunset-december",
+      "helen-december-low"
+    ],
+    "faq": [
+      {
+        "q": "Is the treehouse warm enough in December?",
+        "a": "It's heated for the cold seasons. It's a canvas treehouse, though, so bring layers, because mountain weather changes.",
+        "sources": [
+          "loxley-rescue/docs/briefs/2026-10-29-writer-pseo-copy.md:217",
+          "loxleyforest/scripts/site/pages/faq.py:44",
+          "loxleyforest/scripts/site/pages/faq.py:41",
+          "loxley-rescue/canon/voice.md:74"
+        ]
+      },
+      {
+        "q": "What if it rains?",
+        "a": "Rain in the mountains is its own kind of magic. The canvas windows zip shut like a tent's, and the canopy gives the deck natural protection.",
+        "sources": [
+          "loxley-rescue/docs/briefs/2026-10-29-writer-pseo-copy.md:219",
+          "loxleyforest/scripts/site/pages/faq.py:50",
+          "loxley-rescue/canon/voice.md:124"
+        ]
+      },
+      {
+        "q": "When does it get dark?",
+        "a": "Sunset is around 5:27 pm in mid December. The bridge and deck lights are solar; they come on at dark and burn two or three hours. The trail lanterns are up for the walk in.",
+        "sources": [
+          "loxley-rescue/docs/briefs/2026-10-29-writer-pseo-copy.md:220",
+          "loxley-rescue/canon/voice.md:122",
+          "loxley-rescue/canon/voice.md:41-44",
+          "fact: dahlonega-sunset-december"
+        ]
+      },
+      {
+        "q": "Which packages are there?",
+        "a": "Three: The Vow, The Crossing and The Elevation. The Crossing and The Elevation include our signature rope bridge ceremony. Every Loxley elopement is personally coordinated.",
+        "sources": [
+          "loxleyforest/scripts/site/pages/elopements.py:26-50",
+          "loxleyforest/scripts/site/pages/elopements.py:33",
+          "loxleyforest/scripts/site/pages/elopements.py:133"
+        ]
+      }
+    ],
+    "quote": {
+      "id": "A83",
+      "text": "The treehouse is very comfortable and was decorated perfectly for Christmas.",
+      "credit": "Stephen · Ninety Six, SC"
+    },
+    "form": "elopement",
+    "form_intro": "form-intro",
+    "updated": "2026-10-29"
+  },
+  {
+    "set": "A",
+    "slug": "eloping-from-atlanta",
+    "title": "Eloping from Atlanta: A Treehouse an Hour North",
+    "meta": "Eloping from Atlanta without the city: just over an hour north to Dahlonega, a hundred-foot rope bridge for your aisle, and a treehouse to wake up in.",
+    "eyebrow": "From Atlanta",
+    "h1": "Eloping from Atlanta",
+    "h1_em": "",
+    "crumb": "Atlanta",
+    "hero": {
+      "photo": "aerial-canopy",
+      "alt": "From above in summer: the treehouse deck and canvas among green treetops"
+    },
+    "lead": {
+      "text": "From Atlanta, it's just over an hour to Dahlonega, Georgia. There, a hundred-foot rope bridge sixty feet up becomes your aisle, and a treehouse waits at the far end of it.",
+      "sources": [
+        "loxley-rescue/docs/briefs/2026-10-29-writer-pseo-copy.md:197 (frame D, its first line, canon's drive)",
+        "loxley-rescue/canon/voice.md:77-78",
+        "loxleyforest/scripts/site/pages/elopements.py:15",
+        "loxleyforest/scripts/site/pages/gallery.py:65 (hero photo and alt)"
+      ]
+    },
+    "hub": "/elopements",
+    "links_to": [
+      "/elopements#inquiry",
+      "/elope-in-dahlonega",
+      "/romantic-getaways-near-atlanta"
+    ],
+    "blocks": [
+      "atlanta-drive",
+      "atlanta-without",
+      "bridge",
+      "who-we-are"
+    ],
+    "facts": [
+      "dahlonega-hour-north",
+      "dahlonega-county-seat",
+      "springer-from-atlanta"
+    ],
+    "faq": [
+      {
+        "q": "How long is the drive from Atlanta?",
+        "a": "Just over an hour to Dahlonega. Detailed directions come with your booking confirmation. Then you park and walk in under the trees.",
+        "sources": [
+          "loxley-rescue/docs/briefs/2026-10-29-writer-pseo-copy.md:212",
+          "loxley-rescue/canon/voice.md:77-78",
+          "loxleyforest/scripts/site/pages/faq.py:54-55",
+          "loxley-rescue/canon/voice.md:146"
+        ]
+      },
+      {
+        "q": "What if one of us is afraid of heights?",
+        "a": "The bridge is built to feel safe. The ropes are chest-high, the planks are solid, and the sway is gentle. A thirty-foot rope bridge comes first, as a warm-up.",
+        "sources": [
+          "loxley-rescue/docs/briefs/2026-10-29-writer-pseo-copy.md:213",
+          "loxleyforest/scripts/site/pages/faq.py:22-24"
+        ]
+      },
+      {
+        "q": "Can we come up on a weekday?",
         "a": "Absolutely, and we'll love you for it. Weekday ceremonies get the best light and the quietest forest.",
         "sources": [
           "loxleyforest/scripts/site/pages/elopements.py:64-65 (its last words, on pricing, left out)"
         ]
       },
       {
-        "q": "What else is there to do in the fall?",
-        "a": "In Ellijay, B.J. Reece Orchards for apple picking and legendary doughnuts, then walk across to Reece's Cider Company for hard ciders on tap. In Dahlonega, Gold Rush Days on the square.",
+        "q": "Can we bring our dog?",
+        "a": "Yes, up to two well-behaved dogs, with no fee; dogs only. The bridge sways and sits sixty feet up, so if you're not sure how your dog will take it, write to us first.",
         "sources": [
-          "loxleyforest/scripts/site/pages/local_guide.py:88-91",
-          "loxleyforest/scripts/site/pages/local_guide.py:106-108"
+          "loxley-rescue/docs/briefs/2026-10-29-writer-pseo-copy.md:214",
+          "loxleyforest/scripts/site/pages/faq.py:29-32"
         ]
       }
     ],
     "quote": {
-      "id": "A52",
-      "text": "This stay was truly special, the forest was beautiful and all of the details included made it so cozy and relaxing.",
-      "credit": "Benjamin · Dahlonega, GA"
+      "id": "A9",
+      "text": "This was easily one of our most memorable stays! This is a custom treehouse personally designed, built, and meticulously cared for by the hosts.",
+      "credit": "James · Atlanta, GA"
     },
     "form": "elopement",
+    "form_intro": "form-intro",
     "updated": "2026-10-29"
   },
   {
     "set": "C",
-    "slug": "anniversary-getaway-north-georgia",
-    "title": "An Anniversary in a Treehouse, North Georgia | Loxley Forest",
-    "meta": "Celebrate your anniversary in a hand-built treehouse sixty feet up in a Dahlonega cove forest, reached by a hundred-foot rope bridge.",
-    "eyebrow": "Anniversaries",
-    "h1": "Your anniversary,",
+    "slug": "vow-renewal-north-georgia",
+    "title": "Renew Your Vows in North Georgia | Loxley Forest",
+    "meta": "Renew your vows on a treehouse deck sixty feet up in the North Georgia mountains, with the rope bridge as your aisle and the night in the canopy after.",
+    "eyebrow": "Vow renewals",
+    "h1": "Renew your vows in the canopy",
+    "h1_em": "",
+    "crumb": "Vow renewal",
+    "hero": {
+      "photo": "eq3a0161",
+      "alt": "The white canvas peaks of the treehouse among yellow fall leaves, the rope bridge at its door"
+    },
+    "lead": {
+      "text": "You said them once in front of everyone. Say them again with no one but the trees.",
+      "sources": [
+        "loxley-rescue/docs/briefs/2026-10-29-writer-pseo-copy.md:171 (new words)",
+        "loxleyforest/scripts/site/pages/gallery.py:25 (hero photo and alt)"
+      ]
+    },
+    "hub": "/elopements",
+    "links_to": [
+      "/elopements#inquiry",
+      "/anniversary-getaway-north-georgia",
+      "/treehouses"
+    ],
+    "blocks": [
+      "vow-renewal",
+      "renewal-crossing",
+      "renewal-fire",
+      "renewal-built",
+      "how-it-works"
+    ],
+    "facts": [],
+    "faq": [
+      {
+        "q": "Can our children come?",
+        "a": "Children are welcome. The treehouse sleeps 4 comfortably, and up to 6 guests in all. No smoking.",
+        "sources": [
+          "loxleyforest/scripts/site/pages/faq.py:26-27"
+        ]
+      },
+      {
+        "q": "How many people can be on the bridge?",
+        "a": "It is rated for eight people at one time, everyone counted, your officiant and photographer too.",
+        "sources": [
+          "loxley-rescue/canon/agreements/elopement-hosting.md:23"
+        ]
+      },
+      {
+        "q": "Is the treehouse heated?",
+        "a": "Heated for the cold seasons, with windows that open to the forest in summer.",
+        "sources": [
+          "loxleyforest/scripts/site/build_v2.py:371"
+        ]
+      }
+    ],
+    "quote": {
+      "id": "A93",
+      "text": "We had a magical stay for our 5th wedding anniversary.",
+      "credit": "Jennifer · Greenville, SC"
+    },
+    "form": "elopement",
+    "form_intro": "form-intro",
+    "heard": false,
+    "updated": "2026-10-29"
+  },
+  {
+    "set": "E",
+    "slug": "elopement-or-courthouse",
+    "title": "Elopement or Courthouse Wedding: How to Choose",
+    "meta": "Elopement or courthouse wedding in Georgia: what each one is and what each asks of you, so you can choose the day you want.",
+    "eyebrow": "Two ways to marry",
+    "h1": "Elopement or courthouse wedding",
+    "h1_em": "",
+    "crumb": "Or the courthouse",
+    "hero": {
+      "photo": "eq3a2110",
+      "alt": "The treehouse canvas seen from the hillside below, in orange and red fall colour"
+    },
+    "lead": {
+      "text": "Both start with the same Georgia marriage license. The courthouse gives you the vows; an elopement gives you a day around them.",
+      "sources": [
+        "new words (the answer in the first paragraph)",
+        "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:22 (P1)",
+        "loxleyforest/scripts/site/pages/gallery.py:26 (hero photo and alt)"
+      ]
+    },
+    "hub": "/elopements",
+    "links_to": [
+      "/how-to-elope-in-georgia",
+      "/what-an-elopement-costs-in-georgia",
+      "/elopements#inquiry"
+    ],
+    "blocks": [
+      "courthouse-same",
+      "courthouse-day",
+      "courthouse-season"
+    ],
+    "facts": [
+      "georgia-license-county",
+      "georgia-license-oath",
+      "georgia-blood-test",
+      "georgia-age-18"
+    ],
+    "faq": [
+      {
+        "q": "Do we need a license for an elopement?",
+        "a": "Yes. The statute says marriage licenses “shall be issued only by the judge of the probate court or his clerk” (§ 19-3-30(a)).",
+        "sources": [
+          "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:22 (P1)"
+        ]
+      },
+      {
+        "q": "Who arranges the officiant?",
+        "a": "We arrange your officiant, an independent contractor and not our employee.",
+        "sources": [
+          "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:35 (P14)",
+          "loxley-rescue/canon/agreements/elopement-hosting.md:55"
+        ]
+      },
+      {
+        "q": "Is this legal advice?",
+        "a": "No. It is general information. For your own situation, ask the court or a lawyer.",
+        "sources": [
+          "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:36 (P15)"
+        ]
+      }
+    ],
+    "quote": null,
+    "form": "elopement",
+    "form_intro": "form-intro",
+    "updated": "2026-10-29"
+  },
+  {
+    "set": "C",
+    "slug": "proposals",
+    "title": "Proposals at Loxley Forest | A Treehouse Proposal in North Georgia",
+    "meta": "A treehouse proposal in North Georgia, just over an hour from Atlanta. Ask on a hundred-foot rope bridge sixty feet up, then stay the night.",
+    "eyebrow": "Proposals at Loxley Forest",
+    "h1": "Ask the question",
     "h1_em": "sixty feet up",
-    "crumb": "Anniversary",
+    "crumb": "Proposals",
+    "hero": {
+      "photo": "hero-bridge",
+      "alt": "The rope bridge at night, strung with warm lights, leading to the treehouse glowing at the far end"
+    },
+    "lead": {
+      "text": "A hundred-foot rope bridge strung with small warm lights, in a North Georgia forest just over an hour from Atlanta.",
+      "sources": [
+        "loxleyforest@8feb5c7:scripts/site/pages/proposals.py:101 (the hero lead)",
+        "loxleyforest@8feb5c7:scripts/site/pages/proposals.py:96 (hero alt)"
+      ]
+    },
+    "hub": "/elopements",
+    "links_to": [
+      "/where-to-propose-north-georgia",
+      "/elopements",
+      "/book"
+    ],
+    "blocks": [
+      "proposal",
+      "proposals-where",
+      "proposals-how",
+      "bridge"
+    ],
+    "facts": [],
+    "faq": [
+      {
+        "q": "Can we keep it a secret?",
+        "a": "Yes. We plan it with you and no one else. To your partner it can be a night away in the trees, right up until you ask.",
+        "sources": [
+          "loxleyforest@8feb5c7:scripts/site/pages/proposals.py:51-53"
+        ]
+      },
+      {
+        "q": "Can we have a photographer there?",
+        "a": "Yes. We coordinate with a photographer you choose, or one we suggest, so they know where to be and when.",
+        "sources": [
+          "loxleyforest@8feb5c7:scripts/site/pages/proposals.py:54-55"
+        ]
+      },
+      {
+        "q": "How far is it from Atlanta?",
+        "a": "Just over an hour. We're in the foothills above Dahlonega.",
+        "sources": [
+          "loxleyforest@8feb5c7:scripts/site/pages/proposals.py:56-58 (its \"last mile\" line left out: a distance in miles)"
+        ]
+      }
+    ],
+    "quote": {
+      "id": "A45",
+      "text": "Throughout our stay, we were treated to sweet treats and surprises that made our experience even more special.",
+      "credit": "Hannah · Orlando, FL"
+    },
+    "form": "booking",
+    "form_intro": "form-intro",
+    "updated": "2026-10-29"
+  },
+  {
+    "set": "C",
+    "slug": "where-to-propose-north-georgia",
+    "title": "Where to Propose in North Georgia | Loxley Forest",
+    "meta": "Where to propose in North Georgia: the sunrise and sunset places we send our own guests, and the treehouse sixty feet up where you can stay the night.",
+    "eyebrow": "Local guide",
+    "h1": "Where to propose in North Georgia",
+    "h1_em": "",
+    "crumb": "Where to propose",
+    "hero": {
+      "photo": "ridge-sunset",
+      "alt": "The sun low over the North Georgia ridges, the forest turning for fall"
+    },
+    "lead": {
+      "text": "The spots we actually send our guests to. Not everything in town, just the places worth your time.",
+      "sources": [
+        "loxleyforest/scripts/site/pages/local_guide.py:174",
+        "loxleyforest/scripts/site/pages/local_guide.py:169 (hero photo and alt)"
+      ]
+    },
+    "hub": "/local-guide",
+    "links_to": [
+      "/proposals",
+      "/local-guide",
+      "/treehouses"
+    ],
+    "blocks": [
+      "propose-sunrise",
+      "propose-sunset",
+      "propose-water",
+      "propose-here"
+    ],
+    "facts": [
+      "amicalola-falls-729",
+      "amicalola-approach-trail",
+      "dahlonega-amicalola-at"
+    ],
+    "faq": [
+      {
+        "q": "Do these places keep hours?",
+        "a": "Hours change by season, so call ahead before you go.",
+        "sources": [
+          "loxleyforest/scripts/site/pages/local_guide.py:175"
+        ]
+      },
+      {
+        "q": "What if the weather turns?",
+        "a": "The Consolidated Gold Mine is our number one rainy-day pick. Underground means weatherproof.",
+        "sources": [
+          "loxleyforest/scripts/site/pages/local_guide.py:69"
+        ]
+      },
+      {
+        "q": "Where do we go after?",
+        "a": "Across the bridge. The treehouse is at the far end of it, glowing from the inside like a lantern somebody lit for you.",
+        "sources": [
+          "loxleyforest@8feb5c7:scripts/site/pages/proposals.py:112",
+          "loxley-rescue/canon/voice.md:185"
+        ]
+      }
+    ],
+    "quote": {
+      "id": "G6",
+      "text": "The evening calls of the coyotes and the owls (\"Who, who, who cooks for you?\") felt like enchanting goodnight wishes.",
+      "credit": "Cheryl"
+    },
+    "form": "booking",
+    "form_intro": "form-intro",
+    "updated": "2026-10-29"
+  },
+  {
+    "set": "D",
+    "slug": "romantic-getaways-near-atlanta",
+    "title": "A Romantic Getaway Near Atlanta | Loxley Forest",
+    "meta": "A romantic getaway near Atlanta: a hand-built treehouse sixty feet up in Dahlonega, just over an hour north, reached by a hundred-foot rope bridge.",
+    "eyebrow": "A romantic getaway near Atlanta",
+    "h1": "A treehouse sixty feet up,",
+    "h1_em": "just over an hour from Atlanta",
+    "crumb": "Near Atlanta",
     "hero": {
       "photo": "eq3a0907",
       "alt": "The treehouse at dusk, its canvas glowing from inside, the rope bridge strung with lights"
     },
     "lead": {
-      "text": "Loxley Forest is a luxury treehouse where couples celebrate life's most meaningful moments: elopements, anniversaries, proposals, and intimate family gatherings.",
+      "text": "A hand-built treehouse sixty feet up in the canopy of a North Georgia cove forest, reached by a hundred-foot rope bridge, on 42 acres in Dahlonega, just over an hour from Atlanta.",
       "sources": [
-        "loxleyforest/scripts/site/pages/elopements.py:252",
+        "loxleyforest/scripts/site/build_v2.py:429-431 (the house's schema description)",
         "loxleyforest/scripts/site/pages/our_story.py:113 (hero photo and alt)"
       ]
     },
     "hub": "/book",
     "links_to": [
-      "/elope-in-dahlonega",
-      "/elope-in-october",
-      "/experiences"
+      "/book",
+      "/treehouses",
+      "/anniversary-getaway-north-georgia",
+      "/eloping-from-atlanta"
     ],
     "blocks": [
+      "romantic-stay",
+      "romantic-evening",
+      "romantic-seasons",
+      "bridge",
+      "who-we-are"
+    ],
+    "facts": [
+      "dahlonega-hour-north"
+    ],
+    "faq": [
+      {
+        "q": "How many guests can stay?",
+        "a": "The treehouse sleeps 4 comfortably, and up to 6 guests in all. Children are welcome.",
+        "sources": [
+          "loxleyforest/scripts/site/pages/faq.py:26-27"
+        ]
+      },
+      {
+        "q": "Is there WiFi?",
+        "a": "Yes. But we encourage you not to use it.",
+        "sources": [
+          "loxleyforest/scripts/site/pages/faq.py:47-48"
+        ]
+      },
+      {
+        "q": "What time are check-in and check-out?",
+        "a": "Check-in is from 3:00 PM and check-out is by 11:00 AM.",
+        "sources": [
+          "loxleyforest/scripts/site/build_v2.py:435 (checkinTime, checkoutTime)"
+        ]
+      },
+      {
+        "q": "Is there a television?",
+        "a": "No. What we don't include: televisions. You won't need one.",
+        "sources": [
+          "loxleyforest/scripts/site/build_v2.py:532"
+        ]
+      },
+      {
+        "q": "Is it hot up there in summer?",
+        "a": "In summer the canopy itself is the climate system: the cove forest runs cooler than the valley floor, and the windows open to a cross-breeze sixty feet up. No compressor hum, no recycled air, just a forest that's been cooling itself for a few hundred years. You're suspended inside it.",
+        "sources": [
+          "loxleyforest/scripts/site/pages/faq.py:43-46"
+        ]
+      },
+      {
+        "q": "Can we bring our dog?",
+        "a": "Up to two well-behaved dogs are welcome, with no fee; dogs only. We want every guest, two-legged and four-legged, to be safe and comfortable at sixty feet.",
+        "sources": [
+          "loxleyforest/scripts/site/pages/faq.py:29-34"
+        ]
+      }
+    ],
+    "quote": {
+      "id": "A31",
+      "text": "I wanted a quiet place to relax and enjoy the natural surroundings.",
+      "credit": "Alora · Decatur, GA"
+    },
+    "form": "booking",
+    "form_intro": "form-intro",
+    "updated": "2026-10-29"
+  },
+  {
+    "set": "C",
+    "slug": "anniversary-getaway-north-georgia",
+    "title": "An Anniversary Getaway in North Georgia | Loxley Forest",
+    "meta": "An anniversary in a hand-built treehouse sixty feet up in Dahlonega, just over an hour from Atlanta: the rope bridge, the fire circle, the quiet.",
+    "eyebrow": "Anniversaries",
+    "h1": "An anniversary",
+    "h1_em": "in the canopy",
+    "crumb": "Anniversary",
+    "hero": {
+      "photo": "img_0650",
+      "alt": "Mountain laurel in pink bloom beside the rope bridge"
+    },
+    "lead": {
+      "text": "Loxley Forest is a luxury treehouse where couples celebrate life's most meaningful moments: elopements, anniversaries, proposals, and intimate family gatherings.",
+      "sources": [
+        "loxleyforest/scripts/site/pages/elopements.py:252",
+        "loxleyforest/scripts/site/pages/gallery.py:62 (hero photo and alt)"
+      ]
+    },
+    "hub": "/book",
+    "links_to": [
+      "/book",
+      "/vow-renewal-north-georgia",
+      "/romantic-getaways-near-atlanta"
+    ],
+    "blocks": [
+      "anniversary",
       "anniversary-home",
       "anniversary-evening",
-      "anniversary-crossing",
-      "anniversary-built"
+      "mornings",
+      "how-it-works"
     ],
     "facts": [],
     "faq": [
@@ -200,25 +824,10 @@
         ]
       },
       {
-        "q": "Is the treehouse heated?",
-        "a": "Heated for the cold seasons, with windows that open to the forest in summer.",
-        "sources": [
-          "loxleyforest/scripts/site/build_v2.py:371"
-        ]
-      },
-      {
         "q": "Can we bring our dog?",
         "a": "Yes. Up to two well-behaved dogs are welcome, and there is no fee. Dogs only, please. Know the way in before you decide: the hundred-foot rope bridge sways, and it sits sixty feet up.",
         "sources": [
           "loxleyforest/scripts/site/pages/faq.py:29-32"
-        ]
-      },
-      {
-        "q": "How do we book?",
-        "a": "Book direct with the family who built it. Choose your dates and the total appears, taxes and cleaning included.",
-        "sources": [
-          "loxleyforest/scripts/site/build_v2.py:383",
-          "loxleyforest/scripts/site/build_v2.py:191"
         ]
       }
     ],
@@ -228,6 +837,96 @@
       "credit": "Brandon · Atlanta, GA"
     },
     "form": "booking",
+    "form_intro": "form-intro",
+    "updated": "2026-10-29"
+  },
+  {
+    "set": "C",
+    "slug": "honeymoon-treehouse-north-georgia",
+    "title": "A Honeymoon Treehouse in North Georgia | Loxley Forest",
+    "meta": "A honeymoon treehouse in the North Georgia mountains, or the gift of one: three nights sixty feet up, the brunch carried across the bridge, booked direct.",
+    "eyebrow": "Honeymoons",
+    "h1": "A honeymoon",
+    "h1_em": "in the trees",
+    "crumb": "Honeymoon",
+    "hero": {
+      "photo": "img_2752",
+      "alt": "The sky deck in summer: two chairs, the pizza oven and the cinema screen, deep in green leaves"
+    },
+    "lead": {
+      "text": "A canvas treehouse sixty feet up in the oaks above Dahlonega, Georgia, and a hundred-foot bridge strung with small warm lights to reach it.",
+      "sources": [
+        "loxley-rescue/canon/voice.md:74-77",
+        "loxleyforest/scripts/site/pages/local_guide.py:103 (hero photo and alt)"
+      ]
+    },
+    "hub": "/book",
+    "links_to": [
+      "/book",
+      "/gift",
+      "/eloping-from-atlanta"
+    ],
+    "blocks": [
+      "honeymoon",
+      "honeymoon-room",
+      "honeymoon-gift",
+      "mornings"
+    ],
+    "facts": [],
+    "faq": [
+      {
+        "q": "What time are check-in and check-out?",
+        "a": "Check-in is from 3:00 PM and check-out is by 11:00 AM.",
+        "sources": [
+          "loxleyforest/scripts/site/build_v2.py:435"
+        ]
+      },
+      {
+        "q": "Is there WiFi?",
+        "a": "There is: a hotspot on the deck that has to be switched on. We encourage you not to use it.",
+        "sources": [
+          "loxley-rescue/canon/voice.md:119",
+          "loxleyforest/scripts/site/pages/faq.py:48"
+        ]
+      },
+      {
+        "q": "Can someone give us the stay?",
+        "a": "Yes. The Golden Arrow is the gift of three nights and the Dawn Table, and it is bought on its own page.",
+        "sources": [
+          "loxleyforest/scripts/site/pages/gift.py:73"
+        ]
+      },
+      {
+        "q": "Can we cook up there?",
+        "a": "There is no stove or fridge. The pizza oven on the Sky Deck takes a cast iron pan, the grill sits over the Fire Circle, and a big cooler waits on the deck. You bring pizza sauce, toppings and ice; the house provides the dough on request.",
+        "sources": [
+          "loxley-rescue/canon/voice.md:125-127"
+        ]
+      },
+      {
+        "q": "What is there to do?",
+        "a": "Walk the trails across 42 acres, where the only schedule is sunrise and sunset.",
+        "sources": [
+          "loxleyforest/scripts/site/pages/faq.py:37",
+          "loxleyforest/scripts/site/build_v2.py:599"
+        ]
+      },
+      {
+        "q": "How many can stay?",
+        "a": "The treehouse sleeps four comfortably, and up to six in all.",
+        "sources": [
+          "loxley-rescue/docs/briefs/2026-10-29-writer-pseo-copy.md:225",
+          "loxleyforest/scripts/site/pages/faq.py:27"
+        ]
+      }
+    ],
+    "quote": {
+      "id": "A40",
+      "text": "My husband and I went with our doggie for our honeymoon, and we really had a magical experience.",
+      "credit": "Claudia · Marietta, GA"
+    },
+    "form": "booking",
+    "form_intro": "form-intro",
     "updated": "2026-10-29"
   }
 ]

@@ -1,14 +1,142 @@
 {
+  "way-in": {
+    "eyebrow": "The way in",
+    "heading": "That bridge is",
+    "heading_em": "the front door",
+    "text": "The road turns to dirt and carves through the forest until it runs out. You park, and from there you walk, under a canopy that closes over the trail behind you.\n\nAround the last curve the laurel opens up, and there it is: a hundred feet of suspended bridge strung with small warm lights, swaying over the holler, with a creek running somewhere below. A thirty-foot bridge before it is the warm-up. At the far end, at the top of the last stair, the door handle is oak, burnished by the hands of every guest who came before you.\n\nThat bridge is the front door.",
+    "sources": [
+      "loxley-rescue/docs/briefs/2026-10-29-writer-pseo-copy.md:25-29 (the Writer's \"The way in\"; its \"Ten minutes\" left out: a time in minutes with no fact row)",
+      "loxley-rescue/canon/voice.md:144-149",
+      "loxley-rescue/canon/voice.md:346-350",
+      "loxley-rescue/canon/voice.md:100 (the parking area)",
+      "loxley-rescue/canon/voice.md:101-102 (the oak handle)",
+      "loxleyforest/scripts/site/pages/faq.py:23-24 (the thirty-foot warm-up)",
+      "loxleyforest/scripts/site/build_v2.py:556 (photo and alt)"
+    ],
+    "photo": "eq3a0943",
+    "alt": "The rope bridge at night, strung with warm lights",
+    "shared": true
+  },
+  "treehouse": {
+    "eyebrow": "The treehouse",
+    "heading": "A canvas peak,",
+    "heading_em": "sixty feet up",
+    "text": "At dusk the canvas peak glows from the inside, like a lantern somebody lit for you. The treehouse is hand-built, sixty feet up, on forty-two acres of forest in Dahlonega, Georgia.\n\nThe windows work like a tent's: canvas you roll up and tie back. A chandelier hangs over the bed, on a dimmer. Out on the deck there's a fire table. Up on the Sky Deck there's a pizza oven, and a cast iron pan that goes into it and cooks just about anything, from eggs to steak. There's a projector screen for movie night. The water comes from the property's own well.\n\nThere is no stove and no fridge. There's a big cooler on the deck, and you bring the ice.",
+    "sources": [
+      "loxley-rescue/docs/briefs/2026-10-29-writer-pseo-copy.md:31-35 (the Writer's \"The treehouse\", canon only; its \"Downtown Dahlonega is about ten minutes away\" left out: minutes with no fact row)",
+      "loxley-rescue/canon/voice.md:74",
+      "loxley-rescue/canon/voice.md:77",
+      "loxley-rescue/canon/voice.md:185 (the lantern)",
+      "loxley-rescue/canon/voice.md:120",
+      "loxley-rescue/canon/voice.md:121",
+      "loxley-rescue/canon/voice.md:122",
+      "loxley-rescue/canon/voice.md:123",
+      "loxley-rescue/canon/voice.md:124",
+      "loxley-rescue/canon/voice.md:125",
+      "loxley-rescue/canon/voice.md:126",
+      "loxley-rescue/canon/voice.md:127",
+      "loxleyforest/scripts/site/build_v2.py:527 (photo and alt)"
+    ],
+    "photo": "img_0831",
+    "alt": "The bed beneath the treehouse windows",
+    "shared": true
+  },
+  "bridge": {
+    "eyebrow": "The bridge",
+    "heading": "One hundred feet",
+    "heading_em": "between two white oaks",
+    "text": "A hundred feet long. Sixty feet up. It hangs between two white oaks over the holler, strung with small warm lights that come on at dark and burn for two or three hours. The planks are white oak, salvaged and milled from standing dead trees on this land. A crew of riggers from North Carolina strung its first cables.\n\nIt sways. That's by design. The ropes are chest-high and the planks are solid. It's rated for eight people at one time, everyone counted, and that number is the engineer's, not ours.\n\nEvery guest crosses it. It isn't optional. It's the way home. For a wedding it's the aisle.",
+    "sources": [
+      "loxley-rescue/docs/briefs/2026-10-29-writer-pseo-copy.md:37-41 (the Writer's \"The bridge\"; \"or the altar\" left out: words Mick has not heard)",
+      "loxley-rescue/canon/voice.md:75-76",
+      "loxley-rescue/canon/voice.md:122",
+      "loxleyforest/scripts/site/pages/elopements.py:15",
+      "loxleyforest/scripts/site/pages/elopements.py:55",
+      "loxleyforest/scripts/site/pages/our_story.py:117",
+      "loxleyforest/scripts/site/pages/faq.py:19",
+      "loxleyforest/scripts/site/pages/faq.py:22-23",
+      "loxley-rescue/canon/agreements/elopement-hosting.md:23",
+      "loxleyforest/scripts/site/pages/experiences.py:62",
+      "loxleyforest/scripts/site/pages/elopements.py:95 (photo and alt)"
+    ],
+    "photo": "aerial-bridge",
+    "alt": "From above: the hundred-foot rope bridge through the canopy at golden hour",
+    "shared": true
+  },
+  "mornings": {
+    "eyebrow": "Mornings",
+    "heading": "Nowhere",
+    "heading_em": "you have to be",
+    "text": "Every morning, around 8:30, fresh pastries wait in the TreeMail box where you enter the bridges.\n\nOr take the Dawn Table. Breakfast made from scratch and carried by hand across the bridge to your door. There is always more than you can finish, and there is always premium champagne with fresh-squeezed orange juice.\n\nEat it on the deck while the light comes up. The mist lifts off the valley. The first birds call. The leaves above you glow gold, then green, then gold again, and there's nowhere you have to be.",
+    "sources": [
+      "loxley-rescue/docs/briefs/2026-10-29-writer-pseo-copy.md:43-47 (the Writer's \"Mornings\")",
+      "loxleyforest/scripts/site/pages/experiences.py:81 (TreeMail)",
+      "loxleyforest/scripts/site/pages/experiences.py:40 (the Dawn Table)",
+      "loxleyforest/scripts/site/pages/experiences.py:64 (First Light)",
+      "loxley-rescue/canon/voice.md:58 (made from scratch, carried by hand)",
+      "loxley-rescue/canon/voice.md:17-19 (the two guarantees)",
+      "loxleyforest/scripts/site/pages/experiences.py:63 (photo and alt)"
+    ],
+    "photo": "eq3a9079",
+    "alt": "Morning sun flaring through the canopy, the treehouse small among the trees",
+    "shared": true
+  },
+  "who-we-are": {
+    "eyebrow": "Who we are",
+    "heading": "Built by the family",
+    "heading_em": "that lives here",
+    "text": "We're Mick and Livy. We found this land on a cold January morning, with fog still burning off the valley, down a driveway lined with mountain laurel. Two hundred feet in, before we'd even seen the house, Livy said, “This is it. Come on.”\n\nMick saw the engineering. Livy saw the experience. Every beam was carried four hundred feet down the mountain by hand, because we loved the forest too much to bring in machines. Mick built much of the framing himself. Livy insisted on a full bathroom sixty feet up, because she wasn't climbing down a tree in the middle of the night, and neither should anyone else.\n\nWe live here, with two little girls who think rope bridges are a normal way to get home. Book direct and you deal with the family who built it.",
+    "sources": [
+      "loxley-rescue/docs/briefs/2026-10-29-writer-pseo-copy.md:49-53 (the Writer's \"Who we are\", Our Story's own words)",
+      "loxleyforest/scripts/site/pages/our_story.py:47",
+      "loxleyforest/scripts/site/pages/our_story.py:49",
+      "loxleyforest/scripts/site/pages/our_story.py:78",
+      "loxleyforest/scripts/site/pages/our_story.py:97",
+      "loxleyforest/scripts/site/pages/our_story.py:107",
+      "loxleyforest/scripts/site/pages/our_story.py:108",
+      "loxleyforest/scripts/site/pages/our_story.py:150",
+      "loxley-rescue/canon/voice.md:80-81",
+      "loxleyforest/scripts/site/build_v2.py:656 (heading)",
+      "loxleyforest/scripts/site/build_v2.py:654 (photo and alt)"
+    ],
+    "photo": "eq3a2149",
+    "alt": "The steel and wood frame beneath the treehouse, in fall colour",
+    "shared": true
+  },
+  "how-it-works": {
+    "eyebrow": "How it works",
+    "heading": "Tell us the day.",
+    "heading_em": "We answer fast.",
+    "text": "Write to us with the day you have in mind and what it's for. We answer fast. If you'd rather talk, call or text 706-502-4823.\n\nFor a stay, the calendar does the rest. Choose your dates and the total appears, taxes and cleaning included, with your booking agreement shown in full before you pay.\n\nFor a ceremony, we talk it through first. Then we send the agreement. It is shorter than it looks, and we settle the ceremony time together closer to the day. Sign it, and the date is yours.",
+    "sources": [
+      "loxley-rescue/docs/briefs/2026-10-29-writer-pseo-copy.md:55-59 (the Writer's \"How it works\"; \"Every open night shows its rate\" and \"the whole price appears\" replaced by the site's own \"the total appears\": the price guard)",
+      "loxley-rescue/canon/voice.md:39 (\"We answer fast\")",
+      "loxleyforest/scripts/site/build_v2.py:191",
+      "loxleyforest/scripts/site/pages/faq.py:58",
+      "loxley-rescue/canon/agreements/elopement-hosting.md:21",
+      "loxley-rescue/canon/agreements/elopement-hosting.md:69"
+    ],
+    "shared": true
+  },
+  "form-intro": {
+    "eyebrow": "",
+    "heading": "",
+    "heading_em": "",
+    "text": "Tell us the day you have in mind. A date, or just a month. How many of you. What it's for, in your own words. We answer fast.",
+    "sources": [
+      "loxley-rescue/docs/briefs/2026-10-29-writer-pseo-copy.md:61-62 (the Writer's form intro; the per-set second lines, with their slots, left out)",
+      "loxley-rescue/canon/voice.md:39"
+    ],
+    "shared": true
+  },
   "dahlonega-found": {
     "eyebrow": "How we found it",
     "heading": "A small town with wineries",
     "heading_em": "and mountains",
-    "photo": "eq3a0107",
-    "alt": "Fog lifting through tall hardwoods, morning light coming through the trunks",
-    "text": "There's a place in the North Georgia foothills where the road drops through a tunnel of mountain laurel so thick the branches nearly meet overhead.\n\nSome of Livy's friends had been to a wedding in a small town with wineries and mountains, a place called Dahlonega. “What about there?” she said. Mick had never heard of it. Dahlonega was supposed to be a weekend away, not a life change.\n\nSo on a cold January morning, with fog still burning off the valley, they drove down a driveway lined with mountain laurel. Two hundred feet in, through the laurel tunnel, through the fog, Livy said it: “This is it. Come on.” They hadn't even seen the house yet.\n\nThey live here now: Mick, Livy, Aurora and Tilly Mac. When you arrive, the people who designed and built your treehouse are the same people handing you a welcome basket.",
+    "text": "There's a place in the North Georgia foothills where the road drops through a tunnel of mountain laurel so thick the branches nearly meet overhead.\n\nSome of Livy's friends had been to a wedding in a small town with wineries and mountains, a place called Dahlonega. “What about there?” she said. Mick had never heard of it. Dahlonega was supposed to be a weekend away, not a life change.\n\nSo on a cold January morning, with fog still burning off the valley, they drove down a driveway lined with mountain laurel. Livy said it before they had even seen the house: “This is it. Come on.”\n\nThey live here now: Mick, Livy, Aurora and Tilly Mac. When you arrive, the people who designed and built your treehouse are the same people handing you a welcome basket.",
     "sources": [
       "loxleyforest/scripts/site/pages/our_story.py:32 (eyebrow)",
-      "loxleyforest/scripts/site/pages/our_story.py:35 (the laurel tunnel; 'just over an hour from Atlanta' left out, a drive time with no fact row)",
+      "loxleyforest/scripts/site/pages/our_story.py:35 (\"just over an hour from Atlanta\" left out here)",
       "loxleyforest/scripts/site/pages/our_story.py:37",
       "loxleyforest/scripts/site/pages/our_story.py:43",
       "loxleyforest/scripts/site/pages/our_story.py:47",
@@ -16,30 +144,14 @@
       "loxleyforest/scripts/site/pages/our_story.py:51",
       "loxleyforest/scripts/site/build_v2.py:573",
       "loxleyforest/scripts/site/pages/our_story.py:40 (photo and alt)"
-    ]
-  },
-  "dahlonega-town": {
-    "eyebrow": "Downtown Dahlonega",
-    "heading": "Gold rush history",
-    "heading_em": "and small-town character",
-    "text": "Dahlonega sits at the heart of Georgia's wine country. The square still has its courthouse with the gold-leaf steeple, surrounded by local shops, restaurants and places that have nothing to do with a chain.\n\nFor the night before, Spirits Tavern on the square is our default dinner recommendation: elevated American fare, good cocktails, a solid menu. Call ahead on weekends.\n\nCoffee at Jethro's on the square, then the easy, scenic loop around Lake Zwerner. The perfect easy morning. Everyone stops at the Dahlonega Fudge Factory. It's part of the trip.\n\nFor the last light, Kaya Vineyard has 270-degree mountain views from a hilltop, the most dramatic vista of any winery in the area. Get there an hour before sunset with a glass in hand.",
-    "sources": [
-      "loxleyforest/scripts/site/pages/local_guide.py:53 (eyebrow and heading)",
-      "loxleyforest/scripts/site/pages/local_guide.py:12",
-      "loxleyforest/scripts/site/pages/local_guide.py:54-55 (the 1828 date left out: the fact rows carry the gold rush with a source)",
-      "loxleyforest/scripts/site/pages/local_guide.py:57-59",
-      "loxleyforest/scripts/site/pages/local_guide.py:49-51",
-      "loxleyforest/scripts/site/pages/local_guide.py:70-72",
-      "loxleyforest/scripts/site/pages/local_guide.py:73-76",
-      "loxleyforest/scripts/site/pages/local_guide.py:22-24"
-    ]
+    ],
+    "photo": "eq3a0107",
+    "alt": "Fog lifting through tall hardwoods, morning light coming through the trunks"
   },
   "dahlonega-aisle": {
     "eyebrow": "The aisle",
     "heading": "The bridge becomes the aisle.",
     "heading_em": "The canopy becomes the cathedral.",
-    "photo": "aerial-bridge",
-    "alt": "From above: the hundred-foot rope bridge through the canopy at golden hour",
     "text": "Your ceremony begins on solid ground. You walk together toward the rope bridge: a hundred feet of suspended pathway over the forest floor, swaying gently between two ancient white oaks. Every step is a choice. Every step is toward each other. By the time you reach the other side, the ordinary world is behind you, and you're standing in the canopy, sixty feet above the earth.\n\nSay your vows on the deck of a treehouse a family built with their own hands. Let the forest witness it. Let the silence hold it.\n\nThen stay the night. Wake up married in the sky.",
     "sources": [
       "loxleyforest/scripts/site/pages/elopements.py:108 (eyebrow)",
@@ -47,134 +159,480 @@
       "loxleyforest/scripts/site/pages/elopements.py:111",
       "loxleyforest/scripts/site/pages/elopements.py:112",
       "loxleyforest/scripts/site/pages/elopements.py:114",
-      "loxleyforest/scripts/site/pages/elopements.py:95 (photo and alt)"
-    ]
-  },
-  "dahlonega-way-in": {
-    "eyebrow": "The way in",
-    "heading": "That bridge is",
-    "heading_em": "the front door",
-    "photo": "eq3a0943",
-    "alt": "The rope bridge at night, strung with warm lights",
-    "text": "The road turns to dirt and carves through the forest until it runs out. From there you hike, under a canopy that closes over the trail behind you. Around the last curve the laurel opens up and there it is: a hundred feet of suspended bridge strung with warm lights, swaying over the holler, with a creek running somewhere below. Treehouse glowing at the far end.\n\nThe bridge is rated for eight people at one time, everyone counted: on the bridge that is the two of you, your officiant, and up to five more, your photographer among them.",
-    "sources": [
-      "loxley-rescue/canon/voice.md:350 (heading)",
-      "loxley-rescue/canon/voice.md:348 ('ten minutes' left out, a time with no fact row)",
-      "loxley-rescue/canon/voice.md:144-148",
-      "loxleyforest/scripts/site/pages/elopements.py:55 (the bridge count, Mick's yes 2026-10-27)",
-      "loxleyforest/scripts/site/build_v2.py:556 (photo and alt)"
-    ]
-  },
-  "october-color": {
-    "eyebrow": "The color",
-    "heading": "A cathedral of",
-    "heading_em": "gold and crimson",
+      "loxleyforest/scripts/site/pages/elopements.py:14 (photo and alt)"
+    ],
     "photo": "eq3a0160",
-    "alt": "The rope bridge running through fall leaves to the treehouse canvas",
-    "text": "We have seven seasons, and every one is dramatic. Color Turn is a cathedral of gold and crimson.\n\nColor at elevation arrives earlier and lasts longer. Loxley Forest sits at 1,470 feet, in the foothills above Dahlonega.\n\nWatch the sun drop behind the ridgeline from your private deck. The forest turns gold, then amber, then blue.\n\nIt is the most dramatic season, and the most popular. Book early.",
+    "alt": "The rope bridge running through fall leaves to the treehouse canvas"
+  },
+  "dahlonega-town": {
+    "eyebrow": "Downtown Dahlonega",
+    "heading": "Gold rush history",
+    "heading_em": "and small-town character",
+    "text": "Dahlonega sits at the heart of Georgia's wine country. The square still has its courthouse with the gold-leaf steeple, surrounded by local shops, restaurants and places that have nothing to do with a chain.\n\nPicnic Cafe is small-town, personal, genuine: great sandwiches and baked goods, the perfect quick lunch before you explore the square. Everyone stops at the Dahlonega Fudge Factory, family-owned since 1982. It's part of the trip. Paul Thomas Chocolates makes more than 120 handmade recipes on site, for couples who want something special to bring back to the treehouse.",
     "sources": [
-      "loxleyforest/scripts/site/pages/elopements.py:61",
-      "loxleyforest/scripts/site/pages/local_guide.py:107-108",
-      "loxleyforest/scripts/site/build_v2.py:112 (42 acres at 1,470 feet)",
-      "loxley-rescue/canon/voice.md:78-79 (1,470 feet, Mick 2026-10-13)",
-      "loxleyforest/scripts/site/build_v2.py:599 (the foothills above Dahlonega)",
-      "loxleyforest/scripts/site/pages/book.py:50",
-      "loxleyforest/scripts/site/pages/gallery.py:29 (photo and alt)"
+      "loxleyforest/scripts/site/pages/local_guide.py:53 (eyebrow and heading)",
+      "loxleyforest/scripts/site/pages/local_guide.py:12",
+      "loxleyforest/scripts/site/pages/local_guide.py:54-55 (its 1828 date left to the fact rows, which cite the city)",
+      "loxleyforest/scripts/site/pages/local_guide.py:60-62",
+      "loxleyforest/scripts/site/pages/local_guide.py:73-76",
+      "loxleyforest/scripts/site/pages/local_guide.py:77-79"
     ]
   },
-  "october-fire": {
-    "eyebrow": "Fire as witness",
-    "heading": "Exchange rings",
-    "heading_em": "by the fire",
-    "photo": "img_1717",
-    "alt": "The stone fire pit on the forest floor, ringed with ferns",
-    "text": "The Fire Circle is a boulder fire pit that looks like it emerged from the earth centuries ago, set at the four compass points. It echoes traditions that have existed for thousands of years. Exchange rings beside it.\n\nAfterward the same fire cooks dinner. A stainless steel grill sits over the Fire Circle, for steak, burgers or whatever you fancy.\n\nUp on the sky deck, the fire table keeps you out there longer.",
+  "law-license": {
+    "eyebrow": "The license",
+    "heading": "From a Georgia",
+    "heading_em": "probate court",
+    "text": "The statute says marriage licenses “shall be issued only by the judge of the probate court or his clerk” (O.C.G.A. § 19-3-30(a)).\n\nThe statute says that if neither of you is a Georgia resident, “the license shall be issued in the county in which the ceremony is to be performed” (§ 19-3-30(b)(2)). Loxley Forest is in Lumpkin County.\n\nThe statute says that if one of you is a Georgia resident, “the license may be issued in any county of this state” (§ 19-3-30(b)(2)).\n\nThe statute says a license “may be issued immediately and without any waiting period” (§ 19-3-35).\n\nThe statute says the application is “verified by oath of the applicants” (§ 19-3-33(a)), and “The judge shall require all applicants to furnish the court with documentary evidence of proof of age” (§ 19-3-36). Ask the court what else to bring.",
     "sources": [
-      "loxleyforest/scripts/site/pages/elopements.py:17 (eyebrow, photo and alt)",
-      "loxleyforest/scripts/site/pages/elopements.py:18",
-      "loxleyforest/scripts/site/pages/elopements.py:112 (exchange rings beside a fire pit set at the four compass points)",
-      "loxley-rescue/canon/voice.md:126 (the grill over the Fire Circle, the same fire an elopement couple is married by)",
-      "loxley-rescue/canon/voice.md:121 (the fire table on the deck)",
+      "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:22 (P1)",
+      "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:23 (P2)",
+      "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:24 (P3)",
+      "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:25 (P4)",
+      "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:26 (P5)",
+      "loxley-rescue/canon/agreements/elopement-hosting.md:5 (Lumpkin County)"
+    ],
+    "heard": false
+  },
+  "law-asks": {
+    "eyebrow": "What it asks",
+    "heading": "No waiting period,",
+    "heading_em": "no blood test",
+    "text": "Georgia's probate judges' council says: “As of July 1, 2003, premarital blood tests are no longer required.” The Code's note to § 19-3-40 carries the repeal.\n\nWhat a license costs, with and without a premarital course, is on the court's page, linked below, read [date].\n\nThe statute says each of you must “be at least 18 years of age” (§ 19-3-2(a)(2)), and it sets separate conditions for an applicant who is 17 (§ 19-3-2(b)); ask the court.\n\nThe statute says the application form lets each of you designate “the surnames which will be used as their legal surnames after the marriage is consummated” (§ 19-3-33.1(a)).\n\nThe Supreme Court says: “The Court, in this decision, holds same-sex couples may exercise the fundamental right to marry in all States.” (Obergefell v. Hodges, 576 U.S. 644 (2015)).",
+    "sources": [
+      "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:27 (P6)",
+      "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:28 (P7, the Critic's fix: the cost is the court's page's; [date] waits for the live read)",
+      "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:29 (P8)",
+      "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:33 (P12)",
+      "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:34 (P13)"
+    ],
+    "heard": false
+  },
+  "law-officiant": {
+    "eyebrow": "Who marries you",
+    "heading": "Your officiant,",
+    "heading_em": "and the 30 days",
+    "text": "The statute says the license is directed to officials it names, among them judges and magistrates, and to a “minister, or other person of any religious society or sect authorized by the rules of such society to perform the marriage ceremony” (§ 19-3-30(c)). We arrange your officiant.\n\nThe statute says your officiant must “return the license to the judge of the probate court ... within 30 days after the date of the marriage” (§ 19-3-30(c)), and that after it is recorded the judge “shall return to the parties to a marriage the license” (§ 19-3-44(a)).",
+    "sources": [
+      "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:30 (P9)",
+      "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:35 (P14: \"We arrange your officiant.\" beside it, the held card, log:3036)",
+      "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:31 (P10)",
+      "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:32 (P11 dropped)"
+    ],
+    "heard": false
+  },
+  "law-house": {
+    "eyebrow": "Our part",
+    "heading": "Your license",
+    "heading_em": "is yours",
+    "text": "Your license is yours: we do not handle licenses and cannot get one for you.\n\nThis page quotes Georgia's code and the Lumpkin County Probate Court's own page, read on [date]. It is general information, not legal advice. For your own situation, ask the court or a lawyer.",
+    "sources": [
+      "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:35 (P14)",
+      "loxley-rescue/canon/agreements/elopement-hosting.md:55",
+      "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:36 (P15; [date] waits for the court's page read live)"
+    ],
+    "heard": false
+  },
+  "cost-shape": {
+    "eyebrow": "Line by line",
+    "heading": "What an elopement",
+    "heading_em": "asks for",
+    "text": "An elopement in Georgia asks for four things, and only the first is the law's.\n\nThe license. It comes from a Georgia probate court, and the court's own page says what it costs.\n\nAn officiant. Yours is arranged by us, and is an independent contractor, not our employee.\n\nPhotographs. Bring your own photographer if you like; anyone you bring to work is your guest and follows our safety rules.\n\nThe nights. Every package begins with a two-night treehouse stay, sixty feet up.\n\nWhat our packages come to, we send by reply. Write to us with the day you have in mind, and the answer carries every number.",
+    "sources": [
+      "loxleyforest/scripts/site/pages/elopements.py:27 (2-night treehouse stay)",
+      "loxley-rescue/canon/agreements/elopement-hosting.md:17 (the license not included)",
+      "loxley-rescue/canon/agreements/elopement-hosting.md:55 (the officiant; your own photographer)",
+      "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:28 (P7: the cost is the court's page's)",
+      "new words: the framing, and \"we send by reply\" (no price on the site without Mick's yes)"
+    ],
+    "photo": "eq3a2008",
+    "alt": "The rope bridge stretching through the trees toward the treehouse in fall",
+    "heard": false
+  },
+  "cost-packages": {
+    "eyebrow": "The packages",
+    "heading": "Three tiers.",
+    "heading_em": "One unforgettable beginning.",
+    "text": "The Vow holds a two-night treehouse stay, your choice of ceremony site, the Fire Circle or the treehouse deck, a vetted officiant, a seasonal bouquet and boutonniere, a champagne toast, and romantic room preparation.\n\nThe Crossing holds everything in The Vow, plus the rope bridge ceremony, the Builder's Tour with Mick, golden hour timing, photography coordination, a curated dinner, The Morning After, and a celebration cake.\n\nThe Elevation adds to The Crossing a floral ceremony arch, a premium welcome hamper, a celebration brunch, full day-of coordination, and photography timed to the day's best moments.\n\nEvery Loxley elopement is personally coordinated. No two ceremonies are the same.",
+    "sources": [
+      "loxleyforest/scripts/site/pages/elopements.py:26-50 (the packages as the live page lists them; The Elevation's \"Private chef dinner\" not repeated: a banned phrase)",
+      "loxleyforest/scripts/site/pages/elopements.py:132-133"
+    ]
+  },
+  "december": {
+    "eyebrow": "December",
+    "heading": "Frost on",
+    "heading_em": "the rope bridge",
+    "text": "Some mornings there's frost on the rope bridge. The canopy is stripped to its bones, and it shows views you can't see the rest of the year. The fire pit feels essential. Down in town, Old Fashioned Christmas turns Dahlonega into the Christmas Town of the Southeast.\n\nBack up the trail the silence is deeper and the stars are brighter. The treehouse is heated, and nights run to about 32 degrees in December at the nearest station with records, in Helen. Sunset comes early, around 5:27 pm in mid December, and the bridge lights come on to meet you.",
+    "sources": [
+      "loxley-rescue/docs/briefs/2026-10-29-writer-pseo-copy.md:114-116 (the Writer's December block; \"December is Frost Season.\" left out: the month-to-season mapping Mick has not heard)",
+      "loxleyforest/scripts/site/pages/local_guide.py:110-112",
+      "loxleyforest/scripts/site/pages/elopements.py:61",
+      "loxleyforest/scripts/site/build_v2.py:371",
+      "loxley-rescue/canon/voice.md:122",
+      "facts: helen-december-low (NOAA), dahlonega-sunset-december (USNO)",
+      "loxleyforest/scripts/site/pages/local_guide.py:109 (photo and alt)"
+    ],
+    "photo": "hero-bridge",
+    "alt": "The treehouse canvas glowing at night beside the lit rope bridge"
+  },
+  "christmas-sky": {
+    "eyebrow": "After dark",
+    "heading": "The sky",
+    "heading_em": "you are inside",
+    "text": "When the leaves drop and the canopy opens, November through early spring, the night sky from your deck is staggering. No light pollution. The Milky Way isn't something you look up at. It's something you're inside.\n\nThe fire table on the sky deck keeps you out there longer.",
+    "sources": [
+      "loxleyforest/scripts/site/pages/experiences.py:71",
       "loxleyforest/scripts/site/pages/experiences.py:72"
     ]
   },
-  "october-crossing": {
-    "eyebrow": "The crossing",
-    "heading": "The most dramatic aisle",
-    "heading_em": "in the Southeast",
-    "photo": "eq3a2008",
-    "alt": "The rope bridge stretching through the trees toward the treehouse in fall",
-    "text": "Cross a hundred-foot rope bridge to say your vows. In October it runs through fall leaves to the treehouse canvas, strung with small warm lights.\n\nThe hundred-foot rope bridge isn't a gimmick. It's a threshold. The moment you step onto it, you leave the ground behind. By the time you reach the other side, something in your chest has shifted.",
+  "christmas-fire": {
+    "eyebrow": "Fire as witness",
+    "heading": "The Fire Circle",
+    "heading_em": "",
+    "text": "The Fire Circle is a boulder fire pit that looks like it emerged from the earth centuries ago, set at the four compass points. It echoes traditions that have existed for thousands of years. We light the fire and tend it ourselves.\n\nExchange rings beside it, or say your vows out on the bridge, where it becomes the aisle.\n\nFlower petals, bubbles, and battery candles are very welcome.",
     "sources": [
-      "loxleyforest/scripts/site/build_v2.py:585 (heading)",
-      "loxleyforest/scripts/site/build_v2.py:586",
-      "loxleyforest/scripts/site/pages/gallery.py:29 (the rope bridge running through fall leaves to the treehouse canvas)",
-      "loxleyforest/scripts/site/pages/gallery.py:58 (the forest floor in October, in fall colour)",
-      "loxley-rescue/canon/voice.md:75-76 (strung with small warm lights)",
-      "loxleyforest/scripts/site/build_v2.py:674",
-      "loxleyforest/scripts/site/pages/gallery.py:32 (photo and alt)"
+      "loxleyforest/scripts/site/pages/elopements.py:17 (eyebrow, photo and alt)",
+      "loxleyforest/scripts/site/pages/elopements.py:18",
+      "loxley-rescue/canon/agreements/elopement-hosting.md:51 (we light and tend the fire; petals, bubbles, battery candles)",
+      "loxleyforest/scripts/site/pages/elopements.py:112",
+      "loxleyforest/scripts/site/pages/elopements.py:15"
+    ],
+    "photo": "img_1717",
+    "alt": "The stone fire pit on the forest floor, ringed with ferns"
+  },
+  "atlanta-drive": {
+    "eyebrow": "The drive",
+    "heading": "Just over an hour",
+    "heading_em": "north of Atlanta",
+    "text": "We're in the foothills above Dahlonega, just over an hour north of Atlanta. Detailed directions come with your booking confirmation.\n\nMost people don't have two or three weeks to paddle into the wilderness and set up camp. They have a weekend. Maybe two nights between the obligations that never stop pulling at them. They want the silence, the forest and the feeling of being truly away, without the time, the gear or the trail miles to earn it the hard way.\n\nThat's what Loxley was designed to solve. Not a hotel room with a view. A night in the forest that changes how you feel when you drive home on Sunday.",
+    "sources": [
+      "loxley-rescue/docs/briefs/2026-10-29-writer-pseo-copy.md:196-199 (the Writer's frame D: \"about 70 minutes by car, traffic allowing\" left out, minutes with no fact row; \"The last mile is a mountain road\" left out, a distance in miles)",
+      "loxley-rescue/canon/voice.md:77-78",
+      "loxleyforest/scripts/site/pages/faq.py:54-55",
+      "loxleyforest/scripts/site/pages/our_story.py:68",
+      "loxleyforest/scripts/site/pages/our_story.py:69",
+      "loxleyforest/scripts/site/pages/our_story.py:86",
+      "loxleyforest/scripts/site/pages/gallery.py:65 (photo and alt)"
+    ],
+    "photo": "aerial-sunset",
+    "alt": "The sun low over a ridge of fall trees under a clear sky"
+  },
+  "atlanta-without": {
+    "eyebrow": "Without the city",
+    "heading": "No ballrooms.",
+    "heading_em": "No receiving line.",
+    "text": "No ballrooms. No banquet chairs. No receiving line. Just two people, an ancient forest, and a ceremony as dramatic as the love that brought you here.\n\nLoxley Forest is a private home on forty-two private acres, and you are coming as our overnight guests. Your ceremony is an experience we host as part of your stay.\n\nSay your vows on the bridge, beside the Fire Circle on the forest floor, or on the private deck of your treehouse, sixty feet in the air.",
+    "sources": [
+      "loxleyforest/scripts/site/pages/elopements.py:100",
+      "loxley-rescue/canon/agreements/elopement-hosting.md:9",
+      "loxleyforest/scripts/site/pages/elopements.py:14-22 (the three ceremony spaces)"
     ]
+  },
+  "vow-renewal": {
+    "eyebrow": "Vow renewals",
+    "heading": "Say them again",
+    "heading_em": "with no one but the trees",
+    "text": "You said them once in front of everyone. Say them again with no one but the trees.\n\nPick the place. Out on the bridge, a hundred feet long and sixty feet up, with the holler under you. On the deck, in the canopy, level with the hawks. Or beside the Fire Circle, the boulder fire pit on the forest floor, with the fire going. Say the old words, or the ones you know now.\n\nTell us what you're celebrating when you write, and we'll make it right.\n\nAfterward the night is yours: dinner by the fire, the bridge lights small and warm behind you, and a bed sixty feet up.",
+    "sources": [
+      "loxley-rescue/docs/briefs/2026-10-29-writer-pseo-copy.md:170-175 (the Writer's vow renewal block: new words; the officiant and the places for a renewal are Mick's call)",
+      "loxleyforest/scripts/site/pages/elopements.py:15",
+      "loxleyforest/scripts/site/build_v2.py:667",
+      "loxleyforest/scripts/site/pages/experiences.py:48",
+      "loxleyforest/scripts/site/pages/elopements.py:17-18"
+    ],
+    "photo": "img_2546",
+    "alt": "The treehouse deck with chairs, above the forest",
+    "heard": false
+  },
+  "renewal-crossing": {
+    "eyebrow": "The crossing",
+    "heading": "Your heart",
+    "heading_em": "beats faster",
+    "text": "The thirty-foot bridge is the warm-up. Next come your first steps across the hundred-footer. The ground drops away. The trees rise to meet you. Your hands grip the ropes and your heart beats faster. Halfway across, you stop noticing the height and start noticing the silence.\n\nSit with the person you love and hear nothing but the creek and the wind in the canopy.",
+    "sources": [
+      "loxleyforest/scripts/site/pages/experiences.py:61",
+      "loxleyforest/scripts/site/pages/our_story.py:77",
+      "loxleyforest/scripts/site/build_v2.py:671 (photo and alt)"
+    ],
+    "photo": "eq3a0337",
+    "alt": "The start of the rope bridge in fall"
+  },
+  "renewal-built": {
+    "eyebrow": "Built by hand",
+    "heading": "Built,",
+    "heading_em": "not bought",
+    "text": "The treehouse is a tetrahedron frame, steel sandwiched between wood, suspended from living oaks by specialized hardware. Every piece was carried down four hundred feet of mountain without a single machine touching the forest. It took nine months, three times longer than planned.\n\nThe deck planks are white oak, salvaged and milled from standing dead trees on the property. Wood that was already here, given a second life.\n\nHow many people can say they've spent the night hanging from five oak trees, sixty feet in the air, with nothing between them and the stars but canvas and canopy?\n\nThat's the rhythm of Loxley Forest. Build. Pause for the family. Build again.",
+    "sources": [
+      "loxleyforest/scripts/site/pages/our_story.py:121",
+      "loxleyforest/scripts/site/build_v2.py:652 (heading)",
+      "loxleyforest/scripts/site/build_v2.py:658",
+      "loxleyforest/scripts/site/build_v2.py:659",
+      "loxleyforest/scripts/site/pages/our_story.py:117",
+      "loxleyforest/scripts/site/pages/our_story.py:85",
+      "loxleyforest/scripts/site/pages/our_story.py:72 (photo and alt)"
+    ],
+    "photo": "eq3a2186",
+    "alt": "The treehouse platform seen from the forest floor, its wooden truss overhead"
+  },
+  "renewal-fire": {
+    "eyebrow": "Fireside",
+    "heading": "A dinner you cooked yourself",
+    "heading_em": "under the stars",
+    "text": "Build your own fire in the eight-foot pit on the forest floor and cook over the open flame. The fire pit grill hammers into the pit. There is a skillet for steak and eggs.\n\nSteaks, burgers, foil packets, whatever you bring. There's something primal about a dinner you cooked yourself under the stars.",
+    "sources": [
+      "loxleyforest/scripts/site/pages/experiences.py:75-76",
+      "loxley-rescue/canon/voice.md:126 (the grill over the Fire Circle)"
+    ]
+  },
+  "courthouse-same": {
+    "eyebrow": "The same license",
+    "heading": "One license,",
+    "heading_em": "two different days",
+    "text": "Both begin the same way: a marriage license from a Georgia probate court, which is yours to get. We do not handle licenses and cannot get one for you.\n\nA courthouse wedding is that license and an official to say the words over it. The statute names the officials who may, among them judges and magistrates (§ 19-3-30(c)).\n\nAn elopement is the same license and the same vows, with a day built around them. Here that day has a hundred-foot rope bridge for an aisle, a fire on the forest floor, and a treehouse sixty feet up to wake in.\n\nEither way, the license goes back to the court: the statute says your officiant must “return the license to the judge of the probate court ... within 30 days after the date of the marriage” (§ 19-3-30(c)).",
+    "sources": [
+      "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:30 (P9)",
+      "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:31 (P10)",
+      "loxley-rescue/docs/briefs/2026-10-29-counsel-elope-in-georgia.md:35 (P14)",
+      "loxley-rescue/canon/agreements/elopement-hosting.md:55",
+      "loxleyforest/scripts/site/pages/elopements.py:15",
+      "new words: the framing of the two days",
+      "loxleyforest/scripts/site/pages/local_guide.py:83 (photo and alt)"
+    ],
+    "photo": "eq3a1890",
+    "alt": "A creek running over rock through a forest of fall leaves",
+    "heard": false
+  },
+  "courthouse-day": {
+    "eyebrow": "The other day",
+    "heading": "A threshold,",
+    "heading_em": "not a gimmick",
+    "text": "The hundred-foot rope bridge isn't a gimmick. It's a threshold. The moment you step onto it, you leave the ground behind. By the time you reach the other side, something in your chest has shifted.\n\nMost elopement couples bring their closest people. The bridge is rated for eight people at one time, everyone counted: on the bridge that is the two of you, your officiant, and up to five more, your photographer among them.\n\nNot included: hair and makeup, though we are glad to point you toward artists we trust; your marriage license; and food and drink beyond the champagne toast.",
+    "sources": [
+      "loxleyforest/scripts/site/build_v2.py:674",
+      "loxleyforest/scripts/site/pages/elopements.py:55",
+      "loxley-rescue/canon/agreements/elopement-hosting.md:17",
+      "new words: \"Most elopement couples bring their closest people.\""
+    ],
+    "heard": false
+  },
+  "courthouse-season": {
+    "eyebrow": "A season of your own",
+    "heading": "Any season,",
+    "heading_em": "its own light",
+    "text": "Wildflower brings soft light and mountain laurel. Canopy Green brings fireflies. Color Turn is a cathedral of gold and crimson. Frost Season strips the canopy to its bones and reveals views you can't see the rest of the year.\n\nRain in the mountains is its own kind of magic, and your photographer will love it. Every couple receives a weather contingency plan. The canopy provides natural protection.",
+    "sources": [
+      "loxleyforest/scripts/site/pages/elopements.py:61 (\"We have seven seasons\" left out: the line names four)",
+      "loxleyforest/scripts/site/pages/elopements.py:63 (its \"We've hosted ceremonies\" left out: no ceremony is hosted yet)"
+    ]
+  },
+  "proposal": {
+    "eyebrow": "Proposals",
+    "heading": "Somewhere they will remember",
+    "heading_em": "the walk to",
+    "text": "If you're going to ask, ask somewhere they'll remember the walk to.\n\nAround the last curve the laurel opens, and there's the bridge: a hundred feet of it, sixty feet up, strung with small warm lights. Halfway across, you stop noticing the height and start noticing the silence. You could ask there. Or on the deck, or by the fire.\n\nTell us when you write, and the treehouse will be ready before you walk them in: things like champagne and rose petals, set out ahead of you.\n\nYou bring the ring. The lights come on by themselves.",
+    "sources": [
+      "loxley-rescue/docs/briefs/2026-10-29-writer-pseo-copy.md:143-148 (the Writer's proposal block: new words; \"Ten minutes under the trees\" left out; the \"We'll keep it quiet\" question left out)",
+      "loxley-rescue/canon/voice.md:144-148",
+      "loxley-rescue/canon/voice.md:122",
+      "loxleyforest/scripts/site/pages/experiences.py:47 (Romance Package: an add-on still Mick's open question)"
+    ],
+    "heard": false
+  },
+  "proposals-where": {
+    "eyebrow": "Where to ask",
+    "heading": "On the bridge, by the fire,",
+    "heading_em": "or in the canopy",
+    "text": "The Rope Bridge. A hundred feet of suspended bridge between two white oaks, sixty feet up and strung with small warm lights. Stop halfway across and turn around.\n\nThe Fire Circle. A boulder fire pit set at the four compass points, ringed with ferns. Sit close to the fire after dark and ask with the whole forest listening.\n\nThe Canopy Deck. The private deck of your treehouse, sixty feet in the air. Nothing above you but sky, nothing around you but the canopy.",
+    "sources": [
+      "loxleyforest@8feb5c7:scripts/site/pages/proposals.py:26-36 (SPOTS; \"the Compass Fire Pit\" is the Fire Circle by canon/voice.md law 7)",
+      "loxleyforest@8feb5c7:scripts/site/pages/proposals.py:123 (heading)",
+      "loxleyforest/scripts/site/pages/gallery.py:35 (photo and alt)"
+    ],
+    "photo": "eq3a0946",
+    "alt": "The rope bridge at night, its rails strung with warm lights"
+  },
+  "proposals-how": {
+    "eyebrow": "How it works",
+    "heading": "Leave the setting to us.",
+    "heading_em": "Keep the words for yourself.",
+    "text": "Tell us the date you have in mind and how you want it to feel. Golden hour on the bridge or a fire after dark. Quiet, or with a photographer there to catch it.\n\nThings like flowers and champagne on ice, ready where you plan to ask.\n\nThe rest of the night is yours, in the treehouse at the far end of the bridge. The treehouse is yours until morning: a queen bed framed by panoramic windows, a private deck above the forest floor, and the forest all around you.",
+    "sources": [
+      "loxleyforest@8feb5c7:scripts/site/pages/proposals.py:40-48 (STEPS; \"lanterns\" left out: the agreement bars open flame and sky lanterns)",
+      "loxleyforest@8feb5c7:scripts/site/pages/proposals.py:132 (heading)",
+      "loxleyforest@8feb5c7:scripts/site/pages/proposals.py:145 (after the yes; its late checkout left out: canon/voice.md law 7)"
+    ]
+  },
+  "propose-sunrise": {
+    "eyebrow": "At sunrise",
+    "heading": "Preacher's Rock",
+    "heading_em": "from Woody Gap",
+    "text": "A short climb with a massive reward: one of the best views in North Georgia, on the Appalachian Trail. It faces southeast, so at sunrise you're above the clouds.\n\nLeave the treehouse by 6:30 AM. The best effort-to-reward ratio in the area.",
+    "sources": [
+      "loxleyforest/scripts/site/pages/local_guide.py:42-45 (\"2 miles round trip\" left out: a distance in miles with no fact row)",
+      "loxleyforest/scripts/site/pages/local_guide.py:125",
+      "loxleyforest/scripts/site/pages/local_guide.py:37 (photo and alt)"
+    ],
+    "photo": "eq3a0272",
+    "alt": "A leaf-covered trail through rhododendron and tall hardwoods"
+  },
+  "propose-sunset": {
+    "eyebrow": "At sunset",
+    "heading": "Kaya Vineyard",
+    "heading_em": "an hour before sunset",
+    "text": "270-degree mountain views from a hilltop, the most dramatic vista of any winery in the area. Get there an hour before sunset with a glass in hand. The best free sunset show in North Georgia.",
+    "sources": [
+      "loxleyforest/scripts/site/pages/local_guide.py:22-25",
+      "loxleyforest/scripts/site/pages/local_guide.py:126"
+    ]
+  },
+  "propose-water": {
+    "eyebrow": "By water",
+    "heading": "A lake loop,",
+    "heading_em": "and two waterfalls",
+    "text": "Lake Zwerner is an easy, scenic loop around the reservoir. Flat, beautiful, accessible. Coffee at Jethro's first, then the loop. The perfect easy morning.\n\nAmicalola Falls is the waterfall to see. The East Ridge Loop gives you the best of it. Stop at B.J. Reece Orchards on the way back for cider and doughnuts.\n\nRaven Cliff Falls is for guests who actually want to hike: a stunning waterfall, stream crossings, beautiful forest, real hiking.",
+    "sources": [
+      "loxleyforest/scripts/site/pages/local_guide.py:49-51",
+      "loxleyforest/scripts/site/pages/local_guide.py:38-41 (\"the tallest cascading waterfall in Georgia\" left to the fact row, which cites the park)",
+      "loxleyforest/scripts/site/pages/local_guide.py:46-48 (\"4.9 miles round trip\" left out)",
+      "loxleyforest/scripts/site/pages/gallery.py:61 (photo and alt)"
+    ],
+    "photo": "aerial-creek",
+    "alt": "A waterfall spilling over mossy rock in a green summer forest"
+  },
+  "propose-here": {
+    "eyebrow": "And one you can stay at",
+    "heading": "Ask the question",
+    "heading_em": "sixty feet up",
+    "text": "Halfway across the bridge, you stop noticing the height and start noticing the silence. That is a good place to ask.\n\nAsk on the bridge at golden hour, by the fire after dark, or on the deck with nothing around you but trees. Tell us which, and we'll help you get the moment right.\n\nThen stay the night. Wake up engaged in the trees.",
+    "sources": [
+      "loxleyforest@8feb5c7:scripts/site/pages/proposals.py:110",
+      "loxleyforest@8feb5c7:scripts/site/pages/proposals.py:113",
+      "loxleyforest@8feb5c7:scripts/site/pages/proposals.py:143",
+      "loxleyforest@8feb5c7:proposals.html:66 (h1)",
+      "loxleyforest/scripts/site/pages/gallery.py:36 (photo and alt)"
+    ],
+    "photo": "img_2726",
+    "alt": "The rope bridge deck leading through the canopy to the treehouse at dusk"
+  },
+  "romantic-stay": {
+    "eyebrow": "What a stay is like",
+    "heading": "Sixty feet changes",
+    "heading_em": "everything",
+    "text": "You'll fall asleep sixty feet in the air with nothing above you but stars and nothing below you but the creek rolling through the forest floor.\n\nAt ground level, a forest is beautiful. At sixty feet, it's transcendent. You're level with the hawks. Sound works differently up here: the wind moves through the leaves like a living thing, and the silence between gusts is the deepest quiet you've heard in years.\n\nThe canopy at sunrise isn't a view. It's a slow-motion event.",
+    "sources": [
+      "loxleyforest/scripts/site/build_v2.py:531",
+      "loxleyforest/scripts/site/build_v2.py:666-667",
+      "loxleyforest/scripts/site/pages/experiences.py:64",
+      "loxleyforest/scripts/site/build_v2.py:664 (photo and alt)"
+    ],
+    "photo": "eq3a2062",
+    "alt": "Sun flaring through the canopy"
+  },
+  "romantic-seasons": {
+    "eyebrow": "Every season has a story",
+    "heading": "Fall color.",
+    "heading_em": "Winter fires.",
+    "text": "In spring, wildflowers blanket the forest floor and mountain laurel blooms along every trail. The waterfalls run full, and the forest smells like rain and new growth.\n\nIn summer, fireflies light the forest at dusk: in June and July the canopy lights up from the inside. Long evenings on the deck. The canopy is so thick the only light is green.\n\nIn fall, color at elevation arrives earlier and lasts longer. The canopy turns gold, then crimson, then amber. The most dramatic season, and the most popular. Book early.\n\nIn winter, the bare canopy shows views the leaves keep secret, and the fire pit feels essential.",
+    "sources": [
+      "loxleyforest/scripts/site/pages/local_guide.py:183 (eyebrow)",
+      "loxleyforest/scripts/site/pages/local_guide.py:101-112 (the seasons; the Butterfly Farm's date and the tubing's cost left out)"
+    ],
+    "photo": "aerial-fall",
+    "alt": "From above in fall: the treehouse canvas showing through a canopy of orange, red and gold"
+  },
+  "romantic-evening": {
+    "eyebrow": "Evenings",
+    "heading": "Stars and s'mores,",
+    "heading_em": "a fire you built",
+    "text": "Graham crackers, chocolate, marshmallows, and a fire you built yourself. The stars do the rest.",
+    "sources": [
+      "loxleyforest/scripts/site/pages/experiences.py:83-84 (Stars and S'mores)",
+      "loxleyforest/scripts/site/pages/elopements.py:17 (photo and alt)"
+    ],
+    "photo": "img_1717",
+    "alt": "The stone fire pit on the forest floor, ringed with ferns"
+  },
+  "anniversary": {
+    "eyebrow": "Anniversaries",
+    "heading": "Give one night of them",
+    "heading_em": "to the trees",
+    "text": "You've had years together. Give one night of them to the trees.\n\nWalk in under the canopy. Cross a hundred feet of bridge with the lights coming on. Eat by the fire. Sleep sixty feet up in the oaks.\n\nBefore you go, sit down at the desk. There's stationery there, a pen and an envelope. Write to each other, or to who you want to be a year from now. Seal it and leave it with us. In twelve months it arrives at your door, and you read what you wrote a year ago.\n\nThat's the anniversary. The next one starts with a letter.",
+    "sources": [
+      "loxley-rescue/docs/briefs/2026-10-29-writer-pseo-copy.md:136-141 (the Writer's anniversary block: new words; The Letter is still Mick's open question)",
+      "loxleyforest/scripts/site/pages/experiences.py:90 (The Letter)",
+      "loxley-rescue/canon/voice.md:75",
+      "loxley-rescue/canon/voice.md:122"
+    ],
+    "heard": false
   },
   "anniversary-home": {
     "eyebrow": "The treehouse",
     "heading": "A home",
     "heading_em": "in the sky",
-    "photo": "img_0831",
-    "alt": "The bed beneath the treehouse windows",
     "text": "This is not a cabin with a view. This is a home in the sky, suspended in a canopy of white oak and beech that has stood for over a century.\n\nA queen bed framed by panoramic windows that turn every morning into a painting you've never seen before. A private deck suspended above the forest floor. A pizza oven on your sky deck, because even pizza is better in the canopy.\n\nWhat we don't include: televisions. You won't need one.",
     "sources": [
       "loxleyforest/scripts/site/build_v2.py:629 (heading)",
       "loxleyforest/scripts/site/build_v2.py:512",
       "loxleyforest/scripts/site/build_v2.py:640",
       "loxleyforest/scripts/site/build_v2.py:532",
-      "loxleyforest/scripts/site/build_v2.py:527 (photo and alt)"
-    ]
+      "loxleyforest/scripts/site/build_v2.py:557 (photo and alt)"
+    ],
+    "photo": "img_0828",
+    "alt": "The bed beneath the treehouse windows in warm light"
   },
   "anniversary-evening": {
     "eyebrow": "The evening",
     "heading": "Your stay is a story,",
     "heading_em": "not a checklist",
-    "photo": "eq3a0222",
-    "alt": "The pizza oven on the sky deck",
-    "text": "Unpack. Step onto the deck. Realize you're sixty feet in the air and there isn't a single sound except wind through leaves.\n\nFire up the pizza oven on the sky deck. Open the bottle you brought. Burn the first pizza. Laugh about it. Nail the second one.\n\nBuild a fire. Roast marshmallows. Look up.\n\nFall asleep to absolute silence, sixty feet above the forest floor. Wake up to birdsong. Check the TreeMail box at the entrance to your bridge. Something is waiting inside.",
+    "text": "Unpack. Step onto the deck. Realize you're sixty feet in the air and there isn't a single sound except wind through leaves.\n\nFire up the pizza oven on the sky deck. Open the bottle you brought. Burn the first pizza. Laugh about it. Nail the second one.\n\nBuild a fire. Roast marshmallows. Look up.\n\nFall asleep to absolute silence, sixty feet above the forest floor.",
     "sources": [
       "loxleyforest/scripts/site/build_v2.py:554 (heading)",
       "loxleyforest/scripts/site/pages/book.py:48",
       "loxleyforest/scripts/site/pages/book.py:49",
-      "loxleyforest/scripts/site/pages/book.py:51 ('The Milky Way is right there' left out: the site puts the clearest stars November to early spring, experiences.py:71)",
+      "loxleyforest/scripts/site/pages/book.py:51 (its Milky Way line left out: the site puts the clearest stars November to early spring)",
       "loxleyforest/scripts/site/pages/book.py:52",
-      "loxleyforest/scripts/site/pages/book.py:54",
       "loxleyforest/scripts/site/build_v2.py:558 (photo and alt)"
-    ]
+    ],
+    "photo": "eq3a0222",
+    "alt": "The pizza oven on the sky deck"
   },
-  "anniversary-crossing": {
-    "eyebrow": "The crossing",
-    "heading": "Your heart",
-    "heading_em": "beats faster",
-    "photo": "eq3a0337",
-    "alt": "The start of the rope bridge in fall",
-    "text": "The thirty-foot bridge is the warm-up. Next come your first steps across the hundred-footer. The ground drops away. The trees rise to meet you. Your hands grip the ropes and your heart beats faster. Halfway across, you stop noticing the height and start noticing the silence.\n\nSit with the person you love and hear nothing but the creek and the wind in the canopy. Sound works differently up here: the wind moves through the leaves like a living thing, and the silence between gusts is the deepest quiet you've heard in years.",
+  "honeymoon": {
+    "eyebrow": "Honeymoons",
+    "heading": "This part is",
+    "heading_em": "for the two of you",
+    "text": "The wedding was for everyone. This part is for the two of you.\n\nA hundred feet of bridge, and a canvas treehouse sixty feet up in the oaks. No television. The Wi-Fi is a hotspot you have to switch on, and you don't have to.\n\nOne night, ask for After Dark: champagne, strawberries, a blanket on the deck, and the sky you've never actually seen. From November through early spring, with the leaves down, that sky is all of it. In summer the stars come in pockets between the branches, and the fire table keeps you out there longer.\n\nIn the morning, nowhere to be.",
     "sources": [
-      "loxleyforest/scripts/site/pages/experiences.py:61",
-      "loxleyforest/scripts/site/pages/our_story.py:77",
-      "loxleyforest/scripts/site/build_v2.py:667",
-      "loxleyforest/scripts/site/build_v2.py:671 (photo and alt)"
-    ]
+      "loxley-rescue/docs/briefs/2026-10-29-writer-pseo-copy.md:150-155 (the Writer's honeymoon block: new words; \"Ten minutes on foot from the car\" left out)",
+      "loxley-rescue/canon/voice.md:119",
+      "loxleyforest/scripts/site/pages/faq.py:48",
+      "loxleyforest/scripts/site/pages/experiences.py:46 (After Dark: an add-on still Mick's open question)",
+      "loxleyforest/scripts/site/pages/experiences.py:71-72"
+    ],
+    "heard": false
   },
-  "anniversary-built": {
-    "eyebrow": "Built by hand",
-    "heading": "Built,",
-    "heading_em": "not bought",
-    "photo": "eq3a2149",
-    "alt": "The steel and wood frame beneath the treehouse, in fall colour",
-    "text": "The treehouse is a tetrahedron frame, steel sandwiched between wood, suspended from living oaks by specialized hardware. Every piece was carried down four hundred feet of mountain without a single machine touching the forest. It took nine months, three times longer than planned.\n\nThe deck planks are white oak, salvaged and milled from standing dead trees on the property. Wood that was already here, given a second life.\n\nHow many people can say they've spent the night hanging from five oak trees, sixty feet in the air, with nothing between them and the stars but canvas and canopy?",
+  "honeymoon-room": {
+    "eyebrow": "The room",
+    "heading": "Intimate",
+    "heading_em": "instead of exposed",
+    "text": "A queen bed framed by panoramic windows, and a chandelier over it on a dimmer. The details you'll find during your stay are Livy's hand: the warmth of the light, every window placed to frame the canopy, a room that feels intimate instead of exposed.\n\nIt was Livy who insisted on a full bathroom in the canopy, a waterfall shower sixty feet above the forest floor.",
     "sources": [
-      "loxleyforest/scripts/site/build_v2.py:652 (heading)",
-      "loxleyforest/scripts/site/build_v2.py:658",
-      "loxleyforest/scripts/site/build_v2.py:659",
-      "loxleyforest/scripts/site/pages/our_story.py:117",
-      "loxleyforest/scripts/site/pages/our_story.py:85",
-      "loxleyforest/scripts/site/build_v2.py:654 (photo and alt)"
-    ]
+      "loxleyforest/scripts/site/build_v2.py:365",
+      "loxley-rescue/canon/voice.md:122 (the chandelier on a dimmer)",
+      "loxleyforest/scripts/site/pages/our_story.py:97",
+      "loxleyforest/scripts/site/pages/gallery.py:40 (photo and alt)"
+    ],
+    "photo": "img_0823",
+    "alt": "Inside the treehouse: a bed, a long wooden bench and tall windows onto the forest"
+  },
+  "honeymoon-gift": {
+    "eyebrow": "A gift",
+    "heading": "Or the gift",
+    "heading_em": "of one",
+    "text": "The Golden Arrow is a gift of three nights in the treehouse at Loxley Forest, and the Dawn Table. Champagne brunch across the bridge. Pizza night in the trees.",
+    "sources": [
+      "loxleyforest/scripts/site/pages/gift.py:73 (the description)",
+      "Mick's own words, commit 9fb850c (2026-10-27): \"Champagne brunch across the bridge. Pizza night in the trees.\""
+    ],
+    "heard": false
   }
 }

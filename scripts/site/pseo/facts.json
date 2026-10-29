@@ -1,4 +1,18 @@
 {
+  "dahlonega-county-seat": {
+    "text": "Dahlonega is the county seat of Lumpkin County, in the foothills of the North Georgia mountains, approximately 70 miles north of Atlanta.",
+    "source": "City of Dahlonega",
+    "url": "https://www.dahlonega.gov/community/about-our-town/",
+    "quote": "The City of Dahlonega, the county seat of Lumpkin County, is in the foothills of the North Georgia mountains, approximately 70 miles north of Atlanta.",
+    "checked": "2026-10-29"
+  },
+  "dahlonega-gold-1828": {
+    "text": "Gold was discovered in 1828 in what is now Lumpkin County, setting off one of the first major gold rushes in the nation.",
+    "source": "City of Dahlonega",
+    "url": "https://www.dahlonega.gov/community/about-our-town/",
+    "quote": "The discovery of gold in 1828 in present-day Lumpkin County caused one of the first major gold rushes in the nation.",
+    "checked": "2026-10-29"
+  },
   "dahlonega-first-gold-rush": {
     "text": "Twenty years before California's gold rush of 1849, thousands of prospectors came into the Cherokee Nation in north Georgia: the beginning of the country's first gold rush.",
     "source": "Georgia State Parks, Dahlonega Gold Museum Historic Site",
@@ -12,5 +26,104 @@
     "url": "https://gastateparks.org/DahlonegaGoldMuseum",
     "quote": "The museum is housed inside the 1836 Lumpkin County Courthouse, one of the oldest courthouse buildings in Georgia.",
     "checked": "2026-10-29"
+  },
+  "dahlonega-mint": {
+    "text": "Between 1838 and 1861 a U.S. Branch Mint in Dahlonega struck gold coins: the Half Eagle, the Quarter Eagle, the Gold Dollar and the Three Dollar Gold piece.",
+    "source": "City of Dahlonega",
+    "url": "https://www.dahlonega.gov/community/about-our-town/",
+    "quote": "Between 1838 and 1861, a U.S. Branch Mint produced the Half Eagle, Quarter Eagle, Gold Dollar, and the Three Dollar Gold coins locally.",
+    "checked": "2026-10-29"
+  },
+  "dahlonega-wineries": {
+    "text": "Dahlonega and Lumpkin County hold 12 wine-tasting rooms and eight wineries.",
+    "source": "Dahlonega-Lumpkin County Visitors Bureau",
+    "url": "https://www.dahlonega.org/wineries/",
+    "quote": "Home to 12 wine-tasting rooms and eight wineries, Dahlonega-Lumpkin County offers a variety of quality and award-winning local, regional, and international wines.",
+    "checked": "2026-10-29"
+  },
+  "dahlonega-amicalola-at": {
+    "text": "Dahlonega is the closest town to Amicalola Falls State Park and its Appalachian Trail Approach Trail.",
+    "source": "Appalachian Trail Conservancy",
+    "url": "https://appalachiantrail.org/protect/conservation/at-community-program/dahlonega-ga/",
+    "quote": "As the closest town to Amicalola Falls State Park and its A.T. Approach Trail",
+    "checked": "2026-10-29"
+  },
+  "dahlonega-hour-north": {
+    "text": "Dahlonega sits in the foothills of the Blue Ridge Mountains, only an hour north of Atlanta.",
+    "source": "Dahlonega-Lumpkin County Visitors Bureau",
+    "url": "https://www.dahlonega.org/",
+    "quote": "Nestled in the foothills of the Blue Ridge Mountains / only an hour north of Atlanta",
+    "checked": "2026-10-29"
+  },
+  "springer-from-atlanta": {
+    "text": "Springer Mountain, the southern end of the Appalachian Trail, is 99 miles from Atlanta.",
+    "source": "Appalachian Trail Conservancy",
+    "url": "https://appalachiantrail.org/experience/hike-the-trail/at-basics/transportation-parking/",
+    "quote": "Atlanta is 99 miles from Springer Mountain, the southern terminus of the A.T.",
+    "checked": "2026-10-29"
+  },
+  "amicalola-approach-trail": {
+    "text": "From Amicalola Falls State Park, the eight-mile Approach Trail leads to Springer Mountain, the southern end of the Appalachian Trail.",
+    "source": "Amicalola Falls State Park",
+    "url": "https://amicalolafallslodge.com/georgia-state-park/",
+    "quote": "the eight-mile Approach Trail leads from the park to Springer Mountain, the southern terminus of the",
+    "checked": "2026-10-29"
+  },
+  "amicalola-falls-729": {
+    "text": "Amicalola Falls drop 729 feet, the third-highest cascading waterfall east of the Mississippi River.",
+    "source": "Amicalola Falls State Park",
+    "url": "https://amicalolafallslodge.com/georgia-state-park/",
+    "quote": "the 729-foot falls, the third-highest cascading waterfall east of the Mississippi River",
+    "checked": "2026-10-29"
+  },
+  "dahlonega-sunset-december": {
+    "text": "On December 15 the sun sets at Dahlonega at 5:27 pm, by the US Naval Observatory's reckoning for the town's point.",
+    "source": "US Naval Observatory",
+    "url": "https://aa.usno.navy.mil/api/rstt/oneday?date=2026-12-15&coords=34.54,-83.97&tz=-5&dst=true",
+    "quote": "\"phen\": \"Set\", \"time\": \"17:27  ST\"",
+    "checked": "2026-10-29"
+  },
+  "helen-december-low": {
+    "text": "At Helen, the nearest station with temperature records, December nights average a low of 31.6 degrees (NOAA's 1991 to 2020 normals). Dahlonega has no such station.",
+    "source": "NOAA National Centers for Environmental Information",
+    "url": "https://www.ncei.noaa.gov/data/normals-monthly/1991-2020/access/USC00094230.csv",
+    "quote": "\"USC00094230\",\"12\",\" 34.6997\",\" -83.7261\",\" 455.1\",\"HELEN, GA US\" ... \"MLY-TMIN-NORMAL\": \"    31.6\"",
+    "checked": "2026-10-29"
+  },
+  "georgia-license-county": {
+    "text": "If one of you lives in Georgia, the license can be issued in any county. If neither of you does, it must be issued in the county where the ceremony is performed.",
+    "source": "Council of Probate Court Judges of Georgia",
+    "url": "https://gaprobate.gov/content/marriage-licenses",
+    "quote": "If one of the parties is a resident of Georgia, the license can be issued in any county. If neither party is a resident of Georgia, the license must be issued in the county in which the marriage ceremony is to be performed.",
+    "checked": "2026-10-29"
+  },
+  "georgia-license-oath": {
+    "text": "A marriage license is issued on a written application from the two of you, made under oath.",
+    "source": "Council of Probate Court Judges of Georgia",
+    "url": "https://gaprobate.gov/content/marriage-licenses",
+    "quote": "A marriage license is issued based upon a written application made by the applicants, verified by oath of the applicants.",
+    "checked": "2026-10-29"
+  },
+  "georgia-blood-test": {
+    "text": "Since July 1, 2003, Georgia has required no premarital blood test.",
+    "source": "Council of Probate Court Judges of Georgia",
+    "url": "https://gaprobate.gov/content/marriage-licenses",
+    "quote": "As of July 1, 2003, premarital blood tests are no longer required.",
+    "checked": "2026-10-29"
+  },
+  "georgia-age-18": {
+    "text": "Both of you must be at least 18 years of age.",
+    "source": "Council of Probate Court Judges of Georgia",
+    "url": "https://gaprobate.gov/content/marriage-licenses",
+    "quote": "Both parties must be at least 18 years of age.",
+    "checked": "2026-10-29"
+  },
+  "lumpkin-probate-court": {
+    "text": "The Lumpkin County Probate Court, as its page posted them: 325 Riley Road, Room 122, Dahlonega, GA 30533; phone 706-864-3847; Monday through Friday, 8 a.m. to 5 p.m.",
+    "source": "Lumpkin County Probate Court (its page, in the Internet Archive's copy of 2026-01-06)",
+    "url": "https://web.archive.org/web/20260106011717/https://lumpkincounty.gov/218/Probate-Court",
+    "quote": "\"325 Riley Road\" / \"Room 122\" / \"Dahlonega, GA 30533\" / \"Phone: 706-864-3847\" / \"Monday through Friday\" / \"8 a.m. to 5 p.m.\"",
+    "checked": "2026-10-29",
+    "recheck": true
   }
 }
