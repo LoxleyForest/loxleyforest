@@ -11,10 +11,14 @@
 3. The quote card on /book (2026-10-26): build_v2.QUOTE_CARD's line must sit word for word inside
    one carousel quote, carry that quote's credit exactly, and be found verbatim in all.md; and
    book.html's <template id="gh-proof"> must say the 4.9, that line and that credit, and nothing else.
+4. The search landing pages (2026-10-29): each page's quote in scripts/site/pseo/pages.json, split at
+   " ... ", must be found word for word in the review its id names, a five-star review, credited to
+   that reviewer. (scripts/site/pages/pseo.py also refuses a page whose quote fails.)
 Exit 1 on any failure. Run it before every push that touches reviews.
 """
 import ast
 import html
+import json
 import os
 import re
 import sys
@@ -115,7 +119,33 @@ def main():
     for pr in card_bad:
         print("QUOTE CARD: " + pr)
     print("quote card: 1 line checked, %d failing" % len(card_bad))
-    return 1 if bad or page_bad or card_bad else 0
+
+    land_bad = checked = 0
+    data = os.path.join(HERE, "pseo", "pages.json")
+    for p in (json.load(open(data, encoding="utf-8")) if os.path.exists(data) else []):
+        q = p.get("quote")
+        if not q:
+            continue
+        checked += 1
+        problems = []
+        if q.get("id") not in reviews:
+            problems.append("no such id in all.md")
+        else:
+            heading, paras = reviews[q["id"]]
+            if not re.search(r"\b5 stars\b", heading):
+                problems.append("not a five-star review")
+            for part in q.get("text", "").split(" ... "):
+                if re.sub(r"\s+", " ", part) not in " ".join(paras):
+                    problems.append("not found word for word in its review: " + part[:60])
+            if not re.match(re.escape(q.get("credit", "").split(" · ")[0]) + "(, | · )", heading):
+                problems.append("credit's name is not the reviewer's")
+        if PLATFORM.search(q.get("text", "") + " " + q.get("credit", "")):
+            problems.append("names a platform")
+        for pr in problems:
+            print("LANDING PAGE /%s (%s): %s" % (p.get("slug"), q.get("credit"), pr))
+        land_bad += bool(problems)
+    print("landing pages: %d quotes checked, %d failing" % (checked, land_bad))
+    return 1 if bad or page_bad or card_bad or land_bad else 0
 
 
 if __name__ == "__main__":
