@@ -33,6 +33,9 @@
        two letters, the ZIP as five digits), the body sent (the contract's fields only), the all-in
        amount shown only in the purchase step, the payment page reused for the same details, Stripe
        reached by script, a non-Stripe answer refused, the engine's refusal shown as it wrote it;
+       the visit's own source (js/funnel.js gh_entry) as src and referrer in the checkout, a Google
+       ad click as "google-ads"; with no entry or a broken one, neither, and the sale still starts;
+       never the long-lived attribution (gh_attr, loxley_attribution);
      - /gift/thanks: the payment session out of the address bar before Tag Manager, the thank-you;
        the sale for Google Ads, gift_purchase {value, currency, transaction_id, item}, only on the
        engine's paid answer (GET /v1/gift/sold), once per session, its id a hash; nothing on paid
@@ -666,6 +669,48 @@ async function main() {
     await press(page, '#ga-buy button[type=submit]');
     await page.waitForSelector('#ga-buy .ga-confirm', { timeout: 5000 });
     check(rec.sales.length === 1 && !('deliver' in rec.sales[0]), 'and nothing about a day is sent');
+    await ctx.close();
+  }
+
+  // Where the sale came from (loxley-rescue forge/gift-counts): the visit's own entry, js/funnel.js
+  // gh_entry in this tab, rides the checkout as src and referrer; the engine keeps only its class.
+  console.log('/gift: the visit\'s own source rides the checkout');
+  {
+    const { ctx, page, rec } = await open('gift-src-ad', {});
+    // A Google ad click: it lands on the home page from google.com with a click id, then goes to /gift.
+    await page.goto(BASE + '/?gclid=test-click-1', { referer: 'https://google.com/' });
+    await page.goto(BASE + '/gift');
+    await page.waitForSelector('#ga-buy form', { timeout: 10000 });
+    const entry = await page.evaluate(() => sessionStorage.getItem('gh_entry'));
+    check(entry === JSON.stringify({ referrer: 'google.com', src: 'google-ads' }), 'the visit\'s entry: gh_entry {src: "google-ads", referrer: "google.com"} (' + entry + ')');
+    await page.fill('#ga-for', BUYER.names); await page.fill('#ga-from', BUYER.giver); await page.fill('#ga-email', BUYER.email);
+    await press(page, '#ga-buy button[type=submit]');
+    await page.waitForSelector('#ga-buy .ga-confirm', { timeout: 5000 });
+    const sent = rec.sales[0] || {};
+    check(sent.src === 'google-ads' && sent.referrer === 'google.com', 'POST /v1/gift/checkout carries src "google-ads" and referrer "google.com"');
+    check(Object.keys(sent).sort().join() === 'email,giver_name,product,recipient_names,referrer,src' && sent.product === 'golden-arrow' && sent.email === BUYER.email,
+      'and the rest of the body as before: no attribution, no click id');
+    check(!has(JSON.stringify(sent), 'test-click'), 'the click id itself never sent');
+    await ctx.close();
+  }
+  for (const [what, stored] of [['no entry', null], ['a broken entry', '{not json']]) {
+    const { ctx, page, rec } = await open('gift-src-none', {});
+    await page.goto(BASE + '/gift');
+    // The long-lived attribution (js/gatehouse.js gh_attr, the old loxley_attribution) is there, and never read.
+    await page.evaluate(() => {
+      localStorage.setItem('gh_attr', JSON.stringify({ src: 'instagram', referrer: 'https://instagram.com/', gclid: 'old-click' }));
+      localStorage.setItem('loxley_attribution', JSON.stringify({ gclid: 'old-click' }));
+    });
+    await page.reload();
+    await page.waitForSelector('#ga-buy form', { timeout: 10000 });
+    await page.evaluate((s) => { if (s === null) sessionStorage.removeItem('gh_entry'); else sessionStorage.setItem('gh_entry', s); }, stored);
+    await page.fill('#ga-for', BUYER.names); await page.fill('#ga-from', BUYER.giver); await page.fill('#ga-email', BUYER.email);
+    await press(page, '#ga-buy button[type=submit]');
+    await page.waitForSelector('#ga-buy .ga-confirm', { timeout: 5000 });
+    const sent = rec.sales[0] || {};
+    check(rec.sales.length === 1 && Object.keys(sent).sort().join() === 'email,giver_name,product,recipient_names',
+      what + ': neither src nor referrer sent, and the sale still starts');
+    check(!has(JSON.stringify(sent), 'instagram') && !has(JSON.stringify(sent), 'old-click'), what + ': never the long-lived attribution (gh_attr, loxley_attribution)');
     await ctx.close();
   }
 

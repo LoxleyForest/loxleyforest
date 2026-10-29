@@ -13,8 +13,10 @@
      POST /v1/gift/checkout {product, email, giver_name,
           recipient_names, ship_to?{name, line1, line2, city, state
           (two letters), zip (five digits)}, deliver?{email, date
-          "YYYY-MM-DD", hour 0-23 Eastern, message}} -> {url,
-          total_cents}; no deliver: the card goes to the buyer;
+          "YYYY-MM-DD", hour 0-23 Eastern, message}, src?, referrer?}
+          -> {url, total_cents}; no deliver: the card goes to the buyer;
+          src and referrer are the visit's own (gh_entry), when it has
+          them (loxley-rescue forge/gift-counts);
           400 or 503 {error: a sentence}. Stripe returns the buyer to
           /gift/thanks?session_id=..., or to /gift on the way back.
      GET  /v1/gift?code=LF-XXXX-XXXX -> {code, product, name, status
@@ -250,6 +252,17 @@
       // card goes to the buyer.
       var t = f.them;
       if (canDeliver && f.deliver === 'them') b.deliver = { email: t.email.trim(), date: t.day || '', hour: +t.hour, message: t.message.trim() };
+      // Where this visit came from, so the engine can count the sale by it (loxley-rescue
+      // forge/gift-counts, sources.of_sale: it keeps one word, never the referrer whole): the
+      // visit's own entry (js/funnel.js gh_entry, this tab only), never the long-lived attribution
+      // (gh_attr, loxley_attribution). A missing or broken entry never stops a sale.
+      try {
+        var entry = JSON.parse(sessionStorage.getItem('gh_entry') || 'null');
+        if (entry && typeof entry === 'object') {
+          if (typeof entry.src === 'string' && entry.src) b.src = entry.src;
+          if (typeof entry.referrer === 'string' && entry.referrer) b.referrer = entry.referrer;
+        }
+      } catch (e) {}
       return b;
     }
 
