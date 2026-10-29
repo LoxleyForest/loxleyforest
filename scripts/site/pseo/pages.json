@@ -3,7 +3,7 @@
     "set": "A",
     "slug": "elope-in-dahlonega",
     "title": "Elope in Dahlonega, Georgia | Loxley Forest",
-    "meta": "Eloping in Dahlonega: the town, the day, where to eat after, and a treehouse sixty feet up with a hundred-foot rope bridge for your aisle.",
+    "meta": "Eloping in Dahlonega: the town, the day, where to eat after, and a treehouse sixty feet up at the end of a hundred-foot rope bridge.",
     "eyebrow": "Dahlonega, Georgia · 1,470 feet",
     "h1": "Elope in Dahlonega",
     "h1_em": "",
@@ -13,7 +13,7 @@
       "alt": "The rope bridge from the side, an oak trunk in the foreground"
     },
     "lead": {
-      "text": "We're in Dahlonega, Georgia, on forty-two acres of forest, with a hand-built treehouse sixty feet up in it. The hundred-foot rope bridge to its door becomes your aisle.",
+      "text": "We're in Dahlonega, Georgia, on forty-two acres of forest, with a hand-built treehouse sixty feet up in it. A hundred-foot rope bridge is its front door.",
       "sources": [
         "loxley-rescue/docs/briefs/2026-10-29-writer-pseo-copy.md:185 (frame A, its first line, for the town the house is in)",
         "loxley-rescue/canon/voice.md:74-77",
@@ -23,7 +23,7 @@
     },
     "hub": "/elopements",
     "links_to": [
-      "/elopements#inquiry",
+      "/christmas-new-years-elopement",
       "/how-to-elope-in-georgia",
       "/eloping-from-atlanta",
       "/local-guide"
@@ -118,7 +118,6 @@
     },
     "hub": "/elopements",
     "links_to": [
-      "/elopements#inquiry",
       "/what-an-elopement-costs-in-georgia",
       "/elopement-or-courthouse",
       "/elope-in-dahlonega"
@@ -268,7 +267,7 @@
     },
     "hub": "/elopements",
     "links_to": [
-      "/elopements#inquiry",
+      "/eloping-from-atlanta",
       "/elope-in-dahlonega",
       "/how-to-elope-in-georgia"
     ],
@@ -295,11 +294,10 @@
       },
       {
         "q": "What if it rains?",
-        "a": "Rain in the mountains is its own kind of magic. The canvas windows zip shut like a tent's, and the canopy gives the deck natural protection.",
+        "a": "Rain in the mountains is its own kind of magic. The treehouse is heated.",
         "sources": [
           "loxley-rescue/docs/briefs/2026-10-29-writer-pseo-copy.md:219",
-          "loxleyforest/scripts/site/pages/faq.py:50",
-          "loxley-rescue/canon/voice.md:124"
+          "loxleyforest/scripts/site/pages/faq.py:50 (its canopy line left out: written for the leafed year; the Critic, 2026-10-29)"
         ]
       },
       {
@@ -314,11 +312,9 @@
       },
       {
         "q": "Which packages are there?",
-        "a": "Three: The Vow, The Crossing and The Elevation. The Crossing and The Elevation include our signature rope bridge ceremony. Every Loxley elopement is personally coordinated.",
+        "a": "The elopements page names them. Every Loxley elopement is personally coordinated.",
         "sources": [
-          "loxleyforest/scripts/site/pages/elopements.py:26-50",
-          "loxleyforest/scripts/site/pages/elopements.py:33",
-          "loxleyforest/scripts/site/pages/elopements.py:133"
+          "loxleyforest/scripts/site/pages/elopements.py:133 (no count and no names: the held cards change the packages; the Critic, 2026-10-29)"
         ]
       }
     ],
@@ -345,7 +341,7 @@
       "alt": "From above in summer: the treehouse deck and canvas among green treetops"
     },
     "lead": {
-      "text": "From Atlanta, it's just over an hour to Dahlonega, Georgia. There, a hundred-foot rope bridge sixty feet up becomes your aisle, and a treehouse waits at the far end of it.",
+      "text": "From Atlanta, it's just over an hour to Dahlonega, Georgia. There, a treehouse sixty feet up waits at the far end of a hundred-foot rope bridge.",
       "sources": [
         "loxley-rescue/docs/briefs/2026-10-29-writer-pseo-copy.md:197 (frame D, its first line, canon's drive)",
         "loxley-rescue/canon/voice.md:77-78",
@@ -355,7 +351,7 @@
     },
     "hub": "/elopements",
     "links_to": [
-      "/elopements#inquiry",
+      "/christmas-new-years-elopement",
       "/elope-in-dahlonega",
       "/romantic-getaways-near-atlanta"
     ],
@@ -436,7 +432,7 @@
     },
     "hub": "/elopements",
     "links_to": [
-      "/elopements#inquiry",
+      "/elope-in-dahlonega",
       "/anniversary-getaway-north-georgia",
       "/treehouses"
     ],
@@ -506,7 +502,7 @@
     "links_to": [
       "/how-to-elope-in-georgia",
       "/what-an-elopement-costs-in-georgia",
-      "/elopements#inquiry"
+      "/elope-in-dahlonega"
     ],
     "blocks": [
       "courthouse-same",
@@ -714,8 +710,7 @@
       "romantic-stay",
       "romantic-evening",
       "romantic-seasons",
-      "bridge",
-      "who-we-are"
+      "bridge"
     ],
     "facts": [
       "dahlonega-hour-north"

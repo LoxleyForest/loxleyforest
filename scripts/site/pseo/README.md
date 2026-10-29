@@ -22,6 +22,8 @@ is public: these files hold only what a page prints. Evidence, ranks and notes s
 | `faq` | `[{"q": "...", "a": "...", "sources": [...]}]`, also the page's FAQPage schema |
 | `quote` | `{"id": "A41", "text": "...", "credit": "..."}`: a guest's words, word for word from loxley-rescue `docs/reviews/all.md`, under a credit the site already shows; trims are `" ... "` |
 | `form` | `elopement` (the /elopements form) or `booking` (the /book form); either carries a hidden `page` field naming the page |
+
+Package names: nothing ties these pages to scripts/site/pages/elopements.py. When the packages change (the held cards), every page, block and answer here that names one (The Vow, The Crossing, The Elevation) is changed to follow them.
 | `form_intro` | optional block name: the words over the form |
 | `heard` | optional; `false` holds the page until Mick has heard its words |
 | `updated` | the sitemap's lastmod, `YYYY-MM-DD` |

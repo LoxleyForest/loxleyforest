@@ -45,9 +45,9 @@
     "eyebrow": "The bridge",
     "heading": "One hundred feet",
     "heading_em": "between two white oaks",
-    "text": "A hundred feet long. Sixty feet up. It hangs between two white oaks over the holler, strung with small warm lights that come on at dark and burn for two or three hours. The planks are white oak, salvaged and milled from standing dead trees on this land. A crew of riggers from North Carolina strung its first cables.\n\nIt sways. That's by design. The ropes are chest-high and the planks are solid. It's rated for eight people at one time, everyone counted, and that number is the engineer's, not ours.\n\nEvery guest crosses it. It isn't optional. It's the way home. For a wedding it's the aisle.",
+    "text": "A hundred feet long. Sixty feet up. It hangs between two white oaks over the holler, strung with small warm lights that come on at dark and burn for two or three hours. The planks are white oak, salvaged and milled from standing dead trees on this land. A crew of riggers from North Carolina strung its first cables.\n\nIt sways. That's by design. The ropes are chest-high and the planks are solid. It's rated for eight people at one time, everyone counted, and that number is the engineer's, not ours.\n\nEvery guest crosses it. It isn't optional. It's the way home.",
     "sources": [
-      "loxley-rescue/docs/briefs/2026-10-29-writer-pseo-copy.md:37-41 (the Writer's \"The bridge\"; \"or the altar\" left out: words Mick has not heard)",
+      "loxley-rescue/docs/briefs/2026-10-29-writer-pseo-copy.md:37-41 (the Writer's \"The bridge\"; \"or the altar\" left out: words Mick has not heard; \"For a wedding it's the aisle.\" left out: the bridge ceremony is The Crossing's and The Elevation's, the Critic, 2026-10-29)",
       "loxley-rescue/canon/voice.md:75-76",
       "loxley-rescue/canon/voice.md:122",
       "loxleyforest/scripts/site/pages/elopements.py:15",
@@ -107,13 +107,14 @@
     "eyebrow": "How it works",
     "heading": "Tell us the day.",
     "heading_em": "We answer fast.",
-    "text": "Write to us with the day you have in mind and what it's for. We answer fast. If you'd rather talk, call or text 706-502-4823.\n\nFor a stay, the calendar does the rest. Choose your dates and the total appears, taxes and cleaning included, with your booking agreement shown in full before you pay.\n\nFor a ceremony, we talk it through first. Then we send the agreement. It is shorter than it looks, and we settle the ceremony time together closer to the day. Sign it, and the date is yours.",
+    "text": "Write to us with the day you have in mind and what it's for. We answer fast. If you'd rather talk, call or text 706-502-4823.\n\nFor a stay, the calendar does the rest. Choose your dates and the total appears, taxes and cleaning included, with your booking agreement shown in full before you pay.\n\nFor a ceremony, we talk it through first. Then we send the agreement. It is shorter than it looks, and we settle the ceremony time together closer to the day. Sign it and pay the retainer, and the date is yours.",
     "sources": [
       "loxley-rescue/docs/briefs/2026-10-29-writer-pseo-copy.md:55-59 (the Writer's \"How it works\"; \"Every open night shows its rate\" and \"the whole price appears\" replaced by the site's own \"the total appears\": the price guard)",
       "loxley-rescue/canon/voice.md:39 (\"We answer fast\")",
       "loxleyforest/scripts/site/build_v2.py:191",
       "loxleyforest/scripts/site/pages/faq.py:58",
       "loxley-rescue/canon/agreements/elopement-hosting.md:21",
+      "loxley-rescue/canon/agreements/elopement-hosting.md:29 (the retainer reserves the date; the Critic, 2026-10-29)",
       "loxley-rescue/canon/agreements/elopement-hosting.md:69"
     ],
     "shared": true
@@ -168,11 +169,11 @@
     "eyebrow": "Downtown Dahlonega",
     "heading": "Gold rush history",
     "heading_em": "and small-town character",
-    "text": "Dahlonega sits at the heart of Georgia's wine country. The square still has its courthouse with the gold-leaf steeple, surrounded by local shops, restaurants and places that have nothing to do with a chain.\n\nPicnic Cafe is small-town, personal, genuine: great sandwiches and baked goods, the perfect quick lunch before you explore the square. Everyone stops at the Dahlonega Fudge Factory, family-owned since 1982. It's part of the trip. Paul Thomas Chocolates makes more than 120 handmade recipes on site, for couples who want something special to bring back to the treehouse.",
+    "text": "Dahlonega sits at the heart of Georgia's wine country. The square still has its courthouse, surrounded by local shops, restaurants and places that have nothing to do with a chain.\n\nPicnic Cafe is small-town, personal, genuine: great sandwiches and baked goods, the perfect quick lunch before you explore the square. Everyone stops at the Dahlonega Fudge Factory, family-owned since 1982. It's part of the trip. Paul Thomas Chocolates makes more than 120 handmade recipes on site, for couples who want something special to bring back to the treehouse.",
     "sources": [
       "loxleyforest/scripts/site/pages/local_guide.py:53 (eyebrow and heading)",
       "loxleyforest/scripts/site/pages/local_guide.py:12",
-      "loxleyforest/scripts/site/pages/local_guide.py:54-55 (its 1828 date left to the fact rows, which cite the city)",
+      "loxleyforest/scripts/site/pages/local_guide.py:54-55 (its 1828 date left to the fact rows; its \"gold-leaf steeple\" left out, the town's gold-leaf spire is Price Memorial Hall's, the Critic)",
       "loxleyforest/scripts/site/pages/local_guide.py:60-62",
       "loxleyforest/scripts/site/pages/local_guide.py:73-76",
       "loxleyforest/scripts/site/pages/local_guide.py:77-79"
@@ -279,10 +280,11 @@
     "eyebrow": "After dark",
     "heading": "The sky",
     "heading_em": "you are inside",
-    "text": "When the leaves drop and the canopy opens, November through early spring, the night sky from your deck is staggering. No light pollution. The Milky Way isn't something you look up at. It's something you're inside.\n\nThe fire table on the sky deck keeps you out there longer.",
+    "text": "When the leaves drop and the canopy opens, November through early spring, the night sky from your deck is staggering. No light pollution. The Milky Way isn't something you look up at. It's something you're inside.\n\nThe fire table on the deck keeps you out there longer.",
     "sources": [
       "loxleyforest/scripts/site/pages/experiences.py:71",
-      "loxleyforest/scripts/site/pages/experiences.py:72"
+      "loxleyforest/scripts/site/pages/experiences.py:72 (it says the sky deck)",
+      "loxley-rescue/canon/voice.md:121 (the fire table is on the deck)"
     ]
   },
   "christmas-fire": {
@@ -321,11 +323,12 @@
     "eyebrow": "Without the city",
     "heading": "No ballrooms.",
     "heading_em": "No receiving line.",
-    "text": "No ballrooms. No banquet chairs. No receiving line. Just two people, an ancient forest, and a ceremony as dramatic as the love that brought you here.\n\nLoxley Forest is a private home on forty-two private acres, and you are coming as our overnight guests. Your ceremony is an experience we host as part of your stay.\n\nSay your vows on the bridge, beside the Fire Circle on the forest floor, or on the private deck of your treehouse, sixty feet in the air.",
+    "text": "No ballrooms. No banquet chairs. No receiving line. Just two people, an ancient forest, and a ceremony as dramatic as the love that brought you here.\n\nLoxley Forest is a private home on forty-two private acres, and you are coming as our overnight guests. Your ceremony is an experience we host as part of your stay.\n\nSay your vows on the bridge, beside the Fire Circle on the forest floor, or on the private deck of your treehouse, sixty feet in the air. The Crossing and The Elevation include our signature rope bridge ceremony.",
     "sources": [
       "loxleyforest/scripts/site/pages/elopements.py:100",
       "loxley-rescue/canon/agreements/elopement-hosting.md:9",
-      "loxleyforest/scripts/site/pages/elopements.py:14-22 (the three ceremony spaces)"
+      "loxleyforest/scripts/site/pages/elopements.py:14-22 (the three ceremony spaces)",
+      "loxleyforest/scripts/site/pages/elopements.py:33 (the bridge ceremony comes with The Crossing and The Elevation; the Critic, 2026-10-29)"
     ]
   },
   "vow-renewal": {
@@ -464,8 +467,9 @@
     "eyebrow": "At sunrise",
     "heading": "Preacher's Rock",
     "heading_em": "from Woody Gap",
-    "text": "A short climb with a massive reward: one of the best views in North Georgia, on the Appalachian Trail. It faces southeast, so at sunrise you're above the clouds.\n\nLeave the treehouse by 6:30 AM. The best effort-to-reward ratio in the area.",
+    "text": "Some of the most dramatic hiking in the Southeast, from easy waterfall walks to above-the-clouds sunrise hikes.\n\nA short climb with a massive reward: one of the best views in North Georgia, on the Appalachian Trail. It faces southeast, so at sunrise you're above the clouds.\n\nLeave the treehouse by 6:30 AM. The best effort-to-reward ratio in the area.",
     "sources": [
+      "loxleyforest/scripts/site/pages/local_guide.py:35-36 (\"all within 45 minutes\" left out: minutes with no fact row)",
       "loxleyforest/scripts/site/pages/local_guide.py:42-45 (\"2 miles round trip\" left out: a distance in miles with no fact row)",
       "loxleyforest/scripts/site/pages/local_guide.py:125",
       "loxleyforest/scripts/site/pages/local_guide.py:37 (photo and alt)"
@@ -487,7 +491,7 @@
     "eyebrow": "By water",
     "heading": "A lake loop,",
     "heading_em": "and two waterfalls",
-    "text": "Lake Zwerner is an easy, scenic loop around the reservoir. Flat, beautiful, accessible. Coffee at Jethro's first, then the loop. The perfect easy morning.\n\nAmicalola Falls is the waterfall to see. The East Ridge Loop gives you the best of it. Stop at B.J. Reece Orchards on the way back for cider and doughnuts.\n\nRaven Cliff Falls is for guests who actually want to hike: a stunning waterfall, stream crossings, beautiful forest, real hiking.",
+    "text": "Lake Zwerner is an easy, scenic loop around the reservoir. Flat, beautiful, accessible. Coffee at Jethro's first, then the loop. The perfect easy morning.\n\nAmicalola Falls is the waterfall to see. The East Ridge Loop gives you the best of it. Stop at B.J. Reece Orchards on the way back for cider and doughnuts.\n\nRaven Cliff Falls is for guests who actually want to hike: a stunning waterfall, stream crossings, beautiful forest, real hiking. Stop in Helen after for the mountain coaster.",
     "sources": [
       "loxleyforest/scripts/site/pages/local_guide.py:49-51",
       "loxleyforest/scripts/site/pages/local_guide.py:38-41 (\"the tallest cascading waterfall in Georgia\" left to the fact row, which cites the park)",
@@ -501,10 +505,10 @@
     "eyebrow": "And one you can stay at",
     "heading": "Ask the question",
     "heading_em": "sixty feet up",
-    "text": "Halfway across the bridge, you stop noticing the height and start noticing the silence. That is a good place to ask.\n\nAsk on the bridge at golden hour, by the fire after dark, or on the deck with nothing around you but trees. Tell us which, and we'll help you get the moment right.\n\nThen stay the night. Wake up engaged in the trees.",
+    "text": "Halfway across the bridge, you stop noticing the height and start noticing the silence. That is a good place to ask.\n\nAsk on the bridge at golden hour, by the fire after dark, or on the deck with nothing around you but trees.\n\nThen stay the night. Wake up engaged in the trees.",
     "sources": [
       "loxleyforest@8feb5c7:scripts/site/pages/proposals.py:110",
-      "loxleyforest@8feb5c7:scripts/site/pages/proposals.py:113",
+      "loxleyforest@8feb5c7:scripts/site/pages/proposals.py:113 (\"Tell us which, and we'll help you get the moment right.\" left out: proposals launch in December, log 1437)",
       "loxleyforest@8feb5c7:scripts/site/pages/proposals.py:143",
       "loxleyforest@8feb5c7:proposals.html:66 (h1)",
       "loxleyforest/scripts/site/pages/gallery.py:36 (photo and alt)"
