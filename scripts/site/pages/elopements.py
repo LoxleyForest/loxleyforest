@@ -31,12 +31,12 @@ import build_v2 as B
 
 ACORN = B.ACORN
 
-# The waterfall package's name, said once: its card, its photograph's caption, the form's option and
-# the option's value all read it, so Mick's pick swaps in this one edit. [MICK RATIFIES] the name
-# ("What the owner decides" 3, docs/briefs/2026-10-28-table-elopement-packages.md: The Seventh Season,
-# the table's candidate and this placeholder; Canopy Green; or his own). The Critic's note on the
-# placeholder: the FAQ below names four of the seven seasons.
-WATERFALL_NAME = 'The Seventh Season'
+# The waterfall package's name, said once: its card, the form's option and the option's value all
+# read it, so a change of name is this one edit and a rebuild. The Falls: Mick delegated the name to
+# the CEO seat, 2026-10-30, and the seat's word was set to a plain one a couple would not have to look
+# up (loxley-rescue docs/lantern-log.md). The list field's value does not follow the name
+# (WATERFALL_LIST below).
+WATERFALL_NAME = 'The Falls'
 
 # What the waterfall banner writes into the form's hidden "list" field. It stays the same when the
 # name changes, so every inquiry from the card is counted under one word.
@@ -44,7 +44,7 @@ WATERFALL_LIST = 'waterfall-2027'
 
 
 def slug(name):
-    """'The Seventh Season' -> 'the-seventh-season', the form's option value."""
+    """'The Falls' -> 'the-falls', the form's option value."""
     return re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')
 
 
@@ -88,10 +88,11 @@ PACKAGES = [
 # lines for this card, with the Critic's two fixes (2026-10-30-critic-priced-cards.md): the lead names
 # what it carries from The Vow, not "Everything in The Vow" (which would bring The Vow's two nights and
 # its Fire Circle or Sky Deck vows); the photographs line says where, never "through the day" (Mick,
-# 2026-10-23: no one should read a photographer following them all day). "The calendar is open." is not said: no date can be taken until the agreement
-# carries its words. The photograph is Mick's own of the waterfall on the land (log 2026-10-22 ~14:15;
-# the same frame as branch proposals' proposal-waterfall, a1b4ad1), on the site's gallery since
-# 2026-10-19 as aerial-creek.
+# 2026-10-23: no one should read a photographer following them all day). "The calendar is open." is
+# not said: no date can be taken until the agreement carries its words. The photograph is one of the
+# two Mick sent of the waterfall on 2026-10-30, the falls over the rock shelf with the moss in front,
+# converted from Display P3 to sRGB and made by v2img.py, so the files hold the picture and nothing
+# else (no EXIF, GPS, XMP or colour profile). The gallery keeps aerial-creek as it was.
 WATERFALL = {
     'price': '$10,500',
     'when': 'Summer 2027',
@@ -104,8 +105,8 @@ WATERFALL = {
         'Photographs at the waterfall, and on the bridge at golden hour.'],
     'close': 'One weekend a month, June to September.',
     'banner': 'Get on the list for 2027',
-    'img': 'aerial-creek',
-    'alt': 'A waterfall spilling over mossy rock in a green summer forest',
+    'img': 'waterfall-falls',
+    'alt': 'The waterfall at Loxley Forest, the falls over the rock shelf',
 }
 
 # The line under the cards (agreement: the two of you plus up to six guests; half reserves the date,
