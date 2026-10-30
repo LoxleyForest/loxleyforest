@@ -18,8 +18,9 @@ book now. Its banner scrolls to the form, picks the package there and sets the h
 
 The inquiry form is the same Netlify form: name "elopement-inquiry", the honeypot, the hidden
 form-name, every field name, and the action "/success.html" (check_forms.py). A hidden "page" field
-(2026-10-29) names the page the form was sent from, and a hidden "list" field (2026-10-30), empty
-unless the waterfall banner fills it, names the list. The search landing pages (pages/pseo.py) carry
+(2026-10-29) names the page the form was sent from, and a hidden "list" field (2026-10-30) names the list:
+the banner fills it, and the package dropdown keeps it true (the waterfall's option sets it, any
+other pick clears it). The search landing pages (pages/pseo.py) carry
 this same form, and Netlify reads forms sharing a name as one definition, from the first it meets, so
 both fields are here for theirs to be kept. The waterfall's option value is its name's slug. The
 crossing walk (js/crossing.js) is not on this page by ruling; it is a later decision.
@@ -84,7 +85,10 @@ PACKAGES = [
 
 # The waterfall card (Mick, 2026-10-30). The price is log:3001 ($10,500 plus tax). "Summer 2027" and
 # "a place we are still preparing for summer 2027" are Counsel's W3; the rest are the table's section 7
-# lines for this card. "The calendar is open." is not said: no date can be taken until the agreement
+# lines for this card, with the Critic's two fixes (2026-10-30-critic-priced-cards.md): the lead names
+# what it carries from The Vow, not "Everything in The Vow" (which would bring The Vow's two nights and
+# its Fire Circle or Sky Deck vows); the photographs line says where, never "through the day" (Mick,
+# 2026-10-23: no one should read a photographer following them all day). "The calendar is open." is not said: no date can be taken until the agreement
 # carries its words. The photograph is Mick's own of the waterfall on the land (log 2026-10-22 ~14:15;
 # the same frame as branch proposals' proposal-waterfall, a1b4ad1), on the site's gallery since
 # 2026-10-19 as aerial-creek.
@@ -92,12 +96,12 @@ WATERFALL = {
     'price': '$10,500',
     'when': 'Summer 2027',
     'about': 'Your vows at our waterfall, a place we are still preparing for summer 2027.',
-    'lead': 'Everything in The Vow, and',
+    'lead': 'As in The Vow, an officiant, a bouquet, a boutonniere, a champagne toast, and',
     'items': [
         'Three nights.',
         'Golden hour on the rope bridge after.',
         'A private dinner carried across the bridge to your door.',
-        'Photographs through the day, and one of us with you all of it.'],
+        'Photographs at the waterfall, and on the bridge at golden hour.'],
     'close': 'One weekend a month, June to September.',
     'banner': 'Get on the list for 2027',
     'img': 'aerial-creek',
@@ -288,7 +292,7 @@ def page_elopements():
                 <option value="">Select...</option>
                 <option value="the-vow">The Vow</option>
                 <option value="the-crossing">The Crossing</option>
-                <option value="{slug(WATERFALL_NAME)}">{WATERFALL_NAME}</option>
+                <option value="{slug(WATERFALL_NAME)}" data-list="{WATERFALL_LIST}">{WATERFALL_NAME}</option>
                 <option value="not-sure">Not sure yet, help me decide</option>
               </select>
             </div>
@@ -313,6 +317,21 @@ def page_elopements():
             </div>
 
             <button type="submit" class="lf-btn lf-btn--forest">Inquire about your date</button>
+            <script>
+              // The 2027 list follows the package (the Critic, 2026-10-30): picking the waterfall's
+              // option sets the hidden "list" field to its data-list; any other pick clears it. It sits
+              // inside the form so every page that copies the form (pages/pseo.py) carries it.
+              (function(){{
+                var form = document.currentScript && document.currentScript.closest('form');
+                var pkg = form && form.querySelector('select[name="package"]');
+                var list = form && form.querySelector('input[name="list"]');
+                if (!pkg || !list) return;
+                pkg.addEventListener('change', function(){{
+                  var o = pkg.options[pkg.selectedIndex];
+                  list.value = (o && o.getAttribute('data-list')) || '';
+                }});
+              }})();
+            </script>
           </form>
 
           <p class="lf-inq__talk">Prefer to talk? Call us at <a href="tel:+17065024823">706-502-4823</a> or email <a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a></p>
