@@ -221,6 +221,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <form class="lf-form lf-form--light" name="elopement-inquiry" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" action="/success.html">
             <input type="hidden" name="form-name" value="elopement-inquiry">
             <input type="hidden" name="page" value="/eloping-from-atlanta">
+            <input type="hidden" name="list" value="">
             <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
 
             <div class="lf-form__row">
@@ -261,7 +262,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <option value="">Select...</option>
                 <option value="the-vow">The Vow</option>
                 <option value="the-crossing">The Crossing</option>
-                <option value="the-elevation">The Elevation</option>
+                <option value="the-falls" data-list="waterfall-2027">The Falls</option>
                 <option value="not-sure">Not sure yet, help me decide</option>
               </select>
             </div>
@@ -286,6 +287,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
 
             <button type="submit" class="lf-btn lf-btn--forest">Inquire about your date</button>
+            <script>
+              // The 2027 list follows the package (the Critic, 2026-10-30): picking the waterfall's
+              // option sets the hidden "list" field to its data-list; any other pick clears it. It sits
+              // inside the form so every page that copies the form (pages/pseo.py) carries it.
+              (function(){
+                var form = document.currentScript && document.currentScript.closest('form');
+                var pkg = form && form.querySelector('select[name="package"]');
+                var list = form && form.querySelector('input[name="list"]');
+                if (!pkg || !list) return;
+                pkg.addEventListener('change', function(){
+                  var o = pkg.options[pkg.selectedIndex];
+                  list.value = (o && o.getAttribute('data-list')) || '';
+                });
+              })();
+            </script>
           </form>
           <p class="lf-inq__talk">Prefer to talk? Call us at <a href="tel:+17065024823">706-502-4823</a> or email <a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a></p>
         </div>
