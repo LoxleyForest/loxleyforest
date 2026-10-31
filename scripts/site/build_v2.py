@@ -612,6 +612,19 @@ def page_index():
     return 'index.html', set_schema(head, schema_home()), gtm, body, '/book', True
 
 
+# The interior film beside "The original" (Mick approved the cut by voice, 2026-10-28). Real
+# footage only: ~/footage-in/cuts/interior-rough.mp4 (make_cuts.py, the Canon 4K clips) encoded by
+# make_web.sh beside it, no frame made up. The hero's pattern: the still shows first and stays on
+# reduced motion, Save-Data, a slow connection or no script; the clip has no source until js/v2.js
+# gives it one near the screen, and it plays only while on screen.
+INTERIOR = '''          <figure class="lf-loop lf-rise">
+            <img src="images/interior/interior-poster.jpg" width="720" height="1280" alt="Inside the treehouse by day: the ring chandelier under the canvas peak, triangle windows onto the forest, the queen bed below" loading="lazy" decoding="async">
+            <video class="lf-loop__video" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" data-ready poster="images/interior/interior-poster.jpg"
+              data-desk="images/interior/interior-desk.mp4" data-desk-webm="images/interior/interior-desk.webm" data-phone="images/interior/interior-phone.mp4"></video>
+            <button class="lf-loop__pause" type="button" aria-label="Pause the video" hidden><span></span></button>
+          </figure>'''
+
+
 def page_treehouses():
     head, gtm = head_from('treehouses.html', '<link rel="preload" as="image" type="image/webp" href="images/v2/eq3a0907-1600.webp" media="(min-width: 768px)" fetchpriority="high">\n  <link rel="preload" as="image" type="image/webp" href="images/v2/treehouse-dusk-phone-900.webp" media="(max-width: 767px)" fetchpriority="high">')
     gallery = [('img_0823', 'The treehouse from its deck, the canvas peaks against the forest'),
@@ -635,12 +648,17 @@ def page_treehouses():
     <!-- ========== THE ORIGINAL ========== -->
     <section class="lf-sec lf-light" aria-labelledby="or-h">
       <div class="lf-wrap">
-        <p class="lf-eyebrow lf-rise">The original</p>
-        <h2 class="lf-h2 lf-rise" id="or-h">The treehouse that <em>started everything</em></h2>
-        <p class="lf-lead lf-rise">A queen bed framed by panoramic windows that turn every morning into a painting you've never seen before. A private deck suspended above the forest floor. A pizza oven on your sky deck, because even pizza is better in the canopy.</p>
-        <ul class="lf-chips lf-rise">
-          <li>Sleeps 4 comfortably</li><li>Queen bed</li><li>Full bathroom</li><li>60 feet up</li><li>Private deck</li><li>Heated</li><li>Fire pit</li>
-        </ul>
+        <div class="lf-or">
+          <div>
+            <p class="lf-eyebrow lf-rise">The original</p>
+            <h2 class="lf-h2 lf-rise" id="or-h">The treehouse that <em>started everything</em></h2>
+            <p class="lf-lead lf-rise">A queen bed framed by panoramic windows that turn every morning into a painting you've never seen before. A private deck suspended above the forest floor. A pizza oven on your sky deck, because even pizza is better in the canopy.</p>
+            <ul class="lf-chips lf-rise">
+              <li>Sleeps 4 comfortably</li><li>Queen bed</li><li>Full bathroom</li><li>60 feet up</li><li>Private deck</li><li>Heated</li><li>Fire pit</li>
+            </ul>
+          </div>
+{INTERIOR}
+        </div>
         <div class="lf-chapters lf-gallery">{shots}</div>
       </div>
     </section>
@@ -720,7 +738,9 @@ GIFT_PAGES = ('gift.html', 'gift-card.html', 'gift-thanks.html', 'gift-manage.ht
 OFFER_PAGES = ('elopement-offer.html',)
 
 
-def build(page):
+def render(page):
+    """The page's whole file, (name, html). build() writes it; scripts/site/check_pseo.py
+    compares it with the file on disk."""
     name, head, gtm, body, book, gatehouse = page()
     if name in KEYS_PAGES:
         head = set_keys(head)
@@ -735,6 +755,11 @@ def build(page):
             + '</body>\n</html>\n')
     if name in ROOTED_PAGES:
         html = rooted(html)
+    return name, html
+
+
+def build(page):
+    name, html = render(page)
     open(os.path.join(ROOT, name), 'w').write(html)
     print('wrote', name, len(html))
 
@@ -776,3 +801,8 @@ if __name__ == '__main__':
     open(os.path.join(ROOT, 'css', 'v2-pages.css'), 'w').write(css)
     for p in [page_index, page_treehouses] + [fn for m in mods for fn in m.PAGES]:
         build(p)
+    # A module's steps after every page is written (pages/pseo.py: the search landing pages'
+    # entries in sitemap.xml, and the removal of a landing page its data no longer lists).
+    for m in mods:
+        for fn in getattr(m, 'AFTER', ()):
+            fn()

@@ -13,8 +13,10 @@
      POST /v1/gift/checkout {product, email, giver_name,
           recipient_names, ship_to?{name, line1, line2, city, state
           (two letters), zip (five digits)}, deliver?{email, date
-          "YYYY-MM-DD", hour 0-23 Eastern, message}} -> {url,
-          total_cents}; no deliver: the card goes to the buyer;
+          "YYYY-MM-DD", hour 0-23 Eastern, message}, src?, referrer?}
+          -> {url, total_cents}; no deliver: the card goes to the buyer;
+          src and referrer are the visit's own (gh_entry), when it has
+          them (loxley-rescue forge/gift-counts);
           400 or 503 {error: a sentence}. Stripe returns the buyer to
           /gift/thanks?session_id=..., or to /gift on the way back.
      GET  /v1/gift?code=LF-XXXX-XXXX -> {code, product, name, status
@@ -250,6 +252,17 @@
       // card goes to the buyer.
       var t = f.them;
       if (canDeliver && f.deliver === 'them') b.deliver = { email: t.email.trim(), date: t.day || '', hour: +t.hour, message: t.message.trim() };
+      // Where this visit came from, so the engine can count the sale by it (loxley-rescue
+      // forge/gift-counts, sources.of_sale: it keeps one word, never the referrer whole): the
+      // visit's own entry (js/funnel.js gh_entry, this tab only), never the long-lived attribution
+      // (gh_attr, loxley_attribution). A missing or broken entry never stops a sale.
+      try {
+        var entry = JSON.parse(sessionStorage.getItem('gh_entry') || 'null');
+        if (entry && typeof entry === 'object') {
+          if (typeof entry.src === 'string' && entry.src) b.src = entry.src;
+          if (typeof entry.referrer === 'string' && entry.referrer) b.referrer = entry.referrer;
+        }
+      } catch (e) {}
       return b;
     }
 
@@ -299,9 +312,8 @@
     }
 
     // The purchase step: the whole amount, from the engine, right before Stripe. Never in the
-    // page's prose (Mick, 2026-10-19). A Google Ads conversion for a gift bought is NOT here: it
-    // would fire on Stripe's return, a page view of /gift/thanks, as an Ads account change
-    // (Mick's clicks).
+    // page's prose (Mick, 2026-10-19). The Google Ads conversion for a gift bought is not here: it
+    // fires on /gift/thanks (Sold, below), only once the engine says the session is paid.
     function confirm(res, b) {
       var total = Number(res.total_cents);
       var amount = [];
@@ -587,12 +599,51 @@
     if (d.printed) printed.textContent = w('thanks_printed'); else printed.hidden = true;
   }
 
+  // ============================================ /gift/thanks: the sale, for the tag manager
+
+  // Stripe returns the buyer here when the session completes: paid, or a bank payment still
+  // clearing. The engine says which; nothing is counted until it answers paid.
+  // GET /v1/gift/sold?session_id= (the engine, the Forge 2026-10-29) -> {paid: true|false, cents:
+  // the amount paid}; 404 for anything that is not a gift session. As /booked counts a stay
+  // (js/gatehouse-stay.js purchase): the session goes to our own booking server and nowhere else,
+  // the sale is pushed once per session in this tab, its id a one-way hash of the session so no tag
+  // ever holds a key. An error, a 404 or paid false: nothing pushed. Never a name, an email or the
+  // note. The event is gift_purchase, not purchase: the booking engine's Ads tag fires on every
+  // purchase event, on any page (container version 7), so a purchase here would count a card as a
+  // booked stay. Google Ads counts it once Mick's action "Gift - Golden Arrow" and its tag exist
+  // (loxley-rescue docs/site-tags.md).
+  var SOLD_EVENT = 'gift_purchase';
+  var SESSION_ID = /^cs_(live|test)_\w{1,250}$/;
+  function saleId(s) {
+    if (!(window.crypto && crypto.subtle && window.TextEncoder)) return Promise.resolve('');
+    return crypto.subtle.digest('SHA-256', new TextEncoder().encode('loxley-gift:' + s)).then(function (b) {
+      return 'lf-' + Array.prototype.map.call(new Uint8Array(b).slice(0, 8), function (x) { return ('0' + x.toString(16)).slice(-2); }).join('');
+    }).catch(function () { return ''; });
+  }
+  function Sold(root) {
+    var API = (root.getAttribute('data-api') || '').replace(/\/$/, '');
+    var sid = String((window.__ghKeys || {}).session_id || '');
+    if (!API || !SESSION_ID.test(sid)) return;
+    G.api(API, '/v1/gift/sold?session_id=' + encodeURIComponent(sid), null, 12000).then(function (r) {
+      var cents = Number(r && r.cents);
+      if (!r || r.paid !== true || !isFinite(cents) || cents <= 0) return;
+      return saleId(sid).then(function (id) {
+        var seen = 'ga_purchase_' + (id || 'x');
+        try { if (sessionStorage.getItem(seen)) return; sessionStorage.setItem(seen, '1'); } catch (e) {}
+        var data = { value: Math.round(cents) / 100, currency: 'USD' };
+        if (id) data.transaction_id = id;
+        data.item = PRODUCT;
+        G.track(SOLD_EVENT, data);
+      });
+    }).catch(function () {});
+  }
+
   var buy = document.getElementById('ga-buy');
   if (buy) Buy(buy);
   var page = document.getElementById('ga-card-page');
   if (page) Card(page);
   var thanks = document.getElementById('ga-thanks');
-  if (thanks) Thanks(thanks);
+  if (thanks) { Sold(thanks); Thanks(thanks); }
   var manage = document.getElementById('ga-manage');
   if (manage) Manage(manage);
 })();

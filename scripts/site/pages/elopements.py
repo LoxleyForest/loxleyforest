@@ -1,82 +1,173 @@
 """The elopements page: the bridge as the aisle, the three packages, the inquiry.
 
-Every fact, package, price and inclusion is the old elopements.html's. The inquiry form is the
-same Netlify form: name "elopement-inquiry", the honeypot, the hidden form-name, every field name
-and option value, and the action "/elopements?submitted=1" with its thank-you script. Only the
-visible option labels lost their dashes. The crossing walk (js/crossing.js) is not on this page
-by ruling; it is a later decision.
+The three cards (Mick, 2026-10-30, by voice: "add the pricing. Just make sure the value is there";
+loxley-rescue docs/lantern-log.md, its entry of 15:54 ET that day, which reverses his 2026-10-19 ruling
+of no prices on the site). The Vow and The Crossing print at bare prices with the lines of the
+Strategist's section 7 (loxley-rescue docs/briefs/2026-10-28-table-elopement-packages.md), word for
+word. The rope bridge is the aisle in every package, so no line puts it behind a tier (the Critic,
+2026-10-30-critic-close-package.md: keep "the bridge as your aisle" in The Vow). The gifts are given,
+never priced (Letter Law 1); the dinner is "a private dinner" (Law 7). The Elevation is off the page:
+the round froze its lines as its own for the one couple who was sent it (log 2026-10-28 ~11:05).
+
+The third card is the waterfall package for summer 2027, shown but shadowed (Mick: "there but
+strategically shadowed out, beautiful picture of the waterfall, price and a tantalizing description
+with a banner"). It takes no retainer and no date: its agreement words (Counsel, 2026-10-29) are not
+set. Its words come only from Counsel's W3 and the table, and never say pre-sale, reserve, deposit or
+book now. Its banner scrolls to the form, picks the package there and sets the hidden "list" field to
+"waterfall-2027", so the inquiry says which card it came from.
+
+The inquiry form is the same Netlify form: name "elopement-inquiry", the honeypot, the hidden
+form-name, every field name, and the action "/success.html" (check_forms.py). A hidden "page" field
+(2026-10-29) names the page the form was sent from, and a hidden "list" field (2026-10-30) names the list:
+the banner fills it, and the package dropdown keeps it true (the waterfall's option sets it, any
+other pick clears it). The search landing pages (pages/pseo.py) carry
+this same form, and Netlify reads forms sharing a name as one definition, from the first it meets, so
+both fields are here for theirs to be kept. The waterfall's option value is its name's slug. The
+crossing walk (js/crossing.js) is not on this page by ruling; it is a later decision.
 """
+import re
+
 import build_v2 as B
 
 ACORN = B.ACORN
 
+# The waterfall package's name, said once: its card, the form's option and the option's value all
+# read it, so a change of name is this one edit and a rebuild. The Falls: Mick delegated the name to
+# the CEO seat, 2026-10-30, and the seat's word was set to a plain one a couple would not have to look
+# up (loxley-rescue docs/lantern-log.md). The list field's value does not follow the name
+# (WATERFALL_LIST below).
+WATERFALL_NAME = 'The Falls'
+
+# What the waterfall banner writes into the form's hidden "list" field. It stays the same when the
+# name changes, so every inquiry from the card is counted under one word.
+WATERFALL_LIST = 'waterfall-2027'
+
+
+def slug(name):
+    """'The Falls' -> 'the-falls', the form's option value."""
+    return re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')
+
+
 SPACES = [
     ('eq3a0154', 'The rope bridge from the side, an oak trunk in the foreground', 'The Rope Bridge', 'The crossing',
      'One hundred feet of suspended pathway between two ancient white oaks. The bridge becomes the aisle. The canopy becomes the cathedral. There is no other wedding aisle like this in the Southeast.',
-     'With The Crossing and The Elevation.'),
+     'The aisle in every package.'),
     ('img_1717', 'The stone fire pit on the forest floor, ringed with ferns', 'The Fire Circle', 'Fire as witness',
      'A boulder fire pit that looks like it emerged from the earth centuries ago, set at the four compass points. It echoes traditions that have existed for thousands of years.',
      'With every package.'),
-    ('img_2546', 'The treehouse deck with chairs, above the forest', 'The Canopy Deck', 'Privacy measured in altitude',
+    ('img_2546', 'The treehouse deck with chairs, above the forest', 'The Sky Deck', 'Privacy measured in altitude',
      'An intimate ceremony on the private deck of your treehouse, sixty feet in the air. Just you, your partner, your officiant, and the sky.',
      'With every package.'),
 ]
 
+# The gifts, in every card: said as given, never priced, no dollar figure beside them (Letter Law 1;
+# Mick, 2026-10-28 ~07:30 ET). "And from us:" comes before them.
+GIFTS = 'And from us: The Morning After, champagne brunch carried across the bridge, and a small cake.'
+
+# (name, bare price, the line under the price, lead, items, the closing line). Bare prices: never
+# "from" or "starting at", because no weekday price or seasonal premium exists (table section 7).
+# The waterfall card is not here: it is shadowed and built by waterfall() below.
 PACKAGES = [
-    ('Intimate', 'The Vow', '$4,500', None, [
-        '2-night treehouse stay',
-        'Choice of ceremony site: the Fire Circle or the treehouse deck',
-        'Vetted officiant',
-        'Seasonal bouquet and boutonniere',
-        'Champagne toast',
-        'Romantic room preparation'],
-     'The Crossing and The Elevation include our signature rope bridge ceremony.'),
-    ('Signature', 'The Crossing', '$7,500', 'Everything in The Vow, plus', [
-        'The rope bridge ceremony',
-        "The Builder's Tour with Mick",
-        'Golden hour timing',
-        'Photography coordination',
-        'Curated dinner',
-        'The Morning After',
-        'Celebration cake'],
+    ('The Vow', '$4,500', None, None, [
+        'Two nights in the treehouse.',
+        'Your vows at the Fire Circle, or on the Sky Deck with the rope bridge as your aisle.',
+        'An officiant, and photographs of your ceremony.',
+        'A bouquet, a boutonniere, a champagne toast.'],
      None),
-    ('Ultimate', 'The Elevation', '$10,500', 'Everything in The Crossing, plus', [
-        'Private chef dinner',
-        "Photography timed to the day's best moments",
-        'Floral ceremony arch',
-        'Premium welcome hamper',
-        'Celebration brunch',
-        'Full day-of coordination'],
+    ('The Crossing', '$6,500', None, 'Everything in The Vow, and', [
+        'Your vows out on the rope bridge, at golden hour.',
+        'A private dinner carried across the bridge to your door.',
+        'Two hours of photographs, on the bridge and in the forest.',
+        'Your day planned with Mick, hour by hour.',
+        "The Builder's Tour."],
      None),
 ]
+
+# The waterfall card (Mick, 2026-10-30). The price is log:3001 ($10,500 plus tax). "Summer 2027" and
+# "a place we are still preparing for summer 2027" are Counsel's W3; the rest are the table's section 7
+# lines for this card, with the Critic's two fixes (2026-10-30-critic-priced-cards.md): the lead names
+# what it carries from The Vow, not "Everything in The Vow" (which would bring The Vow's two nights and
+# its Fire Circle or Sky Deck vows); the photographs line says where, never "through the day" (Mick,
+# 2026-10-23: no one should read a photographer following them all day). "The calendar is open." is
+# not said: no date can be taken until the agreement carries its words. The photograph is one of the
+# two Mick sent of the waterfall on 2026-10-30, the falls over the rock shelf with the moss in front,
+# converted from Display P3 to sRGB and made by v2img.py, so the files hold the picture and nothing
+# else (no EXIF, GPS, XMP or colour profile). The gallery keeps aerial-creek as it was.
+WATERFALL = {
+    'price': '$10,500',
+    'when': 'Summer 2027',
+    'about': 'Your vows at our waterfall, a place we are still preparing for summer 2027.',
+    'lead': 'As in The Vow, an officiant, a bouquet, a boutonniere, a champagne toast, and',
+    'items': [
+        'Three nights.',
+        'Golden hour on the rope bridge after.',
+        'A private dinner carried across the bridge to your door.',
+        'Photographs at the waterfall, and on the bridge at golden hour.'],
+    'close': 'One weekend a month, June to September.',
+    'banner': 'Get on the list for 2027',
+    'img': 'waterfall-falls',
+    'alt': 'The waterfall at Loxley Forest, the falls over the rock shelf',
+}
+
+# The line under the cards (agreement: the two of you plus up to six guests; half reserves the date,
+# the balance thirty days before arrival). The waterfall card takes no retainer until its agreement
+# words exist and Counsel has read them, so the retainer sentence names the two tiers it is true for.
+UNDER_CARDS = 'Each is for the two of you and up to six guests. For The Vow and The Crossing, half reserves your date; the rest is due thirty days before you arrive.'
 
 FAQ = [
     ('How many guests can attend?',
-     'Our elopement experiences are designed for 2 to 20 people. Intimate by design. The bridge is rated for eight people at one time, everyone counted: on the bridge that is the two of you, your officiant, and up to five more, your photographer among them. Every guest is part of your private celebration: your closest people, sharing your night in the canopy. Because Loxley Forest is our home and yours during your stay, all ceremony guests are welcomed as part of your booking party.'),
+     'Each package is for the two of you and up to six guests. Intimate by design. The bridge is rated for eight people at one time, everyone counted: on the bridge that is the two of you, your officiant, and up to five more, your photographer among them. Every guest is part of your private celebration: your closest people, sharing your night in the canopy. Because Loxley Forest is our home and yours during your stay, all ceremony guests are welcomed as part of your booking party.'),
+    # No officiant is named in the record: the answer says only what the agreement does.
     ('Do you provide an officiant?',
-     'We keep a curated list of officiants who know this property and understand how to hold a ceremony in the canopy.'),
+     'We arrange your officiant.'),
+    # "Our preferred photographers have shot at Loxley before" is off: no photographer is named in
+    # the record, and "They know the light" leaned on it. What every card says stands in its place.
     ('What about photography?',
-     'Our preferred photographers have shot at Loxley before. They know the light. They know that the rope bridge at golden hour produces images that will stop anyone mid-scroll.'),
+     'Every package includes photographs of your ceremony. The rope bridge at golden hour produces images that will stop anyone mid-scroll.'),
     ("What's the best season?",
      'We have seven seasons, and every one is dramatic. Wildflower brings soft light and mountain laurel. Canopy Green brings fireflies. Color Turn is a cathedral of gold and crimson. Frost Season strips the canopy to its bones and reveals views you can\'t see the rest of the year.'),
+    # "We've hosted ceremonies in every kind of weather" is off: the first ceremony is Dec 15, 2026.
     ('What about weather?',
-     'Rain in the mountains is its own kind of magic, and your photographer will love it. Every couple receives a weather contingency plan. The canopy provides natural protection. We\'ve hosted ceremonies in every kind of weather.'),
+     'Rain in the mountains is its own kind of magic, and your photographer will love it. Every couple receives a weather contingency plan. The canopy provides natural protection.'),
     ('Can we elope on a weekday?',
-     "Absolutely, and we'll love you for it. Weekday ceremonies get the best light, the quietest forest, and preferred pricing."),
+     "Absolutely, and we'll love you for it. Weekday ceremonies get the best light and the quietest forest."),
 ]
 
 
-def package(eyebrow, name, price, lead, items, note):
+def package(name, price, when, lead, items, close):
+    # The Crossing keeps the dark card as the middle of three; no badge, no claim on it.
     featured = name == 'The Crossing'
-    badge = '<p class="lf-pkg__badge">Most popular</p>' if featured else ''
+    when_html = f'<p class="lf-pkg__when">{when}</p>' if when else ''
     lead_html = f'<p class="lf-pkg__lead">{lead}:</p>' if lead else ''
     lis = ''.join(f'<li>{i}</li>' for i in items)
-    note_html = f'<p class="lf-pkg__note">{note}</p>' if note else ''
+    close_html = f'<p class="lf-pkg__note">{close}</p>' if close else ''
     return f'''          <article class="lf-pkg{' lf-pkg--featured' if featured else ''} lf-rise">
-            {badge}<p class="lf-eyebrow">{eyebrow}</p>
             <h3 class="lf-h3 lf-pkg__name">{name}</h3>
-            {lead_html}<ul class="lf-acorns lf-pkg__list">{lis}</ul>
-            {note_html}<a href="#inquiry" class="lf-link lf-pkg__go">Inquire for your date</a>
+            <p class="lf-pkg__price">{price} <span>plus tax</span></p>
+            {when_html}{lead_html}<ul class="lf-acorns lf-pkg__list">{lis}</ul>
+            <p class="lf-pkg__gift">{GIFTS}</p>
+            {close_html}<a href="#inquiry" class="lf-link lf-pkg__go">Inquire for your date</a>
+          </article>
+'''
+
+
+def waterfall():
+    """The third card, shadowed: the photograph and the words dimmed, the banner bright. It has no
+    "Inquire for your date" link, because it takes no date; the banner is its only way to the form."""
+    w = WATERFALL
+    lis = ''.join(f'<li>{i}</li>' for i in w['items'])
+    photo = B.pic(w['img'], w['alt'], '(min-width: 900px) 33vw, 100vw', cls='lf-pkg__img')
+    return f'''          <article class="lf-pkg lf-pkg--soon lf-rise" aria-labelledby="pk-water">
+            <div class="lf-pkg__photo">{photo}<span class="lf-pkg__tag">{w['when']}</span></div>
+            <div class="lf-pkg__shade">
+            <h3 class="lf-h3 lf-pkg__name" id="pk-water">{WATERFALL_NAME}</h3>
+            <p class="lf-pkg__price">{w['price']} <span>plus tax</span></p>
+            <p class="lf-pkg__when">{w['about']}</p>
+            <p class="lf-pkg__lead">{w['lead']}:</p><ul class="lf-acorns lf-pkg__list">{lis}</ul>
+            <p class="lf-pkg__gift">{GIFTS}</p>
+            <p class="lf-pkg__note">{w['close']}</p>
+            </div>
+            <a href="#inquiry" class="lf-pkg__list-go" data-list="{WATERFALL_LIST}" data-package="{slug(WATERFALL_NAME)}">{w['banner']}</a>
           </article>
 '''
 
@@ -87,7 +178,7 @@ def page_elopements():
         f'<figure class="lf-space lf-rise">{B.pic(img, alt, "(min-width: 900px) 33vw, 100vw")}<figcaption>'
         f'<span class="lf-chapter__n">{kicker}</span><h3 class="lf-h3">{title}</h3><p>{words}</p><p class="lf-space__note">{note}</p></figcaption></figure>'
         for img, alt, title, kicker, words, note in SPACES)
-    packages = ''.join(package(*p) for p in PACKAGES)
+    packages = ''.join(package(*p) for p in PACKAGES) + waterfall()
     faq = ''.join(f'<details class="lf-faq__item"><summary>{q}</summary><p>{a}</p></details>' for q, a in FAQ)
     body = f'''
     <!-- ========== HERO: the aisle ========== -->
@@ -134,7 +225,7 @@ def page_elopements():
         </div>
         <div class="lf-pkgs">
 {packages}        </div>
-        <p class="lf-pkgs__small lf-rise">Weekday ceremonies receive preferred pricing. Peak season, September to November, carries a seasonal premium. Custom packages available: tell us your vision.</p>
+        <p class="lf-pkgs__small lf-rise">{UNDER_CARDS}</p>
       </div>
     </section>
 
@@ -160,6 +251,8 @@ def page_elopements():
         <div class="lf-inq__wrap lf-rise">
           <form class="lf-form lf-form--light" name="elopement-inquiry" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" action="/success.html">
             <input type="hidden" name="form-name" value="elopement-inquiry">
+            <input type="hidden" name="page" value="/elopements">
+            <input type="hidden" name="list" value="">
             <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
 
             <div class="lf-form__row">
@@ -200,7 +293,7 @@ def page_elopements():
                 <option value="">Select...</option>
                 <option value="the-vow">The Vow</option>
                 <option value="the-crossing">The Crossing</option>
-                <option value="the-elevation">The Elevation</option>
+                <option value="{slug(WATERFALL_NAME)}" data-list="{WATERFALL_LIST}">{WATERFALL_NAME}</option>
                 <option value="not-sure">Not sure yet, help me decide</option>
               </select>
             </div>
@@ -225,6 +318,21 @@ def page_elopements():
             </div>
 
             <button type="submit" class="lf-btn lf-btn--forest">Inquire about your date</button>
+            <script>
+              // The 2027 list follows the package (the Critic, 2026-10-30): picking the waterfall's
+              // option sets the hidden "list" field to its data-list; any other pick clears it. It sits
+              // inside the form so every page that copies the form (pages/pseo.py) carries it.
+              (function(){{
+                var form = document.currentScript && document.currentScript.closest('form');
+                var pkg = form && form.querySelector('select[name="package"]');
+                var list = form && form.querySelector('input[name="list"]');
+                if (!pkg || !list) return;
+                pkg.addEventListener('change', function(){{
+                  var o = pkg.options[pkg.selectedIndex];
+                  list.value = (o && o.getAttribute('data-list')) || '';
+                }});
+              }})();
+            </script>
           </form>
 
           <p class="lf-inq__talk">Prefer to talk? Call us at <a href="tel:+17065024823">706-502-4823</a> or email <a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a></p>
@@ -244,6 +352,17 @@ def page_elopements():
           if (form) form.style.display = 'none';
           if (success) success.hidden = false;
         }}
+        // The waterfall banner: the click scrolls to the form (js/global.js) and this marks the
+        // inquiry as the 2027 list's and picks the package. Without script the link still scrolls.
+        var go = document.querySelector('.lf-pkg__list-go');
+        if (go) go.addEventListener('click', function(){{
+          var form = document.querySelector('form[name="elopement-inquiry"]');
+          if (!form) return;
+          var list = form.querySelector('input[name="list"]');
+          var pkg = form.querySelector('select[name="package"]');
+          if (list) list.value = go.getAttribute('data-list');
+          if (pkg) pkg.value = go.getAttribute('data-package');
+        }});
       }})();
     </script>
 
@@ -272,13 +391,14 @@ CSS = '''
 .lf-pkgs { display: grid; gap: 22px; margin-top: 48px; }
 .lf-pkg { position: relative; background: var(--cream, #fff); border: 1px solid rgba(61, 50, 40, 0.14); padding: 34px 26px 28px; display: flex; flex-direction: column; }
 .lf-pkg--featured { background: var(--forest-deep); color: var(--on-dark); border-color: var(--forest-deep); }
-.lf-pkg--featured .lf-eyebrow, .lf-pkg--featured .lf-pkg__lead { color: var(--on-dark-muted); }
+.lf-pkg--featured .lf-pkg__lead, .lf-pkg--featured .lf-pkg__note { color: var(--on-dark-muted); }
 .lf-pkg--featured .lf-acorns b, .lf-pkg--featured .lf-pkg__name { color: var(--on-dark); }
-.lf-pkg__badge { position: absolute; top: -12px; left: 26px; margin: 0; padding: 4px 12px; background: var(--linen); color: var(--forest-deep); border: 1px solid var(--forest-deep); font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 0.625rem; letter-spacing: 0.2em; text-transform: uppercase; }
-.lf-pkg .lf-eyebrow { margin-bottom: 8px; }
+.lf-pkg--featured .lf-pkg__gift { color: var(--on-dark); border-top-color: rgba(247, 243, 237, 0.24); }
 .lf-pkg__name { font-size: 2.2rem; color: var(--forest-deep); }
 .lf-pkg__price { margin: 14px 0 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 300; font-size: 2.4rem; line-height: 1; font-variant-numeric: lining-nums; }
-.lf-pkg__price span { display: block; margin-bottom: 6px; font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 0.6875rem; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.75; }
+.lf-pkg__price span { display: block; margin-top: 8px; font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 0.6875rem; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.75; }
+.lf-pkg__when { margin: 18px 0 0; font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 1.35rem; line-height: 1.3; }
+.lf-pkg__gift { margin: 20px 0 0; padding-top: 16px; border-top: 1px solid rgba(61, 50, 40, 0.16); font-size: 1.05rem; line-height: 1.55; }
 .lf-pkg__lead { margin: 24px 0 0; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--stone); }
 .lf-pkg__list { margin-top: 18px; gap: 10px; }
 .lf-pkg__list li { font-size: 1.08rem; }
@@ -286,6 +406,21 @@ CSS = '''
 .lf-pkg__note { margin: 18px 0 0; font-size: 1rem; font-style: italic; color: var(--stone); }
 .lf-pkg__go { margin-top: auto; padding-top: 22px; align-self: flex-start; }
 @media (min-width: 900px) { .lf-pkgs { grid-template-columns: repeat(3, 1fr); align-items: stretch; margin-top: 64px; } .lf-pkg { padding: 40px 32px 32px; } }
+/* The waterfall card, shadowed (Mick, 2026-10-30): a darker ground, the photograph desaturated under a
+   veil, every word in stone; the banner alone at full strength. Colours, not opacity, do the dimming,
+   so the words keep their contrast (stone on the card's ground is above 4.5:1). */
+.lf-pkg--soon { padding-top: 0; overflow: hidden; background: linear-gradient(180deg, var(--parchment), #e7e1d6); color: var(--stone); }
+.lf-pkg--soon .lf-pkg__name, .lf-pkg--soon .lf-pkg__price, .lf-pkg--soon .lf-pkg__lead, .lf-pkg--soon .lf-pkg__note, .lf-pkg--soon .lf-pkg__gift, .lf-pkg--soon .lf-acorns b { color: var(--stone); }
+.lf-pkg--soon .lf-pkg__shade { display: flex; flex-direction: column; }
+.lf-pkg__photo { position: relative; margin: 0 -26px 28px; }
+.lf-pkg__img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; filter: saturate(0.5) brightness(0.78); }
+.lf-pkg__photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(20, 36, 24, 0.1), rgba(20, 36, 24, 0.55)); pointer-events: none; }
+.lf-pkg__tag { position: absolute; left: 22px; bottom: 16px; z-index: 1; font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 0.6875rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--on-dark); }
+.lf-pkg__list-go { display: block; margin: auto -26px -28px; padding: 20px 22px; background: var(--forest-deep); color: var(--linen); text-align: center; text-decoration: none; font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 0.8125rem; letter-spacing: 0.16em; text-transform: uppercase; }
+.lf-pkg--soon .lf-pkg__shade + .lf-pkg__list-go { margin-top: 26px; }
+.lf-pkg__list-go:hover { opacity: 0.92; }
+.lf-pkg__list-go:focus-visible { outline: 2px solid var(--forest-deep); outline-offset: 3px; }
+@media (min-width: 900px) { .lf-pkg--soon { padding-top: 0; } .lf-pkg__photo { margin: 0 -32px 30px; } .lf-pkg__list-go { margin: 26px -32px -32px; } .lf-pkg--soon .lf-pkg__shade { flex: 1; } }
 .lf-pkgs__small { max-width: 40rem; margin: 36px auto 0; text-align: center; font-size: 1.05rem; color: var(--stone); }
 
 .lf-faq { max-width: 820px; }

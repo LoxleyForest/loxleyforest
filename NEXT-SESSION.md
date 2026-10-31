@@ -1,3 +1,38 @@
+# IN FLIGHT · 2026-10-29 · the gift checkout carries its visit's source (merged, ceo/gift-source c720d77)
+
+js/gift.js body() adds src and referrer from sessionStorage gh_entry (the visit's own; never gh_attr or loxley_attribution) inside a try/catch; the engine's forge/gift-counts records the word on the sale once deployed; until then the live engine ignores the two fields. Checks: node scripts/site/check_gift.js (227).
+
+---
+
+# IN FLIGHT · 2026-10-29 · the Golden Arrow's sale for Google Ads (branch ceo/gift-conversion)
+
+/gift/thanks (js/gift.js Sold) pushes `gift_purchase` {value, currency USD, transaction_id (a hash
+of the Stripe session), item golden-arrow} once per session, and only when the engine's
+GET /v1/gift/sold?session_id= answers paid (Stripe also returns a buyer whose bank payment is still
+clearing). That engine read is the Forge's (loxley-rescue) and goes live with Mick's next deploy
+paste; until then it answers 404, so the page pushes nothing and nothing counts, which is right.
+The Google Ads action "Gift - Golden Arrow" and its tag wait on Mick's clicks (the list in
+loxley-rescue docs/site-tags.md); then its label goes in GIFT_LABEL in
+scripts/site/check_conversions.js, which says "awaiting Mick's label" until it does. Checks:
+node scripts/site/check_gift.js; node scripts/site/check_conversions.js.
+
+---
+
+# IN FLIGHT · 2026-10-29 · the interior film on /treehouses (branch ceo/interior-video)
+
+Mick approved the interior rough cut by voice (2026-10-28). It sits beside "The original" on
+/treehouses, the gallery under it, every photo kept. Files: images/interior/ (desk mp4 and webm,
+phone mp4, poster jpg), encoded on the workshop from ~/footage-in/cuts/interior-rough.mp4 by
+~/footage-in/cuts/make_web.sh (real frames only, no grade; each video under the hero's matching one;
+the poster is a 118,107-byte jpg against the hero's 85,110-byte webp, a webp near 90 KB is a later nit).
+The film's width follows the screen's height, so all of it shows under the header at any shape.
+The still paints first; js/v2.js gives the clip a source only after load and once it is on screen
+(the 720 phone file whenever the film is 400 px wide or less, so a desktop column takes it too);
+reduced motion, Save-Data and slow connections keep the still. Re-encode: run make_web.sh, copy
+web/interior-* into images/interior/ (mp4s need git add -f: .gitignore has *.mp4, as for the hero).
+
+---
+
 # IN FLIGHT · 2026-10-27 · an elopement package offer's private page (branch forge/elopement-offer)
 
 /elopement/offer (elopement-offer.html, scripts/site/pages/offer.py, js/offer.js): the page a couple
