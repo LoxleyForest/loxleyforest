@@ -74,7 +74,10 @@ PACKAGES = [
         'An officiant, and photographs of your ceremony.',
         'A bouquet, a boutonniere, a champagne toast.'],
      None),
-    ('The Crossing', '$6,500', None, 'Everything in The Vow, and', [
+    # The Crossing's lead names what it carries from The Vow, as The Falls' does (Mick's yes, 2026-10-31;
+    # the Critic, loxley-rescue docs/briefs/2026-10-31-critic-packages-c2.md, "Two more" item 2): the
+    # engine's Crossing (C2) has its vows on the bridge, never The Vow's Fire Circle or Sky Deck choice.
+    ('The Crossing', '$6,500', None, 'As in The Vow, an officiant, a bouquet, a boutonniere, a champagne toast, and', [
         'Your vows out on the rope bridge, at golden hour.',
         'A private dinner carried across the bridge to your door.',
         'Two hours of photographs, on the bridge and in the forest.',
@@ -87,7 +90,7 @@ PACKAGES = [
 # "a place we are still preparing for summer 2027" are Counsel's W3; the rest are the table's section 7
 # lines for this card, with the Critic's two fixes (2026-10-30-critic-priced-cards.md): the lead names
 # what it carries from The Vow, not "Everything in The Vow" (which would bring The Vow's two nights and
-# its Fire Circle or Sky Deck vows); the photographs line says where, never "through the day" (Mick,
+# its Fire Circle or Sky Deck vows; The Crossing's lead takes the same form since 2026-10-31); the photographs line says where, never "through the day" (Mick,
 # 2026-10-23: no one should read a photographer following them all day). "The calendar is open." is
 # not said: no date can be taken until the agreement carries its words. The photograph is one of the
 # two Mick sent of the waterfall on 2026-10-30, the falls over the rock shelf with the moss in front,
