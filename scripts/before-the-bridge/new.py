@@ -18,7 +18,7 @@ The stay (the arrival day is --check-in):
                             two nights or more, else the arrival. The Morning After is the morning after it.
 The package (the contents of loxley-rescue gatehouse/offers.py PACKAGES):
   --package                 the-vow or the-crossing. The Crossing brings its dinner, The Morning
-                            After and its cake. The waterfall package (the-seventh-season) is
+                            After and its cake. The waterfall package (the-falls) is
                             refused: its words wait for Mick's ear.
   --site                    where the vows are: fire-circle, deck or either (The Vow's choice);
                             bridge (The Crossing's default; The Crossing may also take The Vow's).
@@ -70,7 +70,7 @@ PACKAGES = {  # key: (name, sites it may take, its default site)
     "the-crossing": ("The Crossing", ("bridge", "fire-circle", "deck", "either"), "bridge"),
 }
 REFUSED_PACKAGES = {
-    "the-seventh-season": "the waterfall package's words wait for Mick's ear (every waterfall line "
+    "the-falls": "the waterfall package's words wait for Mick's ear (every waterfall line "
                           "in loxley-rescue gatehouse/offers.py is unheard); no page until he has "
                           "said yes to them",
 }

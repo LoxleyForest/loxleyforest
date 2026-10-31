@@ -80,7 +80,7 @@ const SHAPES = [
   ['The Crossing, the two of them, pizza, every hold set', '--check-in 2027-07-09 --check-out 2027-07-11 --package the-crossing --no-alcohol --own-photographer --waterfall --pizza-night', true],
 ];
 const REFUSALS = [
-  ['the waterfall package', '--check-in 2027-06-04 --check-out 2027-06-07 --package the-seventh-season --alcohol --house-photographs --no-waterfall'],
+  ['the waterfall package', '--check-in 2027-06-04 --check-out 2027-06-07 --package the-falls --alcohol --house-photographs --no-waterfall'],
   ['the bridge left open on the bridge', '--check-in 2027-03-05 --check-out 2027-03-07 --package the-crossing --site bridge --bridge-open --alcohol --house-photographs --no-waterfall'],
   ['a ceremony outside the stay', '--check-in 2027-04-16 --check-out 2027-04-18 --ceremony 2027-04-18 --package the-vow --site deck --alcohol --house-photographs --no-waterfall'],
   ['seven children', '--check-in 2027-04-16 --check-out 2027-04-18 --package the-vow --site deck --alcohol --house-photographs --no-waterfall --children 7'],
