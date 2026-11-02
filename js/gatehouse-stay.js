@@ -185,6 +185,10 @@
       return problem('This request did not become a booking, and nothing was charged: the hold on your card has been released.');
     }
     G.track('gh_requested', { gh_answer_hours: n });
+    // The page's fixed "Things you can ask us for" asks them to reply to a confirmation email they
+    // do not have yet: not shown while the request waits.
+    var add = document.getElementById('add');
+    if (add) { add.hidden = true; add.style.display = 'none'; }
     if (title) title.textContent = 'Your request is in.';
     document.title = 'Request sent | Loxley Forest';
     var by = r.answer_by ? answerBy(r.answer_by) : '';

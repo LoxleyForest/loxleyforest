@@ -632,11 +632,13 @@ async function main() {
     await page.goto(BASE + '/booked?session_id=cs_test_check');
     await page.waitForFunction(() => /request/i.test((document.getElementById('gh-title') || {}).textContent || ''), null, { timeout: 10000 });
     const v = await page.evaluate(() => ({ h1: document.getElementById('gh-title').textContent, text: document.getElementById('gatehouse-stay').textContent,
-      dl: (window.dataLayer || []).map((x) => x && x.event).filter(Boolean), manage: !!document.querySelector('a[href^="/manage"]') }));
+      dl: (window.dataLayer || []).map((x) => x && x.event).filter(Boolean), manage: !!document.querySelector('a[href^="/manage"]'),
+      add: (() => { const n = document.getElementById('add'); return n ? n.getBoundingClientRect().height : -1; })() }));
     check(v.h1 === 'Your request is in.', 'the return page: "' + v.h1 + '"');
     check(/Nothing is charged\./.test(v.text) && /We answer within 4 hours\./.test(v.text) && /Authorized, not charged/.test(v.text), 'it says nothing is charged and we answer within 4 hours');
     check(!v.dl.includes('purchase') && v.dl.includes('gh_requested'), 'no purchase pushed (the booking tag fires on any purchase); gh_requested instead (' + v.dl.join(', ') + ')');
     check(!v.manage && !/You're booked/.test(v.text), 'no manage link and no "You\'re booked" while it waits');
+    check(v.add === 0, 'the fixed "Reply to your confirmation email" section is not shown while it waits (height ' + v.add + ')');
     await shot(page, 'request-booked.png');
     await ctx.close();
   }
