@@ -135,6 +135,8 @@
 .lf-pkg__lead + .lf-pkg__list { margin-top: 14px; }
 .lf-pkg__note { margin: 18px 0 0; font-size: 1rem; font-style: italic; color: var(--stone); }
 .lf-pkg__go { margin-top: auto; padding-top: 22px; align-self: flex-start; }
+/* A card with two links (Firelight, 2026-11-02): the second sits under the first. */
+.lf-pkg__go + .lf-pkg__go { margin-top: 0; padding-top: 14px; }
 @media (min-width: 900px) { .lf-pkgs { grid-template-columns: repeat(3, 1fr); align-items: stretch; margin-top: 64px; } .lf-pkg { padding: 40px 32px 32px; } }
 /* The waterfall card, shadowed (Mick, 2026-10-30): a darker ground, the photograph desaturated under a
    veil, every word in stone; the banner alone at full strength. Colours, not opacity, do the dimming,

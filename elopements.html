@@ -113,7 +113,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="lf-wrap">
         <div class="lf-center">
           <p class="lf-eyebrow lf-rise">Elopement packages</p>
-          <h2 class="lf-h2 lf-rise" id="pk-h">Three tiers. <em>One unforgettable beginning.</em></h2>
+          <h2 class="lf-h2 lf-rise" id="pk-h">Four tiers. <em>One unforgettable beginning.</em></h2>
           <p class="lf-lead lf-rise">Every Loxley elopement is personally coordinated. Share your vision and we'll design something extraordinary. No two ceremonies are the same.</p>
         </div>
         <div class="lf-pkgs">
@@ -123,6 +123,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <ul class="lf-acorns lf-pkg__list"><li>Two nights in the treehouse.</li><li>Your vows at the Fire Circle, or on the Sky Deck with the rope bridge as your aisle.</li><li>An officiant, and photographs of your ceremony.</li><li>A bouquet, a boutonniere, a champagne toast.</li></ul>
             <p class="lf-pkg__gift">And from us: The Morning After, champagne brunch carried across the bridge, and a small cake.</p>
             <a href="#inquiry" class="lf-link lf-pkg__go">Inquire for your date</a>
+          </article>
+          <article class="lf-pkg lf-rise">
+            <h3 class="lf-h3 lf-pkg__name">Firelight</h3>
+            <p class="lf-pkg__price">$2,500 <span>plus tax</span></p>
+            <ul class="lf-acorns lf-pkg__list"><li>One night in the treehouse.</li><li>Your vows at the Fire Circle, its fire lit for your ceremony.</li><li>An officiant, and photographs of your ceremony.</li><li>A bouquet, a boutonniere, a champagne toast.</li></ul>
+            <p class="lf-pkg__gift">And from us: The Morning After, champagne brunch carried across the bridge, and a small cake.</p>
+            <p class="lf-pkg__note">Monday to Thursday nights, through June 30, 2027.</p><p class="lf-pkg__note">Now and then a weekend night comes open a week or two out, when someone's plans change. Firelight can go there too. We can't promise one. If you'd like word when one does, get on the list.</p><a href="#inquiry" class="lf-link lf-pkg__go" data-package="firelight">Inquire for your date</a>
+            <a href="#inquiry" class="lf-link lf-pkg__go" data-list="firelight-weekend" data-package="firelight">Get on the list for a weekend</a>
           </article>
           <article class="lf-pkg lf-pkg--featured lf-rise">
             <h3 class="lf-h3 lf-pkg__name">The Crossing</h3>
@@ -144,7 +152,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <a href="#inquiry" class="lf-pkg__list-go" data-list="waterfall-2027" data-package="the-falls">Get on the list for 2027</a>
           </article>
         </div>
-        <p class="lf-pkgs__small lf-rise">Each is for the two of you and up to six guests. For The Vow and The Crossing, half reserves your date; the rest is due thirty days before you arrive.</p>
+        <p class="lf-pkgs__small lf-rise">Each is for the two of you and up to six guests. For The Vow, Firelight, and The Crossing, half reserves your date; the rest is due thirty days before you arrive.</p>
       </div>
     </section>
 
@@ -252,6 +260,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <select id="el-package" name="package">
                 <option value="">Select...</option>
                 <option value="the-vow">The Vow</option>
+                <option value="firelight">Firelight</option>
                 <option value="the-crossing">The Crossing</option>
                 <option value="the-falls" data-list="waterfall-2027">The Falls</option>
                 <option value="not-sure">Not sure yet, help me decide</option>
@@ -312,16 +321,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           if (form) form.style.display = 'none';
           if (success) success.hidden = false;
         }
-        // The waterfall banner: the click scrolls to the form (js/global.js) and this marks the
-        // inquiry as the 2027 list's and picks the package. Without script the link still scrolls.
-        var go = document.querySelector('.lf-pkg__list-go');
-        if (go) go.addEventListener('click', function(){
-          var form = document.querySelector('form[name="elopement-inquiry"]');
-          if (!form) return;
-          var list = form.querySelector('input[name="list"]');
-          var pkg = form.querySelector('select[name="package"]');
-          if (list) list.value = go.getAttribute('data-list');
-          if (pkg) pkg.value = go.getAttribute('data-package');
+        // The cards' links that name a package (the waterfall banner, and since 2026-11-02 both of
+        // Firelight's): the click scrolls to the form (js/global.js) and this picks the package and
+        // sets the hidden "list" field to the link's data-list, or clears it for a link with none,
+        // as the dropdown does. Without script the links still scroll.
+        Array.prototype.forEach.call(document.querySelectorAll('#packages a[data-package]'), function(go){
+          go.addEventListener('click', function(){
+            var form = document.querySelector('form[name="elopement-inquiry"]');
+            if (!form) return;
+            var list = form.querySelector('input[name="list"]');
+            var pkg = form.querySelector('select[name="package"]');
+            if (list) list.value = go.getAttribute('data-list') || '';
+            if (pkg) pkg.value = go.getAttribute('data-package');
+          });
         });
       })();
     </script>

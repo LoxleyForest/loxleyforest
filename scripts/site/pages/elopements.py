@@ -1,4 +1,4 @@
-"""The elopements page: the bridge as the aisle, the three packages, the inquiry.
+"""The elopements page: the bridge as the aisle, the four packages, the inquiry.
 
 The three cards (Mick, 2026-10-30, by voice: "add the pricing. Just make sure the value is there";
 loxley-rescue docs/lantern-log.md, its entry of 15:54 ET that day, which reverses his 2026-10-19 ruling
@@ -42,6 +42,15 @@ WATERFALL_NAME = 'The Falls'
 # name changes, so every inquiry from the card is counted under one word.
 WATERFALL_LIST = 'waterfall-2027'
 
+# Firelight, the fourth card, after The Vow (Mick's yes by ear, 2026-11-02 ~09:15 ET, every word on
+# the card and the six calls behind it; foundry docs/decisions.md, its two 2026-11-02 entries of
+# ~09:00 and ~09:15 ET). One night, Monday to Thursday, the last night Wednesday June 30, 2027; a
+# weekend night only when a cancellation opens one, with a list for word of it. Its two links name
+# the package (data-package), and the weekend link also sets the hidden "list" field to
+# FIRELIGHT_LIST, the same mechanism as the waterfall banner.
+FIRELIGHT_NAME = 'Firelight'
+FIRELIGHT_LIST = 'firelight-weekend'
+
 
 def slug(name):
     """'The Falls' -> 'the-falls', the form's option value."""
@@ -64,8 +73,10 @@ SPACES = [
 # Mick, 2026-10-28 ~07:30 ET). "And from us:" comes before them.
 GIFTS = 'And from us: The Morning After, champagne brunch carried across the bridge, and a small cake.'
 
-# (name, bare price, the line under the price, lead, items, the closing line). Bare prices: never
-# "from" or "starting at", because no weekday price or seasonal premium exists (table section 7).
+# (name, bare price, the line under the price, lead, items, the closing line or lines[, the links]).
+# Bare prices: never "from" or "starting at", because no weekday price or seasonal premium exists
+# (table section 7). The links, when given, are (words, data-list or None) and each names the
+# card's package; without them the card has the one plain "Inquire for your date".
 # The waterfall card is not here: it is shadowed and built by waterfall() below.
 PACKAGES = [
     ('The Vow', '$4,500', None, None, [
@@ -74,6 +85,17 @@ PACKAGES = [
         'An officiant, and photographs of your ceremony.',
         'A bouquet, a boutonniere, a champagne toast.'],
      None),
+    # Firelight (Mick, 2026-11-02; FIRELIGHT_NAME above): The Vow's shape, its words exactly as he
+    # approved them; the notes in the form The Falls card uses for its note.
+    (FIRELIGHT_NAME, '$2,500', None, None, [
+        'One night in the treehouse.',
+        'Your vows at the Fire Circle, its fire lit for your ceremony.',
+        'An officiant, and photographs of your ceremony.',
+        'A bouquet, a boutonniere, a champagne toast.'],
+     ['Monday to Thursday nights, through June 30, 2027.',
+      "Now and then a weekend night comes open a week or two out, when someone's plans change. Firelight can go there too. We can't promise one. If you'd like word when one does, get on the list."],
+     [('Inquire for your date', None),
+      ('Get on the list for a weekend', FIRELIGHT_LIST)]),
     # The Crossing's lead names what it carries from The Vow, as The Falls' does (Mick's yes, 2026-10-31;
     # the Critic, loxley-rescue docs/briefs/2026-10-31-critic-packages-c2.md, "Two more" item 2): the
     # engine's Crossing (C2) has its vows on the bridge, never The Vow's Fire Circle or Sky Deck choice.
@@ -120,8 +142,10 @@ WATERFALL = {
 
 # The line under the cards (agreement: the two of you plus up to six guests; half reserves the date,
 # the balance thirty days before arrival). The waterfall card takes no retainer until its agreement
-# words exist and Counsel has read them, so the retainer sentence names the two tiers it is true for.
-UNDER_CARDS = 'Each is for the two of you and up to six guests. For The Vow and The Crossing, half reserves your date; the rest is due thirty days before you arrive.'
+# words exist and Counsel has read them, so the retainer sentence names the tiers it is true for.
+# Firelight on the same terms, the two of you and up to six guests, half down (Mick's yes, 2026-11-02;
+# foundry docs/decisions.md, ~09:15 ET).
+UNDER_CARDS = 'Each is for the two of you and up to six guests. For The Vow, Firelight, and The Crossing, half reserves your date; the rest is due thirty days before you arrive.'
 
 FAQ = [
     ('How many guests can attend?',
@@ -143,19 +167,28 @@ FAQ = [
 ]
 
 
-def package(name, price, when, lead, items, close):
-    # The Crossing keeps the dark card as the middle of three; no badge, no claim on it.
+def package(name, price, when, lead, items, close, links=None):
+    # The Crossing keeps the dark card; no badge, no claim on it.
     featured = name == 'The Crossing'
     when_html = f'<p class="lf-pkg__when">{when}</p>' if when else ''
     lead_html = f'<p class="lf-pkg__lead">{lead}:</p>' if lead else ''
     lis = ''.join(f'<li>{i}</li>' for i in items)
-    close_html = f'<p class="lf-pkg__note">{close}</p>' if close else ''
+    notes = [close] if isinstance(close, str) else (close or [])
+    close_html = ''.join(f'<p class="lf-pkg__note">{n}</p>' for n in notes)
+    if links:
+        go_html = '\n            '.join(
+            f'<a href="#inquiry" class="lf-link lf-pkg__go"'
+            + (f' data-list="{lst}"' if lst else '')
+            + f' data-package="{slug(name)}">{words}</a>'
+            for words, lst in links)
+    else:
+        go_html = '<a href="#inquiry" class="lf-link lf-pkg__go">Inquire for your date</a>'
     return f'''          <article class="lf-pkg{' lf-pkg--featured' if featured else ''} lf-rise">
             <h3 class="lf-h3 lf-pkg__name">{name}</h3>
             <p class="lf-pkg__price">{price} <span>plus tax</span></p>
             {when_html}{lead_html}<ul class="lf-acorns lf-pkg__list">{lis}</ul>
             <p class="lf-pkg__gift">{GIFTS}</p>
-            {close_html}<a href="#inquiry" class="lf-link lf-pkg__go">Inquire for your date</a>
+            {close_html}{go_html}
           </article>
 '''
 
@@ -229,7 +262,7 @@ def page_elopements():
       <div class="lf-wrap">
         <div class="lf-center">
           <p class="lf-eyebrow lf-rise">Elopement packages</p>
-          <h2 class="lf-h2 lf-rise" id="pk-h">Three tiers. <em>One unforgettable beginning.</em></h2>
+          <h2 class="lf-h2 lf-rise" id="pk-h">Four tiers. <em>One unforgettable beginning.</em></h2>
           <p class="lf-lead lf-rise">Every Loxley elopement is personally coordinated. Share your vision and we'll design something extraordinary. No two ceremonies are the same.</p>
         </div>
         <div class="lf-pkgs">
@@ -302,6 +335,7 @@ def page_elopements():
               <select id="el-package" name="package">
                 <option value="">Select...</option>
                 <option value="the-vow">The Vow</option>
+                <option value="{slug(FIRELIGHT_NAME)}">{FIRELIGHT_NAME}</option>
                 <option value="the-crossing">The Crossing</option>
                 <option value="{slug(WATERFALL_NAME)}" data-list="{WATERFALL_LIST}">{WATERFALL_NAME}</option>
                 <option value="not-sure">Not sure yet, help me decide</option>
@@ -362,16 +396,19 @@ def page_elopements():
           if (form) form.style.display = 'none';
           if (success) success.hidden = false;
         }}
-        // The waterfall banner: the click scrolls to the form (js/global.js) and this marks the
-        // inquiry as the 2027 list's and picks the package. Without script the link still scrolls.
-        var go = document.querySelector('.lf-pkg__list-go');
-        if (go) go.addEventListener('click', function(){{
-          var form = document.querySelector('form[name="elopement-inquiry"]');
-          if (!form) return;
-          var list = form.querySelector('input[name="list"]');
-          var pkg = form.querySelector('select[name="package"]');
-          if (list) list.value = go.getAttribute('data-list');
-          if (pkg) pkg.value = go.getAttribute('data-package');
+        // The cards' links that name a package (the waterfall banner, and since 2026-11-02 both of
+        // Firelight's): the click scrolls to the form (js/global.js) and this picks the package and
+        // sets the hidden "list" field to the link's data-list, or clears it for a link with none,
+        // as the dropdown does. Without script the links still scroll.
+        Array.prototype.forEach.call(document.querySelectorAll('#packages a[data-package]'), function(go){{
+          go.addEventListener('click', function(){{
+            var form = document.querySelector('form[name="elopement-inquiry"]');
+            if (!form) return;
+            var list = form.querySelector('input[name="list"]');
+            var pkg = form.querySelector('select[name="package"]');
+            if (list) list.value = go.getAttribute('data-list') || '';
+            if (pkg) pkg.value = go.getAttribute('data-package');
+          }});
         }});
       }})();
     </script>
@@ -415,6 +452,8 @@ CSS = '''
 .lf-pkg__lead + .lf-pkg__list { margin-top: 14px; }
 .lf-pkg__note { margin: 18px 0 0; font-size: 1rem; font-style: italic; color: var(--stone); }
 .lf-pkg__go { margin-top: auto; padding-top: 22px; align-self: flex-start; }
+/* A card with two links (Firelight, 2026-11-02): the second sits under the first. */
+.lf-pkg__go + .lf-pkg__go { margin-top: 0; padding-top: 14px; }
 @media (min-width: 900px) { .lf-pkgs { grid-template-columns: repeat(3, 1fr); align-items: stretch; margin-top: 64px; } .lf-pkg { padding: 40px 32px 32px; } }
 /* The waterfall card, shadowed (Mick, 2026-10-30): a darker ground, the photograph desaturated under a
    veil, every word in stone; the banner alone at full strength. Colours, not opacity, do the dimming,
