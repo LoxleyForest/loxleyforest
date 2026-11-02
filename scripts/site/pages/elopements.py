@@ -9,7 +9,7 @@ word. The rope bridge is the aisle in every package, so no line puts it behind a
 never priced (Letter Law 1); the dinner is "a private dinner" (Law 7). The Elevation is off the page:
 the round froze its lines as its own for the one couple who was sent it (log 2026-10-28 ~11:05).
 
-The third card is the waterfall package for summer 2027, shown but shadowed (Mick: "there but
+The third card is the waterfall package, from October 2027, shown but shadowed (Mick: "there but
 strategically shadowed out, beautiful picture of the waterfall, price and a tantalizing description
 with a banner"). It takes no retainer and no date: its agreement words (Counsel, 2026-10-29) are not
 set. Its words come only from Counsel's W3 and the table, and never say pre-sale, reserve, deposit or
@@ -87,7 +87,7 @@ PACKAGES = [
 ]
 
 # The waterfall card (Mick, 2026-10-30). The price is log:3001 ($10,500 plus tax). "Summer 2027" and
-# "a place we are still preparing for summer 2027" are Counsel's W3; the rest are the table's section 7
+# "a place we are still preparing for summer 2027" were Counsel's W3; the rest are the table's section 7
 # lines for this card, with the Critic's two fixes (2026-10-30-critic-priced-cards.md): the lead names
 # what it carries from The Vow, not "Everything in The Vow" (which would bring The Vow's two nights and
 # its Fire Circle or Sky Deck vows; The Crossing's lead takes the same form since 2026-10-31); the photographs line says where, never "through the day" (Mick,
@@ -96,17 +96,23 @@ PACKAGES = [
 # two Mick sent of the waterfall on 2026-10-30, the falls over the rock shelf with the moss in front,
 # converted from Display P3 to sRGB and made by v2img.py, so the files hold the picture and nothing
 # else (no EXIF, GPS, XMP or colour profile). The gallery keeps aerial-creek as it was.
+# The season (2026-11-02): Mick ruled The Falls opens no earlier than Friday, October 1, 2027, its end
+# not ruled (loxley-rescue gatehouse/offers.py WATERFALL_SEASON). Only the season's words changed, to
+# the plainest true form, the Forge's pick for Mick's ear: "Summer 2027" became "From October 2027",
+# "for summer 2027" became "for October 2027", and "June to September" became "from October 2027".
+# loxley-rescue tests/test_gatehouse_offers.py section 21 reads this card from elopements.html and
+# fails when its words and the engine's Falls lines, price, gifts or season differ.
 WATERFALL = {
     'price': '$10,500',
-    'when': 'Summer 2027',
-    'about': 'Your vows at our waterfall, a place we are still preparing for summer 2027.',
+    'when': 'From October 2027',
+    'about': 'Your vows at our waterfall, a place we are still preparing for October 2027.',
     'lead': 'As in The Vow, an officiant, a bouquet, a boutonniere, a champagne toast, and',
     'items': [
         'Three nights.',
         'Golden hour on the rope bridge after.',
         'A private dinner carried across the bridge to your door.',
         'Photographs at the waterfall, and on the bridge at golden hour.'],
-    'close': 'One weekend a month, June to September.',
+    'close': 'One weekend a month, from October 2027.',
     'banner': 'Get on the list for 2027',
     'img': 'waterfall-falls',
     'alt': 'The waterfall at Loxley Forest, the falls over the rock shelf',
