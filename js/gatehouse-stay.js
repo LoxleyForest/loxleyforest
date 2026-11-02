@@ -65,7 +65,7 @@
     var when = p.status === 'succeeded' ? 'Paid'
       : p.status === 'failed' ? 'Due now: the card did not go through'
       : p.status === 'pending' ? 'Confirming'
-      : p.status === 'authorized' ? 'Authorized'
+      : p.status === 'authorized' ? 'Authorized, not charged'
       : p.due_on ? 'Will be charged on ' + long(p.due_on)
       : 'Due';
     return [el('dt', {}, [el('span', { text: name }), el('small', { text: when })]), el('dd', { text: money(p.amount_cents) })];
@@ -140,6 +140,12 @@
     var tries = 0;
     (function load() {
       call('/v1/booked?session_id=' + encodeURIComponent(sid)).then(function (stay) {
+        // A request to book (loxley-rescue GATEHOUSE-SPEC 20): nothing was charged, so no purchase.
+        if (stay.kind === 'request') {
+          var st = (stay.request || {}).status;
+          if (st === 'paying' && tries < 6) { tries++; setTimeout(load, 2500); return; }
+          return requested(stay);
+        }
         if (!active(stay) && stay.status !== 'cancelled' && tries < 6) {
           tries++;
           if (title) title.textContent = 'Payment received';
@@ -158,6 +164,44 @@
         welcome(stay, kind);
       }).catch(function (e) { problem(e.message); });
     })();
+  }
+
+  // A request to book, back from Stripe's page: the card is authorized, not charged, and we answer
+  // within the engine's hours. No purchase is pushed: nothing was bought (the booking tag fires on
+  // any purchase). Approved, it reads as booked; let go, it says nothing was charged.
+  function answerBy(stamp) {
+    try {
+      var d = new Date(stamp);
+      if (isNaN(d)) return '';
+      return d.toLocaleString('en-US', { timeZone: 'America/New_York', weekday: 'long', hour: 'numeric', minute: '2-digit' }) + ' Eastern';
+    } catch (e) { return ''; }
+  }
+  function requested(stay) {
+    var r = stay.request || {}, n = Number(r.answer_hours) || 4;
+    if (r.status === 'approved' && active(stay)) return welcome(stay, 'booked');
+    if (r.status === 'released') {
+      if (title) title.textContent = 'Your request';
+      document.title = 'Your request | Loxley Forest';
+      return problem('This request did not become a booking, and nothing was charged: the hold on your card has been released.');
+    }
+    G.track('gh_requested', { gh_answer_hours: n });
+    if (title) title.textContent = 'Your request is in.';
+    document.title = 'Request sent | Loxley Forest';
+    var by = r.answer_by ? answerBy(r.answer_by) : '';
+    show([
+      stayCard(stay, 'Your request'),
+      el('section', { 'class': 'gh-panel', 'aria-labelledby': 'gh-next-h' }, [
+        el('h2', { 'class': 'gh-eyebrow', id: 'gh-next-h', text: 'What happens next' }),
+        el('ol', { 'class': 'gh-next' }, [
+          el('li', {}, [el('b', { text: 'Now. ' }), 'Nothing is charged. Your card is authorized for ' + money(stay.total_cents) +
+            ', and the charge goes through only if we approve.']),
+          el('li', {}, [el('b', { text: (by ? 'By ' + by : 'Within ' + n + ' hour' + (n === 1 ? '' : 's')) + '. ' }),
+            'We answer within ' + n + ' hour' + (n === 1 ? '' : 's') + '. If we approve, you are booked and your confirmation email follows. ' +
+            'If not, the hold on your card is released and nothing is charged.'])
+        ]),
+        el('p', { 'class': 'gh-fine' }, ['Questions? Call or text ', el('a', { href: G.TEL, text: PHONE }), '. We answer fast.'])
+      ])
+    ]);
   }
 
   // The purchase for the tag manager. Its id is a one-way hash of the payment session, so
