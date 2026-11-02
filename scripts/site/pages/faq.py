@@ -140,6 +140,7 @@ def page_faq():
         <div class="lf-rise">
           <form class="lf-form" name="faq-contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/success.html">
             <input type="hidden" name="form-name" value="faq-contact">
+            {B.ATTR_FIELDS}
             <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
             <label for="faq-name">Name</label>
             <input type="text" id="faq-name" name="name" required autocomplete="name">

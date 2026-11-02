@@ -1,3 +1,16 @@
+# IN FLIGHT · 2026-11-02 · the ad click on every inquiry form (branch forge/form-clicks)
+
+Every Netlify form now carries hidden gclid, gbraid, wbraid, utm_source, utm_campaign and
+landing_page (build_v2.ATTR_FIELDS, data-lf-attr). js/global.js fills them from the first ad click
+it kept (loxley_attribution, 90 days). your-adventure.html loads no global.js, so it has its own
+four-line filler. /book's form keeps its own older fields (pages/book.py). check_forms.py now
+fails the deploy if any Netlify form has no gclid field. On the live pages before this branch,
+8 of 11 forms failed it, including all four elopement forms. The engine reads them with
+loxley-rescue `python3 -m gatehouse.clicks` (GATEHOUSE-SPEC 22): counts only, nothing stored. The
+privacy page's sentence for it is [MICK RATIFIES] (the spec has the proposed words).
+
+---
+
 # IN FLIGHT · 2026-10-29 · the gift checkout carries its visit's source (merged, ceo/gift-source c720d77)
 
 js/gift.js body() adds src and referrer from sessionStorage gh_entry (the visit's own; never gh_attr or loxley_attribution) inside a try/catch; the engine's forge/gift-counts records the word on the sale once deployed; until then the live engine ignores the two fields. Checks: node scripts/site/check_gift.js (227).

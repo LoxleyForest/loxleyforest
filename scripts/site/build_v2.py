@@ -339,6 +339,21 @@ def _reviews():
 REVIEWS = _reviews()
 
 
+# The ad click on every inquiry form (2026-11-02, loxley-rescue GATEHOUSE-SPEC 22): Google's click id
+# (gclid, or gbraid/wbraid from an iPhone), the campaign words and the page the ad landed on, as
+# js/global.js kept them from the visit's first ad click (90 days, the conversion window). global.js
+# fills each field by its data-lf-attr; a visit that came from no ad sends them empty. Netlify keeps
+# them with the inquiry, so a couple who books later can be traced to the ad that brought them.
+# /book's form has its own (pages/book.py). check_forms.py fails a form without gclid.
+ATTR_FIELDS = (
+    '<input type="hidden" name="gclid" data-lf-attr="gclid">\n'
+    '            <input type="hidden" name="gbraid" data-lf-attr="gbraid">\n'
+    '            <input type="hidden" name="wbraid" data-lf-attr="wbraid">\n'
+    '            <input type="hidden" name="utm_source" data-lf-attr="utm_source">\n'
+    '            <input type="hidden" name="utm_campaign" data-lf-attr="utm_campaign">\n'
+    '            <input type="hidden" name="landing_page" data-lf-attr="landing">')
+
+
 def treehouse_two():
     return f'''    <section class="lf-sec lf-dark" id="treehouse-two" aria-labelledby="t2-h">
       <div class="lf-wrap lf-split">
@@ -348,6 +363,7 @@ def treehouse_two():
           <p class="lf-lead lf-rise">Same hand-built craft. Same sixty-foot elevation. A different view of the same forest. The first nights go to the list.</p>
           <form class="lf-signup lf-rise" name="treehouse-2-list" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" data-lf-ajax action="/success.html">
             <input type="hidden" name="form-name" value="treehouse-2-list">
+            {ATTR_FIELDS}
             <p hidden><label>Leave this empty <input name="bot-field"></label></p>
             <label for="t2-email">Your email</label>
             <input id="t2-email" type="email" name="email" required autocomplete="email" placeholder="you@example.com">

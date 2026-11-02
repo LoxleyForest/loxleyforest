@@ -13,6 +13,10 @@
    90 days to match the conversion window set on both Google Ads
    conversion actions. Stored first-party, in this site's own
    localStorage. Nothing is sent anywhere by this file.
+
+   It also fills the hidden ad fields on the site's inquiry forms
+   (data-lf-attr, 2026-11-02, loxley-rescue GATEHOUSE-SPEC 22), so
+   an inquiry carries the click that brought it when the guest sends it.
    ============================================================ */
 (function () {
   var KEY = 'loxley_attribution';
@@ -64,6 +68,16 @@
       return current.gclid || current.gbraid || current.wbraid || '';
     }
   };
+
+  function fill() {
+    var inputs = document.querySelectorAll('input[data-lf-attr]');
+    for (var i = 0; i < inputs.length; i++) {
+      var v = current[inputs[i].getAttribute('data-lf-attr')];
+      if (v && !inputs[i].value) inputs[i].value = String(v).slice(0, 300);
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fill);
+  else fill();
 })();
 
 /* ============================================================
