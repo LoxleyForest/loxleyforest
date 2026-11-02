@@ -7,7 +7,7 @@ four-line filler. /book's form keeps its own older fields (pages/book.py). check
 fails the deploy if any Netlify form has no gclid field. On the live pages before this branch,
 8 of 11 forms failed it, including all four elopement forms. The engine reads them with
 loxley-rescue `python3 -m gatehouse.clicks` (GATEHOUSE-SPEC 22): counts only, nothing stored. The
-privacy page's sentence for it is [MICK RATIFIES] (the spec has the proposed words).
+privacy page says so in Mick's words (his yes, 2026-11-02), shipped in the same push.
 
 ---
 

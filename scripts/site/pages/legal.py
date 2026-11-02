@@ -60,10 +60,12 @@ TERMS = ('Terms &amp; Conditions', 'The Ground Rules', 'Written like a conversat
 # while the talk card leaves a trail marker (the trail marker is not new). When the hold is
 # switched on, this line goes in PRIVACY right after the checkout-lead line, on Mick's yes:
 #   <p>If you ask us to hold your nights, we use your email to hold them and to send you the link to book them, and for nothing else.</p>
+# The ad click line: Mick's yes, 2026-11-02, shipped with the click fields on every form (loxley-rescue GATEHOUSE-SPEC 22).
 PRIVACY = ('Privacy', 'Your Privacy at Loxley', 'Simple, plain-spoken, and personal.', '''
       <p>We keep this simple because we believe it should be.</p>
       <p>When you book a stay, submit an inquiry, or join our email list, we collect the information you provide — your name, email, phone number, and stay preferences. That's it.</p>
       <p>If you type your email at checkout and leave before paying, we keep it with the dates you chose so we can write to you personally about them, and it never joins our email list unless you tick the box.</p>
+      <p>If one of our ads brought you here, your inquiry or booking also keeps that ad's click code, so we can tell which ads bring guests.</p>
       <p>We use this information for one purpose: to communicate with you about your stay, your experience, and occasional updates from the forest. We will never sell, rent, or share your personal information with third parties. Period.</p>
       <p>If you receive emails from us and decide you'd rather not, every email includes an unsubscribe link that works immediately. No hoops.</p>
       <p>We use cookies to understand how visitors interact with our website so we can make it better. No personal data is sold through these tools.</p>
