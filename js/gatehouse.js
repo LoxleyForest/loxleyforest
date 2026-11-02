@@ -265,7 +265,8 @@
           opts.onChange(c); return;
         }
         c.checkIn = day; c.checkOut = null;
-        c.note = 'Arriving ' + short(day) + '. Now choose your check-out day.';
+        // Inside the engine's lead time, by request (loxley-rescue GATEHOUSE-SPEC 20): the quote card says how.
+        c.note = 'Arriving ' + short(day) + (c.nights[day].request ? ', by request' : '') + '. Now choose your check-out day.';
       } else {
         var why = c.stayOk(c.checkIn, day);
         if (why) { c.note = why; if (opts.onRefuse) opts.onRefuse(why, c.checkIn); opts.onChange(c); return; }
@@ -729,7 +730,18 @@
   // Nothing to pay today: only when a credit or the gift covers it.
   function coveredToday(q, mode) { return creditUsed(q) + giftUsed(q) > 0 && !summaryFor(q, mode).today_cents; }
 
+  // A request to book (loxley-rescue GATEHOUSE-SPEC 20): check-in is inside the engine's lead
+  // time, so the card is authorized, not charged, until we answer. The engine's own hours.
+  function isRequest(q) { return !!(q && q.request); }
+  function requestWords(q) {
+    var r = q.request || {}, n = Number(r.answer_hours) || 4, lead = Number(r.lead_hours) || 48;
+    return 'Check-in is less than ' + lead + ' hours away, so this is a request to book. Your card is authorized for ' +
+      money(q.quote.total_cents) + ' but not charged. We answer within ' + n + ' hour' + (n === 1 ? '' : 's') +
+      ': if we approve, the charge goes through and you are booked; if not, the hold on your card is released and nothing is charged.';
+  }
+
   function planLine(mode, q) {
+    if (isRequest(q)) return { title: 'Request to book, ' + money(q.quote.total_cents), sub: 'Authorized now, charged only if we approve.' };
     var s = summaryFor(q, mode), pct = (q.promise || {}).retainer_pct, used = creditUsed(q) + giftUsed(q);
     var gift = giftUsed(q) > 0, by = gift ? gw('book_name') : 'your credit';
     if (used && !s.today_cents && !s.balance_cents) {
@@ -789,6 +801,7 @@
   function ctaText(q, mode, forDetails) {
     var s = summaryFor(q, mode);
     if (coveredToday(q, mode)) return giftUsed(q) ? gw('book_cta') : 'Book with your credit';
+    if (isRequest(q)) return forDetails ? 'Continue to request · ' + money(s.today_cents) + ' authorized' : 'Request for ' + money(s.today_cents);
     if (forDetails) return 'Continue to payment · ' + money(s.today_cents) + ' today';
     return mode === 'deposit' ? 'Reserve for ' + money(s.today_cents)
       : mode === 'affirm' ? 'Continue with Affirm' : 'Book for ' + money(s.today_cents);
@@ -925,7 +938,7 @@
       giftNotice(q),
       extendOffer(q),
       creditNotice(q),
-      allCovered ? null : plansLine(q),
+      allCovered ? null : isRequest(q) ? el('p', { 'class': 'gh-plans gh-request', role: 'note', text: requestWords(q) }) : plansLine(q),
       // The gift's own line above already says nothing is left; a credit says it here.
       allCovered ? (giftUsed(q) ? null : el('p', { 'class': 'gh-lead gh-covered', text: 'Your credit covers this stay. Nothing to pay, today or later.' })) : options,
       el('button', { type: 'button', 'class': 'lf-btn gh-cta', onclick: function () { toCheckout(false); }, text: ctaText(q, state.payMode) }),
@@ -934,7 +947,7 @@
       // Book button's row, so it never covers the total, the pay choice or the button.
       el('div', { 'class': 'gh-talk-slot' }),
       // A stay the gift covers in full has nothing to hold: no trail marker.
-      giftUsed(q) && !leftToPay(q) ? null : markerBlock(q)
+      (giftUsed(q) && !leftToPay(q)) || isRequest(q) ? null : markerBlock(q)
     ]));
   }
 
@@ -1188,7 +1201,7 @@
     var s = summaryFor(q, mode);
     var dl = el('dl', { 'class': 'gh-lines gh-lines--summary' }, [
       el('dt', { 'class': 'gh-total', text: 'Total' }), el('dd', { 'class': 'gh-total', text: money(q.quote.total_cents) }),
-      el('dt', { text: 'Due today' }), el('dd', { text: money(s.today_cents) })
+      el('dt', { text: isRequest(q) ? 'Authorized today, not charged' : 'Due today' }), el('dd', { text: money(s.today_cents) })
     ]);
     if (s.balance_cents) {
       dl.appendChild(el('dt', { text: 'Balance, will be charged on ' + long(s.balance_on) }));
@@ -1211,6 +1224,7 @@
       dl,
       changePassed(s.change_until, cal.checkIn) ? null : el('p', { 'class': 'gh-change' }, [el('span', { text: 'Last moment to move or cancel' }),
         el('strong', { text: changeUntil(s.change_until, cal.checkIn) })]),
+      isRequest(q) ? el('p', { 'class': 'gh-fine gh-request', text: requestWords(q) }) : null,
       mode === 'full' && q.gift_if_paid_in_full ? el('p', { 'class': 'gh-fine', text: giftLine(q.gift_if_paid_in_full) }) : null,
       CREDIT && !creditUsed(q) ? creditNotice(q) : null,
       GIFT && !giftUsed(q) ? giftNotice(q) : null
@@ -1324,6 +1338,8 @@
     if (CREDIT && state.credit && creditUsed(state.quote)) body.credit = CREDIT;
     if (GIFT && giftUsed(state.quote)) body.gift = GIFT;
     if (HOLD) { body.hold = HOLD; body.visit = VISIT; }   // the engine matches a hold to its visit
+    // Only a page that showed the guest it is a request may start one (the engine refuses otherwise).
+    if (isRequest(state.quote)) body.request = true;
     // Same details, same dates: reuse the checkout already opened, never a second claim
     // on the guest's own nights (a retry must not lock them out). heard_from and list_opt_in are
     // left out of the key on purpose: changing either after payment opened reuses the first
@@ -1357,7 +1373,9 @@
         head.replaceChildren(
           el('p', { 'class': 'gh-eyebrow', text: 'Secure payment' }),
           el('p', { 'class': 'gh-dates', text: span(cal.checkIn, cal.checkOut) }),
-          el('p', { 'class': 'gh-lead', text: money(due) + ' due today, of ' + money(res.total_cents || state.quote.quote.total_cents) + '.' }),
+          el('p', { 'class': 'gh-lead', text: isRequest(state.quote)
+            ? money(due) + ' authorized on your card, not charged. We answer within ' + ((res.request && res.request.answer_hours) || (state.quote.request.answer_hours) || 4) + ' hours.'
+            : money(due) + ' due today, of ' + money(res.total_cents || state.quote.quote.total_cents) + '.' }),
           el('button', { type: 'button', 'class': 'gh-back', text: '‹ Back to your details', onclick: function () {
             form.hidden = false; head.hidden = true; document.getElementById('gh-pay').replaceChildren();
             btn.disabled = false; btn.textContent = ctaText(state.quote, state.payMode, true);

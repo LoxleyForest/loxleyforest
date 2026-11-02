@@ -38,6 +38,9 @@
        change? ..." in place of the 30-day line; a deposit stay reads "Plans change? ..." with
        its retainer line as before; a stay inside 7 days, its last moment to move gone, reads
        "Paid in full today." and makes no move offer.
+     - (2026-11-02, loxley-rescue GATEHOUSE-SPEC 20) a check-in inside the lead time is a request
+       to book: its card and summary say plainly it is authorized, not charged, answered within the
+       engine's hours; the checkout sends request: true; the return page pushes no purchase.
    Nothing leaves this machine: the booking API is answered here, everything else gets an empty
    answer, Stripe is never reached. */
 'use strict';
@@ -170,7 +173,8 @@ async function main() {
         }
         if (u.pathname === '/v1/lead') { leads.push(b); return json({ ok: true }); }
         if (u.pathname === '/v1/checkout') { checkouts.push(b); return json({ error: 'not in this check' }, 503); }
-        if (u.pathname === '/v1/availability') return json(NIGHTS);
+        if (u.pathname === '/v1/booked' && opts.booked) return json(opts.booked);
+        if (u.pathname === '/v1/availability') return json(opts.nights || NIGHTS);
         if (u.pathname === '/v1/quote') return json(opts.quote ? opts.quote(u.searchParams.get('check_in')) : QUOTE);
         if (u.pathname === '/v1/agreement') return json({ version: 'check', text: agreementText });
         return json({ error: 'not found' }, 404);
@@ -579,6 +583,63 @@ async function main() {
     await page.tap('#gatehouse form.gh-form button[type=submit]');
     check(await until(() => checkouts.length === 1), 'every check met: the checkout is asked for, as before');
     check(await until(() => refusedLines.length > 0) || beacons.some((b) => b.step === 'pay_field_touched'), 'the refused beacons were sent (' + refusedLines.length + ' 400 lines from Chrome, kept apart)');
+    await ctx.close();
+  }
+
+
+  // The request to book (loxley-rescue GATEHOUSE-SPEC 20, 2026-11-02): a check-in inside the
+  // engine's lead time reads "request" on the calendar; its quote carries request {answer_hours,
+  // lead_hours}. The card says plainly it is a request, authorized and not charged, answered
+  // within the engine's hours; the checkout says request: true; the return page pushes no purchase.
+  console.log('the request to book: inside the lead time, authorized, not charged');
+  {
+    const RQ_IN = day(1), RQ_OUT = day(3);
+    const nights = { nights: NIGHTS.nights.map((n) => (n.night === RQ_IN ? Object.assign({}, n, { request: true }) : n)) };
+    const rq = (ci) => { const q = stayQuote(ci); q.modes = ['full']; q.summary = { full: { today_cents: 98765, balance_cents: 0, balance_on: null, change_until: null } };
+      q.request = { answer_hours: 4, floor_hours: 24, lead_hours: 48 }; q.extend = null; return q; };
+    const { ctx, page, checkouts } = await open('request', AGREEMENT_TEXT, { quote: rq, nights });
+    await page.goto(BASE + '/book?checkIn=' + RQ_IN + '&checkOut=' + RQ_OUT);
+    await page.waitForSelector('#gatehouse button.gh-cta', { timeout: 10000 });
+    const card = await page.evaluate(() => ({ cta: document.querySelector('#gatehouse button.gh-cta').textContent,
+      words: (document.querySelector('.gh-request') || {}).textContent || '', text: document.querySelector('.gh-summary').textContent,
+      marker: !!document.querySelector('#gh-marker-email') }));
+    check(/^Request for \$987\.65$/.test(card.cta), 'the button reads "' + card.cta + '"');
+    check(/so this is a request to book/.test(card.words) && /authorized for \$987\.65 but not charged/.test(card.words) && /We answer within 4 hours/.test(card.words)
+      && /nothing is charged/.test(card.words), 'the card says plainly: a request, authorized not charged, answered within 4 hours');
+    check(!/Paid in full today/.test(card.text), 'no "Paid in full today." on a request');
+    check(!card.marker, 'no trail marker on a request (the engine refuses one inside the lead)');
+    await page.click('#gatehouse button.gh-cta');
+    await page.waitForSelector('#gatehouse form.gh-form', { timeout: 5000 });
+    const pay = await page.evaluate(() => ({ dt: [...document.querySelectorAll('.gh-booking dt')].map((n) => n.textContent),
+      fine: (document.querySelector('.gh-booking .gh-request') || {}).textContent || '', btn: document.querySelector('form.gh-form button[type=submit]').textContent }));
+    check(pay.dt.includes('Authorized today, not charged') && !pay.dt.includes('Due today'), 'the summary: "Authorized today, not charged", never "Due today"');
+    check(/not charged/.test(pay.fine), 'the summary repeats the request in words');
+    check(/^Continue to request · \$987\.65 authorized$/.test(pay.btn), 'the pay button reads "' + pay.btn + '"');
+    await page.fill('#gh-first_name', 'Seed'); await page.fill('#gh-last_name', 'Test'); await page.fill('#gh-email', EMAIL);
+    await page.fill('#gh-phone', '706 555 0100'); await page.selectOption('#gh-guests', '2');
+    await page.check('#gh-agree'); await page.fill('#gh-typed_name', 'Seed Test');
+    await page.click('#gatehouse form.gh-form button[type=submit]');
+    check(await until(() => checkouts.length === 1), 'the checkout is asked for');
+    check((checkouts[0] || {}).request === true && (checkouts[0] || {}).mode === 'full', 'it says request: true, mode full');
+    await shot(page, 'request-pay.png');
+    await ctx.close();
+  }
+  {
+    const stay = { kind: 'request', status: 'held', check_in: day(1), check_out: day(3), total_cents: 98765, guests: 2, dogs: 0, manage_token: '',
+      payments: [{ kind: 'full', label: '', display_label: '', amount_cents: 98765, due_on: null, status: 'authorized' }],
+      request: { status: 'waiting', answer_by: new Date(Date.now() + 4 * 3600e3).toISOString(), answer_hours: 4 } };
+    const { ctx, page } = await open('request-booked', AGREEMENT_TEXT, { booked: stay });
+    await page.goto(BASE + '/booked?session_id=cs_test_check');
+    await page.waitForFunction(() => /request/i.test((document.getElementById('gh-title') || {}).textContent || ''), null, { timeout: 10000 });
+    const v = await page.evaluate(() => ({ h1: document.getElementById('gh-title').textContent, text: document.getElementById('gatehouse-stay').textContent,
+      dl: (window.dataLayer || []).map((x) => x && x.event).filter(Boolean), manage: !!document.querySelector('a[href^="/manage"]'),
+      add: (() => { const n = document.getElementById('add'); return n ? n.getBoundingClientRect().height : -1; })() }));
+    check(v.h1 === 'Your request is in.', 'the return page: "' + v.h1 + '"');
+    check(/Nothing is charged\./.test(v.text) && /We answer within 4 hours\./.test(v.text) && /Authorized, not charged/.test(v.text), 'it says nothing is charged and we answer within 4 hours');
+    check(!v.dl.includes('purchase') && v.dl.includes('gh_requested'), 'no purchase pushed (the booking tag fires on any purchase); gh_requested instead (' + v.dl.join(', ') + ')');
+    check(!v.manage && !/You're booked/.test(v.text), 'no manage link and no "You\'re booked" while it waits');
+    check(v.add === 0, 'the fixed "Reply to your confirmation email" section is not shown while it waits (height ' + v.add + ')');
+    await shot(page, 'request-booked.png');
     await ctx.close();
   }
 
