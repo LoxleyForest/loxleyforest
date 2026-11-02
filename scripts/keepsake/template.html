@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<!-- The keepsake's template. new.py fills every {{TOKEN}} and strips every note like this one and
+     every CSS note; the page it makes keeps only its header. See README.md beside this file. -->
+<html lang="en" class="size-{{SIZE}}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light only">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#121a14">
+<title>Married at Loxley Forest</title>
+<link rel="icon" href="/favicon.svg">
+<!-- The site's own faces, as index.html loads them (one request, cached with the site's). -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap">
+<style>
+/* Two inks, as a letterpress sheet: a deep forest for every word, the house's gold for the arrow
+   and the rules. Nothing prints pure black, and nothing that must print is a background. */
+:root{
+  --paper:#f5eedd;
+  --ink:#1e3424;
+  --ink-quiet:rgba(30,52,36,.42);
+  --gold:#a8874a;
+  --table:#111912;
+  --serif:'Cormorant Garamond','Cormorant',Garamond,'EB Garamond','Adobe Garamond Pro','Times New Roman',Georgia,serif;
+  --sans:'Montserrat','Helvetica Neue',Helvetica,Arial,sans-serif;
+  color-scheme:light only;
+}
+/* Every size on the sheet is in cqw (a hundredth of the sheet's width), so the screen view and the
+   print are the same page at two scales. Letter: 1cqw = 0.085in. Card: 1cqw = 0.05in. */
+.size-letter{
+  --w:8.5in; --h:11in; --ratio:8.5/11;
+  --pad-top:12.4cqw; --pad-side:11.8cqw; --pad-bottom:11.2cqw;
+  --mark:38cqw; --names:7.5cqw; --married:2.65cqw; --site:3.45cqw;
+  --date:1.45cqw; --place:1.3cqw; --closing:2.5cqw; --sig:1.2cqw; --sig-rule:30cqw; --blank:54cqw;
+  --gap-names:3.6cqw; --gap-site:.7cqw; --gap-date:5.4cqw; --gap-place:1.25cqw; --gap-sig:8.4cqw;
+}
+.size-card{
+  --w:5in; --h:7in; --ratio:5/7;
+  --pad-top:11cqw; --pad-side:10cqw; --pad-bottom:10cqw;
+  --mark:48cqw; --names:7.9cqw; --married:3.2cqw; --site:3.85cqw;
+  --date:1.95cqw; --place:1.75cqw; --closing:3cqw; --sig:1.7cqw; --sig-rule:38cqw; --blank:62cqw;
+  --gap-names:3.8cqw; --gap-site:.8cqw; --gap-date:5.6cqw; --gap-place:1.6cqw; --gap-sig:10cqw;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--table)}
+/* The screen: the sheet like paper on a dark table, the whole of it in view. */
+body{
+  min-height:100vh;min-height:100svh;display:grid;place-items:center;padding:32px 16px;
+  background:radial-gradient(ellipse at 50% 38%,#1d2a1f 0%,var(--table) 70%);
+  -webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;
+}
+.sheet{
+  position:relative;container-type:inline-size;aspect-ratio:var(--ratio);
+  width:min(var(--w),calc(100vw - 32px),calc((100svh - 64px) * var(--ratio)));
+  color:var(--ink);background-color:var(--paper);
+  background-image:
+    radial-gradient(ellipse at 50% 35%,rgba(255,252,242,.55),rgba(255,252,242,0) 65%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .36 0 0 0 0 .3 0 0 0 0 .2 0 0 0 .075 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  box-shadow:0 1px 1px rgba(0,0,0,.35),0 14px 30px rgba(0,0,0,.42),0 40px 90px rgba(0,0,0,.35);
+}
+.size-card .sheet{width:min(6.25in,calc(100vw - 32px),calc((100svh - 64px) * var(--ratio)))}
+
+.leaf{
+  position:absolute;inset:0;display:grid;grid-template-rows:auto 1fr auto;justify-items:center;
+  padding:var(--pad-top) var(--pad-side) var(--pad-bottom);text-align:center;
+}
+/* The impression: on screen only, a hair of light under each letter, as type pressed into card. */
+.ink{text-shadow:0 .07cqw 0 rgba(255,253,245,.7)}
+.wm{display:block;width:var(--mark);height:auto;color:var(--ink);filter:drop-shadow(0 .07cqw 0 rgba(255,253,245,.7))}
+.wm .arrow{color:var(--gold)}
+
+.middle{align-self:center;display:flex;flex-direction:column;align-items:center;width:100%;margin-top:-2cqw}
+.names{
+  font-family:var(--serif);font-style:italic;font-weight:400;
+  font-size:calc(var(--names) * var(--fit,1));line-height:1.08;letter-spacing:.005em;
+  max-width:100%;text-wrap:balance;overflow-wrap:break-word;
+}
+/* Two names joined by "and" (or "&") are set as a pair: each on its line, the "and" small between. */
+.pair .names span{display:block}
+.pair .names .amp{font-size:.42em;letter-spacing:.04em;line-height:1;margin:.16em 0 .2em}
+/* No names in the link: a quiet rule where they go, for a pen. */
+.names-blank{display:block;width:var(--blank);height:calc(var(--names) * 1.08);border-bottom:max(1px,.1cqw) solid var(--ink-quiet)}
+html:not(.named) .names{display:none}
+html.named .names-blank{display:none}
+.married{
+  margin-top:var(--gap-names);font-family:var(--serif);font-weight:400;font-size:var(--married);
+  letter-spacing:.06em;line-height:1.3;
+}
+.site{margin-top:var(--gap-site);font-family:var(--serif);font-style:italic;font-weight:400;font-size:var(--site);line-height:1.28}
+.site .clause{display:block}
+.date,.place{font-family:var(--sans);text-transform:uppercase;line-height:1.4}
+.date{margin-top:var(--gap-date);font-weight:500;font-size:var(--date);letter-spacing:.3em;margin-right:-.3em}
+.place{margin-top:var(--gap-place);font-weight:400;font-size:var(--place);letter-spacing:.32em;margin-right:-.32em}
+
+.foot{display:flex;flex-direction:column;align-items:center}
+.closing{font-family:var(--serif);font-style:italic;font-weight:400;font-size:var(--closing);line-height:1.35;text-wrap:balance}
+.sign{margin-top:var(--gap-sig);width:var(--sig-rule);border-top:max(1px,.09cqw) solid var(--gold)}
+.sig{
+  margin-top:.9em;font-family:var(--sans);font-weight:500;font-size:var(--sig);text-transform:uppercase;
+  letter-spacing:.3em;margin-right:-.3em;line-height:1.4;
+}
+
+/* The print: exactly the sheet, one page, no margin from the browser. The cream prints only with
+   Background graphics on (for the PDF sent to the couple); on cream card stock leave it off. */
+@page{size:{{PAGE_SIZE}};margin:0}
+@media print{
+  html,body{width:var(--w);height:var(--h);overflow:hidden;background:var(--paper)}
+  body{display:block;min-height:0;padding:0}
+  .sheet{width:var(--w);height:var(--h);aspect-ratio:auto;box-shadow:none;background-image:none;break-inside:avoid}
+  .ink{text-shadow:none}
+  .wm{filter:none}
+}
+</style>
+</head>
+<body>
+<main class="sheet">
+  <div class="leaf">
+    {{WORDMARK}}
+    <div class="middle">
+      <p class="names ink" id="names"><span class="n1"></span><span class="amp"></span><span class="n2"></span></p>
+      <span class="names-blank" aria-hidden="true"></span>
+      <p class="married ink">were married here</p>
+      <p class="site ink">{{SITE_LINES}}</p>
+      <p class="date ink"><time datetime="{{DATE_ISO}}">{{DATE_LONG}}</time></p>
+      <p class="place ink">Dahlonega, Georgia</p>
+    </div>
+    <div class="foot">
+      <!-- The closing line: one sentence, Mick's. new.py refuses while the marker stands.
+           Proposed (new.py PROPOSED, unheard): "The bridge will be lit when you come back."
+           On his yes: his words in place of the marker, and here who said yes and when. -->
+      <p class="closing ink" data-slot="closing">[MICK RATIFIES]</p>
+      <div class="sign" aria-hidden="true"></div>
+      <!-- The signature line: the words printed under the gold rule he signs above.
+           Proposed (new.py PROPOSED, unheard): "Mick", as his letters are signed (canon/voice.md). -->
+      <p class="sig ink" data-slot="signature">[MICK RATIFIES]</p>
+    </div>
+  </div>
+</main>
+<!-- The names ride in the link after the # (#for=Her%20and%20Him) and never reach a server, a log or
+     this file. Read as text, never as markup. Two names joined by "and" or "&" are set as a pair, each on its
+     line; long names step down in size to fit. -->
+<script>
+(function(){
+  var root=document.documentElement,el=document.getElementById('names'),part=el.children;
+  function lines(e){var lh=parseFloat(getComputedStyle(e).lineHeight)||1;return Math.round(e.getBoundingClientRect().height/lh)}
+  function fits(){
+    if(el.scrollWidth>el.clientWidth+1)return false;
+    return root.classList.contains('pair')?lines(part[0])<=1&&lines(part[2])<=1:lines(el)<=2;
+  }
+  function fit(){
+    root.style.setProperty('--fit','1');
+    if(!el.textContent)return;
+    for(var s=1,i=0;i<12&&!fits();i++){s-=.04;root.style.setProperty('--fit',s.toFixed(2))}
+  }
+  function read(){
+    var v='';
+    try{v=new URLSearchParams(location.hash.replace(/^#/,'')).get('for')||''}catch(e){}
+    v=v.replace(/[\u0000-\u001f\u007f]/g,'').replace(/\s+/g,' ').trim().slice(0,120);
+    var m=v.match(/^(.+?)\s+(and|&)\s+(.+)$/i);
+    part[0].textContent=m?m[1]:v;part[1].textContent=m?m[2]:'';part[2].textContent=m?m[3]:'';
+    root.classList.toggle('pair',!!m);
+    root.classList.toggle('named',!!v);
+    fit();
+  }
+  addEventListener('hashchange',read);
+  addEventListener('resize',fit);
+  addEventListener('beforeprint',fit);
+  read();
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);
+})();
+</script>
+</body>
+</html>
