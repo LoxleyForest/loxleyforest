@@ -9,6 +9,11 @@ post to /success or /success.html. On 2026-10-23 the elopement and FAQ forms
 posted back to their own pages and the ads paid for inquiries Google could not
 count. Runs in the Netlify build before publish: a failing form fails the
 deploy. Exit 1 names each form that would not count.
+
+Every such form also carries the ad click (2026-11-02, loxley-rescue
+GATEHOUSE-SPEC 22): a hidden field named gclid, so an inquiry keeps the click
+that brought it and a stay booked from it can be traced to the ad. A form
+without one fails the deploy too.
 """
 import os
 import re
@@ -26,7 +31,8 @@ def main():
         if not name.endswith(".html"):
             continue
         html = open(os.path.join(root, name), encoding="utf-8").read()
-        for tag in re.findall(r"<form\b[^>]*>", html, re.I):
+        for whole in re.findall(r"<form\b.*?</form>", html, re.I | re.S):
+            tag = whole[:whole.index(">") + 1]
             if not re.search(r"data-netlify|netlify-honeypot|\bnetlify\b", tag, re.I):
                 continue
             form = (re.search(r'name=["\']([^"\']+)', tag) or [None, "?"])[1]
@@ -37,7 +43,10 @@ def main():
             if action.split("?")[0].split("#")[0] not in OK:
                 print("FORM WILL NOT COUNT: %s form %r posts to %r, not /success" % (name, form, action))
                 bad += 1
-    print("check_forms: %d inquiry forms checked, %d would not count" % (checked, bad))
+            if not re.search(r"<input\b[^>]*\bname=[\"']gclid[\"']", whole, re.I):
+                print("FORM DROPS THE AD CLICK: %s form %r has no hidden gclid field" % (name, form))
+                bad += 1
+    print("check_forms: %d inquiry forms checked, %d would not count or carry the ad click" % (checked, bad))
     return 1 if bad else 0
 
 

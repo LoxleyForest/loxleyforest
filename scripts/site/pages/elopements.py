@@ -262,6 +262,7 @@ def page_elopements():
             <input type="hidden" name="form-name" value="elopement-inquiry">
             <input type="hidden" name="page" value="/elopements">
             <input type="hidden" name="list" value="">
+            {B.ATTR_FIELDS}
             <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
 
             <div class="lf-form__row">

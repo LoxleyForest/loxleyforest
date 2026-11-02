@@ -92,6 +92,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <div class="wrap">
 <form name="your-adventure" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" action="/success.html">
   <input type="hidden" name="form-name" value="your-adventure">
+  <input type="hidden" name="gclid" data-lf-attr="gclid">
+  <input type="hidden" name="gbraid" data-lf-attr="gbraid">
+  <input type="hidden" name="wbraid" data-lf-attr="wbraid">
+  <input type="hidden" name="utm_source" data-lf-attr="utm_source">
+  <input type="hidden" name="utm_campaign" data-lf-attr="utm_campaign">
+  <input type="hidden" name="landing_page" data-lf-attr="landing">
   <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
 
   <div class="q">
@@ -199,5 +205,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <!-- The page beacon (hand-placed: this page is not built by scripts/site/build_v2.py) -->
 <script src="/js/funnel.js"></script>
+<script>
+/* The ad fields above, from the click this browser kept (js/global.js, 90 days; this page loads no global.js). */
+(function () {
+  var a = {};
+  try { a = JSON.parse(localStorage.getItem('loxley_attribution') || '{}') || {}; } catch (e) {}
+  if (!a.t || Date.now() - a.t > 90 * 24 * 60 * 60 * 1000) return;
+  document.querySelectorAll('input[data-lf-attr]').forEach(function (el) {
+    var v = a[el.getAttribute('data-lf-attr')];
+    if (v && !el.value) el.value = String(v).slice(0, 300);
+  });
+})();
+</script>
 </body>
 </html>
