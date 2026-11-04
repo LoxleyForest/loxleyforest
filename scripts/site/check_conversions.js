@@ -2,7 +2,8 @@
 // catching each hit before it leaves (nothing is recorded, no analytics sent).
 //     node scripts/site/check_conversions.js        (needs Playwright)
 //     SITE=http://127.0.0.1:8000 node scripts/site/check_conversions.js   (a local render)
-// Exit 1 if any expected conversion label does not fire. Labels: docs/site-tags.md.
+// Exit 1 if any expected conversion label does not fire, or one fires where it must not.
+// Labels: loxley-rescue docs/site-tags.md, and docs/elopement-conversion.md here.
 const PW = process.env.PLAYWRIGHT || '/home/mick/.npm/_npx/705bc6b22212b352/node_modules/playwright';
 const { chromium } = require(PW);
 const SITE = process.env.SITE || 'https://loxleyforest.com';
@@ -15,8 +16,20 @@ const SITE_HOST = new URL(SITE).hostname;
 // Mick's label" and does not fail; the push's shape is checked either way.
 const GIFT_LABEL = '';
 const GIFT = { cents: 200000, item: 'golden-arrow', session: 'cs_test_checknotsent' };
+// The elopement form's own door (2026-11-04, the Marketer's elopements memo item 3, routed by the
+// Chief): /success-elopement. Its Google Ads action, "Elopement Inquiry", does not exist yet: Mick
+// makes it by his own clicks (docs/elopement-conversion.md) and, in the same Tag Manager version,
+// keeps the Form Inquiry trigger off this page. Until then the page's path holds "/success", so Form
+// Inquiry (its trigger matches by "contains") still counts an elopement inquiry, and this check wants
+// that label there. Once the label is in ELOPEMENT_LABEL the page must fire it and Form Inquiry must
+// not (a "not" label here fails the check when it fires), or every elopement inquiry counts twice.
+const FORM_LABEL = '12CKCM613eccEM6c6btD';
+const ELOPEMENT_LABEL = '';
 const WANT = [
-  { path: '/success', label: '12CKCM613eccEM6c6btD', what: 'Form Inquiry (success)' },
+  { path: '/success', label: FORM_LABEL, what: 'Form Inquiry (success)', not: ELOPEMENT_LABEL },
+  ELOPEMENT_LABEL
+    ? { path: '/success-elopement', label: ELOPEMENT_LABEL, what: 'Elopement Inquiry (success-elopement)', not: FORM_LABEL }
+    : { path: '/success-elopement', label: FORM_LABEL, what: 'Form Inquiry (success-elopement), until Mick\'s Elopement Inquiry label is in ELOPEMENT_LABEL' },
   { path: '/booking-confirmed', label: '7sTuCMu13eccEM6c6btD', what: 'Widget Inquiry' },
   { path: '/booked', label: 'iI0nCNmZg6YdEM6c6btD', what: 'Booking - direct', push: { event: 'purchase', value: 1, currency: 'USD', transaction_id: 'check-not-sent' } },
   { path: '/gift/thanks?session_id=' + GIFT.session, label: GIFT_LABEL, what: 'Gift - Golden Arrow', gift: GIFT },
@@ -71,6 +84,7 @@ function giftShape(dl, g) {
     const ok = seen.includes(w.label);
     console.log((ok ? 'fires   ' : 'MISSING ') + w.what + ' on ' + where);
     if (!ok) bad++;
+    if (w.not && seen.includes(w.not)) { console.log('WRONG   ' + w.not + ' fired on ' + where + ' too'); bad++; }
     await p.close();
   }
   await b.close(); process.exit(bad ? 1 : 0);

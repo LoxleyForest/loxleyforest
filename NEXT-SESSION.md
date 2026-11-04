@@ -12,6 +12,7 @@
 
 **Waits on Mick**
 - The Google Ads label for "Gift - Golden Arrow": it goes in GIFT_LABEL in scripts/site/check_conversions.js (docs/log/2026-10.md, 2026-10-29).
+- The "Elopement Inquiry" action and its Tag Manager tag, by his clicks (docs/elopement-conversion.md, one list); until then elopement inquiries count under Form Inquiry. Its label then goes in ELOPEMENT_LABEL in scripts/site/check_conversions.js (the 2026-11-04 block below).
 - your-adventure.html, the arrival questionnaire: a draft, noindex, linked from nowhere; its copy and its last line need his yes, and the link rides only in the booking confirmation (docs/log/2026-09.md).
 - Open since 2026-10-19, the pages keep what they say: the Experiences add-ons still offered, s'mores included or an add-on, The Letter, "Most popular" on The Crossing, 2 to 20 ceremony guests against a stay of 6, the Woodland Yurt line, "treehouses" in the home title, Klarna in Stripe, the bell line for disputes (docs/log/2026-10.md, both 2026-10-19 blocks).
 - Hostfully's 30-day rollback from 2026-10-19: when it is cancelled, redirect /booking-confirmed and /booking-confirmed.html to /book in netlify.toml and retire booking-confirmed.html (docs/log/2026-10.md, 2026-10-19 night).
@@ -23,6 +24,25 @@
 - Ideas logged, not started: the animated guidebook with the pizza guide as a chapter, seasonal reels and profile pictures, the interior clips still on Mick's laptop (docs/log/2026-10.md, 2026-10-13 and 2026-10-19).
 
 The Janitor (chief docs/v2/janitor.md) runs here weekly: this file keeps this block and the current month's entries; older blocks move word for word to docs/log/<YYYY-MM>.md.
+
+---
+
+# DONE · 2026-11-04 · the elopement form's fixes and its own door (the Chief's routing of the Marketer's item 3)
+
+On /elopements and the three elopement landing pages (one Netlify form, elopement-inquiry): guest
+count "Just us" or "2 to 6 guests" (the cards say up to six; 7 to 20 gone), the date hint "e.g. May
+2027 or 5/12/2027", "Romantic Atlanta" under How did you hear, and the form lands on its own page,
+/success-elopement (pages/confirmations.py: /success's words unchanged, the bridge from above;
+noindex, not in the sitemap). Its path holds "/success" on purpose: Form Inquiry's trigger matches by
+"contains", so elopement inquiries keep counting under it until Mick's clicks make "Elopement
+Inquiry" and scope the old trigger (docs/elopement-conversion.md, one list). check_forms.py holds the
+form there (OWN) and keeps the coming giveaway form off any /success path (NOT_INQUIRY);
+check_conversions.js wants Form Inquiry on the new page today and, once ELOPEMENT_LABEL is set, the
+new label there and Form Inquiry not. Proven on a local render with the live container (a clean-URL
+server in the session scratchpad; python3 -m http.server has no clean URLs, so every row reads
+MISSING under it): every row fires, nothing sent. The Forge's side, flagged to the Chief:
+/success-elopement into loxley-rescue gatehouse/funnel.py CONFIRM_PATHS and gatehouse/sources.py
+SITE_PATHS (exact matches today).
 
 ---
 

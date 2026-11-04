@@ -1,5 +1,6 @@
-"""The two thank-you pages: /booking-confirmed (Hostfully's redirect after a booking) and
-/success (where every Netlify form lands). Both keep their noindex from their own heads.
+"""The thank-you pages: /booking-confirmed (Hostfully's redirect after a booking), /success
+(where every Netlify form lands) and, since 2026-11-04, /success-elopement (where the elopement
+form lands, so its inquiries can count on their own Google Ads action). All keep noindex.
 Warm and short: the message, Mick and Livy, a way home and a way to the treehouse."""
 import re
 
@@ -51,7 +52,26 @@ def page_success():
     return 'success.html', head, gtm, body, '/book', False
 
 
-PAGES = [page_booking_confirmed, page_success]
+# The elopement form's own door (the Marketer's elopements memo, item 3, routed by the Chief,
+# 2026-11-04): the words are /success's, unchanged, nothing new of Mick's; the photograph is the
+# bridge from above, the elopements page's own. The path holds "/success" on purpose: the Form
+# Inquiry trigger in Tag Manager matches by "contains" (loxley-rescue docs/site-tags.md, 2026-08-25),
+# so the old action keeps counting elopement inquiries until Mick's "Elopement Inquiry" action and
+# his trigger edit are published (docs/elopement-conversion.md); scripts/site/check_conversions.js
+# proves which fires. The head is /success's with its own canonical: noindex, not in the sitemap.
+SUCCESS_CANONICAL = '<link rel="canonical" href="https://loxleyforest.com/success">'
+
+
+def page_success_elopement():
+    head, gtm = B.head_from('success.html')
+    assert SUCCESS_CANONICAL in head, 'success.html lost its canonical; /success-elopement takes its head from it'
+    head = tidy(head.replace(SUCCESS_CANONICAL, SUCCESS_CANONICAL.replace('/success', '/success-elopement'), 1))
+    body = note('Received', "The forest knows you're coming.", "We'll be in touch soon.", [],
+                B.pic('aerial-bridge', 'From above: the hundred-foot rope bridge through the canopy at golden hour', '(min-width: 900px) 50vw, 100vw', eager=True))
+    return 'success-elopement.html', head, gtm, body, '/book', False
+
+
+PAGES = [page_booking_confirmed, page_success, page_success_elopement]
 
 CSS = '''
 .lf-note { min-height: 100svh; display: flex; align-items: center; padding-top: calc(var(--hdr-h) + clamp(40px, 7vw, 80px)); }
