@@ -16,7 +16,7 @@
 - Open since 2026-10-19, the pages keep what they say: the Experiences add-ons still offered, s'mores included or an add-on, The Letter, "Most popular" on The Crossing, 2 to 20 ceremony guests against a stay of 6, the Woodland Yurt line, "treehouses" in the home title, Klarna in Stripe, the bell line for disputes (docs/log/2026-10.md, both 2026-10-19 blocks).
 - Hostfully's 30-day rollback from 2026-10-19: when it is cancelled, redirect /booking-confirmed and /booking-confirmed.html to /book in netlify.toml and retire booking-confirmed.html (docs/log/2026-10.md, 2026-10-19 night).
 
-- Before the Bridge for the December 15 to 17 stay (The Vow, ceremony Wednesday the 16th): made on branch `before-the-bridge-2026-12-15`, not on main, until his ear has had the template's new lines and his word on the flags (the 2026-11-05 block below). Nothing of the couple is on the page; their names ride only after the # in the link.
+- The December 15 to 17 couple's recap email: in the Gmail draft in their thread, waiting on Mick's own hand for the five bridge pictures and the three links (the Drive folder, Make Me Up, the Before the Bridge page with the names after the #), pasted in Gmail, never through the connector, then send (the 2026-11-05 block below). Their page is live at /private/before-the-bridge-2026-12-15-to-17-7df87e/; it says "ready from 3:00 pm" while their signed agreement says 4:00 p.m., for his word.
 
 **For the seat to rule, next session (the Chief's flags of 2026-11-04; nothing new goes live Nov 13 to about Nov 27 while Mick is away)**
 - CLAUDE.md still says "no build system" though scripts/site/build_v2.py builds the pages; README.md is GitHub boilerplate. Fix both, and point CLAUDE.md's session-open line at this block and docs/log/.
@@ -28,7 +28,27 @@ The Janitor (chief docs/v2/janitor.md) runs here weekly: this file keeps this bl
 
 ---
 
-# IN FLIGHT · 2026-11-05 · Before the Bridge and the recap for the December 15 to 17 stay (branch before-the-bridge-2026-12-15)
+# DONE · 2026-11-05 · Before the Bridge live and the recap drafted for the December 15 to 17 stay (merge 6c349ff)
+
+The page is on main and live (200 at 16:50 ET, noindex, the vows line as below), on Mick's yes by
+voice ("Okay amazing ... whatever you think is best", the new lines read to him in the seat's message;
+the drone break put to him in the Critic's words first). The branch is merged and deleted. The seat's
+calls on "whatever you think is best": the drone stays in as his free gift, worded as the house's own
+exception to the no-drones line and flown by him, the videographer the polished option; the page keeps
+"ready from 3:00 pm" (his standing ruling) though their signed agreement says 4:00 p.m., for his word
+if he wants it changed. The recap is in the Chief's Gmail draft in their thread, updated in place by
+the seat on Mick's ask, with four bracketed spots for his own hand: the five bridge pictures
+(email-sized copies in the session scratchpad, bridge/), the Drive folder link, the Make Me Up link
+and the page link. Found and proven: the Gmail connector rewrites every link it writes, in the HTML
+and the plain text alike, into https://www.google.com/url?q=...&source=gmail&ust=<about 24 h
+later>&sa=E, the redirect Mick's earlier recipients hit; so links go into a draft by hand in Gmail,
+never through the connector. The license paragraph corrects the Sep 15 email's "or a county easier
+for y'all": for non-residents the license comes from the ceremony's county (gaprobate.gov). Send is
+Mick's, from his phone. The route below is the record of how it was built.
+
+---
+
+# IN FLIGHT · 2026-11-05 · Before the Bridge and the recap for the December 15 to 17 stay (the build, branch before-the-bridge-2026-12-15, merged above)
 
 The Chief's route (chief docs/log.md, 15:50): the first elopement (The Vow, signed and paid in
 September; ceremony Wednesday Dec 16) needs its own questionnaire with Mick's recap tonight; the page
