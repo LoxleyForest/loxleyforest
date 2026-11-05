@@ -17,16 +17,21 @@ are /success's, unchanged.
 
 | Action | Label (AW-18110631502/...) | Fires on | Since |
 |---|---|---|---|
-| Elopement Inquiry | [MICK RATIFIES] label | /success-elopement, page view | not yet: Mick's clicks below |
+| Elopement Inquiry | `6ibiCPrZ1LIdEM6c6btD` | /success-elopement, page view | the action since 2026-11-05 08:50 ET (the Chief's clicks in Mick's Chrome, on his word; the label read from the page, proven by the check only after the publish); the tag not yet: Tag Manager steps 2 to 5 below |
 
 ## Mick's clicks (one list; nothing here spends money; the accounts, not the site, so any day)
 
-1. **Google Ads, the action:** Goals, Conversions, Summary, New conversion action, Website,
-   loxleyforest.com, Scan, Add a conversion action manually. Goal: Submit lead form. Name:
-   **Elopement Inquiry**. Value: don't use a value (as Form Inquiry). Count: One. Click-through
-   window 90 days (as Form Inquiry and Widget Inquiry: a long consideration), the other windows and
-   attribution at their defaults. Save and continue, Use Google Tag Manager, copy the conversion
-   label (the ID is 18110631502).
+Step 1 is done (2026-11-05). Steps 2 to 5 wait: the extension has no access to tagmanager.google.com
+in Mick's Chrome; the Chief is asking him for it, else he clicks them himself.
+
+1. **Google Ads, the action: done 2026-11-05 08:50 ET** (the Chief, in Mick's Chrome, on his word).
+   Goal Submit lead form, name **Elopement Inquiry**, count One, click-through window 90 days (as
+   Form Inquiry and Widget Inquiry: a long consideration), attribution data-driven. Value: this
+   Google Ads flow no longer offers "don't use a value" (Form Inquiry's setting), so the action
+   carries "same value for each conversion" at Google's default, $1. Google Ads shows $1 of
+   conversion value per elopement inquiry where Form Inquiry shows none; it changes nothing while
+   the campaigns bid for conversions, and matters only if one ever bids for value (the Marketer's
+   call then). Conversion ID 18110631502, label `6ibiCPrZ1LIdEM6c6btD`, read from the page.
 2. **Tag Manager, the trigger** (GTM-5N4BX66K): Triggers, New, "PV - Elopement Inquiry Success":
    Page View, Some Page Views, Page Path contains `/success-elopement`. Save.
 3. **Tag Manager, the tag:** Tags, New, "Ads - Elopement Inquiry Conversion": Google Ads Conversion
@@ -42,10 +47,16 @@ are /success's, unchanged.
 6. **Google Ads, the campaign:** Campaigns, Elopements, Settings, Goals: it should use the account
    default goals, where Submit lead form now holds Elopement Inquiry as Primary. If it names its own
    goals, add Elopement Inquiry there.
-7. **The seat:** the label into `ELOPEMENT_LABEL` in scripts/site/check_conversions.js and into the
-   table above, then `node scripts/site/check_conversions.js` on the live site: it must print
-   "fires Elopement Inquiry (success-elopement)" with no WRONG line. The row into loxley-rescue
-   docs/site-tags.md (the Forge's file, through the Chief).
+7. **The seat:** the label is in the table above (2026-11-05) and in `ELOPEMENT_LABEL` in
+   scripts/site/check_conversions.js on the branch `elopement-label`, with this file's rows as they
+   will read after the publish. The branch merges the hour the Chief says the container is published
+   (step 5), never before: from the merge the check wants the new label on /success-elopement and
+   Form Inquiry not there, which is false until the publish. Proven 2026-11-05 against the live site:
+   on the branch the check prints "MISSING Elopement Inquiry (success-elopement)" and "WRONG
+   12CKCM613eccEM6c6btD fired on /success-elopement too", exit 1, the two lines the publish flips;
+   on main it passes, every row. After the merge: `node scripts/site/check_conversions.js` on the
+   live site must print "fires Elopement Inquiry (success-elopement)" with no WRONG line. The row
+   into loxley-rescue docs/site-tags.md (the Forge's file, through the Chief).
 8. **The Forge:** `/success-elopement` into loxley-rescue gatehouse/funnel.py CONFIRM_PATHS and
    gatehouse/sources.py SITE_PATHS, both exact matches today, so the engine's funnel counts a visit
    that sent an elopement inquiry as confirmed and names the page (today it would read "other").

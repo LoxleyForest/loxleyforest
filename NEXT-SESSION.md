@@ -1,4 +1,4 @@
-# CURRENT STATE · 2026-11-04 (at most 40 lines here, kept by the Janitor; the history by month is in docs/log/)
+# CURRENT STATE · 2026-11-05 (at most 40 lines here, kept by the Janitor; the history by month is in docs/log/)
 
 **In force**
 - Live since 2026-10-19 (merge a246479): the V2 design on every page, /book our own checkout on book.loxleyforest.com, no Hostfully anywhere (Mick's ruling). The look is DIRECTION.md (docs/log/2026-10.md, the 2026-10-19 night block and 2026-10-13).
@@ -12,7 +12,7 @@
 
 **Waits on Mick**
 - The Google Ads label for "Gift - Golden Arrow": it goes in GIFT_LABEL in scripts/site/check_conversions.js (docs/log/2026-10.md, 2026-10-29).
-- The "Elopement Inquiry" action and its Tag Manager tag, by his clicks (docs/elopement-conversion.md, one list); until then elopement inquiries count under Form Inquiry. Its label then goes in ELOPEMENT_LABEL in scripts/site/check_conversions.js (the 2026-11-04 block below).
+- The "Elopement Inquiry" Tag Manager tag (docs/elopement-conversion.md, steps 2 to 5): the action itself exists since 2026-11-05, label `6ibiCPrZ1LIdEM6c6btD`. Until the container is published, elopement inquiries count under Form Inquiry. The switch waits on the branch `elopement-label`; the seat merges it the hour the Chief says "published", never before (the 2026-11-05 block below).
 - your-adventure.html, the arrival questionnaire: a draft, noindex, linked from nowhere; its copy and its last line need his yes, and the link rides only in the booking confirmation (docs/log/2026-09.md).
 - Open since 2026-10-19, the pages keep what they say: the Experiences add-ons still offered, s'mores included or an add-on, The Letter, "Most popular" on The Crossing, 2 to 20 ceremony guests against a stay of 6, the Woodland Yurt line, "treehouses" in the home title, Klarna in Stripe, the bell line for disputes (docs/log/2026-10.md, both 2026-10-19 blocks).
 - Hostfully's 30-day rollback from 2026-10-19: when it is cancelled, redirect /booking-confirmed and /booking-confirmed.html to /book in netlify.toml and retire booking-confirmed.html (docs/log/2026-10.md, 2026-10-19 night).
@@ -24,6 +24,28 @@
 - Ideas logged, not started: the animated guidebook with the pizza guide as a chapter, seasonal reels and profile pictures, the interior clips still on Mick's laptop (docs/log/2026-10.md, 2026-10-13 and 2026-10-19).
 
 The Janitor (chief docs/v2/janitor.md) runs here weekly: this file keeps this block and the current month's entries; older blocks move word for word to docs/log/<YYYY-MM>.md.
+
+---
+
+# IN FLIGHT · 2026-11-05 · the Elopement Inquiry label, waiting on the Tag Manager publish (branch elopement-label)
+
+The Chief made the Google Ads action "Elopement Inquiry" at 08:50 ET in Mick's Chrome on his word
+(docs/elopement-conversion.md, step 1): Submit lead form, count One, click-through 90 days,
+data-driven attribution, ID 18110631502, label 6ibiCPrZ1LIdEM6c6btD, read from the page. Google's
+flow no longer offers "don't use a value", so the action carries "same value for each conversion" at
+the default $1 (Form Inquiry carries none): $1 shows per elopement inquiry in the value columns, and
+it matters only if a campaign ever bids for value. Steps 2 to 5 (the trigger, the tag, the old
+trigger's exclusion, the publish) are not done: the extension has no access to tagmanager.google.com
+in Mick's Chrome; the Chief is asking him for it, else he clicks them himself. The branch
+elopement-label holds ELOPEMENT_LABEL set in scripts/site/check_conversions.js and the doc's rows as
+they will read; not merged, on the Chief's instruction, because from the merge the check wants the
+new label on /success-elopement and Form Inquiry not there, false until the publish. Proven against
+the live site today: the branch's check prints MISSING Elopement Inquiry and WRONG Form Inquiry
+fired too (exit 1); main's passes every row. The hour the Chief says "published": on main, git merge
+elopement-label, the fast checks, push, then node scripts/site/check_conversions.js on the live
+site must print "fires Elopement Inquiry (success-elopement)" with no WRONG line; then the row to
+the Forge for loxley-rescue docs/site-tags.md, through the Chief. The seat clicks nothing in Tag
+Manager or Google Ads.
 
 ---
 
