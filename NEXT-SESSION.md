@@ -12,7 +12,7 @@
 
 **Waits on Mick**
 - The Google Ads label for "Gift - Golden Arrow": it goes in GIFT_LABEL in scripts/site/check_conversions.js (docs/log/2026-10.md, 2026-10-29).
-- The "Elopement Inquiry" Tag Manager tag (docs/elopement-conversion.md, steps 2 to 5): the action itself exists since 2026-11-05, label `6ibiCPrZ1LIdEM6c6btD`. Until the container is published, elopement inquiries count under Form Inquiry. The switch waits on the branch `elopement-label`; the seat merges it the hour the Chief says "published", never before (the 2026-11-05 block below).
+- Elopement Inquiry's step 6 (docs/elopement-conversion.md): the Elopements campaign's goals should use the account default goals, where Submit lead form holds Elopement Inquiry as Primary; if the campaign names its own goals, add it there. Eyes only, any day; the counting itself is live since 2026-11-05 (the block below).
 - your-adventure.html, the arrival questionnaire: a draft, noindex, linked from nowhere; its copy and its last line need his yes, and the link rides only in the booking confirmation (docs/log/2026-09.md).
 - Open since 2026-10-19, the pages keep what they say: the Experiences add-ons still offered, s'mores included or an add-on, The Letter, "Most popular" on The Crossing, 2 to 20 ceremony guests against a stay of 6, the Woodland Yurt line, "treehouses" in the home title, Klarna in Stripe, the bell line for disputes (docs/log/2026-10.md, both 2026-10-19 blocks).
 - Hostfully's 30-day rollback from 2026-10-19: when it is cancelled, redirect /booking-confirmed and /booking-confirmed.html to /book in netlify.toml and retire booking-confirmed.html (docs/log/2026-10.md, 2026-10-19 night).
@@ -27,25 +27,32 @@ The Janitor (chief docs/v2/janitor.md) runs here weekly: this file keeps this bl
 
 ---
 
-# IN FLIGHT · 2026-11-05 · the Elopement Inquiry label, waiting on the Tag Manager publish (branch elopement-label)
+# DONE · 2026-11-05 · Elopement Inquiry counts on its own label (merge 359c303)
 
-The Chief made the Google Ads action "Elopement Inquiry" at 08:50 ET in Mick's Chrome on his word
-(docs/elopement-conversion.md, step 1): Submit lead form, count One, click-through 90 days,
-data-driven attribution, ID 18110631502, label 6ibiCPrZ1LIdEM6c6btD, read from the page. Google's
-flow no longer offers "don't use a value", so the action carries "same value for each conversion" at
-the default $1 (Form Inquiry carries none): $1 shows per elopement inquiry in the value columns, and
-it matters only if a campaign ever bids for value. Steps 2 to 5 (the trigger, the tag, the old
-trigger's exclusion, the publish) are not done: the extension has no access to tagmanager.google.com
-in Mick's Chrome; the Chief is asking him for it, else he clicks them himself. The branch
-elopement-label holds ELOPEMENT_LABEL set in scripts/site/check_conversions.js and the doc's rows as
-they will read; not merged, on the Chief's instruction, because from the merge the check wants the
-new label on /success-elopement and Form Inquiry not there, false until the publish. Proven against
-the live site today: the branch's check prints MISSING Elopement Inquiry and WRONG Form Inquiry
-fired too (exit 1); main's passes every row. The hour the Chief says "published": on main, git merge
-elopement-label, the fast checks, push, then node scripts/site/check_conversions.js on the live
-site must print "fires Elopement Inquiry (success-elopement)" with no WRONG line; then the row to
-the Forge for loxley-rescue docs/site-tags.md, through the Chief. The seat clicks nothing in Tag
-Manager or Google Ads.
+The Chief, in Mick's Chrome on his word: the Google Ads action "Elopement Inquiry" at 08:50 ET
+(docs/elopement-conversion.md step 1: Submit lead form, count One, click-through 90 days, data-driven
+attribution, ID 18110631502, label 6ibiCPrZ1LIdEM6c6btD; Google's flow no longer offers "don't use a
+value", so it carries "same value for each conversion" at the default $1 where Form Inquiry carries
+none, which matters only if a campaign ever bids for value), then Tag Manager GTM-5N4BX66K version 8
+"Elopement Inquiry conversion" at 09:26 ET, three changes in one version: the tag "Ads - Elopement
+Inquiry Conversion", its trigger "PV - Elopement Inquiry Success" (Page Path contains
+/success-elopement), and the trigger "PV — /success" now also Page Path does not contain
+/success-elopement. The seat prepared the switch on branch elopement-label (ELOPEMENT_LABEL in
+scripts/site/check_conversions.js and the doc's rows) while the publish waited, proved on the live
+site that the branch's check failed in exactly the two lines the publish flips while main's passed,
+and merged on the Chief's word. node scripts/site/check_conversions.js on the live site after the
+merge, nothing sent:
+  fires   Form Inquiry (success) on /success
+  fires   Elopement Inquiry (success-elopement) on /success-elopement
+  fires   Widget Inquiry on /booking-confirmed
+  fires   Booking - direct on /booked
+  pushes  gift_purchase on /gift/thanks {value: 2000, currency: USD, transaction_id: lf-…, item: golden-arrow}
+  awaiting Mick's label: Gift - Golden Arrow on /gift/thanks
+Exit 0, no WRONG line. Before the merge, main's check with the blank label already read MISSING Form
+Inquiry on /success-elopement: version 8's exclusion was live. Open: step 6 (the Elopements campaign's
+goals, in Waits on Mick above) and step 8, the Forge's CONFIRM_PATHS in loxley-rescue
+gatehouse/funnel.py (SITE_PATHS already carries the path, per the Forge); the site-tags.md row goes to
+the Forge with the Chief's next message. Branch elopement-label is merged and can go.
 
 ---
 
