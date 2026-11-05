@@ -28,34 +28,43 @@ The Janitor (chief docs/v2/janitor.md) runs here weekly: this file keeps this bl
 
 ---
 
-# IN FLIGHT · 2026-11-05 · Before the Bridge for the December 15 to 17 stay (branch before-the-bridge-2026-12-15)
+# IN FLIGHT · 2026-11-05 · Before the Bridge and the recap for the December 15 to 17 stay (branch before-the-bridge-2026-12-15)
 
 The Chief's route (chief docs/log.md, 15:50): the first elopement (The Vow, signed and paid in
 September; ceremony Wednesday Dec 16) needs its own questionnaire with Mick's recap tonight; the page
-he had in hand was the Dec 11 to 13 couple's. Made in the branch's worktree by
+he had in hand was the Dec 11 to 13 couple's. Then Mick, by voice in the seat's session, passed the
+seat the torch on the page and the recap email with his call notes of Oct 26 (dates and amounts only
+here; nothing of the couple in the repo). His word: the brunch yes; the drone his gift, free; the
+cake locked (caramel, cream cheese buttercream); pizza night locked (dough and toppings for two named
+pizzas on arrival); the ceremony spot still theirs to lock, the middle of the bridge or the bridge as
+the aisle to the Sky Deck; a bold marriage-license reminder; hair and makeup a recommendation only.
+The page, made in the branch's worktree by
   python3 scripts/before-the-bridge/new.py --check-in 2026-12-15 --check-out 2026-12-17 \
-    --ceremony 2026-12-16 --package the-vow --site either --alcohol --house-photographs --waterfall
-into private/before-the-bridge-2026-12-15-to-17-42af64/ (6d4d59e, pushed; not on main): 4 print pages,
-19 questions, the laurel grove row held. The waterfall row is the seat's read: Mick's own Sep 11 email
-promised them "select shots afterwards including down at the waterfall"; the row's words claim nothing
-about the water, and the seasons record names it running only in summer, so December's walk and flow
-are his cover note's. --site either because The Vow's line is the Fire Circle or the Sky Deck and the
-record fixes neither. --alcohol because The Vow carries a champagne toast and the record says nothing
-else; his no re-makes the page, one command. For his word through the Chief: alcohol or not, children
-(count and word), The Morning After, the cake, pizza night (offers.py gives the brunch and a small
-cake with every package since Oct 28; their September agreement predates it). Proven: node
-scripts/before-the-bridge/check.js (10 shapes, 7 refusals, 0 failed); the page itself rendered at
-390 px with made-up names in the link: no sideways scroll, no outside request, no script error,
-greets by name, 4 Letter pages. The repo is public (200 unauthenticated, 15:45 ET): the page carries
-dates, package and flags only, its header comment and nothing else hidden. This is the first page
-made from the template, so its words go to Mick's ear before the push, the new lines first (the
-README): the "either" site line, the toast's "Tell us what you would like", question 3's unnamed
-form; sent to the Chief with the exact words. The made page is a private artifact on Mick's account for
-his eye (https://claude.ai/artifact/PyVDS4c1DM5zmtdaMdo8A3; it greets "Hi," there, no names in that
-link). With nothing beyond the package, print page 3 carries only the toast question, the template's
-shape for a bare Vow; the cake or the brunch would fill it. On his yes: merge the branch, push, log the yes here;
-the link goes from his own Gmail with #for=Her%20and%20Him. That couple said no to the marketing
-release (loxley-rescue docs/log/2026-09.md, 2026-09-15): no image from their stay in any marketing.
+    --ceremony 2026-12-16 --package the-vow --site deck --bridge-open --alcohol \
+    --house-photographs --waterfall --morning-after
+into private/before-the-bridge-2026-12-15-to-17-7df87e/ (d9c09bf, pushed; not on main): 4 print
+pages, 20 questions, the laurel grove row held; no --cake and no --pizza-night because both are
+chosen, so their questions would be moot. The waterfall row on Mick's own Sep 11 promise of shots
+"down at the waterfall"; the row claims nothing about the water. Template change on the branch, the
+Critic's words: deck with the bridge open now reads "Your vows are out on the rope bridge or on the
+Sky Deck at its end, and the choice is yours until the week of" (the deck alone read as fixed beside
+a letter offering the middle of the bridge). Mick's own "If your friends described the two of you as
+a couple" question was tried and taken out: a sixth question on sheet one spills to a fifth print
+page on every shape (two failed checks, then stop). Proven: check.js 10 shapes, 7 refusals, 0 failed;
+the page at 390 px with made-up names in the link, no sideways scroll, no outside request, 4 Letter
+pages. Private artifact for his eye: https://claude.ai/artifact/PyVDS4c1DM5zmtdaMdo8A3.
+The recap email: the Writer's draft in Mick's shape, the Scout's rows (the county rule and the
+court's phone primary from gaprobate.gov; the court's address, hours and fee secondary, so the email
+says call ahead; December flowers from UGA Extension: camellias, magnolia, cedar, boxwood; Make Me Up's
+own $100 fee inside 30 days), the Critic last. The Critic's weakest claim: the drone, against
+agreement line 51 (drones not permitted anywhere on the property, signed by them) and the camera
+(The Vow's ceremony photographs; who shoots stills while he flies); its fix is to drop the drone
+from tonight's letter or name the exception out loud. Put to Mick in the Critic's words. Also to his
+word: the page's "ready from 3:00 pm" against their signed agreement's 4:00 p.m. check-in. The
+Chief holds the Gmail draft; on Mick's yes the seat merges the branch, pushes, and sends the Chief
+the full text with the link (#for=Her%20and%20Him); the Chief places it and "send" is Mick's. They
+said no to the marketing release (loxley-rescue docs/log/2026-09.md, 2026-09-15): nothing from their
+stay in any marketing, the drone footage included.
 
 ---
 
