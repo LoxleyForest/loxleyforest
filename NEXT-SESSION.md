@@ -16,6 +16,8 @@
 - Open since 2026-10-19, the pages keep what they say: the Experiences add-ons still offered, s'mores included or an add-on, The Letter, "Most popular" on The Crossing, 2 to 20 ceremony guests against a stay of 6, the Woodland Yurt line, "treehouses" in the home title, Klarna in Stripe, the bell line for disputes (docs/log/2026-10.md, both 2026-10-19 blocks).
 - Hostfully's 30-day rollback from 2026-10-19: when it is cancelled, redirect /booking-confirmed and /booking-confirmed.html to /book in netlify.toml and retire booking-confirmed.html (docs/log/2026-10.md, 2026-10-19 night).
 
+- Before the Bridge for the December 15 to 17 stay (The Vow, ceremony Wednesday the 16th): made on branch `before-the-bridge-2026-12-15`, not on main, until his ear has had the template's new lines and his word on the flags (the 2026-11-05 block below). Nothing of the couple is on the page; their names ride only after the # in the link.
+
 **For the seat to rule, next session (the Chief's flags of 2026-11-04; nothing new goes live Nov 13 to about Nov 27 while Mick is away)**
 - CLAUDE.md still says "no build system" though scripts/site/build_v2.py builds the pages; README.md is GitHub boilerplate. Fix both, and point CLAUDE.md's session-open line at this block and docs/log/.
 - private/new-site-371cf1/ (26 MB, the preview and its reels) was to be deleted at launch and is still on main; Mick shared its links with Livy, so his yes before it goes.
@@ -23,6 +25,34 @@
 - Ideas logged, not started: the animated guidebook with the pizza guide as a chapter, seasonal reels and profile pictures, the interior clips still on Mick's laptop (docs/log/2026-10.md, 2026-10-13 and 2026-10-19).
 
 The Janitor (chief docs/v2/janitor.md) runs here weekly: this file keeps this block and the current month's entries; older blocks move word for word to docs/log/<YYYY-MM>.md.
+
+---
+
+# IN FLIGHT · 2026-11-05 · Before the Bridge for the December 15 to 17 stay (branch before-the-bridge-2026-12-15)
+
+The Chief's route (chief docs/log.md, 15:50): the first elopement (The Vow, signed and paid in
+September; ceremony Wednesday Dec 16) needs its own questionnaire with Mick's recap tonight; the page
+he had in hand was the Dec 11 to 13 couple's. Made in the branch's worktree by
+  python3 scripts/before-the-bridge/new.py --check-in 2026-12-15 --check-out 2026-12-17 \
+    --ceremony 2026-12-16 --package the-vow --site either --alcohol --house-photographs --waterfall
+into private/before-the-bridge-2026-12-15-to-17-42af64/ (6d4d59e, pushed; not on main): 4 print pages,
+19 questions, the laurel grove row held. The waterfall row is the seat's read: Mick's own Sep 11 email
+promised them "select shots afterwards including down at the waterfall"; the row's words claim nothing
+about the water, and the seasons record names it running only in summer, so December's walk and flow
+are his cover note's. --site either because The Vow's line is the Fire Circle or the Sky Deck and the
+record fixes neither. --alcohol because The Vow carries a champagne toast and the record says nothing
+else; his no re-makes the page, one command. For his word through the Chief: alcohol or not, children
+(count and word), The Morning After, the cake, pizza night (offers.py gives the brunch and a small
+cake with every package since Oct 28; their September agreement predates it). Proven: node
+scripts/before-the-bridge/check.js (10 shapes, 7 refusals, 0 failed); the page itself rendered at
+390 px with made-up names in the link: no sideways scroll, no outside request, no script error,
+greets by name, 4 Letter pages. The repo is public (200 unauthenticated, 15:45 ET): the page carries
+dates, package and flags only, its header comment and nothing else hidden. This is the first page
+made from the template, so its words go to Mick's ear before the push, the new lines first (the
+README): the "either" site line, the toast's "Tell us what you would like", question 3's unnamed
+form; sent to the Chief with the exact words. On his yes: merge the branch, push, log the yes here;
+the link goes from his own Gmail with #for=Her%20and%20Him. That couple said no to the marketing
+release (loxley-rescue docs/log/2026-09.md, 2026-09-15): no image from their stay in any marketing.
 
 ---
 
