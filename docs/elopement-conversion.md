@@ -17,14 +17,18 @@ are /success's, unchanged.
 
 | Action | Label (AW-18110631502/...) | Fires on | Since |
 |---|---|---|---|
-| Elopement Inquiry | `6ibiCPrZ1LIdEM6c6btD` | /success-elopement, page view | the action since 2026-11-05 08:50 ET (the Chief's clicks in Mick's Chrome, on his word; the label read from the page); the tag since the publish of the Tag Manager version "Elopement Inquiry conversion", proven by the check on the live site that day |
+| Elopement Inquiry | `6ibiCPrZ1LIdEM6c6btD` | /success-elopement, page view | the action since 2026-11-05, by 08:23 ET on the box's clock (the Chief's clicks in Mick's Chrome, on his word; the label read from the page); the tag since Tag Manager version 8, "Elopement Inquiry conversion", published 08:26 ET by the Tag Manager page's own time, proven by the check on the live site that day |
 
 ## Mick's clicks (one list; nothing here spends money; the accounts, not the site, so any day)
 
-Steps 1 to 7 are done, all on 2026-11-05 (the publish, Tag Manager version 8, at 09:26 ET; the live
-check's output in NEXT-SESSION's block for that day). Step 8 is the Forge's, routed by the Chief that day.
+Steps 1 to 7 are done, all on 2026-11-05 (the publish, Tag Manager version 8, at 08:26 ET by the Tag
+Manager page's own time; the live check's output in NEXT-SESSION's block for that day). Step 8 is the
+Forge's, routed by the Chief that day. The Chief's clock ran ahead that morning: the times below that
+came from it are given as bounds from the box's clock instead.
 
-1. **Google Ads, the action: done 2026-11-05 08:50 ET** (the Chief, in Mick's Chrome, on his word).
+1. **Google Ads, the action: done 2026-11-05, by 08:23 ET on the box's clock** (the Chief, in Mick's
+   Chrome, on his word; the Chief's clock read 08:50, which cannot be, since the tag carrying this
+   label was published at 08:26).
    Goal Submit lead form, name **Elopement Inquiry**, count One, click-through window 90 days (as
    Form Inquiry and Widget Inquiry: a long consideration), attribution data-driven. Value: this
    Google Ads flow no longer offers "don't use a value" (Form Inquiry's setting), so the action
@@ -44,7 +48,8 @@ check's output in NEXT-SESSION's block for that day). Step 8 is the Forge's, rou
    (Preview, enter https://loxleyforest.com/success-elopement, Connect: "Ads - Elopement Inquiry
    Conversion" under Tags Fired, "Ads - Form Inquiry Conversion" under Not Fired), knowing a Preview
    visit fires one real conversion, as the 2026-08-25 proof did. The seat's check fires nothing real.
-6. **Google Ads, the campaign: done 2026-11-05 09:35 ET, read only, no change made** (the Chief). The
+6. **Google Ads, the campaign: done 2026-11-05, by 08:30 ET on the box's clock, read only, no change
+   made** (the Chief; its clock read 09:35). The
    Search - Elopements campaign's conversion goals read "Account-default: Purchases, Submit lead
    forms", so Elopement Inquiry counts for it as a primary Submit lead form goal.
 7. **The seat: done with the publish.** The label is in the table above (2026-11-05) and in

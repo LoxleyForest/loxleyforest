@@ -28,12 +28,15 @@ The Janitor (chief docs/v2/janitor.md) runs here weekly: this file keeps this bl
 
 # DONE · 2026-11-05 · Elopement Inquiry counts on its own label (merge 359c303)
 
-The Chief, in Mick's Chrome on his word: the Google Ads action "Elopement Inquiry" at 08:50 ET
+The Chief, in Mick's Chrome on his word: the Google Ads action "Elopement Inquiry" by 08:23 ET on the
+box's clock (the Chief's clock ran ahead that morning and read 08:50; the box's commit times bound it)
 (docs/elopement-conversion.md step 1: Submit lead form, count One, click-through 90 days, data-driven
 attribution, ID 18110631502, label 6ibiCPrZ1LIdEM6c6btD; Google's flow no longer offers "don't use a
 value", so it carries "same value for each conversion" at the default $1 where Form Inquiry carries
 none, which matters only if a campaign ever bids for value), then Tag Manager GTM-5N4BX66K version 8
-"Elopement Inquiry conversion" at 09:26 ET, three changes in one version: the tag "Ads - Elopement
+"Elopement Inquiry conversion" at 08:26 ET by the Tag Manager page's own time (the Chief first reported
+09:26 from the clock that ran ahead; the merge commit's message carries that figure), three changes in
+one version: the tag "Ads - Elopement
 Inquiry Conversion", its trigger "PV - Elopement Inquiry Success" (Page Path contains
 /success-elopement), and the trigger "PV — /success" now also Page Path does not contain
 /success-elopement. The seat prepared the switch on branch elopement-label (ELOPEMENT_LABEL in
@@ -48,7 +51,8 @@ merge, nothing sent:
   pushes  gift_purchase on /gift/thanks {value: 2000, currency: USD, transaction_id: lf-…, item: golden-arrow}
   awaiting Mick's label: Gift - Golden Arrow on /gift/thanks
 Exit 0, no WRONG line. Before the merge, main's check with the blank label already read MISSING Form
-Inquiry on /success-elopement: version 8's exclusion was live. Step 6 closed at 09:35 ET, read only: the
+Inquiry on /success-elopement: version 8's exclusion was live. Step 6 closed by 08:30 ET on the box's
+clock (the Chief's clock read 09:35), read only: the
 Search - Elopements campaign's goals read "Account-default: Purchases, Submit lead forms", so the new
 action counts for it, no change made (the Chief). Open only on the Forge's side: step 8, CONFIRM_PATHS
 in loxley-rescue gatehouse/funnel.py (SITE_PATHS already carries the path) and the site-tags.md row,
