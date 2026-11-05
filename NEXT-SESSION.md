@@ -12,7 +12,6 @@
 
 **Waits on Mick**
 - The Google Ads label for "Gift - Golden Arrow": it goes in GIFT_LABEL in scripts/site/check_conversions.js (docs/log/2026-10.md, 2026-10-29).
-- Elopement Inquiry's step 6 (docs/elopement-conversion.md): the Elopements campaign's goals should use the account default goals, where Submit lead form holds Elopement Inquiry as Primary; if the campaign names its own goals, add it there. Eyes only, any day; the counting itself is live since 2026-11-05 (the block below).
 - your-adventure.html, the arrival questionnaire: a draft, noindex, linked from nowhere; its copy and its last line need his yes, and the link rides only in the booking confirmation (docs/log/2026-09.md).
 - Open since 2026-10-19, the pages keep what they say: the Experiences add-ons still offered, s'mores included or an add-on, The Letter, "Most popular" on The Crossing, 2 to 20 ceremony guests against a stay of 6, the Woodland Yurt line, "treehouses" in the home title, Klarna in Stripe, the bell line for disputes (docs/log/2026-10.md, both 2026-10-19 blocks).
 - Hostfully's 30-day rollback from 2026-10-19: when it is cancelled, redirect /booking-confirmed and /booking-confirmed.html to /book in netlify.toml and retire booking-confirmed.html (docs/log/2026-10.md, 2026-10-19 night).
@@ -49,10 +48,11 @@ merge, nothing sent:
   pushes  gift_purchase on /gift/thanks {value: 2000, currency: USD, transaction_id: lf-…, item: golden-arrow}
   awaiting Mick's label: Gift - Golden Arrow on /gift/thanks
 Exit 0, no WRONG line. Before the merge, main's check with the blank label already read MISSING Form
-Inquiry on /success-elopement: version 8's exclusion was live. Open: step 6 (the Elopements campaign's
-goals, in Waits on Mick above) and step 8, the Forge's CONFIRM_PATHS in loxley-rescue
-gatehouse/funnel.py (SITE_PATHS already carries the path, per the Forge); the site-tags.md row goes to
-the Forge with the Chief's next message. Branch elopement-label is merged and can go.
+Inquiry on /success-elopement: version 8's exclusion was live. Step 6 closed at 09:35 ET, read only: the
+Search - Elopements campaign's goals read "Account-default: Purchases, Submit lead forms", so the new
+action counts for it, no change made (the Chief). Open only on the Forge's side: step 8, CONFIRM_PATHS
+in loxley-rescue gatehouse/funnel.py (SITE_PATHS already carries the path) and the site-tags.md row,
+both routed to the workshop Forge by the Chief. Branch elopement-label is merged and can go.
 
 ---
 

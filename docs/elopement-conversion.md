@@ -21,8 +21,8 @@ are /success's, unchanged.
 
 ## Mick's clicks (one list; nothing here spends money; the accounts, not the site, so any day)
 
-Steps 1 to 5 and 7 are done (step 1 on 2026-11-05; 2 to 5 with the publish, the date in NEXT-SESSION's
-block for that day). Step 6 is Mick's or the Chief's eyes on the campaign's goals; step 8 is the Forge's.
+Steps 1 to 7 are done, all on 2026-11-05 (the publish, Tag Manager version 8, at 09:26 ET; the live
+check's output in NEXT-SESSION's block for that day). Step 8 is the Forge's, routed by the Chief that day.
 
 1. **Google Ads, the action: done 2026-11-05 08:50 ET** (the Chief, in Mick's Chrome, on his word).
    Goal Submit lead form, name **Elopement Inquiry**, count One, click-through window 90 days (as
@@ -44,9 +44,9 @@ block for that day). Step 6 is Mick's or the Chief's eyes on the campaign's goal
    (Preview, enter https://loxleyforest.com/success-elopement, Connect: "Ads - Elopement Inquiry
    Conversion" under Tags Fired, "Ads - Form Inquiry Conversion" under Not Fired), knowing a Preview
    visit fires one real conversion, as the 2026-08-25 proof did. The seat's check fires nothing real.
-6. **Google Ads, the campaign:** Campaigns, Elopements, Settings, Goals: it should use the account
-   default goals, where Submit lead form now holds Elopement Inquiry as Primary. If it names its own
-   goals, add Elopement Inquiry there.
+6. **Google Ads, the campaign: done 2026-11-05 09:35 ET, read only, no change made** (the Chief). The
+   Search - Elopements campaign's conversion goals read "Account-default: Purchases, Submit lead
+   forms", so Elopement Inquiry counts for it as a primary Submit lead form goal.
 7. **The seat: done with the publish.** The label is in the table above (2026-11-05) and in
    `ELOPEMENT_LABEL` in scripts/site/check_conversions.js (the branch `elopement-label`, prepared
    2026-11-05 and merged the hour the Chief said the container was published; before the publish it
@@ -55,10 +55,11 @@ block for that day). Step 6 is Mick's or the Chief's eyes on the campaign's goal
    the merge, `node scripts/site/check_conversions.js` on the live site must print "fires Elopement
    Inquiry (success-elopement)" with no WRONG line; its output goes in NEXT-SESSION's block for that
    day. The row into loxley-rescue docs/site-tags.md (the Forge's file, through the Chief).
-8. **The Forge:** `/success-elopement` into loxley-rescue gatehouse/funnel.py CONFIRM_PATHS and
-   gatehouse/sources.py SITE_PATHS, both exact matches today, so the engine's funnel counts a visit
-   that sent an elopement inquiry as confirmed and names the page (today it would read "other").
-   Google Ads counts either way; this is the engine's own read.
+8. **The Forge:** `/success-elopement` into loxley-rescue gatehouse/funnel.py CONFIRM_PATHS (an exact
+   match today), so the engine's funnel counts a visit that sent an elopement inquiry as confirmed;
+   gatehouse/sources.py SITE_PATHS already carries the path (the Forge, 2026-11-05). With it, the row
+   for loxley-rescue docs/site-tags.md. Routed to the workshop Forge by the Chief, 2026-11-05. Google
+   Ads counts either way; this is the engine's own read.
 
 ## The giveaway form, coming (the memo's item 4)
 
