@@ -17,7 +17,13 @@ book now. Its banner scrolls to the form, picks the package there and sets the h
 "waterfall-2027", so the inquiry says which card it came from.
 
 The inquiry form is the same Netlify form: name "elopement-inquiry", the honeypot, the hidden
-form-name, every field name, and the action "/success.html" (check_forms.py). A hidden "page" field
+form-name and every field name. Since 2026-11-04 it lands on its own page, /success-elopement
+(pages/confirmations.py; check_forms.py holds it there), so elopement inquiries can count on their
+own Google Ads action once Mick's clicks make it (the Marketer's elopements memo, item 3, routed by
+the Chief; the clicks in docs/elopement-conversion.md). The same routing set the form's choices to
+what the page says, no new words of Mick's: the guest count is "Just us" or "2 to 6 guests" (the
+cards: the two of you and up to six; the form offered 7 to 20), the date hint reads May 2027 (it read
+October 2026), and "Romantic Atlanta" is one way to have heard of us. A hidden "page" field
 (2026-10-29) names the page the form was sent from, and a hidden "list" field (2026-10-30) names the list:
 the banner fills it, and the package dropdown keeps it true (the waterfall's option sets it, any
 other pick clears it). The search landing pages (pages/pseo.py) carry
@@ -291,7 +297,7 @@ def page_elopements():
         </div>
 
         <div class="lf-inq__wrap lf-rise">
-          <form class="lf-form lf-form--light" name="elopement-inquiry" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" action="/success.html">
+          <form class="lf-form lf-form--light" name="elopement-inquiry" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" action="/success-elopement.html">
             <input type="hidden" name="form-name" value="elopement-inquiry">
             <input type="hidden" name="page" value="/elopements">
             <input type="hidden" name="list" value="">
@@ -315,7 +321,7 @@ def page_elopements():
 
             <div class="lf-form__row">
               <label for="el-date">Preferred date or month</label>
-              <input type="text" id="el-date" name="preferred_date" placeholder="e.g. October 2026 or 10/12/2026">
+              <input type="text" id="el-date" name="preferred_date" placeholder="e.g. May 2027 or 5/12/2027">
             </div>
 
             <div class="lf-form__row">
@@ -324,8 +330,6 @@ def page_elopements():
                 <option value="">Select...</option>
                 <option value="just-us">Just us</option>
                 <option value="2-6">2 to 6 guests</option>
-                <option value="7-12">7 to 12 guests</option>
-                <option value="13-20">13 to 20 guests</option>
               </select>
               <p class="lf-form__help">Every guest is part of your private celebration: your closest people, sharing your night in the canopy. Because Loxley Forest is our home and yours during your stay, all ceremony guests are welcomed as part of your booking party.</p>
             </div>
@@ -349,6 +353,7 @@ def page_elopements():
                 <option value="instagram">Instagram</option>
                 <option value="pinterest">Pinterest</option>
                 <option value="google">Google</option>
+                <option value="romantic-atlanta">Romantic Atlanta</option>
                 <option value="photographer">Photographer Referral</option>
                 <option value="the-knot">The Knot</option>
                 <option value="friend">Friend / Word of Mouth</option>
@@ -454,7 +459,7 @@ CSS = '''
 .lf-pkg__go { margin-top: auto; padding-top: 22px; align-self: flex-start; }
 /* A card with two links (Firelight, 2026-11-02): the second sits under the first. */
 .lf-pkg__go + .lf-pkg__go { margin-top: 0; padding-top: 14px; }
-@media (min-width: 900px) { .lf-pkgs { grid-template-columns: repeat(3, 1fr); align-items: stretch; margin-top: 64px; } .lf-pkg { padding: 40px 32px 32px; } }
+@media (min-width: 900px) { .lf-pkgs { grid-template-columns: repeat(2, 1fr); align-items: stretch; max-width: 60rem; margin-left: auto; margin-right: auto; margin-top: 64px; } .lf-pkg { padding: 40px 32px 32px; } }
 /* The waterfall card, shadowed (Mick, 2026-10-30): a darker ground, the photograph desaturated under a
    veil, every word in stone; the banner alone at full strength. Colours, not opacity, do the dimming,
    so the words keep their contrast (stone on the card's ground is above 4.5:1). */

@@ -606,8 +606,10 @@ def rendered_rules(p, page):
         out.append(('render', 'as written, says noindex'))
     if f'<link rel="canonical" href="{B.SITE}/{p["slug"]}">' not in page:
         out.append(('render', 'as written, lacks its canonical'))
-    if f'<input type="hidden" name="page" value="/{p["slug"]}">' not in page or 'action="/success.html"' not in page:
-        out.append(('render', 'as written, lacks its form posting to /success with the hidden page field'))
+    # The elopement form lands on its own page since 2026-11-04 (pages/elopements.py; check_forms.py OWN).
+    door = '/success-elopement' if p['form'] == 'elopement' else '/success'
+    if f'<input type="hidden" name="page" value="/{p["slug"]}">' not in page or f'action="{door}.html"' not in page:
+        out.append(('render', f'as written, lacks its form posting to {door} with the hidden page field'))
     rest = re.sub(r'<li class="ps-fact">.*?</li>|<figure class="ps-quote">.*?</figure>', ' ', page, flags=re.S)
     for c, m in text_rules(visible(rest)):
         if c != 'schema':   # markup is the page itself here; the copy was read for it before
