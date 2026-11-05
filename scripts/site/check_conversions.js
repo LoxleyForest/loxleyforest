@@ -17,14 +17,16 @@ const SITE_HOST = new URL(SITE).hostname;
 const GIFT_LABEL = '';
 const GIFT = { cents: 200000, item: 'golden-arrow', session: 'cs_test_checknotsent' };
 // The elopement form's own door (2026-11-04, the Marketer's elopements memo item 3, routed by the
-// Chief): /success-elopement. Its Google Ads action, "Elopement Inquiry", does not exist yet: Mick
-// makes it by his own clicks (docs/elopement-conversion.md) and, in the same Tag Manager version,
-// keeps the Form Inquiry trigger off this page. Until then the page's path holds "/success", so Form
-// Inquiry (its trigger matches by "contains") still counts an elopement inquiry, and this check wants
-// that label there. Once the label is in ELOPEMENT_LABEL the page must fire it and Form Inquiry must
-// not (a "not" label here fails the check when it fires), or every elopement inquiry counts twice.
+// Chief): /success-elopement. Its Google Ads action, "Elopement Inquiry", exists since 2026-11-05
+// (the Chief's clicks in Mick's Chrome, on his word; the label read from the page), and the Tag
+// Manager version named in docs/elopement-conversion.md fires it there and keeps the Form Inquiry
+// trigger off the page. So the page must fire ELOPEMENT_LABEL and Form Inquiry must not (a "not"
+// label here fails the check when it fires), or every elopement inquiry counts twice. Before that
+// version was published the page's path holding "/success" made Form Inquiry (its trigger matches
+// by "contains") count an elopement inquiry, and this check wanted that label there: blank
+// ELOPEMENT_LABEL again and it wants that again, should the container ever be rolled back.
 const FORM_LABEL = '12CKCM613eccEM6c6btD';
-const ELOPEMENT_LABEL = '';
+const ELOPEMENT_LABEL = '6ibiCPrZ1LIdEM6c6btD';
 const WANT = [
   { path: '/success', label: FORM_LABEL, what: 'Form Inquiry (success)', not: ELOPEMENT_LABEL },
   ELOPEMENT_LABEL
