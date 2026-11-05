@@ -50,7 +50,10 @@ greets by name, 4 Letter pages. The repo is public (200 unauthenticated, 15:45 E
 dates, package and flags only, its header comment and nothing else hidden. This is the first page
 made from the template, so its words go to Mick's ear before the push, the new lines first (the
 README): the "either" site line, the toast's "Tell us what you would like", question 3's unnamed
-form; sent to the Chief with the exact words. On his yes: merge the branch, push, log the yes here;
+form; sent to the Chief with the exact words. The made page is a private artifact on Mick's account for
+his eye (https://claude.ai/artifact/PyVDS4c1DM5zmtdaMdo8A3; it greets "Hi," there, no names in that
+link). With nothing beyond the package, print page 3 carries only the toast question, the template's
+shape for a bare Vow; the cake or the brunch would fill it. On his yes: merge the branch, push, log the yes here;
 the link goes from his own Gmail with #for=Her%20and%20Him. That couple said no to the marketing
 release (loxley-rescue docs/log/2026-09.md, 2026-09-15): no image from their stay in any marketing.
 
