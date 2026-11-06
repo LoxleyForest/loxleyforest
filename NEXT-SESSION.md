@@ -16,7 +16,7 @@
 - Open since 2026-10-19, the pages keep what they say: the Experiences add-ons still offered, s'mores included or an add-on, The Letter, "Most popular" on The Crossing, 2 to 20 ceremony guests against a stay of 6, the Woodland Yurt line, "treehouses" in the home title, Klarna in Stripe, the bell line for disputes (docs/log/2026-10.md, both 2026-10-19 blocks).
 - Hostfully's 30-day rollback from 2026-10-19: when it is cancelled, redirect /booking-confirmed and /booking-confirmed.html to /book in netlify.toml and retire booking-confirmed.html (docs/log/2026-10.md, 2026-10-19 night).
 
-- The December 15 to 17 couple's recap email: in the Gmail draft in their thread, waiting on Mick's own hand for five spots: one bridge picture (the whole span at dusk) and four links (the bridge page, the Drive folder, Make Me Up, the Before the Bridge page with the names after the #), pasted in Gmail, never through the connector, then send (the 2026-11-05 blocks below). The bridge page, private/the-bridge-21b368/ (84dd12f), is the house's five bridge pictures with captions in the Before the Bridge look, unlisted, nothing about any guest, so it serves any couple choosing where to say their vows. Their page is live at /private/before-the-bridge-2026-12-15-to-17-7df87e/; it says "ready from 3:00 pm" while their signed agreement says 4:00 p.m., for his word.
+- The December 15 to 17 couple's Before the Bridge page says "ready from 3:00 pm" (his standing ruling) while their signed agreement says 4:00 p.m.; his word if he wants the page changed. Their recap went 2026-11-05 at about 17:40 ET from his Gmail (the blocks below); their answers come back to him by reply or as a photo of the pages, and nothing of them belongs in this repo. Their page is live at /private/before-the-bridge-2026-12-15-to-17-7df87e/; it says "ready from 3:00 pm" while their signed agreement says 4:00 p.m., for his word.
 
 **For the seat to rule, next session (the Chief's flags of 2026-11-04; nothing new goes live Nov 13 to about Nov 27 while Mick is away)**
 - CLAUDE.md still says "no build system" though scripts/site/build_v2.py builds the pages; README.md is GitHub boilerplate. Fix both, and point CLAUDE.md's session-open line at this block and docs/log/.
@@ -43,8 +43,14 @@ and the page link. Found and proven: the Gmail connector rewrites every link it 
 and the plain text alike, into https://www.google.com/url?q=...&source=gmail&ust=<about 24 h
 later>&sa=E, the redirect Mick's earlier recipients hit; so links go into a draft by hand in Gmail,
 never through the connector. The license paragraph corrects the Sep 15 email's "or a county easier
-for y'all": for non-residents the license comes from the ceremony's county (gaprobate.gov). Send is
-Mick's, from his phone. The route below is the record of how it was built.
+for y'all": for non-residents the license comes from the ceremony's county (gaprobate.gov). Then the
+Chief's last route on Mick's ask for "the elite way" to show the bridge: private/the-bridge-21b368/
+(84dd12f), the house's five bridge pictures with captions in the Before the Bridge look, the stay
+guide's bridge line under the title, unlisted, nothing about any guest, so it serves any couple
+choosing where to say their vows; the draft's picture spot became one hero shot inline (the whole
+span at dusk) and the page's link. **Sent by Mick from his Gmail at about 17:40 ET, the hero shot
+and the four links pasted by his hand** (the Chief's word, cleared in its queue). The route below is
+the record of how it was built.
 
 ---
 
