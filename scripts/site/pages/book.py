@@ -178,6 +178,7 @@ def page_book():
               <option value="pinterest">Pinterest</option>
               <option value="google">Google</option>
               <option value="airbnb">Airbnb</option>
+              <option value="ai-assistant">An AI assistant (ChatGPT, Claude, Gemini)</option>
               <option value="friend">Friend / Word of Mouth</option>
               <option value="other">Other</option>
             </select>

@@ -16,6 +16,8 @@
 - Open since 2026-10-19, the pages keep what they say: the Experiences add-ons still offered, s'mores included or an add-on, The Letter, "Most popular" on The Crossing, 2 to 20 ceremony guests against a stay of 6, the Woodland Yurt line, "treehouses" in the home title, Klarna in Stripe, the bell line for disputes (docs/log/2026-10.md, both 2026-10-19 blocks).
 - Hostfully's 30-day rollback from 2026-10-19: when it is cancelled, redirect /booking-confirmed and /booking-confirmed.html to /book in netlify.toml and retire booking-confirmed.html (docs/log/2026-10.md, 2026-10-19 night).
 
+- The December 15 to 17 couple's Before the Bridge page says "ready from 3:00 pm" (his standing ruling) while their signed agreement says 4:00 p.m.; his word if he wants the page changed. Their recap went 2026-11-05 at about 17:40 ET from his Gmail (the blocks below); their answers come back to him by reply or as a photo of the pages, and nothing of them belongs in this repo. Their page is live at /private/before-the-bridge-2026-12-15-to-17-7df87e/; it says "ready from 3:00 pm" while their signed agreement says 4:00 p.m., for his word.
+
 **For the seat to rule, next session (the Chief's flags of 2026-11-04; nothing new goes live Nov 13 to about Nov 27 while Mick is away)**
 - CLAUDE.md still says "no build system" though scripts/site/build_v2.py builds the pages; README.md is GitHub boilerplate. Fix both, and point CLAUDE.md's session-open line at this block and docs/log/.
 - private/new-site-371cf1/ (26 MB, the preview and its reels) was to be deleted at launch and is still on main; Mick shared its links with Livy, so his yes before it goes.
@@ -23,6 +25,72 @@
 - Ideas logged, not started: the animated guidebook with the pizza guide as a chapter, seasonal reels and profile pictures, the interior clips still on Mick's laptop (docs/log/2026-10.md, 2026-10-13 and 2026-10-19).
 
 The Janitor (chief docs/v2/janitor.md) runs here weekly: this file keeps this block and the current month's entries; older blocks move word for word to docs/log/<YYYY-MM>.md.
+
+---
+
+# DONE · 2026-11-05 · Before the Bridge live and the recap drafted for the December 15 to 17 stay (merge 6c349ff)
+
+The page is on main and live (200 at 16:50 ET, noindex, the vows line as below), on Mick's yes by
+voice ("Okay amazing ... whatever you think is best", the new lines read to him in the seat's message;
+the drone break put to him in the Critic's words first). The branch is merged and deleted. The seat's
+calls on "whatever you think is best": the drone stays in as his free gift, worded as the house's own
+exception to the no-drones line and flown by him, the videographer the polished option; the page keeps
+"ready from 3:00 pm" (his standing ruling) though their signed agreement says 4:00 p.m., for his word
+if he wants it changed. The recap is in the Chief's Gmail draft in their thread, updated in place by
+the seat on Mick's ask, with four bracketed spots for his own hand: the five bridge pictures
+(email-sized copies in the session scratchpad, bridge/), the Drive folder link, the Make Me Up link
+and the page link. Found and proven: the Gmail connector rewrites every link it writes, in the HTML
+and the plain text alike, into https://www.google.com/url?q=...&source=gmail&ust=<about 24 h
+later>&sa=E, the redirect Mick's earlier recipients hit; so links go into a draft by hand in Gmail,
+never through the connector. The license paragraph corrects the Sep 15 email's "or a county easier
+for y'all": for non-residents the license comes from the ceremony's county (gaprobate.gov). Then the
+Chief's last route on Mick's ask for "the elite way" to show the bridge: private/the-bridge-21b368/
+(84dd12f), the house's five bridge pictures with captions in the Before the Bridge look, the stay
+guide's bridge line under the title, unlisted, nothing about any guest, so it serves any couple
+choosing where to say their vows; the draft's picture spot became one hero shot inline (the whole
+span at dusk) and the page's link. **Sent by Mick from his Gmail at about 17:40 ET, the hero shot
+and the four links pasted by his hand** (the Chief's word, cleared in its queue). The route below is
+the record of how it was built.
+
+---
+
+# IN FLIGHT · 2026-11-05 · Before the Bridge and the recap for the December 15 to 17 stay (the build, branch before-the-bridge-2026-12-15, merged above)
+
+The Chief's route (chief docs/log.md, 15:50): the first elopement (The Vow, signed and paid in
+September; ceremony Wednesday Dec 16) needs its own questionnaire with Mick's recap tonight; the page
+he had in hand was the Dec 11 to 13 couple's. Then Mick, by voice in the seat's session, passed the
+seat the torch on the page and the recap email with his call notes of Oct 26 (dates and amounts only
+here; nothing of the couple in the repo). His word: the brunch yes; the drone his gift, free; the
+cake locked (caramel, cream cheese buttercream); pizza night locked (dough and toppings for two named
+pizzas on arrival); the ceremony spot still theirs to lock, the middle of the bridge or the bridge as
+the aisle to the Sky Deck; a bold marriage-license reminder; hair and makeup a recommendation only.
+The page, made in the branch's worktree by
+  python3 scripts/before-the-bridge/new.py --check-in 2026-12-15 --check-out 2026-12-17 \
+    --ceremony 2026-12-16 --package the-vow --site deck --bridge-open --alcohol \
+    --house-photographs --waterfall --morning-after
+into private/before-the-bridge-2026-12-15-to-17-7df87e/ (d9c09bf, pushed; not on main): 4 print
+pages, 20 questions, the laurel grove row held; no --cake and no --pizza-night because both are
+chosen, so their questions would be moot. The waterfall row on Mick's own Sep 11 promise of shots
+"down at the waterfall"; the row claims nothing about the water. Template change on the branch, the
+Critic's words: deck with the bridge open now reads "Your vows are out on the rope bridge or on the
+Sky Deck at its end, and the choice is yours until the week of" (the deck alone read as fixed beside
+a letter offering the middle of the bridge). Mick's own "If your friends described the two of you as
+a couple" question was tried and taken out: a sixth question on sheet one spills to a fifth print
+page on every shape (two failed checks, then stop). Proven: check.js 10 shapes, 7 refusals, 0 failed;
+the page at 390 px with made-up names in the link, no sideways scroll, no outside request, 4 Letter
+pages. Private artifact for his eye: https://claude.ai/artifact/PyVDS4c1DM5zmtdaMdo8A3.
+The recap email: the Writer's draft in Mick's shape, the Scout's rows (the county rule and the
+court's phone primary from gaprobate.gov; the court's address, hours and fee secondary, so the email
+says call ahead; December flowers from UGA Extension: camellias, magnolia, cedar, boxwood; Make Me Up's
+own $100 fee inside 30 days), the Critic last. The Critic's weakest claim: the drone, against
+agreement line 51 (drones not permitted anywhere on the property, signed by them) and the camera
+(The Vow's ceremony photographs; who shoots stills while he flies); its fix is to drop the drone
+from tonight's letter or name the exception out loud. Put to Mick in the Critic's words. Also to his
+word: the page's "ready from 3:00 pm" against their signed agreement's 4:00 p.m. check-in. The
+Chief holds the Gmail draft; on Mick's yes the seat merges the branch, pushes, and sends the Chief
+the full text with the link (#for=Her%20and%20Him); the Chief places it and "send" is Mick's. They
+said no to the marketing release (loxley-rescue docs/log/2026-09.md, 2026-09-15): nothing from their
+stay in any marketing, the drone footage included.
 
 ---
 
