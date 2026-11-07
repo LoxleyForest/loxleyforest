@@ -1,4 +1,4 @@
-# CURRENT STATE · 2026-11-05 (at most 40 lines here, kept by the Janitor; the history by month is in docs/log/)
+# CURRENT STATE · 2026-11-06 (at most 40 lines here, kept by the Janitor; the history by month is in docs/log/)
 
 **In force**
 - Live since 2026-10-19 (merge a246479): the V2 design on every page, /book our own checkout on book.loxleyforest.com, no Hostfully anywhere (Mick's ruling). The look is DIRECTION.md (docs/log/2026-10.md, the 2026-10-19 night block and 2026-10-13).
@@ -25,6 +25,33 @@
 - Ideas logged, not started: the animated guidebook with the pizza guide as a chapter, seasonal reels and profile pictures, the interior clips still on Mick's laptop (docs/log/2026-10.md, 2026-10-13 and 2026-10-19).
 
 The Janitor (chief docs/v2/janitor.md) runs here weekly: this file keeps this block and the current month's entries; older blocks move word for word to docs/log/<YYYY-MM>.md.
+
+---
+
+# DONE · 2026-11-06 · The AI channel counted, and llms.txt says what a stay holds (the Chief's route, Mick: "Let's build", 22:10 ET)
+
+Why: the Nov 5 to 6 couple found Loxley because the wife asked ChatGPT for the best place to take
+her husband and it named Loxley Forest; the site could not count that. (1) "How did you hear about
+us?" on /book's Netlify inquiry form (pages/book.py) and on the elopement form (pages/elopements.py,
+reused by the five landing pages) gains "An AI assistant (ChatGPT, Claude, Gemini)", value
+ai-assistant, before "Friend / Word of Mouth"; the field stays "referral"; the option is on all
+seven built pages, once each. /book's own checkout already had the chip "An AI assistant" sending
+heard_from=ai_assistant (js/gatehouse.js; the engine's desk.py HEARD_FROM), so the two vocabularies
+stand: Netlify referral=ai-assistant, checkout heard_from=ai_assistant; the workshop Forge told both
+in one line for the lead doors. (2) llms.txt: two sections from the site's own words, "What a stay
+holds" (the home page's "Your stay is a story, not a checklist"; TreeMail, Fire & Flour, First Light
+as "Part of every stay") and "Elopements" (the four cards with their prices and lines, the guest
+count, the half-reserves line, The Falls' one weekend a month from October 2027 and its list), and
+"Prices are never printed" corrected to nightly prices, since the elopement packages are priced on
+the page. The Critic's weakest claim, taken: "at no extra cost" is not the site's phrase, and Stars &
+S'mores and The Letter stay out of the file because both are questions Mick has held open since
+2026-10-19 (s'mores included or an add-on; The Letter still running); the file hardens nothing he
+has not ruled. Also taken: The Falls' line carries its cadence and its list, not "inquire"; the
+"three ceremony spaces" sentence dropped rather than sit beside the waterfall. (3) faq.py "Three
+packages" became "Four packages", a correction to the page's four cards since Firelight (83a077f,
+Mick's yes by ear 2026-11-02), in the visible answer and the FAQPage schema alike. Checks: build_v2,
+check_forms (11 forms), ensure_gtm, check_pseo (0 problems). The Critic's standing ask, not built
+tonight: a check that fails the build when llms.txt holds a phrase no built page holds.
 
 ---
 

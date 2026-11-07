@@ -356,6 +356,7 @@ def page_elopements():
                 <option value="romantic-atlanta">Romantic Atlanta</option>
                 <option value="photographer">Photographer Referral</option>
                 <option value="the-knot">The Knot</option>
+                <option value="ai-assistant">An AI assistant (ChatGPT, Claude, Gemini)</option>
                 <option value="friend">Friend / Word of Mouth</option>
                 <option value="other">Other</option>
               </select>

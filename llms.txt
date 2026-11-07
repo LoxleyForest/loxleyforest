@@ -2,7 +2,7 @@
 
 > A hand-built luxury treehouse sixty feet up in the canopy of a North Georgia cove forest, reached by a hundred-foot suspended rope bridge, on 42 acres in Dahlonega, Georgia, just over an hour from Atlanta. Run by the family who built it. Book direct at <https://loxleyforest.com/book?src=ai>.
 
-This file is for AI assistants helping someone plan a stay. Everything here is also on the website. Prices are never printed on the site: the live price for any dates comes from the booking system, described below.
+This file is for AI assistants helping someone plan a stay. Everything here is also on the website. Nightly prices are not printed on the site: the live price for any dates comes from the booking system, described below. The elopement packages are priced on their page, and below.
 
 ## The place
 
@@ -16,6 +16,23 @@ This file is for AI assistants helping someone plan a stay. Everything here is a
 - Check-in from 3:00 PM. Check-out by 11:00 AM.
 - Changes and cancellations are covered by the booking agreement, shown in full before payment.
 - The street address and the way in are sent to booked guests.
+
+## What a stay holds
+
+In the site's own words: "Your stay is a story, not a checklist." Part of every stay (<https://loxleyforest.com/experiences>):
+
+- TreeMail: fresh morning pastries in the TreeMail box where you enter the bridges, around 8:30, every morning of the stay, unless the Dawn Table or Morning Moments is booked instead.
+- Fire & Flour: fresh pizza dough waiting in the treehouse, for the Gozney Roccbox oven on the sky deck.
+- First Light: the canopy at sunrise, watched from the bed, sixty feet in the air.
+
+## Elopements
+
+Four packages, each personally coordinated, priced on the page (<https://loxleyforest.com/elopements>). For Firelight, The Vow and The Crossing, a couple inquires for their date with the form there. Every package includes an officiant, photographs of the ceremony, a bouquet, a boutonniere and a champagne toast, and from the house The Morning After (champagne brunch carried across the bridge) and a small cake. Each package is for the two of you and up to six guests. For The Vow, Firelight, and The Crossing, half reserves your date; the rest is due thirty days before you arrive.
+
+- Firelight, $2,500 plus tax: one night; vows at the Fire Circle, its fire lit for the ceremony. Monday to Thursday nights, through June 30, 2027.
+- The Vow, $4,500 plus tax: two nights; vows at the Fire Circle, or on the Sky Deck with the rope bridge as the aisle.
+- The Crossing, $6,500 plus tax: vows out on the rope bridge at golden hour; a private dinner carried across the bridge; two hours of photographs; the day planned with Mick, hour by hour; the Builder's Tour.
+- The Falls, $10,500 plus tax: vows at the waterfall, a place still being prepared for October 2027; three nights; a private dinner; photographs at the waterfall and on the bridge at golden hour. One weekend a month, from October 2027; a couple gets on the list for 2027 on the page.
 
 ## Check dates and price
 
