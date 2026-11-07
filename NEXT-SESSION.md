@@ -56,8 +56,14 @@ once took a still on his iPhone for a fault (docs/log/2026-10.md:363): it is the
 is what keeps the reel's week inside the plan's credits. The Critic's arithmetic, at 50,000 visits
 credits roughly equal the KB a visit: before, about 2,500 credits on landings alone, 4,100 on full
 scrolls, against the plan's 3,000; after, about 300 on a landing and about 940 on a full scroll. The
-Critic read before merge; its fixes are in. The live after-number is measured after the push and
-written below.
+Critic read before merge; its fixes are in. Measured live after the push (d1821d5), our origin's bytes on a 3x phone: the home page 299 KB on
+a landing and 1,105 KB on a full scroll for an iPhone (no film), 958 and 1,764 KB for an Android that
+reports 4g (the 659 KB film); /giveaway about 60 KB cold; /giveaway-entered 37 KB plus the shared
+CSS and scripts; /experiences 123 KB on a landing, 607 on a full scroll. At 50,000 visits, credits
+roughly equal the KB a visit: about 285 to 915 on landings and 1,055 to 1,680 on full scrolls, against
+2,400 and 3,970 before, on a plan of 3,000. The next shave if the counts run hot: img_2546-800 (257
+KB, the home page's tall deck photo, no 1600 to crop from) and img_1717-800 (301 KB, experiences),
+both re-encoded from their sources at a lower quality.
 
 ---
 
