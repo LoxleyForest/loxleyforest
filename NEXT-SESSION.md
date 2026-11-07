@@ -65,9 +65,17 @@ Then the Forge's own rule and numbering, on the page in plain words (5515ea1): t
 hexadecimal number; alternates the next entry number up, wrapping to 1, up to three; entries
 numbered in the order counted with no gaps, spam-held ones unnumbered until checked by hand,
 entries that do not count never numbered. The words' hash for his yes:
-60812d2f1102731874761aadd538bb03b4311b704bd5f409a680b4eb7dcd375c, sent to the Chief with every word. On his yes: APPROVED_SHA256 set, OPENS set to the day and hour he
+4d99610a332686eae771b1a5e9c691a7dd2cd83d6c0b174e871716a45e41555c, sent to the Chief with every word. On his yes: APPROVED_SHA256 set, OPENS set to the day and hour he
 says live and only after the engine's giveaway_open is on, rebuild, push, then link it where the
-Marketer's list says. Nothing about any guest on either page.
+Marketer's list says. Counsel's read of 2026-11-07 (chief docs/briefs/2026-11-07-counsel-giveaway-champagne.md):
+it can launch Nov 12 without a lawyer; one required change, the sponsor's mailing address (O.C.G.A.
+10-1-393(b)(16)), is ADDRESS in giveaway.py, a merge value outside the hash, shown as a bracket until
+Mick's choice comes through the Chief (the registered office or a PO box rented before Nov 11), and
+the form does not open without it; three tightenings taken (the fallback weekend through March 2027,
+"The winner pays nothing to claim or take the stay", "income tax", the odds beside the value).
+Entry at 18 with champagne for 21 and older fits the statute, Counsel says, as long as nobody under
+21 is poured for; 21 to enter only if the draw ever runs in paid ads. Nothing about any guest on
+either page.
 
 ---
 

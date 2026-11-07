@@ -45,6 +45,13 @@ CLOSE_UTC = (2026, 11, 14, 4, 59, 59)  # JavaScript's month is 0-based: 11 is De
 OPENS = None
 # The draw's seed and winning entry number, in the Forge's words, once drawn. None: not yet.
 RESULT = None
+# The sponsor's mailing address, required by O.C.G.A. 10-1-393(b)(16) (Counsel, 2026-11-07, chief
+# docs/briefs/2026-11-07-counsel-giveaway-champagne.md): the LLC's registered office on file with the
+# Secretary of State, or a PO box rented before Nov 11; Mick's choice, brought by the Chief, never
+# taken from a guest-facing file. A merge value, not a word in the hash, so his yes on the words
+# survives it. The form does not open without it. None: not yet.
+ADDRESS = None
+ADDRESS_PLACEHOLDER = '[mailing address], Dahlonega, Georgia [ZIP]'
 
 # =============================================================================================
 # WORDS. From the table memo (2026-11-03) and the site's own pages: gift-card.html's Dawn Table
@@ -64,14 +71,16 @@ WORDS = {
              'each, by the form below.'),
     'prize_h': 'The prize',
     'prize_1': ('Two nights in the treehouse, Friday and Saturday, on the weekend of January 8, 15, 22 or 29, '
-                '2027. The winner chooses from those still open when they claim the prize.'),
+                '2027. The winner chooses from those still open when they claim the prize. If all four are '
+                'booked, any open Friday and Saturday through March 2027.'),
     'prize_2': ('The Dawn Table on your first morning: champagne brunch carried across the bridge to your door. '
                 'Champagne is for guests 21 or older. And pizza night, as on every stay: fresh dough waiting '
                 'in the treehouse.'),
     'prize_3': ('Approximate retail value: $1,565, the dearest of the four weekends at our rates on November 7, '
-                '2026, with the Dawn Table. The prize has no cash value, cannot be exchanged or transferred, '
-                'and is for the winner\'s own stay, booked with us under our usual booking agreement. Any '
-                'taxes on the prize are the winner\'s.'),
+                '2026, with the Dawn Table. Odds depend on the number of entries. The winner pays nothing to '
+                'claim or take the stay. The prize has no cash value, cannot be exchanged or transferred, and '
+                'is for the winner\'s own stay, booked with us under our usual booking agreement. Any income '
+                'tax on the prize is the winner\'s.'),
     'enter_h': 'How to enter',
     'enter_1': ('Fill in the form below. That is the whole of it. No purchase, no follow, no tag, no share, and '
                 'nothing you buy improves your chances.'),
@@ -94,8 +103,7 @@ WORDS = {
                'Beacon\'s pulse at 12:00 PM Eastern Time that day, a number the US government publishes every '
                'minute and nobody can pick. The winning entry number is that pulse, read as a hexadecimal '
                'number, divided by the number of entries, remainder plus one. We publish the pulse, the number '
-               'of entries and the winning number on this page, so anyone can check the draw. Odds depend on '
-               'the number of entries.'),
+               'of entries and the winning number on this page, so anyone can check the draw.'),
     'draw_2': ('The winner hears from us by email, from an @loxleyforest.com address and from nowhere else, and '
                'we never ask for money. They have 72 hours to claim the weekend. If they do not, the next entry '
                'number up wins, wrapping around to 1 after the last, and so on for up to three alternates.'),
@@ -107,7 +115,7 @@ WORDS = {
     'meta_h': 'Instagram',
     'meta_1': ('This giveaway is not sponsored, endorsed or administered by, or associated with, Instagram or '
                'Meta. By entering, you release Instagram of any responsibility for it.'),
-    'sponsor': 'Sponsor: Loxley Forest LLC, Dahlonega, Georgia. Questions: stay@loxleyforest.com.',
+    'sponsor': 'Sponsor: Loxley Forest LLC, {{address}}. Questions: stay@loxleyforest.com.',
     'form_h': 'Enter',
     'first_name': 'First name',
     'email': 'Email',
@@ -135,7 +143,7 @@ def words_sha256(words=None):
 
 
 def ready():
-    return APPROVED_SHA256 is not None and words_sha256() == APPROVED_SHA256 and bool(OPENS)
+    return APPROVED_SHA256 is not None and words_sha256() == APPROVED_SHA256 and bool(OPENS) and bool(ADDRESS)
 
 
 def w(key, **merge):
@@ -194,7 +202,8 @@ def page_giveaway():
     open_now = ready()
     if not open_now:
         print(f'giveaway: the form is closed; words sha256 {words_sha256()} (APPROVED_SHA256 '
-              f'{"matches" if APPROVED_SHA256 == words_sha256() else "unset or stale"}; OPENS {OPENS!r})')
+              f'{"matches" if APPROVED_SHA256 == words_sha256() else "unset or stale"}; OPENS {OPENS!r}; '
+              f'ADDRESS {"set" if ADDRESS else "unset"})')
     opens = f'on {OPENS}' if OPENS else 'soon'
     e = lambda k, **m: escape(w(k, **m), quote=False)
     result = f'\n      <p class="gw-result">{e("result", result=RESULT)}</p>' if RESULT else ''
@@ -228,7 +237,7 @@ def page_giveaway():
       <p>{w('details_1')}</p>
       <h2>{e('meta_h')}</h2>
       <p>{e('meta_1')}</p>
-      <p class="lf-legal-sign">{e('sponsor')}</p>
+      <p class="lf-legal-sign">{e('sponsor', address=ADDRESS or ADDRESS_PLACEHOLDER)}</p>
       </div>
       <div class="gw-entry">{closed_soon}
         <p class="gw-closed" id="gw-after" hidden>{e('closed_after')}</p>{form_html(open_now)}
