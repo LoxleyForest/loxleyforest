@@ -38,7 +38,11 @@ ai-assistant, before "Friend / Word of Mouth"; the field stays "referral"; the o
 seven built pages, once each. /book's own checkout already had the chip "An AI assistant" sending
 heard_from=ai_assistant (js/gatehouse.js; the engine's desk.py HEARD_FROM), so the two vocabularies
 stand: Netlify referral=ai-assistant, checkout heard_from=ai_assistant; the workshop Forge told both
-in one line for the lead doors. (2) llms.txt: two sections from the site's own words, "What a stay
+in one line. The Forge's answer: nothing in the engine reads a form's referral today (the doors keep
+id, form name and time only); counting form referrals would be a new door counter by value, counts
+only, likely a mirror field and a contract bump, the Chief's call to route. Until then the value
+reaches Mick in each Netlify submission. Live on main as 010b566 (the option, llms.txt and the FAQ
+confirmed by fetch). (2) llms.txt: two sections from the site's own words, "What a stay
 holds" (the home page's "Your stay is a story, not a checklist"; TreeMail, Fire & Flour, First Light
 as "Part of every stay") and "Elopements" (the four cards with their prices and lines, the guest
 count, the half-reserves line, The Falls' one weekend a month from October 2027 and its list), and
