@@ -20,11 +20,12 @@
    /book gets no card: one quiet line under the hero, in the page's
    HTML, which this script only reveals.
 
-   It tells our own booking server popup_shown, popup_close and
-   popup_click (the Forge, 2026-11-07), once each a visit, through the
-   page beacon (window.lfFunnel, js/funnel.js): the visit's id, the
-   step, the page's path, and the visit's src and referrer as
-   funnel.js keeps them. Nothing typed by anyone, nothing about the
+   It tells our own booking server popup_shown, popup_close,
+   popup_click and, for the holdout, popup_held_out (the Forge,
+   2026-11-07), once each a visit, through the page beacon
+   (window.lfFunnel, js/funnel.js): the visit's id, the step, the
+   page's path, and the visit's src and referrer as funnel.js keeps
+   them. Nothing typed by anyone, nothing about the
    person. The button carries ?src=giveaway-ads when the visit landed
    from an ad (gclid, gbraid, wbraid or utm_source=google on the
    landing URL, as the engine's funnel reads it), else giveaway-site.
@@ -109,8 +110,10 @@
   if (!PAGES[PATH]) return;
   if (document.querySelector('script[src$="talk.js"]')) return;
   if (m.entered) return;
+  // The holdout, one visitor in three, decided once and kept: never shown the card, but told as
+  // popup_held_out at the moment and on the page it would have shown (the Forge, 2026-11-07), so
+  // the held-out visits' picked-dates rate can be read against the shown ones'.
   if (m.holdout === undefined) { m.holdout = Math.random() < HOLDOUT; save(m); }
-  if (m.holdout) return;
 
   function tell(step) {
     try {
@@ -157,6 +160,7 @@
     if (done) return;
     if (inField() || menuOpen() || document.visibilityState !== 'visible') return;
     done = true;
+    if (m.holdout) { tell('popup_held_out'); return; }
     show();
   }
 

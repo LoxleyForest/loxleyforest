@@ -138,6 +138,19 @@ WORDS = {
     'closed_soon': 'Entries are not open yet. When they are, the form will be right here.',
     'closed_after': ('Entries closed on Sunday, December 13. The draw is Monday, December 14, and the result '
                      'will be posted on this page.'),
+    # The invitation (js/giveaway-popup.js, the table of 2026-11-07): the card's words, the folded
+    # line after a dismissal, the quiet line under /book's hero, and the entered page's link to
+    # the open nights (the Marketer's move). All in this one hash.
+    'popup_h': 'Two nights in the trees. Free to enter.',
+    'popup_p': ('A January weekend at the treehouse, with the Dawn Table, on us. Worth about $1,565. Odds '
+                'depend on the number of entries.'),
+    'popup_button': 'See the giveaway',
+    'popup_close': 'Close',
+    'popup_fold': 'A January weekend, on us. Free to enter.',
+    'popup_fold_link': 'See the giveaway',
+    'book_line': 'A January weekend, on us. Two nights in the trees, free to enter.',
+    'book_link': 'See the giveaway',
+    'entered_link': 'See the open nights',
     'entered_eyebrow': 'Entered',
     'entered_h': 'You\'re in.',
     'entered_lead': 'We have your entry. One counts per email address.',
@@ -156,6 +169,30 @@ def words_sha256(words=None):
 
 def ready():
     return APPROVED_SHA256 is not None and words_sha256() == APPROVED_SHA256 and bool(OPENS) and bool(ADDRESS)
+
+
+# The invitation's photograph: the treehouse at dusk (the thank-you pages' own), with its alt text.
+POPUP_PHOTO = ('images/v2/eq3a0907-800.webp', 'The treehouse at dusk, its canvas glowing, the rope bridge strung with lights')
+
+
+def popup_words_block():
+    """The invitation's words as JSON in a page, for js/giveaway-popup.js (build_v2 writes it on the
+    pages that load the script). The script holds no words of its own. '</' is escaped so nothing in
+    it can close the tag."""
+    data = {'h': WORDS['popup_h'], 'p': WORDS['popup_p'], 'button': WORDS['popup_button'],
+            'close': WORDS['popup_close'], 'fold': WORDS['popup_fold'], 'foldLink': WORDS['popup_fold_link'],
+            'photo': POPUP_PHOTO[0], 'photoAlt': POPUP_PHOTO[1]}
+    body = json.dumps(data, ensure_ascii=False, sort_keys=True).replace('</', '<\\/')
+    return f'  <script type="application/json" id="lf-gw-words">{body}</script>\n'
+
+
+def book_line_html():
+    """/book's quiet line under its hero (pages/book.py): in the page, hidden; js/giveaway-popup.js
+    reveals it while LIVE and points its link by the visit's route. Never a card on /book."""
+    # No href in the file: while the form is closed no page may link /giveaway (check_giveaway.py);
+    # the script sets the link by the visit's route when it reveals the line.
+    return (f'<p class="lf-gw-line" id="lf-gw-line" hidden>{escape(WORDS["book_line"], quote=False)} '
+            f'<a data-gw-link>{escape(WORDS["book_link"], quote=False)}</a></p>')
 
 
 def w(key, **merge):
@@ -268,6 +305,10 @@ def page_giveaway_entered():
     e = lambda k: escape(WORDS[k], quote=False)
     body = c.note(e('entered_eyebrow'), e('entered_h'), e('entered_lead'), [e('entered_1')],
                   B.pic('eq3a0907', 'The treehouse at dusk, its canvas glowing, the rope bridge strung with lights', '(min-width: 900px) 50vw, 100vw', eager=True))
+    # The Marketer's move (the table of 2026-11-07): the open nights, in place of the treehouse link.
+    old = '<a href="/treehouses" class="lf-link">See the treehouse</a>'
+    assert body.count(old) == 1, 'the thank-you note lost its second link; the entered page replaces it'
+    body = body.replace(old, f'<a href="/book?src=giveaway-site" class="lf-link">{e("entered_link")}</a>')
     return 'giveaway-entered.html', head, gtm, body, '/book', False
 
 
@@ -282,4 +323,25 @@ CSS = '''
 .lf-form .gw-check input[type="checkbox"] { width: 20px; height: 20px; margin: 4px 0 0; padding: 0; flex: none; accent-color: var(--forest-deep); }
 .gw-closed { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 1.3rem; line-height: 1.5; color: var(--stone); margin: 0; }
 .gw-closed + .gw-form { margin-top: 28px; }
+
+/* The invitation (js/giveaway-popup.js): a card at the corner on a desktop, a bottom sheet on a phone,
+   never full screen; the folded line under the header after a dismissal; /book's quiet line. */
+.lf-gw { position: fixed; right: 20px; bottom: 20px; z-index: 60; width: min(380px, calc(100vw - 40px)); background: var(--forest-deep); color: var(--on-dark); border-radius: 14px; box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.6); overflow: hidden; opacity: 0; transform: translateY(12px); transition: opacity 0.35s ease, transform 0.35s ease; pointer-events: none; }
+.lf-gw.is-in { opacity: 1; transform: none; pointer-events: auto; }
+.lf-gw:focus, .lf-gw:focus-visible { outline: none; }
+.lf-gw__x { position: absolute; top: 8px; right: 8px; z-index: 1; width: 40px; height: 40px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: rgba(18, 29, 22, 0.55); color: var(--on-dark); cursor: pointer; }
+.lf-gw__x:hover { background: rgba(18, 29, 22, 0.8); }
+.lf-gw__x:focus-visible { outline: 2px solid var(--on-dark); outline-offset: 2px; }
+.lf-gw__photo img { display: block; width: 100%; height: 150px; object-fit: cover; }
+.lf-gw__in { padding: 18px 20px 20px; }
+.lf-gw__h { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 1.55rem; line-height: 1.15; color: var(--on-dark); }
+.lf-gw__p { margin: 8px 0 0; font-size: 1rem; line-height: 1.5; color: var(--on-dark-muted); }
+.lf-gw__btn { display: flex; width: 100%; min-height: 48px; margin-top: 14px; justify-content: center; align-items: center; }
+.lf-gw.is-sheet { left: 0; right: 0; bottom: 0; width: auto; max-height: 70vh; max-height: 70svh; border-radius: 16px 16px 0 0; padding-bottom: env(safe-area-inset-bottom, 0px); transform: translateY(100%); overflow-y: auto; }
+.lf-gw.is-sheet.is-in { transform: none; }
+.lf-gw.is-sheet .lf-gw__photo img { height: 120px; }
+.lf-gwbar { position: fixed; top: calc(var(--hdr-h) + env(safe-area-inset-top, 0px)); left: 0; right: 0; z-index: 55; display: flex; flex-wrap: wrap; gap: 2px 12px; justify-content: center; align-items: center; padding: 9px 16px; background: var(--forest-deep); color: var(--on-dark-muted); font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.05rem; line-height: 1.4; text-align: center; box-shadow: 0 8px 24px -16px rgba(0, 0, 0, 0.5); }
+.lf-gwbar a { color: var(--on-dark); font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.lf-gw-line { margin: 18px auto 0; max-width: 36rem; font-size: 1.05rem; line-height: 1.5; color: var(--on-dark-muted); }
+.lf-gw-line a { color: var(--on-dark); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 '''

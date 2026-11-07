@@ -9,8 +9,17 @@ hidden fields, every field name and its action. The header Book button goes to #
 import importlib.util
 import os
 import re
+import sys
 
 import build_v2 as B
+
+
+def _giveaway_line():
+    """The January giveaway's quiet line under the hero (pages/giveaway.py book_line_html): in the
+    page hidden, revealed by js/giveaway-popup.js while its LIVE switch is on. Never a card here
+    (the table of 2026-11-07). giveaway.py loads after this module; the words are read at build."""
+    mod = sys.modules.get('lfpage_giveaway')
+    return mod.book_line_html() if mod and hasattr(mod, 'book_line_html') else ''
 
 
 def _gift_words():
@@ -88,6 +97,7 @@ def page_book():
         <p class="lf-eyebrow">Dahlonega, Georgia</p>
         <h1 class="lf-h1" id="bk-h">Book your stay</h1>
         <p class="lf-lead">Book direct. No platform fees, no middleman. Just you, the forest, and the family who built it.</p>
+        {_giveaway_line()}
       </div>
     </section>
 
