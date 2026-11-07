@@ -39,13 +39,20 @@ FONTS = ('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@
 
 
 def pic(name, alt, sizes, eager=False, cls=''):
-    """A responsive <img> from images/v2/<name>-800.webp (and -1600 when it exists)."""
+    """A responsive <img> from images/v2/<name>-800.webp (and -1600 when it exists). On a phone
+    (under 768 px) the 800 is the only source: a 3x phone would otherwise ask for the 1600 at
+    100vw (the Chief's bandwidth route, 2026-11-07; a full scroll of the home page moved 4.2 MB on
+    a phone, most of it 1600s), and 800 across 390 px is still two device pixels to one."""
     big = f'images/v2/{name}-1600.webp'
-    srcset = f'images/v2/{name}-800.webp 800w' + (f', {big} 1600w' if os.path.exists(os.path.join(ROOT, big)) else '')
+    has_big = os.path.exists(os.path.join(ROOT, big))
+    srcset = f'images/v2/{name}-800.webp 800w' + (f', {big} 1600w' if has_big else '')
     w, h = Image.open(os.path.join(ROOT, f'images/v2/{name}-800.webp')).size
     load = ' fetchpriority="high"' if eager else ' loading="lazy" decoding="async"'
     c = f' class="{cls}"' if cls else ''
-    return f'<img src="images/v2/{name}-800.webp" srcset="{srcset}" sizes="{sizes}" width="{w}" height="{h}" alt="{alt}"{load}{c}>'
+    img = f'<img src="images/v2/{name}-800.webp" srcset="{srcset}" sizes="{sizes}" width="{w}" height="{h}" alt="{alt}"{load}{c}>'
+    if not has_big:
+        return img
+    return f'<picture><source media="(max-width: 767px)" srcset="images/v2/{name}-800.webp" type="image/webp">{img}</picture>'
 
 
 # Rating and count claims a page's own <head> still carried (the home page's meta description),
