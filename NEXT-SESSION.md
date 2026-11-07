@@ -18,6 +18,8 @@
 
 - The December 15 to 17 couple's Before the Bridge page says "ready from 3:00 pm" (his standing ruling) while their signed agreement says 4:00 p.m.; his word if he wants the page changed. Their recap went 2026-11-05 at about 17:40 ET from his Gmail (the blocks below); their answers come back to him by reply or as a photo of the pages, and nothing of them belongs in this repo. Their page is live at /private/before-the-bridge-2026-12-15-to-17-7df87e/; it says "ready from 3:00 pm" while their signed agreement says 4:00 p.m., for his word.
 
+- The January giveaway's words (scripts/site/pages/giveaway.py WORDS): his yes by hash, then the day and hour he says "live" into OPENS, only after the engine's giveaway_open is on; then the seat links the page. Open with the yes: the holds (the engine holds nothing until he rules; the page says the winner chooses from the weekends still open), the value ($1,565 by the Marketer's Nov 7 quote; the accountant confirms), champagne 21 or older on the page, which address he writes to the winner from, the PO box for the sponsor line (the 2026-11-07 block below).
+
 **For the seat to rule, next session (the Chief's flags of 2026-11-04; nothing new goes live Nov 13 to about Nov 27 while Mick is away)**
 - CLAUDE.md still says "no build system" though scripts/site/build_v2.py builds the pages; README.md is GitHub boilerplate. Fix both, and point CLAUDE.md's session-open line at this block and docs/log/.
 - private/new-site-371cf1/ (26 MB, the preview and its reels) was to be deleted at launch and is still on main; Mick shared its links with Livy, so his yes before it goes.
@@ -25,6 +27,44 @@
 - Ideas logged, not started: the animated guidebook with the pizza guide as a chapter, seasonal reels and profile pictures, the interior clips still on Mick's laptop (docs/log/2026-10.md, 2026-10-13 and 2026-10-19).
 
 The Janitor (chief docs/v2/janitor.md) runs here weekly: this file keeps this block and the current month's entries; older blocks move word for word to docs/log/<YYYY-MM>.md.
+
+---
+
+# IN FLIGHT · 2026-11-07 · The January giveaway in shadow: /giveaway and /giveaway-entered (025de64)
+
+The Chief's route (08:20 ET) on Mick's "we just do our own" after Romantic Atlanta declined: the
+engine's half (register, draw, held weekends) is the workshop Forge's, branch forge/giveaway; the
+page and the form are the seat's, in shadow by Wed Nov 11. Built in scripts/site/pages/giveaway.py:
+the rules (the table of 2026-11-03, chief docs/briefs/2026-11-03-table-january-giveaway.md; Counsel's
+list at its line 93; the Critic's fix; Counsel's memo of 2026-10-27 line 71) and the entry form, a
+Netlify form named giveaway with the Forge's fields exactly (first_name, email, eligible checkbox
+yes required, letters checkbox yes unticked and not required, src hidden from ?src= as a token
+[a-z0-9_-]{1,40} else "direct", the honeypot), landing on /giveaway-entered.html, never /success
+(check_forms NOT_INQUIRY). Every visitor-facing sentence is in WORDS; APPROVED_SHA256 None, so the
+form is in the file (Netlify registers it) but hidden and disabled with the closed line in its
+place; the page is noindex, in no nav and not in sitemap.xml; the rules read at the URL for Mick's
+eye. scripts/site/check_giveaway.py holds the form to the contract and the pages to shadow
+(fails if /giveaway is linked while the form is closed). The page's own clock closes the form after
+Sun Dec 13 11:59:59 PM ET; the engine refuses late entries too. The Critic's read, taken: no hold
+stated that the engine is not making (the engine holds nothing until Mick rules; the Marketer's
+Nov 7 move keeps the weekends on sale), so "the winner chooses from those still open when they claim
+the prize"; the value $1,565 (the Marketer's live quote: $1,300.02 all in plus the Dawn Table's
+$265), not the table's $1,749; "we publish the seed, the number of entries and the winning number"
+without "anyone can check it" (the seed is typed after the close and no entrant knows their number;
+a seed hash posted before entries open would make it checkable, the Forge's call); the winner hears
+"from an @loxleyforest.com address" since Mick writes from his own mail; "Champagne is for guests
+21 or older" (Georgia's alcohol rules unread by Counsel; the entry age is 18); the entered page's
+lead "We have your entry. One counts per email address." Then, the Chief's line by way of the Forge
+(9951c70): the draw's seed named before entries open, the NIST Randomness Beacon's pulse at 12:00 PM
+Eastern on Dec 14, the winning number "that pulse divided by the number of entries, remainder plus
+one" [MICK RATIFIES the beacon; the Forge's draw matches the rule, told], and the register's rules
+in plain words (Gmail dots and plus-tags are one address; spam-flagged entries checked by hand; late
+entries not counted). Netlify rewrites the <form> tag at deploy (attributes reordered, data-netlify
+and the honeypot attribute removed), so the closed state sits on a wrapper div, not the form tag.
+The words' hash for his yes: 1c384616917766965f23dc724c5370141ff72f3281667f27606a8c164b0cf89f,
+sent to the Chief with every word. On his yes: APPROVED_SHA256 set, OPENS set to the day and hour he
+says live and only after the engine's giveaway_open is on, rebuild, push, then link it where the
+Marketer's list says. Nothing about any guest on either page.
 
 ---
 
