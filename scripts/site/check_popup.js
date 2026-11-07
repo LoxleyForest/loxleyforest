@@ -68,13 +68,17 @@ async function main() {
   const browser = await chromium.launch({ executablePath: EXE });
 
   // One browsing context is one visitor; its beacons are recorded on it.
+  // live: the script served with LIVE true, and the pages' words block with "open": true (as the
+  // builder writes it once Mick's yes, the address and the day are set), unless asBuilt keeps the
+  // block as it is on disk. time: the visitor's clock.
   async function visitor(opts) {
-    const o = Object.assign({ live: false, phone: false, random: 0.9 }, opts || {});
+    const o = Object.assign({ live: false, phone: false, random: 0.9, asBuilt: false, time: null }, opts || {});
     const ctx = await browser.newContext(o.phone
       ? { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 }
       : { viewport: { width: 1440, height: 900 } });
     ctx.beacons = [];
     ctx.outside = [];
+    ctx.opts = o;
     await ctx.addInitScript('Math.random = function () { return ' + o.random + '; };');
     await ctx.route('**/*', async (route) => {
       const req = route.request();
@@ -82,6 +86,11 @@ async function main() {
       if (u.origin === base) {
         if (u.pathname === '/js/giveaway-popup.js' && o.live) {
           return route.fulfill({ status: 200, contentType: 'text/javascript', body: SCRIPT.replace(SWITCH, 'var LIVE = true;') });
+        }
+        if (o.live && !o.asBuilt && req.resourceType() === 'document') {
+          const resp = await route.fetch();
+          const text = await resp.text();
+          return route.fulfill({ response: resp, body: text.replace(/"open":\s*false/, '"open": true') });
         }
         return route.continue();
       }
@@ -94,7 +103,7 @@ async function main() {
       return route.abort();
     });
     const page = await ctx.newPage();
-    await page.clock.install();
+    await page.clock.install(o.time ? { time: o.time } : {});
     return { ctx, page };
   }
   async function go(page, p) { await page.goto(base + p, { waitUntil: 'load' }); await page.clock.runFor(50); await page.waitForTimeout(150); }
@@ -241,7 +250,26 @@ async function main() {
     check(await page.evaluate(() => JSON.parse(localStorage.getItem('lf_giveaway')).holdout === true), 'the holdout is kept for the visitor');
     await go(page, '/faq'); await runFor(page, 6000); await exit(page);
     check(steps(ctx).length === 1, 'once per visit');
+    // A later visit by the same held-out visitor (a new tab: new session, same storage).
+    const again = await ctx.newPage(); await again.clock.install();
+    await go(again, '/experiences'); await runFor(again, 6000); await exit(again);
+    check(steps(ctx).length === 1 && !(await card(again)), 'and once per visitor, like the card: a later visit sends nothing');
     await ctx.close();
+  }
+
+  // ---- live: the switch alone opens nothing
+  console.log('live, but the form not open, or closed by the clock');
+  {
+    const { ctx, page } = await visitor({ live: true, asBuilt: true });
+    await go(page, '/experiences'); await runFor(page, 6000); await exit(page);
+    check(!(await card(page)) && steps(ctx).length === 0, 'with the words block as built today (the form not yet open): no card, no step');
+    await go(page, '/book');
+    check(await page.evaluate(() => document.getElementById('lf-gw-line').hidden === true), 'and /book\'s line stays hidden');
+    await ctx.close();
+    const late = await visitor({ live: true, time: new Date('2026-12-14T06:00:00Z') });
+    await go(late.page, '/experiences'); await runFor(late.page, 6000); await exit(late.page);
+    check(!(await card(late.page)) && steps(late.ctx).length === 0, 'after the close (Dec 14, 06:00 UTC on the visitor\'s clock): no card, no step');
+    await late.ctx.close();
   }
 
   // ---- live: after an entry

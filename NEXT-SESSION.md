@@ -18,7 +18,7 @@
 
 - The December 15 to 17 couple's Before the Bridge page says "ready from 3:00 pm" (his standing ruling) while their signed agreement says 4:00 p.m.; his word if he wants the page changed. Their recap went 2026-11-05 at about 17:40 ET from his Gmail (the blocks below); their answers come back to him by reply or as a photo of the pages, and nothing of them belongs in this repo. Their page is live at /private/before-the-bridge-2026-12-15-to-17-7df87e/; it says "ready from 3:00 pm" while their signed agreement says 4:00 p.m., for his word.
 
-- The January giveaway's words (scripts/site/pages/giveaway.py WORDS): his yes by hash, then the day and hour he says "live" into OPENS, only after the engine's giveaway_open is on; then the seat links the page. Open with the yes: the holds (the engine holds nothing until he rules; the page says the winner chooses from the weekends still open), the value ($1,565 by the Marketer's Nov 7 quote; the accountant confirms), champagne 21 or older on the page, which address he writes to the winner from, the PO box for the sponsor line (the 2026-11-07 block below).
+- The January giveaway's words (scripts/site/pages/giveaway.py WORDS, the card's and /book's line among them): his yes by hash, the sponsor's mailing address into ADDRESS, then the day and hour he says "live" into OPENS, only after the engine's giveaway_open is on; then LIVE in js/giveaway-popup.js flips to true in the same push and the seat links the page. Open with the yes: the holds (the engine holds nothing until he rules; the page says the winner chooses from the weekends still open), the value ($1,565 by the Marketer's Nov 7 quote; the accountant confirms), champagne 21 or older on the page or 21 to enter (the table's lean, since the card meets paid traffic), which address he writes to the winner from, the pull switch's standing term in chief docs/terms.md by Nov 11 (the two 2026-11-07 blocks below).
 
 **For the seat to rule, next session (the Chief's flags of 2026-11-04; nothing new goes live Nov 13 to about Nov 27 while Mick is away)**
 - CLAUDE.md still says "no build system" though scripts/site/build_v2.py builds the pages; README.md is GitHub boilerplate. Fix both, and point CLAUDE.md's session-open line at this block and docs/log/.
@@ -27,6 +27,43 @@
 - Ideas logged, not started: the animated guidebook with the pizza guide as a chapter, seasonal reels and profile pictures, the interior clips still on Mick's laptop (docs/log/2026-10.md, 2026-10-13 and 2026-10-19).
 
 The Janitor (chief docs/v2/janitor.md) runs here weekly: this file keeps this block and the current month's entries; older blocks move word for word to docs/log/<YYYY-MM>.md.
+
+---
+
+# IN FLIGHT · 2026-11-07 · The giveaway's invitation in shadow: js/giveaway-popup.js behind LIVE=false
+
+The Chief's route (09:30 ET) from the table (chief docs/briefs/2026-11-07-table-giveaway-popup.md,
+the Critic's fixes whole): the card that points a visitor to /giveaway, built in shadow by Tue Nov
+10. THE SWITCH: `var LIVE = false;` in js/giveaway-popup.js, one line; true removes nothing but
+shows the card, the folded line and /book's quiet line; false removes all three in one push and
+changes nothing else; the rules page and the form never move. On top of it the builder writes the
+form's state into each page's words block (open: ready(); closes: the Dec 13 close), so even with
+LIVE true nothing shows before Mick's yes, the address and the day, nor after the close by the
+visitor's clock. THE PAGES (build_v2 POPUP_PAGES): /, /treehouses, /experiences, /gallery,
+/our-story, /local-guide, /faq; the script also loads on /book, where it only reveals the quiet line
+under the hero (pages/book.py, hidden in the file with no href until revealed, so check_giveaway's
+shadow rule holds), and on /giveaway-entered, where it only remembers the entry. Never /elopements,
+/proposals, the landing pages, /gift, checkout, manage, the confirmations or /giveaway. WHEN: on a
+phone a bottom sheet 1.5 s into the second page of the visit, never full screen (70% of the screen
+at most), never on first landing; on a desktop only when the pointer leaves the top 10 px after 5 s
+(talk.js's own trigger; no talk.js page is in the list). Once per visitor (localStorage lf_giveaway),
+never after an entry (the mark set on /giveaway-entered), one visitor in three a holdout decided once
+and kept, counted at its first exposure like the card. Dismissed, it folds to one line under the
+header for the rest of the visit. THE STEPS, agreed with the Forge (its engine commit to come):
+popup_shown, popup_close, popup_click, popup_held_out, once each a visit, through window.lfFunnel as
+the card's steps go, body visit, step, path, src, referrer. THE ROUTE: the button and the lines carry
+?src=giveaway-ads when the visit's first page carried gclid, gbraid, wbraid or utm_source=google (or
+gh_entry.src is google-ads), else giveaway-site. THE WORDS are in giveaway.py WORDS (popup_h, popup_p,
+popup_button, popup_close, popup_fold, popup_fold_link, book_line, book_link, entered_link), in Mick's
+one hash, written into the pages as JSON (#lf-gw-words); the script holds none. The entered page
+links the open nights (/book?src=giveaway-site) in place of the treehouse. PROVEN: scripts/site/
+check_popup.js, 70 checks in a real browser in both switch states (shipped: nothing anywhere; live:
+every rule above, the ad route, the holdout and its step, the clock, the entry mark); check_giveaway,
+check_forms, ensure_gtm, publish, check_pseo; check_talk on /book. The Critic's read before merge,
+taken: the holdout counted once per visitor (else held-out visits outnumber shown ones and the pull
+trigger misreads); the sheet above the Book button (z-index 930, under the menu and header); the
+open-and-close gate. Still Mick's: the yes by hash, the address, the day and hour, the pull switch's
+standing term by Nov 11, and 21 to enter or not.
 
 ---
 
@@ -64,8 +101,8 @@ and the honeypot attribute removed), so the closed state sits on a wrapper div, 
 Then the Forge's own rule and numbering, on the page in plain words (5515ea1): the pulse read as a
 hexadecimal number; alternates the next entry number up, wrapping to 1, up to three; entries
 numbered in the order counted with no gaps, spam-held ones unnumbered until checked by hand,
-entries that do not count never numbered. The words' hash for his yes:
-b339c22eb9ca14b1b893cb017631007185baded91b8f5c5c351f9fbaeb1bc8d2, sent to the Chief with every word. On his yes: APPROVED_SHA256 set, OPENS set to the day and hour he
+entries that do not count never numbered. The words' hash for his yes, the card's and /book's line now among the words:
+2c2997ac4f118b2b5d305dcf44cf001f40c88fa1e68d2ef0231594c4f41740bc, sent to the Chief with every word. On his yes: APPROVED_SHA256 set, OPENS set to the day and hour he
 says live and only after the engine's giveaway_open is on, rebuild, push, then link it where the
 Marketer's list says. Counsel's read of 2026-11-07 (chief docs/briefs/2026-11-07-counsel-giveaway-champagne.md):
 it can launch Nov 12 without a lawyer; one required change, the sponsor's mailing address (O.C.G.A.

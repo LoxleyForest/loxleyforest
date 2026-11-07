@@ -181,7 +181,11 @@ def popup_words_block():
     it can close the tag."""
     data = {'h': WORDS['popup_h'], 'p': WORDS['popup_p'], 'button': WORDS['popup_button'],
             'close': WORDS['popup_close'], 'fold': WORDS['popup_fold'], 'foldLink': WORDS['popup_fold_link'],
-            'photo': POPUP_PHOTO[0], 'photoAlt': POPUP_PHOTO[1]}
+            'photo': POPUP_PHOTO[0], 'photoAlt': POPUP_PHOTO[1],
+            # The form's state, so the card and /book's line show only while entries are open (the
+            # Critic, 2026-11-07): open is ready() at build; closes is the close, in JavaScript's
+            # Date.UTC order, read by the visitor's clock.
+            'open': ready(), 'closes': list(CLOSE_UTC)}
     body = json.dumps(data, ensure_ascii=False, sort_keys=True).replace('</', '<\\/')
     return f'  <script type="application/json" id="lf-gw-words">{body}</script>\n'
 
@@ -326,7 +330,7 @@ CSS = '''
 
 /* The invitation (js/giveaway-popup.js): a card at the corner on a desktop, a bottom sheet on a phone,
    never full screen; the folded line under the header after a dismissal; /book's quiet line. */
-.lf-gw { position: fixed; right: 20px; bottom: 20px; z-index: 60; width: min(380px, calc(100vw - 40px)); background: var(--forest-deep); color: var(--on-dark); border-radius: 14px; box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.6); overflow: hidden; opacity: 0; transform: translateY(12px); transition: opacity 0.35s ease, transform 0.35s ease; pointer-events: none; }
+.lf-gw { position: fixed; right: 20px; bottom: 20px; z-index: 930; width: min(380px, calc(100vw - 40px)); background: var(--forest-deep); color: var(--on-dark); border-radius: 14px; box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.6); overflow: hidden; opacity: 0; transform: translateY(12px); transition: opacity 0.35s ease, transform 0.35s ease; pointer-events: none; }
 .lf-gw.is-in { opacity: 1; transform: none; pointer-events: auto; }
 .lf-gw:focus, .lf-gw:focus-visible { outline: none; }
 .lf-gw__x { position: absolute; top: 8px; right: 8px; z-index: 1; width: 40px; height: 40px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: rgba(18, 29, 22, 0.55); color: var(--on-dark); cursor: pointer; }
@@ -340,7 +344,7 @@ CSS = '''
 .lf-gw.is-sheet { left: 0; right: 0; bottom: 0; width: auto; max-height: 70vh; max-height: 70svh; border-radius: 16px 16px 0 0; padding-bottom: env(safe-area-inset-bottom, 0px); transform: translateY(100%); overflow-y: auto; }
 .lf-gw.is-sheet.is-in { transform: none; }
 .lf-gw.is-sheet .lf-gw__photo img { height: 120px; }
-.lf-gwbar { position: fixed; top: calc(var(--hdr-h) + env(safe-area-inset-top, 0px)); left: 0; right: 0; z-index: 55; display: flex; flex-wrap: wrap; gap: 2px 12px; justify-content: center; align-items: center; padding: 9px 16px; background: var(--forest-deep); color: var(--on-dark-muted); font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.05rem; line-height: 1.4; text-align: center; box-shadow: 0 8px 24px -16px rgba(0, 0, 0, 0.5); }
+.lf-gwbar { position: fixed; top: calc(var(--hdr-h) + env(safe-area-inset-top, 0px)); left: 0; right: 0; z-index: 930; display: flex; flex-wrap: wrap; gap: 2px 12px; justify-content: center; align-items: center; padding: 9px 16px; background: var(--forest-deep); color: var(--on-dark-muted); font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.05rem; line-height: 1.4; text-align: center; box-shadow: 0 8px 24px -16px rgba(0, 0, 0, 0.5); }
 .lf-gwbar a { color: var(--on-dark); font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 .lf-gw-line { margin: 18px auto 0; max-width: 36rem; font-size: 1.05rem; line-height: 1.5; color: var(--on-dark-muted); }
 .lf-gw-line a { color: var(--on-dark); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }

@@ -95,6 +95,11 @@
   var words = null;
   try { var el = document.getElementById('lf-gw-words'); words = el ? JSON.parse(el.textContent) : null; } catch (e) {}
   if (!words || !words.h) return;
+  // Only while the form is open: the builder writes open (Mick's yes, the address and the day set)
+  // and the close (the page's own clock); neither the card nor /book's line says "free to enter"
+  // to a closed form (the Critic, 2026-11-07).
+  if (!words.open) return;
+  try { if (words.closes && Date.now() > Date.UTC.apply(null, words.closes)) return; } catch (e) { return; }
 
   // /book: the quiet line under the hero, and nothing else.
   if (PATH === '/book') {
@@ -160,7 +165,9 @@
     if (done) return;
     if (inField() || menuOpen() || document.visibilityState !== 'visible') return;
     done = true;
-    if (m.holdout) { tell('popup_held_out'); return; }
+    // The holdout follows the card's own once-per-visitor rule (the Critic, 2026-11-07): counted
+    // at its first exposure only, so held-out and shown visits compare like with like.
+    if (m.holdout) { m.shown = Date.now(); save(m); tell('popup_held_out'); return; }
     show();
   }
 
