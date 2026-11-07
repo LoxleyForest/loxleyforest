@@ -76,9 +76,13 @@ WORDS = {
     'enter_1': ('Fill in the form below. That is the whole of it. No purchase, no follow, no tag, no share, and '
                 'nothing you buy improves your chances.'),
     'enter_2': ('One entry per person. A second entry from the same email address does not count, and dots or a '
-                'plus-tag in a Gmail address do not make it a different address. If an entry lands in our spam '
-                'filter, we check it by hand before the draw. Entries after the close are not counted.'),
+                'plus-tag in a Gmail address do not make it a different address. Entries after the close do not '
+                'count, nor does an entry without the eligibility box ticked.'),
     'enter_3': 'Entries open {{opens}} and close on Sunday, December 13, 2026, at 11:59 PM Eastern Time.',
+    # The numbering the draw's rule rests on, as the engine does it (the Forge, 2026-11-07).
+    'enter_4': ('Entries are numbered 1, 2, 3 and so on in the order we count them, with no gaps. If an entry '
+                'lands in our spam filter, it waits without a number until we check it by hand; a real one then '
+                'takes the next number. Entries that do not count are never numbered.'),
     'who_h': 'Who can enter',
     'who_1': ('Anyone 18 or older who lives in the United States. Not our own household, nor anyone who works '
               'with us at Loxley Forest or lives with them.'),
@@ -88,12 +92,13 @@ WORDS = {
     # Eastern on the draw day. [MICK RATIFIES] the beacon; the Forge's draw matches the rule below.
     'draw_1': ('On Monday, December 14, 2026, we draw one entry number. The seed is the NIST Randomness '
                'Beacon\'s pulse at 12:00 PM Eastern Time that day, a number the US government publishes every '
-               'minute and nobody can pick. The winning entry number is that pulse divided by the number of '
-               'entries, remainder plus one. We publish the pulse, the number of entries and the winning number '
-               'on this page, so anyone can check the draw. Odds depend on the number of entries.'),
+               'minute and nobody can pick. The winning entry number is that pulse, read as a hexadecimal '
+               'number, divided by the number of entries, remainder plus one. We publish the pulse, the number '
+               'of entries and the winning number on this page, so anyone can check the draw. Odds depend on '
+               'the number of entries.'),
     'draw_2': ('The winner hears from us by email, from an @loxleyforest.com address and from nowhere else, and '
-               'we never ask for money. They have 72 hours to claim the weekend. If they do not, we draw the '
-               'next number.'),
+               'we never ask for money. They have 72 hours to claim the weekend. If they do not, the next entry '
+               'number up wins, wrapping around to 1 after the last, and so on for up to three alternates.'),
     'result': 'The draw: {{result}}',
     'details_h': 'Your details',
     'details_1': ('We use your first name and email to run the giveaway and to reach the winner, and for nothing '
@@ -213,6 +218,7 @@ def page_giveaway():
       <p>{e('enter_1')}</p>
       <p>{e('enter_2')}</p>
       <p>{e('enter_3', opens=opens)}</p>
+      <p>{e('enter_4')}</p>
       <h2>{e('who_h')}</h2>
       <p>{e('who_1')}</p>
       <h2>{e('draw_h')}</h2>
