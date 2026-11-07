@@ -75,9 +75,9 @@ WORDS = {
     'enter_h': 'How to enter',
     'enter_1': ('Fill in the form below. That is the whole of it. No purchase, no follow, no tag, no share, and '
                 'nothing you buy improves your chances.'),
-    'enter_2': ('One entry per person. A second entry from the same email address does not count, and dots or a '
-                'plus-tag in a Gmail address do not make it a different address. Entries after the close do not '
-                'count, nor does an entry without the eligibility box ticked.'),
+    'enter_2': ('One entry per person. A second entry from the same email address does not count. A plus-tag in '
+                'any address, or dots in a Gmail address, do not make it a different address. Entries after the '
+                'close do not count, nor does an entry without the eligibility box ticked.'),
     'enter_3': 'Entries open {{opens}} and close on Sunday, December 13, 2026, at 11:59 PM Eastern Time.',
     # The numbering the draw's rule rests on, as the engine does it (the Forge, 2026-11-07).
     'enter_4': ('Entries are numbered 1, 2, 3 and so on in the order we count them, with no gaps. If an entry '

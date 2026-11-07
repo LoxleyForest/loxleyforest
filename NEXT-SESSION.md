@@ -61,8 +61,11 @@ one" [MICK RATIFIES the beacon; the Forge's draw matches the rule, told], and th
 in plain words (Gmail dots and plus-tags are one address; spam-flagged entries checked by hand; late
 entries not counted). Netlify rewrites the <form> tag at deploy (attributes reordered, data-netlify
 and the honeypot attribute removed), so the closed state sits on a wrapper div, not the form tag.
-The words' hash for his yes: 1c384616917766965f23dc724c5370141ff72f3281667f27606a8c164b0cf89f,
-sent to the Chief with every word. On his yes: APPROVED_SHA256 set, OPENS set to the day and hour he
+Then the Forge's own rule and numbering, on the page in plain words (5515ea1): the pulse read as a
+hexadecimal number; alternates the next entry number up, wrapping to 1, up to three; entries
+numbered in the order counted with no gaps, spam-held ones unnumbered until checked by hand,
+entries that do not count never numbered. The words' hash for his yes:
+60812d2f1102731874761aadd538bb03b4311b704bd5f409a680b4eb7dcd375c, sent to the Chief with every word. On his yes: APPROVED_SHA256 set, OPENS set to the day and hour he
 says live and only after the engine's giveaway_open is on, rebuild, push, then link it where the
 Marketer's list says. Nothing about any guest on either page.
 
