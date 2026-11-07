@@ -43,7 +43,11 @@ CLOSE_UTC = (2026, 11, 14, 4, 59, 59)  # JavaScript's month is 0-based: 11 is De
 # when Mick says "live" and only after the engine's giveaway_open is on (the Critic, 2026-11-07:
 # until then the engine refuses every entry while the page would say "You're in"). None: not yet.
 OPENS = None
-# The draw's seed and winning entry number, in the Forge's words, once drawn. None: not yet.
+# Dec 14, two lines from the engine through Mick and the Chief, numbers only (the Forge, 2026-11-07):
+# FROZEN, the count fixed before the pulse ("N entries, at <time UTC>"), published here before noon
+# ET; RESULT, after the draw ("pulse <outputValue> index <i>; N entries; winning entry W; alternates
+# A, B, C"). Both are values outside the words' hash. None: not yet.
+FROZEN = None
 RESULT = None
 # The sponsor's mailing address, required by O.C.G.A. 10-1-393(b)(16) (Counsel, 2026-11-07, chief
 # docs/briefs/2026-11-07-counsel-giveaway-champagne.md): the LLC's registered office on file with the
@@ -114,7 +118,8 @@ WORDS = {
     'draw_2': ('The winner hears from us by email, from an @loxleyforest.com address and from nowhere else, and '
                'we never ask for money. They have 72 hours to claim the weekend. If they do not, the next entry '
                'number up wins, wrapping around to 1 after the last, and so on for up to three alternates.'),
-    'result': 'The draw: {{result}}',
+    'frozen': 'The number of entries, fixed before the pulse: {{frozen}}.',
+    'result': 'The draw: {{result}}.',
     'details_h': 'Your details',
     'details_1': ('We use your first name and email to run the giveaway and to reach the winner, and for nothing '
                   'else, unless you tick the letters box. Our <a href="/privacy">privacy page</a> says how we '
@@ -213,7 +218,8 @@ def page_giveaway():
               f'ADDRESS {"set" if ADDRESS else "unset"})')
     opens = f'on {OPENS}' if OPENS else 'soon'
     e = lambda k, **m: escape(w(k, **m), quote=False)
-    result = f'\n      <p class="gw-result">{e("result", result=RESULT)}</p>' if RESULT else ''
+    result = (f'\n      <p class="gw-result">{e("frozen", frozen=FROZEN)}</p>' if FROZEN else '') + (
+              f'\n      <p class="gw-result">{e("result", result=RESULT)}</p>' if RESULT else '')
     closed_soon = '' if open_now else f'\n        <p class="gw-closed" id="gw-soon">{e("closed_soon")}</p>'
     body = f'''
     <section class="lf-sec lf-dark lf-legal-top" aria-labelledby="gw-h">
