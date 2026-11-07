@@ -65,7 +65,7 @@ Then the Forge's own rule and numbering, on the page in plain words (5515ea1): t
 hexadecimal number; alternates the next entry number up, wrapping to 1, up to three; entries
 numbered in the order counted with no gaps, spam-held ones unnumbered until checked by hand,
 entries that do not count never numbered. The words' hash for his yes:
-4d99610a332686eae771b1a5e9c691a7dd2cd83d6c0b174e871716a45e41555c, sent to the Chief with every word. On his yes: APPROVED_SHA256 set, OPENS set to the day and hour he
+2d73ff1e688b3d80d761096387dc8c3d048354158f89edc59ec06d453b6b4d46, sent to the Chief with every word. On his yes: APPROVED_SHA256 set, OPENS set to the day and hour he
 says live and only after the engine's giveaway_open is on, rebuild, push, then link it where the
 Marketer's list says. Counsel's read of 2026-11-07 (chief docs/briefs/2026-11-07-counsel-giveaway-champagne.md):
 it can launch Nov 12 without a lawyer; one required change, the sponsor's mailing address (O.C.G.A.
@@ -74,8 +74,12 @@ Mick's choice comes through the Chief (the registered office or a PO box rented 
 the form does not open without it; three tightenings taken (the fallback weekend through March 2027,
 "The winner pays nothing to claim or take the stay", "income tax", the odds beside the value).
 Entry at 18 with champagne for 21 and older fits the statute, Counsel says, as long as nobody under
-21 is poured for; 21 to enter only if the draw ever runs in paid ads. Nothing about any guest on
-either page.
+21 is poured for; 21 to enter only if the draw ever runs in paid ads. Then the Forge's freeze (its
+Critic: nothing fixed the count before the pulse went public): the page says the number of entries
+is fixed and published by 11:00 AM ET on Dec 14, names the beacon's outputValue (128 hexadecimal
+digits) at 12:00 PM ET, 17:00:00 UTC, at beacon.nist.gov with its index, and the fallback to the
+first pulse after a missed minute; the engine's draw refuses without the freeze logged before the
+pulse. Nothing about any guest on either page.
 
 ---
 

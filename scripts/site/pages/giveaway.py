@@ -99,11 +99,18 @@ WORDS = {
     # The seed source named before entries open, so it cannot be chosen once the entries are known
     # (the Critic by way of the Forge, 2026-11-07): the NIST Randomness Beacon's pulse at noon
     # Eastern on the draw day. [MICK RATIFIES] the beacon; the Forge's draw matches the rule below.
-    'draw_1': ('On Monday, December 14, 2026, we draw one entry number. The seed is the NIST Randomness '
-               'Beacon\'s pulse at 12:00 PM Eastern Time that day, a number the US government publishes every '
-               'minute and nobody can pick. The winning entry number is that pulse, read as a hexadecimal '
-               'number, divided by the number of entries, remainder plus one. We publish the pulse, the number '
-               'of entries and the winning number on this page, so anyone can check the draw.'),
+    # The count frozen before the pulse (the Forge's `freeze`, by 11:00 AM ET), the beacon's field,
+    # its time in UTC, where to find it, and the fallback if the beacon misses the minute (the Forge,
+    # 2026-11-07, after the Critic). [MICK RATIFIES] with the rest.
+    'draw_1': ('On Monday, December 14, 2026, we draw one entry number. The number of entries is fixed and '
+               'published here by 11:00 AM Eastern Time that day, before the pulse. The seed is the NIST '
+               'Randomness Beacon\'s pulse at 12:00 PM Eastern Time, 17:00:00 UTC, that day: its outputValue, '
+               '128 hexadecimal digits, published by the US government at beacon.nist.gov, which nobody can '
+               'pick. If the beacon publishes no pulse for that minute, we use the first pulse it publishes '
+               'after it.'),
+    'draw_1b': ('The winning entry number is that outputValue, read as a hexadecimal number, divided by the '
+                'number of entries, remainder plus one. We publish the pulse\'s value and index, the number of '
+                'entries and the winning number on this page, so anyone can check the draw.'),
     'draw_2': ('The winner hears from us by email, from an @loxleyforest.com address and from nowhere else, and '
                'we never ask for money. They have 72 hours to claim the weekend. If they do not, the next entry '
                'number up wins, wrapping around to 1 after the last, and so on for up to three alternates.'),
@@ -232,6 +239,7 @@ def page_giveaway():
       <p>{e('who_1')}</p>
       <h2>{e('draw_h')}</h2>
       <p>{e('draw_1')}</p>
+      <p>{e('draw_1b')}</p>
       <p>{e('draw_2')}</p>{result}
       <h2>{e('details_h')}</h2>
       <p>{w('details_1')}</p>
