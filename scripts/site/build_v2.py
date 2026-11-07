@@ -753,6 +753,22 @@ GIFT_PAGES = ('gift.html', 'gift-card.html', 'gift-thanks.html', 'gift-manage.ht
 # An elopement package offer's private page (scripts/site/pages/offer.py, 2026-10-27).
 OFFER_PAGES = ('elopement-offer.html',)
 
+# The January giveaway's invitation (js/giveaway-popup.js, the table of 2026-11-07): the pages the
+# card may show on, never a talk.js page, a form page or /giveaway itself; plus /book, where the
+# script only reveals the quiet line under the hero, and /giveaway-entered, where it only remembers
+# the entry. The script's words come from pages/giveaway.py WORDS, written into the page as JSON.
+POPUP_PAGES = ('index.html', 'treehouses.html', 'experiences.html', 'gallery.html', 'our-story.html',
+               'local-guide.html', 'faq.html')
+POPUP_SCRIPT_PAGES = POPUP_PAGES + ('book.html', 'giveaway-entered.html')
+
+
+def popup_block(name):
+    if name not in POPUP_SCRIPT_PAGES:
+        return ''
+    mod = sys.modules.get('lfpage_giveaway')
+    words = mod.popup_words_block() if mod and hasattr(mod, 'popup_words_block') else ''
+    return words + '  <script src="js/giveaway-popup.js" defer></script>\n'
+
 
 def render(page):
     """The page's whole file, (name, html). build() writes it; scripts/site/check_pseo.py
@@ -768,6 +784,7 @@ def render(page):
             + ('  <script src="js/talk.js" defer></script>\n' if name in TALK_PAGES else '')
             + ('  <script src="js/gift.js" defer></script>\n' if name in GIFT_PAGES else '')
             + ('  <script src="js/offer.js" defer></script>\n' if name in OFFER_PAGES else '')
+            + popup_block(name)
             + '</body>\n</html>\n')
     if name in ROOTED_PAGES:
         html = rooted(html)
