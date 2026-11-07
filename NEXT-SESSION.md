@@ -54,11 +54,38 @@ without "anyone can check it" (the seed is typed after the close and no entrant 
 a seed hash posted before entries open would make it checkable, the Forge's call); the winner hears
 "from an @loxleyforest.com address" since Mick writes from his own mail; "Champagne is for guests
 21 or older" (Georgia's alcohol rules unread by Counsel; the entry age is 18); the entered page's
-lead "We have your entry. One counts per email address." The words' hash for his yes:
-4bb813c43fafb49ee8a06bc2336762b94ac4438799436bf051c5adbd20c08dc0, sent to the Chief with every
-word. On his yes: APPROVED_SHA256 set, OPENS set to the day and hour he says live and only after the
-engine's giveaway_open is on, rebuild, push, then link it where the Marketer's list says. Nothing
-about any guest on either page.
+lead "We have your entry. One counts per email address." Then, the Chief's line by way of the Forge
+(9951c70): the draw's seed named before entries open, the NIST Randomness Beacon's pulse at 12:00 PM
+Eastern on Dec 14, the winning number "that pulse divided by the number of entries, remainder plus
+one" [MICK RATIFIES the beacon; the Forge's draw matches the rule, told], and the register's rules
+in plain words (Gmail dots and plus-tags are one address; spam-flagged entries checked by hand; late
+entries not counted). Netlify rewrites the <form> tag at deploy (attributes reordered, data-netlify
+and the honeypot attribute removed), so the closed state sits on a wrapper div, not the form tag.
+Then the Forge's own rule and numbering, on the page in plain words (5515ea1): the pulse read as a
+hexadecimal number; alternates the next entry number up, wrapping to 1, up to three; entries
+numbered in the order counted with no gaps, spam-held ones unnumbered until checked by hand,
+entries that do not count never numbered. The words' hash for his yes:
+b339c22eb9ca14b1b893cb017631007185baded91b8f5c5c351f9fbaeb1bc8d2, sent to the Chief with every word. On his yes: APPROVED_SHA256 set, OPENS set to the day and hour he
+says live and only after the engine's giveaway_open is on, rebuild, push, then link it where the
+Marketer's list says. Counsel's read of 2026-11-07 (chief docs/briefs/2026-11-07-counsel-giveaway-champagne.md):
+it can launch Nov 12 without a lawyer; one required change, the sponsor's mailing address (O.C.G.A.
+10-1-393(b)(16)), is ADDRESS in giveaway.py, a merge value outside the hash, shown as a bracket until
+Mick's choice comes through the Chief (the registered office or a PO box rented before Nov 11), and
+the form does not open without it; three tightenings taken (the fallback weekend through March 2027,
+"The winner pays nothing to claim or take the stay", "income tax", the odds beside the value).
+Entry at 18 with champagne for 21 and older fits the statute, Counsel says, as long as nobody under
+21 is poured for; 21 to enter only if the draw ever runs in paid ads. Then the Forge's freeze (its
+Critic: nothing fixed the count before the pulse went public): the page says the number of entries
+is fixed and published by 11:00 AM ET on Dec 14, names the beacon's outputValue (128 hexadecimal
+digits) at 12:00 PM ET, 17:00:00 UTC, at beacon.nist.gov with its index, and the fallback to the
+first pulse after a missed minute; the engine's draw refuses without the freeze logged before the
+pulse. DEC 14, THE SEAT'S TWO DUTIES: the workshop has no path to the droplet, so the engine's two
+lines come through Mick and the Chief, numbers only. Before 11:00 AM ET Mick runs `freeze`, which
+prints "RESULT frozen: N entries, at <time UTC>"; it goes into FROZEN in giveaway.py (a value outside
+the hash), rebuild, push, live before noon. After the noon pulse he runs `draw`, which prints "RESULT
+pulse <outputValue> index <i>; N entries; winning entry W; alternates A, B, C"; it goes into RESULT
+the same way. Both slots and their sentences are on the page now, so no word changes that day.
+Nothing about any guest on either page.
 
 ---
 

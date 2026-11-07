@@ -67,28 +67,31 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <section class="lf-sec lf-light lf-legal gw">
       <div class="lf-legal__text">
       <h2>The prize</h2>
-      <p>Two nights in the treehouse, Friday and Saturday, on the weekend of January 8, 15, 22 or 29, 2027. The winner chooses from those still open when they claim the prize.</p>
+      <p>Two nights in the treehouse, Friday and Saturday, on the weekend of January 8, 15, 22 or 29, 2027. The winner chooses from those still open when they claim the prize. If all four are booked, any open Friday and Saturday through March 2027.</p>
       <p>The Dawn Table on your first morning: champagne brunch carried across the bridge to your door. Champagne is for guests 21 or older. And pizza night, as on every stay: fresh dough waiting in the treehouse.</p>
-      <p>Approximate retail value: $1,565, the dearest of the four weekends at our rates on November 7, 2026, with the Dawn Table. The prize has no cash value, cannot be exchanged or transferred, and is for the winner's own stay, booked with us under our usual booking agreement. Any taxes on the prize are the winner's.</p>
+      <p>Approximate retail value: $1,565, the dearest of the four weekends at our rates on November 7, 2026, with the Dawn Table. Odds depend on the number of entries. The winner pays nothing to claim or take the stay. The prize has no cash value, cannot be exchanged or transferred, and is for the winner's own stay, booked with us under our usual booking agreement. Any income tax on the prize is the winner's.</p>
       <h2>How to enter</h2>
       <p>Fill in the form below. That is the whole of it. No purchase, no follow, no tag, no share, and nothing you buy improves your chances.</p>
-      <p>One entry per person. A second entry from the same email address does not count.</p>
+      <p>One entry per person. A second entry from the same email address does not count. A plus-tag in any address, or dots in a Gmail address, do not make it a different address. Entries after the close do not count, nor does an entry without the eligibility box ticked.</p>
       <p>Entries open soon and close on Sunday, December 13, 2026, at 11:59 PM Eastern Time.</p>
+      <p>Entries are numbered 1, 2, 3 and so on in the order we count them, with no gaps. If an entry lands in our spam filter, it waits without a number until we check it by hand; a real one then takes the next number. Entries that do not count are never numbered.</p>
       <h2>Who can enter</h2>
       <p>Anyone 18 or older who lives in the United States. Not our own household, nor anyone who works with us at Loxley Forest or lives with them.</p>
       <h2>The draw</h2>
-      <p>On Monday, December 14, 2026, we draw one entry number at random. We publish the seed, the number of entries and the winning number on this page. Odds depend on the number of entries.</p>
-      <p>The winner hears from us by email, from an @loxleyforest.com address and from nowhere else, and we never ask for money. They have 72 hours to claim the weekend. If they do not, we draw the next number.</p>
+      <p>On Monday, December 14, 2026, we draw one entry number. The number of entries is fixed and published here by 11:00 AM Eastern Time that day, before the pulse. The seed is the NIST Randomness Beacon's pulse at 12:00 PM Eastern Time, 17:00:00 UTC, that day: its outputValue, 128 hexadecimal digits, published by the US government at beacon.nist.gov, which nobody can pick. If the beacon publishes no pulse for that minute, we use the first pulse it publishes after it.</p>
+      <p>The winning entry number is that outputValue, read as a hexadecimal number, divided by the number of entries, remainder plus one. We publish the pulse's value and index, the number of entries and the winning number on this page, so anyone can check the draw.</p>
+      <p>The winner hears from us by email, from an @loxleyforest.com address and from nowhere else, and we never ask for money. They have 72 hours to claim the weekend. If they do not, the next entry number up wins, wrapping around to 1 after the last, and so on for up to three alternates.</p>
       <h2>Your details</h2>
       <p>We use your first name and email to run the giveaway and to reach the winner, and for nothing else, unless you tick the letters box. Our <a href="/privacy">privacy page</a> says how we keep them.</p>
       <h2>Instagram</h2>
       <p>This giveaway is not sponsored, endorsed or administered by, or associated with, Instagram or Meta. By entering, you release Instagram of any responsibility for it.</p>
-      <p class="lf-legal-sign">Sponsor: Loxley Forest LLC, Dahlonega, Georgia. Questions: stay@loxleyforest.com.</p>
+      <p class="lf-legal-sign">Sponsor: Loxley Forest LLC, [mailing address], Dahlonega, Georgia [ZIP]. Questions: stay@loxleyforest.com.</p>
       </div>
       <div class="gw-entry">
         <p class="gw-closed" id="gw-soon">Entries are not open yet. When they are, the form will be right here.</p>
         <p class="gw-closed" id="gw-after" hidden>Entries closed on Sunday, December 13. The draw is Monday, December 14, and the result will be posted on this page.</p>
-        <form class="lf-form lf-form--light gw-form" id="gw-form" name="giveaway" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" action="/giveaway-entered.html" hidden>
+        <div id="gw-formwrap" hidden>
+        <form class="lf-form lf-form--light gw-form" id="gw-form" name="giveaway" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" action="/giveaway-entered.html">
           <input type="hidden" name="form-name" value="giveaway">
           <input type="hidden" name="src" value="direct" id="gw-src">
           <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
@@ -107,9 +110,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="lf-form__actions"><button type="submit" class="lf-btn lf-btn--forest">Enter the giveaway</button></div>
           </fieldset>
         </form>
+        </div>
       </div>
     </section>
-    <script>(function(){var m=/[?&]src=([^&#]*)/.exec(location.search);var v=m?decodeURIComponent(m[1].replace(/\+/g," ")).trim().toLowerCase():"";if(!/^[a-z0-9_-]{1,40}$/.test(v))v="direct";var s=document.getElementById("gw-src");if(s)s.value=v;if(Date.now()>Date.UTC(2026,11,14,4,59,59)){var f=document.getElementById("gw-form"),c=document.getElementById("gw-after");if(f)f.hidden=true;if(c)c.hidden=false;}})();</script>
+    <script>(function(){var m=/[?&]src=([^&#]*)/.exec(location.search);var v=m?decodeURIComponent(m[1].replace(/\+/g," ")).trim().toLowerCase():"";if(!/^[a-z0-9_-]{1,40}$/.test(v))v="direct";var s=document.getElementById("gw-src");if(s)s.value=v;if(Date.now()>Date.UTC(2026,11,14,4,59,59)){var f=document.getElementById("gw-formwrap"),c=document.getElementById("gw-after");if(f)f.hidden=true;if(c)c.hidden=false;}})();</script>
 
   </main>
 
