@@ -75,14 +75,22 @@ WORDS = {
     'enter_h': 'How to enter',
     'enter_1': ('Fill in the form below. That is the whole of it. No purchase, no follow, no tag, no share, and '
                 'nothing you buy improves your chances.'),
-    'enter_2': 'One entry per person. A second entry from the same email address does not count.',
+    'enter_2': ('One entry per person. A second entry from the same email address does not count, and dots or a '
+                'plus-tag in a Gmail address do not make it a different address. If an entry lands in our spam '
+                'filter, we check it by hand before the draw. Entries after the close are not counted.'),
     'enter_3': 'Entries open {{opens}} and close on Sunday, December 13, 2026, at 11:59 PM Eastern Time.',
     'who_h': 'Who can enter',
     'who_1': ('Anyone 18 or older who lives in the United States. Not our own household, nor anyone who works '
               'with us at Loxley Forest or lives with them.'),
     'draw_h': 'The draw',
-    'draw_1': ('On Monday, December 14, 2026, we draw one entry number at random. We publish the seed, the '
-               'number of entries and the winning number on this page. Odds depend on the number of entries.'),
+    # The seed source named before entries open, so it cannot be chosen once the entries are known
+    # (the Critic by way of the Forge, 2026-11-07): the NIST Randomness Beacon's pulse at noon
+    # Eastern on the draw day. [MICK RATIFIES] the beacon; the Forge's draw matches the rule below.
+    'draw_1': ('On Monday, December 14, 2026, we draw one entry number. The seed is the NIST Randomness '
+               'Beacon\'s pulse at 12:00 PM Eastern Time that day, a number the US government publishes every '
+               'minute and nobody can pick. The winning entry number is that pulse divided by the number of '
+               'entries, remainder plus one. We publish the pulse, the number of entries and the winning number '
+               'on this page, so anyone can check the draw. Odds depend on the number of entries.'),
     'draw_2': ('The winner hears from us by email, from an @loxleyforest.com address and from nowhere else, and '
                'we never ask for money. They have 72 hours to claim the weekend. If they do not, we draw the '
                'next number.'),
@@ -141,17 +149,20 @@ SCRIPT = ('<script>(function(){var m=/[?&]src=([^&#]*)/.exec(location.search);'
           'if(!/^[a-z0-9_-]{1,40}$/.test(v))v="direct";'
           'var s=document.getElementById("gw-src");if(s)s.value=v;'
           'if(Date.now()>Date.UTC(' + ','.join(str(n) for n in CLOSE_UTC) + ')){'
-          'var f=document.getElementById("gw-form"),c=document.getElementById("gw-after");'
+          'var f=document.getElementById("gw-formwrap"),c=document.getElementById("gw-after");'
           'if(f)f.hidden=true;if(c)c.hidden=false;}})();</script>')
 
 
 def form_html(open_now):
     """The Netlify form, in the file either way (so Netlify registers it); hidden and disabled
     until the words are approved and OPENS is set."""
+    # The closed state sits on a wrapper, not on the <form> tag: Netlify rewrites the form tag it
+    # processes at deploy, so an attribute there may not survive (seen 2026-11-07).
     state = '' if open_now else ' hidden'
     disabled = '' if open_now else ' disabled'
     return f'''
-        <form class="lf-form lf-form--light gw-form" id="gw-form" name="giveaway" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" action="/giveaway-entered.html"{state}>
+        <div id="gw-formwrap"{state}>
+        <form class="lf-form lf-form--light gw-form" id="gw-form" name="giveaway" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" action="/giveaway-entered.html">
           <input type="hidden" name="form-name" value="giveaway">
           <input type="hidden" name="src" value="direct" id="gw-src">
           <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
@@ -169,7 +180,8 @@ def form_html(open_now):
             <label class="gw-check"><input type="checkbox" name="letters" value="yes"><span>{escape(WORDS['letters'], quote=False)}</span></label>
             <div class="lf-form__actions"><button type="submit" class="lf-btn lf-btn--forest">{escape(WORDS['submit'], quote=False)}</button></div>
           </fieldset>
-        </form>'''
+        </form>
+        </div>'''
 
 
 def page_giveaway():

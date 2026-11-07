@@ -96,7 +96,12 @@ def main():
         bad.append('the form carries the ad click fields; an entry is not an inquiry')
     if 'id="gw-src"' not in form or 'getElementById("gw-src")' not in html:
         bad.append('src is not filled from the landing URL by the page')
-    closed = has(tag, 'hidden')
+    # The closed state is on the wrapper (Netlify rewrites the form tag at deploy), with the
+    # fields disabled; both or neither.
+    wrap = re.search(r'<div id="gw-formwrap"[^>]*>', html)
+    if not wrap:
+        bad.append('the form has no gw-formwrap wrapper')
+    closed = bool(wrap) and has(wrap.group(0), 'hidden')
     if closed != ('<fieldset class="gw-fields" disabled>' in form):
         bad.append('the form is hidden but not disabled, or disabled but not hidden')
     # Shadow: not in the sitemap; while closed, linked from no other page.
