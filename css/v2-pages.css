@@ -477,6 +477,16 @@ body:has(#ga-buy, #ga-card-page, #ga-manage, #ga-thanks) .book-fab { display: no
   .ga-cardpage .ga-message__text { font-size: 12.5pt; }
 }
 
+/* ---- giveaway ---- */
+.gw .lf-legal__text .gw-result { margin-top: 1em; font-family: 'Montserrat', sans-serif; font-size: 0.95rem; letter-spacing: 0.02em; }
+.gw-entry { max-width: 40rem; margin: clamp(40px, 6vw, 64px) auto 0; }
+.gw-fields { border: 0; padding: 0; margin: 0; display: grid; gap: 22px; min-width: 0; }
+.gw-h2 { margin: 0 0 4px; padding: 0; }
+.lf-form label.gw-check { display: flex; gap: 12px; align-items: flex-start; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.15rem; font-weight: 400; letter-spacing: 0; text-transform: none; line-height: 1.5; color: var(--bark); cursor: pointer; }
+.lf-form .gw-check input[type="checkbox"] { width: 20px; height: 20px; margin: 4px 0 0; padding: 0; flex: none; accent-color: var(--forest-deep); }
+.gw-closed { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 1.3rem; line-height: 1.5; color: var(--stone); margin: 0; }
+.gw-closed + .gw-form { margin-top: 28px; }
+
 /* ---- guest ---- */
 .lf-stay-top { padding-top: calc(var(--hdr-h) + clamp(40px, 7vw, 80px)); padding-bottom: clamp(36px, 6vw, 64px); }
 .lf-stay-top .lf-h1 { font-size: clamp(2.6rem, 9vw, 4.4rem); }
