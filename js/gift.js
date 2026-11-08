@@ -92,6 +92,12 @@
   // Apart from SIZES: a hand-issued card of another size can exist before /gift offers the sizes
   // (the Critic, 2026-11-08), and the card page must never read "three nights" for it.
   var SIZE_WORDS = false;
+  // The engine's price on /gift before the names are typed (the Critic's site-audit sheet, 2026-11-08,
+  // the Chief's route; it reverses Mick's rule of 2026-10-19 that the amount shows only right before
+  // Stripe, so it waits for his yes): PRICE true, the price of the card on sale, read from
+  // /v1/gift/sizes, stands above the names with "Taxes and fees included."; typed nowhere; nothing
+  // shown if the engine is silent. false: as it was.
+  var PRICE = false;
   var FRONTS = { 'golden-arrow-1': '/images/gift/golden-arrow-card-front-1-night.jpg',
                  'golden-arrow-2': '/images/gift/golden-arrow-card-front-2-nights.jpg',
                  'golden-arrow': '/images/gift/golden-arrow-card-front.jpg' };
@@ -202,6 +208,7 @@
     var sizes = null;           // the engine's sizes, when SIZES is on and it lists them
     var size = null;            // the one chosen
     var product = PRODUCT;      // what the checkout is asked for
+    var onlyPrice = 0;          // PRICE: the engine's price of the card the form sells, for the line above the names
     var termsLine = document.querySelector('.ga-terms-line');   // the card's words under the panel
 
     function show(nodes) { root.replaceChildren.apply(root, nodes); }
@@ -286,6 +293,11 @@
         var x = document.getElementById('ga-for'); if (x && x.focus) x.focus({ preventScroll: true });
       } }, [el('fieldset', { 'class': 'ga-sizes' }, [el('legend', { text: w('size_legend') })].concat(options)), err, btn]);
     }
+    // The engine's price above the names (PRICE), when the form sells one card and no size line stands there.
+    function priceLine() {
+      if (!PRICE || !onlyPrice || (sizes && size)) return null;
+      return el('p', { 'class': 'ga-price' }, [G.money(onlyPrice), el('small', { text: ' ' + w('all_in') })]);
+    }
     // The size chosen, above the names, one tap from choosing again.
     function chosenLine() {
       if (!sizes || !size) return null;
@@ -347,6 +359,7 @@
       ]);
       var btn = el('button', { type: 'submit', 'class': 'lf-btn gh-btn--dark gh-cta', text: w('continue') });
       return el('form', { 'class': 'ga-form', novalidate: 'novalidate', onsubmit: function (ev) { ev.preventDefault(); submit(ev.target, btn, err); } }, [
+        priceLine(),
         chosenLine(),
         field('ga-for', 'recipient_names', w('for_label'), { hint: w('for_hint'), auto: 'off', max: 80 }),
         field('ga-from', 'giver_name', w('from_label'), { hint: w('from_hint'), auto: 'name', max: 80 }),
@@ -490,16 +503,29 @@
       var selling = !!(h && h.gift_sales === true);
       // The page as it was: the 3-night form while the engine sells that card, else call or text Mick.
       function asIs() { return selling ? show([form()]) : off('off'); }
-      if (!SIZES) return asIs();
+      if (!SIZES && !PRICE) return asIs();
+      var named = h && Array.isArray(h.gift_sizes) ? h.gift_sizes.map(String) : null;
+      // PRICE alone: the form at once, as it was, and the engine's price joins it above the names when
+      // the sizes answer (the Critic: the form never waits on that read).
+      if (!SIZES) {
+        asIs();
+        if (!selling) return;
+        return G.api(API, '/v1/gift/sizes', null, 8000).then(function (answer) {
+          usable(answer, named).forEach(function (s) { if (s.product === PRODUCT && s.buyable) onlyPrice = s.price_cents; });
+          var frm = root.querySelector('form.ga-form'), pl = priceLine();
+          if (frm && pl && !frm.querySelector('.ga-price')) frm.insertBefore(pl, frm.firstChild);
+        }, function () {});
+      }
       // health's gift_sales speaks for the 3-night card alone (false at its cap), so the sizes are
       // read whenever it or gift_sizes says anything sells; closed only when both say closed (the
       // Critic, 2026-11-08). The sizes on sale, each with its price and its words, from the engine
       // alone. The 3-night card by itself is the page as it was; anything else is the choice first.
-      // A read that fails or lists nothing usable leaves the page as it was.
-      var named = h && Array.isArray(h.gift_sizes) ? h.gift_sizes.map(String) : null;
+      // A read that fails or lists nothing usable leaves the page as it was. With PRICE, the price
+      // of the card the form sells (the 3-night) rides the read and stands above the names.
       if (!selling && !(named && named.length)) return off('off');
       return G.api(API, '/v1/gift/sizes', null, 8000).then(function (answer) {
         var got = usable(answer, named);
+        got.forEach(function (s) { if (s.product === PRODUCT && s.buyable) onlyPrice = s.price_cents; });
         if (!got.length || (got.length === 1 && got[0].product === PRODUCT && got[0].buyable)) return asIs();
         sizes = got;
         whenRow(got);

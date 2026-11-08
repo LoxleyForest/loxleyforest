@@ -116,10 +116,11 @@ const SOLD = 'The Golden Arrow is spoken for this season. Call or text Mick at 7
 // own words; sold_out and the engine's sentence for one at the season's cap (gifts.FEWER_NIGHTS
 // while a shorter size still fits). The shipped file has SIZES false; the "on" checks serve
 // js/gift.js with it true, and say so.
-const GIFT_JS = read('js/gift.js'), SIZES_SWITCH = 'var SIZES = false;', WORDS_SWITCH = 'var SIZE_WORDS = false;';
-// js/gift.js with its two switches set as a run asks: SIZES (the gift page in its sizes) and SIZE_WORDS
-// (the Writer's gift line and status for a card of one night or two, for Mick's ear).
-const withSwitches = (sizes, words) => GIFT_JS.replace(SIZES_SWITCH, 'var SIZES = ' + !!sizes + ';').replace(WORDS_SWITCH, 'var SIZE_WORDS = ' + !!words + ';');
+const GIFT_JS = read('js/gift.js'), SIZES_SWITCH = 'var SIZES = false;', WORDS_SWITCH = 'var SIZE_WORDS = false;', PRICE_SWITCH = 'var PRICE = false;';
+// js/gift.js with its switches set as a run asks: SIZES (the gift page in its sizes), SIZE_WORDS (the
+// Writer's gift line and status for a card of one night or two, for Mick's ear) and PRICE (the engine's
+// price above the names, which reverses Mick's rule of 2026-10-19 and waits for his yes).
+const withSwitches = (sizes, words, price) => GIFT_JS.replace(SIZES_SWITCH, 'var SIZES = ' + !!sizes + ';').replace(WORDS_SWITCH, 'var SIZE_WORDS = ' + !!words + ';').replace(PRICE_SWITCH, 'var PRICE = ' + !!price + ';');
 // The page's own lines follow the SIZES switch at build (gift.py SIZES_ON reads js/gift.js): the
 // three-night lines while it is off, the Writer's lines that fit every size while it is on. The "on"
 // runs serve gift.html with those lines swapped in, as the builder would write it, so the page as it
@@ -258,17 +259,36 @@ function statics() {
   // gift page is still a failure: the card, the thank-you and the change page are reached by their
   // own links, never from the site.
   const ONE_WAY = '<a href="/faq">Questions</a><a href="/gift">The Golden Arrow</a></nav>';
+  // "Give a Stay" (build_v2.GIVE_A_STAY, 2026-11-08, for Mick's yes): on, the second link of the header row
+  // and the menu is /gift as "Give a Stay", and the home page carries a band to /gift; the one way beside
+  // "Questions" stays either way. The built pages say which state they are in.
+  const GIVE = '<a href="/gift">Give a Stay</a>';
+  const giveOn = has(read('index.html'), GIVE);
   const pages = fs.readdirSync(ROOT).filter((n) => n.endsWith('.html'));
   const navved = pages.filter((n) => /aria-label="(?:Menu|Footer)"/.test(read(n)));
   const missing = navved.filter((n) => {
     const h = read(n);
-    return !(/<nav aria-label="Menu">[^]*?<\/nav>/.exec(h) || [''])[0].endsWith(ONE_WAY)
+    return (!giveOn && !(/<nav aria-label="Menu">[^]*?<\/nav>/.exec(h) || [''])[0].endsWith(ONE_WAY))
       || !(/<nav aria-label="Footer">[^]*?<\/nav>/.exec(h) || [''])[0].endsWith(ONE_WAY);
   });
-  check(navved.length > 0 && missing.length === 0, 'every page\'s menu and footer link to /gift as "The Golden Arrow"' + (missing.length ? ': not on ' + missing.join(', ') : ''));
+  check(navved.length > 0 && missing.length === 0, 'every page\'s ' + (giveOn ? 'footer links' : 'menu and footer link') + ' to /gift as "The Golden Arrow"' + (missing.length ? ': not on ' + missing.join(', ') : ''));
+  // on, the header row keeps its six links (a seventh pushes the Book button off a 1280 px screen, the
+  // Critic measured); the menu takes "Give a Stay" second and drops "The Golden Arrow", one name for /gift
+  // there; the footer keeps the one way. check_header_fit.js lays the header out at 1280 to 1366 px.
+  const giveWrong = navved.filter((n) => {
+    const h = read(n), row = (/<nav class="lf-hdr__nav" aria-label="Main">([^]*?)<\/nav>/.exec(h) || ['', ''])[1], menu = (/<nav aria-label="Menu">([^]*?)<\/nav>/.exec(h) || ['', ''])[1];
+    const links = (s) => s.match(/<a [^>]*>[^<]*<\/a>/g) || [];
+    const giftLinks = (s) => links(s).filter((a) => /href="\/gift"/.test(a)).length;
+    if (has(row, GIVE) || links(row).length !== 6) return true;
+    return giveOn ? (links(menu)[1] !== GIVE || giftLinks(menu) !== 1 || !menu.endsWith('<a href="/faq">Questions</a>')) : (has(menu, GIVE) || giftLinks(menu) !== 1);
+  });
+  check(giveWrong.length === 0, (giveOn ? 'the header row keeps its six links; "Give a Stay" is the menu\'s second link and /gift\'s one name there, on every page' : 'no page carries "Give a Stay" (GIVE_A_STAY off); the row\'s six links, /gift once in the menu') + (giveWrong.length ? ': wrong on ' + giveWrong.join(', ') : ''));
+  // (the giveaway's third door, "Give a stay" to /gift?src=giveaway-site, is the reel's way in, 2026-11-08)
   const linking = pages.filter((n) => !/^gift/.test(n))
-    .filter((n) => /href="\/?gift(?:[\/"#?.-])/i.test(read(n).split(ONE_WAY).join('</nav>')));
-  check(linking.length === 0, 'no other link to the gift pages' + (linking.length ? ': ' + linking.join(', ') : ''));
+    .filter((n) => /href="\/?gift(?:[\/"#?.-])/i.test(read(n).split(ONE_WAY).join('</nav>').split(GIVE).join('')
+      .replace(/<section class="lf-sec lf-dark lf-center lf-give"[^]*?<\/section>/, '').replace(/<nav class="gw-doors"[^]*?<\/nav>/g, '')));
+  check(linking.length === 0, 'no other link to the gift pages beyond the giveaway\'s door' + (giveOn ? ', "Give a Stay" and the home band' : '') + (linking.length ? ': ' + linking.join(', ') : ''));
+  check(giveOn ? has(gift, 'ga-what__gift') && /gift card/i.test(gift) : !has(gift, 'ga-what__gift'), giveOn ? '/gift says "gift card" where it explains the gift' : '/gift does not say "gift card" yet (GIVE_A_STAY off)');
   check(!/\/gift/.test(read('sitemap.xml')), 'not in sitemap.xml');
   check(has(gift, RATIFIED), '/gift carries the card\'s ratified terms line');
   // The page's own lines follow the sizes switch at build (gift.py SIZES_ON reads js/gift.js); the
@@ -307,7 +327,7 @@ async function main() {
       dv: { recipient_names: 'Ana & Luis', giver_name: 'Aunt June', email: THEM, date: nextMorning('12-25').slice(0, 10), hour: 8, message: NOTE, sent: !!engine.sent }, quotes: [], checkouts: [], stays: [], outside: [], stripePages: [], solds: [] };
     await ctx.route('**/*', (route) => {
       const req = route.request(), u = new URL(req.url());
-      if (u.hostname === '127.0.0.1' && u.pathname === '/js/gift.js' && (engine.sizesOn || engine.sizeWordsOn)) return route.fulfill({ status: 200, contentType: 'text/javascript', body: withSwitches(engine.sizesOn, engine.sizeWordsOn) });
+      if (u.hostname === '127.0.0.1' && u.pathname === '/js/gift.js' && (engine.sizesOn || engine.sizeWordsOn || engine.priceOn)) return route.fulfill({ status: 200, contentType: 'text/javascript', body: withSwitches(engine.sizesOn, engine.sizeWordsOn, engine.priceOn) });
       if (u.hostname === '127.0.0.1' && (u.pathname === '/gift' || u.pathname === '/gift.html') && engine.sizesOn && !has(GIFT_JS, 'var SIZES = true;')) return route.fulfill({ status: 200, contentType: 'text/html', body: giftBuiltOn() });
       if (u.hostname === '127.0.0.1') return route.continue();
       if (u.hostname === 'fonts.googleapis.com' || u.hostname === 'fonts.gstatic.com') return route.continue();
@@ -909,6 +929,41 @@ async function main() {
     check(!noart.img && /ga-size--noart/.test(noart.cls) && noart.textLeft < 30 && noart.textWidth > noart.cardWidth * 0.8, 'a size with no front yet: no picture, its words across the card (' + Math.round(noart.textWidth) + ' of ' + Math.round(noart.cardWidth) + ' px)');
     check(await overflow(five.page) <= 0, 'no sideways scroll at 390');
     await five.ctx.close();
+  }
+
+  console.log('/gift: the engine\'s price above the names (js/gift.js PRICE, in shadow)');
+  check((GIFT_JS.match(/var PRICE = (true|false);/g) || []).length === 1 && has(GIFT_JS, PRICE_SWITCH), 'the PRICE switch is one line, false as shipped (it reverses Mick\'s rule of 2026-10-19; his yes first)');
+  {
+    const one = await open('gift-price', { priceOn: true, sizes: ['golden-arrow'], sizesList: [SIZE_3] });
+    await one.page.goto(BASE + '/gift');
+    await one.page.waitForSelector('#ga-buy form', { timeout: 10000 });
+    const formFirst = !(await one.page.$('#ga-buy form .ga-price'));   // the form never waits on the sizes read (the Critic)
+    await one.page.waitForSelector('#ga-buy form .ga-price', { timeout: 5000 });
+    const pl = await text(one.page, '#ga-buy form .ga-price');
+    check(one.rec.sizesReads === 1 && pl === '$2,000.00 ' + PANEL.all_in, 'PRICE on, the 3-night alone: the engine\'s price above the names, "' + pl + '", from one read of the sizes' + (formFirst ? ' (the form first, the price joining it)' : ''));
+    check(await one.page.evaluate(() => { const f = document.querySelector('#ga-buy form'); return f.firstElementChild.className === 'ga-price' && !!f.querySelector('#ga-for'); }), 'the line stands first, the names below it');
+    const prose = await one.page.evaluate(() => document.querySelector('main').innerText.replace(document.querySelector('#ga-buy').innerText, ''));
+    check(!/\$\s?\d/.test(prose), 'no amount anywhere else on the page');
+    await one.page.locator('#ga-buy').scrollIntoViewIfNeeded();
+    await shot(one.page, 'gift-price.png', false);
+    await one.ctx.close();
+    for (const [what, engine] of [['answers 404', { sizesRoute: 'off' }], ['is unreachable', { sizesRoute: 'down' }], ['lists the 3-night at its cap', { sizes: [], sizesList: [Object.assign({}, SIZE_3, { sold_out: true, sentence: SOLD })] }]]) {
+      const c = await open('gift-price-silent', Object.assign({ priceOn: true }, engine));
+      await c.page.goto(BASE + '/gift');
+      await c.page.waitForSelector('#ga-buy form, #ga-buy .ga-panel', { timeout: 10000 });
+      await settle();
+      check(!(await c.page.$('.ga-price')), 'the sizes read ' + what + ': no price shown, the page as it was');
+      await c.ctx.close();
+    }
+    // with the sizes on too, the chooser carries the prices and no line doubles them; the 3-night alone keeps the line
+    const both = await open('gift-price-sizes', { priceOn: true, sizesOn: true, sizes: ['golden-arrow', 'golden-arrow-1', 'golden-arrow-2'], sizesList: SIZES_ALL });
+    await both.page.goto(BASE + '/gift');
+    await both.page.waitForSelector('#ga-buy .ga-sizes', { timeout: 10000 });
+    check(!(await both.page.$('.ga-price')), 'PRICE and SIZES on, three sizes: the cards carry the prices, no line above');
+    await press(both.page, 'label[for="ga-size-golden-arrow-2"]'); await press(both.page, '#ga-buy button[type=submit]');
+    await both.page.waitForSelector('#ga-buy form .ga-chosen', { timeout: 5000 });
+    check(!(await both.page.$('.ga-price')), 'a size chosen: its own line carries the price, no second line');
+    await both.ctx.close();
   }
 
   console.log('/gift in its sizes, the switch on: the sizes read fails');
