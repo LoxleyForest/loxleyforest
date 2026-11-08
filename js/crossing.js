@@ -31,7 +31,7 @@
   // in its place: no scene, no canvas, the words shown, the calendar right after, one screen).
   // PHONE_STILL false: as it was. true on the Chief's word. A desk stays animated either way.
   // scripts/site/check_crossing_still.js proves both.
-  const PHONE_STILL = false;
+  const PHONE_STILL = true;
   if (PHONE_STILL && window.matchMedia('(max-width: 767px)').matches && !sec.hasAttribute('data-steady')) {
     sec.classList.add('is-still', 'is-poster', 'is-ready');
     return;
