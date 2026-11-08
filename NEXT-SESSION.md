@@ -205,13 +205,33 @@ read it. Proven: check_gift.js, 270 (40 new: shipped, the 3-night alone, three s
 through Stripe and the thank-you, the engine's own pair at the 3-night's cap with the fake's health
 computed as api.py computes it, health naming fewer than the list, the sales door off, the cap with
 the read failing, a size with no front, the read failing four ways).
-BEFORE THE SWITCH GOES ON (the Writer's flag): the page's own copy still says three nights in six
-places (the card subtitle, the description, the lead, "Three nights in the trees", the card's gift
-line, "Unused, ready for three nights"). The Chief (2026-11-08): the Writer is drafting those six
-to fit every size, with a verdict on "How many nights?" and "Please choose how many nights."; the
-words come here after Mick hears them, and the page is rebuilt from gift.py WORDS then. The Dawn
+THE CARD PAGE PER SIZE (the Chief's second route the same night, on the Writer's read, chief
+docs/briefs/2026-11-08-writer-gift-page-sizes.md): /gift/card accepts every Golden Arrow product
+(it refused all but golden-arrow, so a 1- or 2-night card's link would have read "We could not find
+a gift on this link"); with SIZES on it shows the card's own size from GET /v1/gift's new fields
+(the Forge, forge/gift-sizes-read 08d0eee, main commit to follow: nights, subtitle, terms, includes
+on every product, from one helper gifts.card_words that /v1/gift/sizes reads too): the engine's
+subtitle and terms, the site's gift line and unused status by nights, keyed by product only when
+the fields are missing (the terms then the engine's words typed in gift.py as the fallback). With
+SIZES off the card is exactly as today, whatever its product. On /gift, choosing a size swaps the
+sample card to that size's line, gift line and terms. THE WORDS (the Writer's, 2026-11-08, for
+Mick's ear, typed in gift.py WORDS; shown only with the switch on): per size, "A gift of a night in
+the trees" / "A gift of two nights in the trees"; "A night in the treehouse, and the Dawn Table:
+champagne brunch carried across the bridge to your door." / "Two nights in the treehouse, and the
+Dawn Table: ..."; "Unused, ready for one night" / "Unused, ready for two nights". One version for
+every size, BUILT INTO THE PAGE ONLY WHILE js/gift.js HAS SIZES TRUE (gift.py reads the switch at
+build, so one line flips both and a rebuild carries the words): the description "A gift of nights in
+the treehouse at Loxley Forest, and the Dawn Table." (all four gift pages), the lead "Nights in the
+treehouse, and the Dawn Table: champagne brunch carried across the bridge to their door.", the
+heading "Nights in the trees", and the "When" row "Any weeknight for one night, Monday to Thursday;
+any two or three nights, weekends included. Good within twelve months of purchase. After that it
+never expires; we ask only the difference if rates have risen." Proven: check_gift.js 281 (11 more:
+a two-night card shipped and with the switch on, a one-night card from the product alone, the
+three-night unchanged, the sample swap and back, the built lines matching the switch). The Dawn
 Table is ruled, not a question: Mick, 2026-11-08, "Golden Arrow as written", the brunch given in
-every size. The switch flips only on the Chief's word, after Mick types the open line on the engine.
+every size. The switch flips only on the Chief's word, after Mick hears the words above and types
+the open line on the engine; flipping it is: the one line in js/gift.js, python3
+scripts/site/build_v2.py, the checks, one commit.
 
 ---
 

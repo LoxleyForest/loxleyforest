@@ -171,12 +171,14 @@ WORDS = {
     'description_sizes': 'A gift of nights in the treehouse at Loxley Forest, and the Dawn Table.',
     'lead_sizes': 'Nights in the treehouse, and the Dawn Table: champagne brunch carried across the bridge to their door.',
     'what_h_sizes': 'Nights <em>in the trees</em>',
+    # The "When" row's one sentence for every size: js/gift.js shows it only while all three sell.
     'when_sizes': 'Any weeknight for one night, Monday to Thursday; any two or three nights, weekends included. '
                   'Good within twelve months of purchase. After that it never expires; we ask only the difference if rates have risen.',
-    # A card of one night or two (the Writer's words, as above): its line, its gift line, its status
-    # while unused. Shown by the card's nights, only with the switch on; the engine's own subtitle
-    # and terms win when it sends them, and the terms below are its words (gifts.PRODUCTS), the
-    # fallback when it does not.
+    # A card of one night or two. Its line and its terms are the printed card's own words (ruled
+    # 2026-10-27, the engine's gifts.PRODUCTS): the engine sends them with the card, and these are
+    # the fallback when it does not. Its gift line and its status while unused are the Writer's,
+    # shown only once js/gift.js SIZE_WORDS is on (Mick's ear); until then a card of another size
+    # shows neither, never the 3-night card's.
     'card_subtitle_1': 'A gift of a night in the trees',
     'card_subtitle_2': 'A gift of two nights in the trees',
     'card_gift_1': 'A night in the treehouse, and the Dawn Table: champagne brunch carried across the bridge to your door.',
@@ -289,7 +291,7 @@ PANEL_KEYS = ('opening', 'off', 'down', 'call_mick', 'text_mick', 'for_label', '
               'deliver_them', 'their_email_label', 'their_email_hint', 'day_label', 'hour_label', 'picks_label',
               'pick_christmas', 'pick_valentine', 'note_label', 'note_hint', 'note_count', 'need_their_email', 'need_day',
               'need_future', 'when_christmas', 'when_valentine', 'when_at', 'confirm_them', 'confirm_note',
-              'size_legend', 'need_size', 'card_gift_1', 'card_gift_2')
+              'size_legend', 'need_size', 'card_gift_1', 'card_gift_2', 'when_sizes')
 CARD_KEYS = ('card_none', 'card_unknown', 'card_off', 'card_down', 'card_void', 'state_unused', 'state_booked', 'state_used',
              'note_from', 'choose_dates', 'print', 'share', 'share_copied', 'share_manual', 'keep', 'questions',
              'lost_h', 'lost_label', 'lost_send', 'lost_sending', 'lost_need', 'lost_off', 'lost_sent',
@@ -309,9 +311,11 @@ def words_block(keys):
     """The words a page's script reads, as JSON in the page, with the card's own name and its
     two ratified openings. '</' is escaped so nothing in it can close the tag."""
     data = {k: WORDS[k] for k in keys}
-    data.update({'card_name': CARD['title'], 'card_for': CARD['for'], 'card_from': CARD['from'],
-                 # the 3-night card's own ratified lines, so a script that keys by nights has all three
-                 'card_subtitle_3': CARD['subtitle'], 'card_gift_3': CARD['gift'], 'card_nights_3': CARD['nights']})
+    data.update({'card_name': CARD['title'], 'card_for': CARD['for'], 'card_from': CARD['from']})
+    # Where a script keys the card's lines by nights (the panel and the card page), the 3-night card's
+    # own ratified lines ride with the per-size ones, so all three sizes are at hand.
+    if 'card_gift_1' in keys:
+        data.update({'card_subtitle_3': CARD['subtitle'], 'card_gift_3': CARD['gift'], 'card_nights_3': CARD['nights']})
     body = json.dumps(data, ensure_ascii=False, sort_keys=True).replace('</', '<\\/')
     return f'<script type="application/json" id="lf-gift-words">{body}</script>'
 
@@ -402,10 +406,11 @@ def description():
 
 def page_gift():
     W = WORDS
-    # The lines that name the nights follow the sizes switch (SIZES_ON above).
+    # The lines that name the nights follow the sizes switch (SIZES_ON above). The "When" row keeps
+    # the 3-night card's words as built; js/gift.js puts the one sentence for every size in its place
+    # only while the engine sells all three (it names the one-night card's weeknights).
     lead = W['lead_sizes'] if SIZES_ON else W['lead']
     what_h = W['what_h_sizes'] if SIZES_ON else W['what_h']
-    when = W['when_sizes'] if SIZES_ON else CARD['nights']
     h, gtm = head_for(W['title'], description(), URL)
     what = ''.join(f'\n            <p>{escape(p, quote=False)}</p>' for p in W['what'])
     body = head_section(W['eyebrow'], CARD['title'], escape(lead, quote=False),
@@ -426,7 +431,7 @@ def page_gift():
           </div>
         </div>
         <dl class="ga-terms">
-          <div><dt>{W["when_h"]}</dt><dd>{escape(when, quote=False)}</dd></div>
+          <div><dt>{W["when_h"]}</dt><dd data-ga-when>{escape(CARD["nights"], quote=False)}</dd></div>
           <div><dt>{W["choose_h"]}</dt><dd>{escape(W["choose"], quote=False)}</dd></div>
           <div><dt>{W["card_h"]}</dt><dd>{escape(W["card_how"], quote=False)}</dd></div>
         </dl>
@@ -707,6 +712,7 @@ CSS = '''
 .ga-chosen { margin: 0; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; font-size: 15px; line-height: 1.4; color: var(--stone); }
 .ga-chosen strong { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 1.25rem; color: var(--forest-deep); }
 .ga-confirm__size { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 1.2rem; color: var(--stone); }
+.ga-card .ga-gift[hidden] { display: none; }   /* a card of another size, its gift line not yet heard */
 .ga-terms-line[hidden] { display: none; }
 
 .ga-mail-hint { margin: 6px 0 0 34px; font-size: 15px; line-height: 1.45; color: var(--stone); }
