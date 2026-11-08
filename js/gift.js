@@ -8,8 +8,14 @@
 
    The engine (book.loxleyforest.com, loxley-rescue ceo/golden-arrow,
    cdb68bc):
-     GET  /v1/health -> {..., gift_sales, gift_delivery}: whether to
-          sell, and whether to offer "a day I choose".
+     GET  /v1/health -> {..., gift_sales, gift_delivery, gift_sizes}:
+          whether to sell, whether to offer "a day I choose", and each
+          open size that still sells (main c78de5b).
+     GET  /v1/gift/sizes -> {sizes: [{product, nights, name, subtitle,
+          price_cents (all in, what the checkout charges), terms, includes,
+          sold_out, sentence}]} in nights order, the sizes on sale alone
+          (the Forge, 2026-11-08); 404 while the sales door is off. Read
+          once a page load, only with SIZES on.
      POST /v1/gift/checkout {product, email, giver_name,
           recipient_names, ship_to?{name, line1, line2, city, state
           (two letters), zip (five digits)}, deliver?{email, date
@@ -71,6 +77,17 @@
   function unreachable(e) { return !e || !e.status || e.status >= 500; }
 
   var PRODUCT = 'golden-arrow';
+  // The gift in its sizes (the Chief's route, 2026-11-08; the Forge's opening piece, Loxley main
+  // c78de5b), in shadow: SIZES false, the page is as it was, the 3-night card alone. true on the
+  // Chief's word: the panel first offers one card per size the engine sells, each with its own
+  // front, its price and its terms as the engine sends them (GET /v1/gift/sizes; never typed
+  // here), buyable only while /v1/health's gift_sizes names it, else with the engine's own
+  // sentence for a size at the season's cap. Only sizes the engine lists ever show; a read that
+  // fails leaves the page as it was. scripts/site/check_gift.js proves both states.
+  var SIZES = false;
+  var FRONTS = { 'golden-arrow-1': '/images/gift/golden-arrow-card-front-1-night.jpg',
+                 'golden-arrow-2': '/images/gift/golden-arrow-card-front-2-nights.jpg',
+                 'golden-arrow': '/images/gift/golden-arrow-card-front.jpg' };
   var USABLE = { issued: 1 };
   var USED = { redeemed: 1 };
   var STRIPE = /^https:\/\/([a-z0-9-]+\.)*stripe\.com\//i;
@@ -175,8 +192,77 @@
     var opened = null;          // {key, res, at}: a payment page already made for these exact details
     var error = '';
     var canDeliver = false;     // GET /v1/health's gift_delivery: "a day I choose" is offered
+    var sizes = null;           // the engine's sizes, when SIZES is on and it lists them
+    var size = null;            // the one chosen
+    var product = PRODUCT;      // what the checkout is asked for
+    var termsLine = document.querySelector('.ga-terms-line');   // the card's words under the panel
 
     function show(nodes) { root.replaceChildren.apply(root, nodes); }
+
+    // The engine's sizes, kept only as it sent them: a product, its nights, its price in cents,
+    // its words. Buyable while health names it and it is not at the cap; at the cap it shows only
+    // with the engine's own sentence; anything else is not shown.
+    function usable(answer, named) {
+      // GET /v1/gift/sizes -> {sizes: [...]} (the Forge, 2026-11-08, forge/gift-sizes-read)
+      var list = answer && Array.isArray(answer.sizes) ? answer.sizes : null;
+      if (!list) return [];
+      var out = [];
+      list.forEach(function (s) {
+        if (!s || typeof s.product !== 'string' || !s.product) return;
+        var price = Number(s.price_cents), nights = Number(s.nights);
+        if (!isFinite(price) || price <= 0 || !isFinite(nights) || nights <= 0) return;
+        if (typeof s.subtitle !== 'string' || !s.subtitle.trim() || typeof s.terms !== 'string' || !s.terms.trim()) return;
+        var sentence = typeof s.sentence === 'string' ? s.sentence.trim() : '';
+        var buyable = s.sold_out !== true && (!named || named.indexOf(s.product) >= 0);
+        if (!buyable && !sentence) return;
+        out.push({ product: s.product, nights: nights, price_cents: Math.round(price), subtitle: s.subtitle.trim(),
+          terms: s.terms.trim(), sentence: sentence, buyable: buyable });
+      });
+      out.sort(function (a, b) { return a.nights - b.nights; });
+      return out;
+    }
+    function choose(s) {
+      size = s; product = s.product; opened = null;
+      if (termsLine) { termsLine.textContent = s.terms; termsLine.hidden = false; }
+    }
+    // One card per size: its front, its line, its price (the engine's, with "taxes and fees
+    // included"), its terms; a size at the cap carries the engine's sentence and takes no tap.
+    function chooser() {
+      if (termsLine) termsLine.hidden = true;
+      var err = el('p', { 'class': 'gh-error', id: 'ga-size-error', role: 'alert', text: error });
+      var options = sizes.map(function (s) {
+        var id = 'ga-size-' + s.product;
+        var front = FRONTS[s.product] || '';
+        var input = el('input', { type: 'radio', id: id, name: 'size', value: s.product, disabled: s.buyable ? null : 'disabled',
+          checked: size && size.product === s.product ? 'checked' : null, 'aria-describedby': id + '-terms' + (s.buyable ? '' : ' ' + id + '-out'),
+          onchange: function () { error = ''; err.textContent = ''; choose(s); } });
+        return el('label', { 'class': 'ga-size' + (s.buyable ? '' : ' ga-size--out') + (front ? '' : ' ga-size--noart'), 'for': id }, [
+          input,
+          front ? el('img', { 'class': 'ga-size__front', src: front, width: '720', height: '1008', alt: '', loading: 'lazy', decoding: 'async' }) : null,
+          el('span', { 'class': 'ga-size__text' }, [
+            el('span', { 'class': 'ga-size__name', text: s.subtitle }),
+            s.buyable ? el('span', { 'class': 'ga-size__price' }, [G.money(s.price_cents), el('small', { text: ' ' + w('all_in') })]) : null,
+            el('span', { 'class': 'ga-size__terms', id: id + '-terms', text: s.terms }),
+            s.buyable ? null : el('span', { 'class': 'ga-size__out', id: id + '-out', role: 'status', text: s.sentence })])]);
+      });
+      var btn = el('button', { type: 'submit', 'class': 'lf-btn gh-btn--dark gh-cta', text: w('continue') });
+      return el('form', { 'class': 'ga-form ga-sizes-form', novalidate: 'novalidate', onsubmit: function (ev) {
+        ev.preventDefault();
+        if (!size) {
+          error = w('need_size'); err.textContent = error;
+          var first = root.querySelector('.ga-sizes input:not([disabled])'); if (first && first.focus) first.focus();
+          return;
+        }
+        error = ''; show([form()]);
+        var x = document.getElementById('ga-for'); if (x && x.focus) x.focus({ preventScroll: true });
+      } }, [el('fieldset', { 'class': 'ga-sizes' }, [el('legend', { text: w('size_legend') })].concat(options)), err, btn]);
+    }
+    // The size chosen, above the names, one tap from choosing again.
+    function chosenLine() {
+      if (!sizes || !size) return null;
+      return el('p', { 'class': 'ga-chosen' }, [el('strong', { text: size.subtitle }), G.money(size.price_cents) + ' ' + w('all_in') + ' ',
+        el('button', { type: 'button', 'class': 'ga-inline', 'aria-label': w('confirm_change') + ': ' + w('size_legend'), text: w('confirm_change'), onclick: function () { show([chooser()]); } })]);
+    }
 
     function off(kind, sentence) {
       // The lead above promises a price before paying; with no way to pay here, it steps aside.
@@ -232,6 +318,7 @@
       ]);
       var btn = el('button', { type: 'submit', 'class': 'lf-btn gh-btn--dark gh-cta', text: w('continue') });
       return el('form', { 'class': 'ga-form', novalidate: 'novalidate', onsubmit: function (ev) { ev.preventDefault(); submit(ev.target, btn, err); } }, [
+        chosenLine(),
         field('ga-for', 'recipient_names', w('for_label'), { hint: w('for_hint'), auto: 'off', max: 80 }),
         field('ga-from', 'giver_name', w('from_label'), { hint: w('from_hint'), auto: 'name', max: 80 }),
         field('ga-email', 'email', w('email_label'), { type: 'email', auto: 'email', mode: 'email' }),
@@ -242,7 +329,7 @@
     }
 
     function body() {
-      var b = { product: PRODUCT, email: f.email.trim(), giver_name: f.giver_name.trim(), recipient_names: f.recipient_names.trim() };
+      var b = { product: product, email: f.email.trim(), giver_name: f.giver_name.trim(), recipient_names: f.recipient_names.trim() };
       if (f.mail) {
         b.ship_to = {};
         ['name', 'line1', 'line2', 'city', 'state', 'zip'].forEach(function (k) { b.ship_to[k] = String(f.ship[k] || '').trim(); });
@@ -339,7 +426,7 @@
         // The buyer's email rides along so the thank-you can say where it went; this tab only,
         // never a beacon or the tag manager, and the thank-you clears it once shown.
         var keep = b.deliver ? { to: 'them', date: b.deliver.date, hour: b.deliver.hour } : { to: 'me' };
-        keep.email = b.email; keep.printed = !!b.ship_to;
+        keep.email = b.email; keep.printed = !!b.ship_to; keep.product = b.product;
         try { sessionStorage.setItem('ga_deliver', JSON.stringify(keep)); } catch (e) {}
         location.assign(res.url);
       } });
@@ -353,6 +440,7 @@
         } })]);
       show([el('div', { 'class': 'ga-confirm' }, [
         head,
+        sizes && size ? el('p', { 'class': 'ga-confirm__size', text: size.subtitle }) : null,
         el('p', { 'class': 'ga-confirm__names' }, [w('card_for') + ' ' + b.recipient_names, el('span', { text: w('card_from') + ' ' + b.giver_name })]),
         mine,
         them ? el('p', { 'class': 'gh-fine', text: w('confirm_them').replace('{email}', d.email).replace('{when}', whenWords(d.date, d.hour)) }) : null,
@@ -370,7 +458,23 @@
     // 002ab6c). A missing field or a failed read counts as closed: the call-or-text panel.
     G.api(API, '/v1/health', null, 8000).then(function (h) {
       canDeliver = !!(h && h.gift_delivery === true);
-      if (h && h.gift_sales === true) show([form()]); else off('off');
+      var selling = !!(h && h.gift_sales === true);
+      // The page as it was: the 3-night form while the engine sells that card, else call or text Mick.
+      function asIs() { return selling ? show([form()]) : off('off'); }
+      if (!SIZES) return asIs();
+      // health's gift_sales speaks for the 3-night card alone (false at its cap), so the sizes are
+      // read whenever it or gift_sizes says anything sells; closed only when both say closed (the
+      // Critic, 2026-11-08). The sizes on sale, each with its price and its words, from the engine
+      // alone. The 3-night card by itself is the page as it was; anything else is the choice first.
+      // A read that fails or lists nothing usable leaves the page as it was.
+      var named = h && Array.isArray(h.gift_sizes) ? h.gift_sizes.map(String) : null;
+      if (!selling && !(named && named.length)) return off('off');
+      return G.api(API, '/v1/gift/sizes', null, 8000).then(function (answer) {
+        var got = usable(answer, named);
+        if (!got.length || (got.length === 1 && got[0].product === PRODUCT && got[0].buyable)) return asIs();
+        sizes = got;
+        show([chooser()]);
+      }, asIs);
     }, function (e) { off(unreachable(e) ? 'down' : 'off'); });
   }
 
@@ -624,6 +728,9 @@
     var API = (root.getAttribute('data-api') || '').replace(/\/$/, '');
     var sid = String((window.__ghKeys || {}).session_id || '');
     if (!API || !SESSION_ID.test(sid)) return;
+    // The size bought, as the purchase panel kept it in this tab (Thanks clears the record once shown).
+    var item = PRODUCT;
+    try { var kept = JSON.parse(sessionStorage.getItem('ga_deliver') || 'null'); if (kept && typeof kept.product === 'string' && kept.product) item = kept.product; } catch (e) {}
     G.api(API, '/v1/gift/sold?session_id=' + encodeURIComponent(sid), null, 12000).then(function (r) {
       var cents = Number(r && r.cents);
       if (!r || r.paid !== true || !isFinite(cents) || cents <= 0) return;
@@ -632,7 +739,7 @@
         try { if (sessionStorage.getItem(seen)) return; sessionStorage.setItem(seen, '1'); } catch (e) {}
         var data = { value: Math.round(cents) / 100, currency: 'USD' };
         if (id) data.transaction_id = id;
-        data.item = PRODUCT;
+        data.item = item;
         G.track(SOLD_EVENT, data);
       });
     }).catch(function () {});

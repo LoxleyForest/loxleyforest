@@ -171,6 +171,48 @@ they can reply to.
 
 ---
 
+# IN FLIGHT · 2026-11-08 · The Golden Arrow in its sizes on /gift (shadow, `var SIZES = false;` in js/gift.js)
+
+The Chief's route, the Golden Arrow's last site piece: the gift page per size, the 1-night (Monday
+to Thursday), the 2-night and the 3-night, each with its own card front (images/gift/
+golden-arrow-card-front-1-night.jpg, -2-nights.jpg, golden-arrow-card-front.jpg), its price and its
+terms in the card's own words, every one from the engine, never typed. The engine's side: /v1/health
+gift_sizes names each open size that still sells (Loxley main c78de5b); GET /v1/gift/sizes (the
+Forge, 2026-11-08, forge/gift-sizes-read, main commit to follow) answers {sizes: [{product, nights,
+name, subtitle, price_cents (what the checkout charges), terms, includes, sold_out, sentence}]} in
+nights order, the sizes on sale alone, sentence "" while a size sells and the engine's FEWER_NIGHTS
+("There are not enough nights left this season for this Golden Arrow. A shorter one is still open,
+or call or text Mick at 706-502-4823.", ratified 2026-11-08) or its sold-out sentence at the cap;
+404 while the sales door is off. The page, with the switch on: health's gift_sales speaks for the
+3-night card alone (false at its cap), so the sizes are read whenever it or gift_sizes says anything
+sells, and the page is closed only when both say closed (the Critic's weakest claim: before its
+fix the page would have said "can't be bought online just yet" in the one case FEWER_NIGHTS exists
+for); one read of the sizes; a size is buyable only while health names it and it is not at the
+cap; a size at the cap shows with the engine's sentence, named to a screen reader with its terms,
+and takes no tap; a size the engine lists without either is not shown; the 3-night alone (today)
+is exactly the page as it was; two or more, or the 3-night at the cap, open with the choice: one
+card per size, its front (a size with no front yet takes the width with its words), the engine's
+line ("A gift of two nights in the trees"), its price with "Taxes and fees included.", its terms;
+the choice sets the product the checkout asks for, the terms line under the panel, a line above
+the names with "Change", the purchase step's size, and the thank-you's gift_purchase item. A read
+that fails, or lists nothing usable, leaves the page as it was (the form while the 3-night sells,
+else call or text Mick). NEW WORDS, for Mick's ear (typed in gift.py WORDS, shown only with the
+switch on): the legend "How many nights?" (the Writer's pick; the others were "Which card should
+they have?" and "A night, two, or three?") and the ask "Please choose how many nights." Nothing
+else new: each card's line, price and terms are the engine's; the prices in the chooser are the
+engine's figures, so Mick's rule of 2026-10-19 (no amount typed on the page) holds, as the Critic
+read it. Proven: check_gift.js, 270 (40 new: shipped, the 3-night alone, three sizes end to end
+through Stripe and the thank-you, the engine's own pair at the 3-night's cap with the fake's health
+computed as api.py computes it, health naming fewer than the list, the sales door off, the cap with
+the read failing, a size with no front, the read failing four ways).
+BEFORE THE SWITCH GOES ON (the Writer's flag): the page's own copy still says three nights in six
+places (the card subtitle, the description, the lead, "Three nights in the trees", the card's gift
+line, "Unused, ready for three nights"); each needs Mick's words per size or words that fit all
+three, and his word on whether the smaller cards carry the Dawn Table (the engine says they do).
+The switch flips only on the Chief's word, after Mick types the open line on the engine.
+
+---
+
 # DONE · 2026-11-07 · The home page's phone weight, for the reel's burst (the Chief's bandwidth route)
 
 Why: Netlify bandwidth costs credits (about 150 GB a month on the plan; at zero the site pauses;
