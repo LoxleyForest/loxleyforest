@@ -234,7 +234,7 @@ card with the engine's fields and a one-night from the product alone, no gift li
 SIZE_WORDS on, the Writer's lines; the three-night unchanged in every state; the sample swap, back,
 and with the Writer's line; the "When" row swapped only with all three on sale; the page as built
 with SIZES on rendered, not only its script). The Dawn Table is ruled, not a question: Mick,
-2026-11-08, "Golden Arrow as written", the brunch given in every size. ORDER (the Critic): Mick
+2026-11-08, "Golden Arrow as written", the brunch given in every size. ORDER (the Critic's, confirmed by the Chief 2026-11-08: "a card always tells the truth about its own size, whatever the switches say"): Mick
 hears the Writer's six lines before he types the open line for any size; SIZE_WORDS flips on his
 yes (one line, the check, one commit); SIZES flips on the Chief's word once a size is open (the
 one line in js/gift.js, python3 scripts/site/build_v2.py, the checks, one commit).
