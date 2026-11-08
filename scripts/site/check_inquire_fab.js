@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-/* Checks the elopement page's fixed button on a phone (js/global.js INQUIRE_FAB) in a real browser,
-   on a local copy of the site, in both states of its switch.
+/* Checks the phone's one fixed button (js/global.js: "Book your dates", and on /elopements with
+   INQUIRE_FAB "Inquire about your date") in a real browser, on a local copy of the site, in both
+   states of its switch; and the home hero's pause button.
 
    Run from the repo:  node scripts/site/check_inquire_fab.js
    Needs playwright-core (scripts/logo/node_modules has it; or set PLAYWRIGHT_CORE) and the Chromium
@@ -9,11 +10,14 @@
    Nothing leaves this machine; every outside request is refused. The check reads the shipped value
    of INQUIRE_FAB, says which it is, and serves js/global.js in each state in turn.
 
-   It proves: off, /elopements keeps "Book your dates" to /book on a phone, as every page; on,
-   the one fixed button on /elopements reads "Inquire about your date" (the acorn kept), points at
-   #inquiry, is on screen once the reader is past the first screen (as every page's button), a tap
-   lands on the form, the button steps aside while the form is on screen and returns above it;
-   /book and the home page keep their button either way; on a desktop the button is not shown. */
+   It proves: the button keeps the pattern guests know (the Chief, 2026-11-08): hidden over the first
+   screen, hidden while the thumb scrolls down, back on a scroll up and at the page's end, on
+   /elopements and on the home page; off, /elopements keeps "Book your dates" to /book, as every
+   page; on, the one fixed button on /elopements reads "Inquire about your date" (the acorn kept),
+   points at #inquiry, a tap lands on the form, the button steps aside while the form is on screen
+   and returns above it; /book and the home page keep their button either way; on a desk the button
+   is not shown. And the hero's pause button is drawn only while the film plays: the hidden attribute
+   alone hides it, and "playing" unhides it. */
 'use strict';
 const http = require('http');
 const fs = require('fs');
@@ -28,7 +32,7 @@ if (!chromium) { console.error('playwright-core not found (set PLAYWRIGHT_CORE)'
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const EXE = process.env.CHROME || path.join(process.env.HOME, '.cache/ms-playwright/chromium-1243/chrome-linux64/chrome');
-const TYPES = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.webp': 'image/webp', '.png': 'image/png', '.jpg': 'image/jpeg' };
+const TYPES = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.webp': 'image/webp', '.png': 'image/png', '.jpg': 'image/jpeg', '.mp4': 'video/mp4', '.woff2': 'font/woff2' };
 const SCRIPT = fs.readFileSync(path.join(ROOT, 'js', 'global.js'), 'utf8');
 const SHIPPED = (SCRIPT.match(/var INQUIRE_FAB = (true|false);/) || [])[1];
 const withSwitch = (on) => SCRIPT.replace(/var INQUIRE_FAB = (true|false);/, 'var INQUIRE_FAB = ' + on + ';');
@@ -69,48 +73,30 @@ async function main() {
     return { ctx, page: await ctx.newPage() };
   }
   const fab = (page) => page.evaluate(() => { const f = document.querySelector('.book-fab'); if (!f) return null; const r = f.getBoundingClientRect(); const cs = getComputedStyle(f);
-    return { text: f.textContent.trim(), href: f.getAttribute('href'), icon: !!f.querySelector('svg'), shown: cs.display !== 'none' && cs.opacity !== '0', away: f.classList.contains('is-away'), onScreen: r.top >= 0 && r.bottom <= innerHeight }; });
-  // The button keeps clear of the words (the audit, 2026-11-08): it steps aside while a text block runs
-  // through the band at the foot of the screen where it sits. textInBand: is any text there now?
-  const TEXT = 'main :is(p, li, dd, dt, h1, h2, h3, h4, blockquote, figcaption, label, summary, td, th, a, span, b, button)';
-  // The page's clear stretches: scroll positions past the first screen where no words run through the band and no
-  // other Book button is on screen, measured by geometry in 8 px steps, as runs [start, length]. Also the shown share.
-  const stretches = (page) => page.evaluate(async (sel) => {
-    const f = document.querySelector('.book-fab'), band = () => innerHeight - (f.offsetHeight + 32);
-    const has = () => [...document.querySelectorAll(sel)].some((el) => { const r = el.getBoundingClientRect(); return r.height > 0 && r.bottom > band() && r.top < innerHeight; });
-    const other = () => [...document.querySelectorAll('main a.btn--primary[href="/book"], main a.lf-btn[href="#book"], main #book')].some((el) => { const r = el.getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight; });
-    const go = (y) => { if (window.lfLenis) window.lfLenis.scrollTo(y, { immediate: true }); else window.scrollTo(0, y); };
-    const max = document.documentElement.scrollHeight - innerHeight, runs = [];
-    let clear = 0, total = 0, run = null;
-    for (let y = Math.round(innerHeight * 0.6) + 8; y < max; y += 8) {
-      go(y);
-      const ok = !has() && !other();
-      total++; if (ok) clear++;
-      if (ok && !run) run = [y, 0];
-      if (ok) run[1] += 8;
-      if (!ok && run) { runs.push(run); run = null; }
-    }
-    if (run) runs.push(run);
-    go(0);
-    return { runs, share: total ? Math.round((clear / total) * 100) : 0 };
-  }, TEXT);
-  const fabHidden = (page) => page.evaluate(() => document.querySelector('.book-fab').classList.contains('is-hidden'));
-  const textInBand = (page) => page.evaluate((sel) => { const f = document.querySelector('.book-fab'); const band = innerHeight - (f.offsetHeight + 32);
-    return [...document.querySelectorAll(sel)].some((el) => { const r = el.getBoundingClientRect(); return r.height > 0 && r.bottom > band && r.top < innerHeight; }); }, TEXT);
-  // scroll until a text block sits in the band (over = true) or the band is clear of text (over = false), past the first screen
-  // (a clear spot also has no other Book button on screen, which hides the button too)
-  const scrollUntil = (page, over) => page.evaluate(async ([sel, over]) => {
-    const f = document.querySelector('.book-fab'), band = () => innerHeight - (f.offsetHeight + 32);
-    const has = () => [...document.querySelectorAll(sel)].some((el) => { const r = el.getBoundingClientRect(); return r.height > 0 && r.bottom > band() && r.top < innerHeight; });
-    const other = () => [...document.querySelectorAll('main a.btn--primary[href="/book"], main a.lf-btn[href="#book"], main #book')].some((el) => { const r = el.getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight; });
-    const max = document.documentElement.scrollHeight - innerHeight;
-    for (let y = Math.round(innerHeight * 0.8); y < max; y += 24) {
-      if (window.lfLenis) window.lfLenis.scrollTo(y, { immediate: true }); else window.scrollTo(0, y);
-      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
-      if (over ? has() : (!has() && !other())) return y;
-    }
-    return -1;
-  }, [TEXT, over]);
+    return { text: f.textContent.trim(), href: f.getAttribute('href'), icon: !!f.querySelector('svg'), shown: cs.display !== 'none' && cs.opacity !== '0', away: f.classList.contains('is-away'), hidden: f.classList.contains('is-hidden'), onScreen: r.top >= 0 && r.bottom <= innerHeight }; });
+  // a scroll as the page scrolls (the smooth-scroll library has the wheel once it is up)
+  const go = (page, y) => page.evaluate((y) => { if (window.lfLenis) window.lfLenis.scrollTo(y, { immediate: true }); else window.scrollTo(0, y); }, y).then(() => page.waitForTimeout(350));
+  const pageEnd = (page) => page.evaluate(() => document.documentElement.scrollHeight - innerHeight);
+  // the pattern: down hides, up shows, the end shows, the first screen hides
+  async function pattern(page, where) {
+    await go(page, 0); await go(page, Math.round(844 * 1.6)); await go(page, Math.round(844 * 2.2));
+    let f = await fab(page);
+    check(f && f.hidden && !f.shown, where + ': scrolling down past the first screen, the button is hidden');
+    await go(page, Math.round(844 * 2.2) - 90);
+    f = await fab(page);
+    check(f && !f.hidden && f.shown && f.onScreen, where + ': a scroll up brings it back');
+    await go(page, Math.round(844 * 2.2) + 240);
+    f = await fab(page);
+    check(f && f.hidden, where + ': down again, hidden again');
+    await go(page, await pageEnd(page));
+    f = await fab(page);
+    check(f && !f.hidden && f.shown, where + ': at the page\'s end it shows, however it was reached');
+    await go(page, 200);
+    f = await fab(page);
+    check(f && f.hidden, where + ': over the first screen it stays hidden');
+  }
+  // bring the button into view: a little down, then a little up
+  async function reveal(page) { await go(page, Math.round(844 * 1.7)); await go(page, Math.round(844 * 1.7) - 80); }
   // The hero's pause button (the audit, 2026-11-08): hidden until the film is playing; an iPhone never plays it.
   const pauseState = (page) => page.evaluate(() => { const b = document.querySelector('.lf-hero__pause'); if (!b) return null; return { hidden: b.hidden, display: getComputedStyle(b).display, playing: !!document.querySelector('.hero__video.is-playing') }; });
 
@@ -118,9 +104,10 @@ async function main() {
   {
     const { ctx, page } = await visitor(false, true);
     await page.goto(base + '/elopements', { waitUntil: 'load' }); await page.waitForTimeout(400);
-    await scrollUntil(page, false); await page.waitForTimeout(700);
+    await reveal(page);
     const f = await fab(page);
     check(f && f.text === 'Book your dates' && f.href === '/book' && f.shown && f.icon, '/elopements keeps "Book your dates" to /book, with its acorn: ' + JSON.stringify(f));
+    await pattern(page, '/elopements');
     await ctx.close();
   }
 
@@ -130,77 +117,32 @@ async function main() {
     await page.goto(base + '/elopements', { waitUntil: 'load' }); await page.waitForTimeout(400);
     let f = await fab(page);
     check(f && f.text === 'Inquire about your date' && f.href === '#inquiry' && f.icon, 'the one fixed button reads "Inquire about your date", keeps its acorn, and points at the form');
-    // the button shows after the first screen, as on every page (global.js keeps it hidden over the hero), where no text runs under it
-    await scrollUntil(page, false); await page.waitForTimeout(700);
+    await reveal(page);
     f = await fab(page);
-    check(f && f.shown && f.onScreen && !f.away, 'and is on screen once the reader is past the first screen, the band clear: ' + JSON.stringify(f));
+    check(f && f.shown && f.onScreen && !f.away, 'and is on screen once past the first screen, on a scroll up: ' + JSON.stringify(f));
+    await pattern(page, '/elopements (on)');
+    await reveal(page);
     // the guest's own path: a tap, which the site's anchor handler turns into its own smooth scroll (the address bar does not change)
     await page.tap('.book-fab'); await page.waitForTimeout(1500);
     const landed = await page.evaluate(() => { const r = document.getElementById('inquiry').getBoundingClientRect(); return r.top <= 120 && r.bottom > 0; });
     check(landed, 'a tap lands on the form');
     f = await fab(page);
     check(f && f.away, 'and the button steps aside while the form is on screen');
-    // back up the page to a clear spot (the smooth-scroll library has the wheel once it has scrolled)
-    await scrollUntil(page, false); await page.waitForTimeout(900);
+    await reveal(page);
     f = await fab(page);
     check(f && !f.away && f.shown, 'and returns when the form has gone');
-    // clear of the words: over a text block it steps aside; over a photograph or a gap it is back
-    let y = await scrollUntil(page, true); await page.waitForTimeout(500);
-    f = await fab(page);
-    check(y > 0 && await textInBand(page) && f && !f.shown, 'a text block under the button\'s band on /elopements: it steps aside (scrollY ' + y + ')');
-    y = await scrollUntil(page, false); await page.waitForTimeout(500);
-    f = await fab(page);
-    check(y > 0 && !(await textInBand(page)) && f && f.shown, 'the band clear of text: the button is back (scrollY ' + y + ')');
-    // the Critic's three (2026-11-08): no blink through a short gap, no unhide on an address bar's resize, and the shown share said
-    const st = await stretches(page);
-    const short = st.runs.filter((r) => r[1] <= 120), long = st.runs.filter((r) => r[1] >= 400);
-    console.log('       /elopements: the band is clear on ' + st.share + '% of the scroll, in ' + st.runs.length + ' stretches (' + short.length + ' of 120 px or less)');
-    if (short.length) {
-      // a flick through the shortest gap: three steps 50 ms apart; the button must stay hidden throughout
-      const gap = short.sort((a, b) => a[1] - b[1])[0];
-      const blinked = await page.evaluate(async ([y0, len]) => {
-        const f = document.querySelector('.book-fab'), go = (y) => { if (window.lfLenis) window.lfLenis.scrollTo(y, { immediate: true }); else window.scrollTo(0, y); };
-        go(y0 - 40); await new Promise((r) => setTimeout(r, 400));
-        let shown = false;
-        for (const y of [y0, y0 + len / 2, y0 + len, y0 + len + 40]) { go(y); await new Promise((r) => setTimeout(r, 50)); if (!f.classList.contains('is-hidden')) shown = true; }
-        return shown;
-      }, gap);
-      check(!blinked, 'a flick through a ' + gap[1] + ' px gap in the words: the button never blinks on');
-    }
-    if (long.length) {
-      await page.evaluate((y) => { if (window.lfLenis) window.lfLenis.scrollTo(y + 100, { immediate: true }); else window.scrollTo(0, y + 100); }, long[0][0]);
-      const at80 = await page.waitForTimeout(80).then(() => fabHidden(page));
-      await page.waitForTimeout(500);
-      check(at80 && !(await fabHidden(page)), 'a long clear stretch: still hidden after 80 ms, shown once the way has been clear a moment');
-      // the address bar collapsing mid-scroll: a taller screen and a scroll in the same breath never unhide it over words
-      y = await scrollUntil(page, true); await page.waitForTimeout(400);
-      const before = await fabHidden(page);
-      await page.setViewportSize({ width: 390, height: 844 + 160 });
-      const during = await page.evaluate(() => { window.dispatchEvent(new Event('scroll')); return document.querySelector('.book-fab').classList.contains('is-hidden'); });
-      await page.waitForTimeout(400);
-      const after = await fabHidden(page) && await textInBand(page);
-      await page.setViewportSize({ width: 390, height: 844 });
-      check(before && during && after, 'the screen grows by an address bar over words: hidden before, in the same breath, and after the observer re-arms');
-    }
     await page.goto(base + '/book', { waitUntil: 'load' }); await page.waitForTimeout(300);
     f = await fab(page);
     check(f && f.text === 'Book your dates' && f.href === '#book', '/book keeps "Book your dates" to its own calendar');
-    await page.goto(base + '/', { waitUntil: 'load' }); await page.waitForTimeout(300);
+    await page.goto(base + '/', { waitUntil: 'load' }); await page.waitForTimeout(400);
     f = await fab(page);
     check(f && f.text === 'Book your dates', 'the home page keeps "Book your dates"');
-    y = await scrollUntil(page, true); await page.waitForTimeout(500);
-    f = await fab(page);
-    check(y > 0 && f && !f.shown, 'a text block under the band on the home page: it steps aside (scrollY ' + y + ')');
-    y = await scrollUntil(page, false); await page.waitForTimeout(500);
-    f = await fab(page);
-    check(y > 0 && f && f.shown, 'the home page\'s band clear of text: the button is back (scrollY ' + y + ')');
-    const sh = await stretches(page);
-    console.log('       the home page: the band is clear on ' + sh.share + '% of the scroll, in ' + sh.runs.length + ' stretches');
+    await pattern(page, 'the home page');
     // this browser's phone reports a fast connection, so the film may play here where an iPhone's never does:
     // hidden means not drawn, shown only while playing, and the hidden attribute alone must hide it
     const ps = await pauseState(page);
     check(ps && (ps.playing ? !ps.hidden && ps.display !== 'none' : ps.hidden && ps.display === 'none'), 'the hero\'s pause button on a phone: drawn only while the film plays (playing ' + (ps && ps.playing) + ', display ' + (ps && ps.display) + ')');
-    const forced = await page.evaluate(() => { const b = document.querySelector('.lf-hero__pause'); b.hidden = true; const d = getComputedStyle(b).display; return d; });
+    const forced = await page.evaluate(() => { const b = document.querySelector('.lf-hero__pause'); b.hidden = true; return getComputedStyle(b).display; });
     check(forced === 'none', 'the hidden attribute alone hides it (an iPhone\'s case, where "playing" never comes): display ' + forced);
     await ctx.close();
     const d = await visitor(true, false);
@@ -210,7 +152,6 @@ async function main() {
     await d.page.goto(base + '/', { waitUntil: 'load' }); await d.page.waitForTimeout(300);
     const pd = await pauseState(d.page);
     check(pd && (pd.playing ? !pd.hidden && pd.display !== 'none' : pd.hidden && pd.display === 'none'), 'on a desk the pause button shows only once the film plays (playing ' + (pd && pd.playing) + ', display ' + (pd && pd.display) + ')');
-    // and "playing" is what unhides it: fire the event on the video and read the button
     const unhid = await d.page.evaluate(() => { const v = document.querySelector('.hero__video'), b = document.querySelector('.lf-hero__pause'); if (!v || !b) return null; v.dispatchEvent(new Event('playing')); return !b.hidden && getComputedStyle(b).display !== 'none'; });
     check(unhid === true, 'the film\'s "playing" unhides it, and it is drawn then');
     await d.ctx.close();
