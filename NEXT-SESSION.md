@@ -140,6 +140,12 @@ words, no "May 31" in book.html), check_checkout 124, check_offer_stay 36. No ot
 31 (the card's and letters' words were already "within twelve months of purchase"). What would settle
 it: a live quote with a night past a card's last night, which no guest can reach before late 2027.
 
+Same day, the Chief's word, the Forge's files: two more card fronts published for the gift letters,
+which read them by URL and nothing links them: images/gift/golden-arrow-card-front-1-night.jpg and
+golden-arrow-card-front-2-nights.jpg, from loxley-rescue docs/gift-card/golden-arrow/moo-luxe/
+front-1-night.jpg and front-2-nights.jpg, made the way golden-arrow-card-front.jpg (the three-night
+card, untouched) was: the 0.08 in bleed trimmed, 5 x 7 at 720 x 1008, JPEG 85, no profile.
+
 ---
 
 # DONE · 2026-11-07 · The home page's phone weight, for the reel's burst (the Chief's bandwidth route)
