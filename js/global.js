@@ -531,8 +531,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // made for the hero"; it reverses the 2026-11-07 rule that only a phone reporting 4g got it, which
   // kept it from every iPhone), unless the browser asks for less: Save-Data, or a connection it reports
   // as slow (slow-2g, 2g, 3g). No report counts as fast: an iPhone reports nothing. The poster shows
-  // first so nothing jumps; muted, inline; the pause button once it is playing. hero-phone.mp4 is 659
-  // KB: at the reel's 100,000 phone visits that is about 70 GB, inside the plan's bandwidth.
+  // first so nothing jumps; muted, inline; the pause button once it is playing. The cost (the Critic,
+  // 2026-11-08, from the Nov 7 measurements): hero-phone.mp4 is 659 KB, so a phone landing is about
+  // 958 KB and a full scroll about 1,764 KB; at the reel's 100,000 phone visits that is about 1,900
+  // credits on landings and about 3,500 on full scrolls against the plan's 3,000 a month (20 a GB,
+  // shared by every project), so the reel's week needs Mick's auto recharge or a bought pack.
   if (c && (c.saveData || /^(slow-2g|2g|3g)$/.test(c.effectiveType || ''))) return;
   const btn = document.querySelector('.lf-hero__pause');
   const tryPlay = () => { const p = v.play(); if (p && p.catch) p.catch(() => {}); };
@@ -545,9 +548,11 @@ document.addEventListener('DOMContentLoaded', () => {
     v.load();
     v.addEventListener('playing', () => { v.classList.add('is-playing'); if (btn) btn.hidden = false; }, { once: true });
     tryPlay();
-    // An iPhone in Low Power Mode refuses autoplay; the first touch starts the loop instead.
+    // An iPhone in Low Power Mode refuses autoplay; the first touch starts the loop instead. WebKit
+    // counts touchend and click as the tap that may start a video, not touchstart (the Critic,
+    // 2026-11-08), so those are listened for too; each fires once.
     const kick = () => { if (v.paused && !v.dataset.userPaused) tryPlay(); };
-    ['touchstart', 'pointerdown', 'keydown'].forEach((ev) => window.addEventListener(ev, kick, { once: true, passive: true }));
+    ['touchend', 'click', 'touchstart', 'pointerdown', 'keydown'].forEach((ev) => window.addEventListener(ev, kick, { once: true, passive: true }));
   };
   if (btn) btn.addEventListener('click', () => {
     if (v.paused) { delete v.dataset.userPaused; tryPlay(); btn.setAttribute('aria-label', 'Pause the video'); btn.classList.remove('is-paused'); }

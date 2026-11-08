@@ -188,6 +188,37 @@ paragraphs below describe each piece as built; where one says "shadow" or "flips
 this line. Too risky for the freeze, not started: the toast move, the /book price card
 and calendar layout, "Buying for someone else?", cancellation rewording.
 
+**The hero film on every phone (Mick, 2026-11-08 about 18:45 ET, by the Chief: "I want the video we
+made for the hero"; ships on his word).** js/global.js: the film plays on every phone unless the
+browser asks for less (Save-Data, or a connection it reports as slow-2g, 2g or 3g); no report counts
+as fast, so an iPhone, which reports nothing, now gets it. This reverses the 2026-11-07 rule (only a
+phone reporting 4g; DIRECTION.md's video direction and the Forge's tier rule) on the owner's own
+word. The poster first, muted, inline, the pause button once playing, as before. hero-phone.mp4 is
+659 KB: about 70 GB at the reel's 100,000 phone visits, inside the plan's 150 GB (the credit pack
+stays Mick's to buy). Proven: scripts/site/check_hero_film.js (an iPhone-shaped browser that reports
+no connection asks for hero-phone.mp4 alone, muted and inline, plays, the pause button drawn and
+stopping it; 4g plays; 3g, 2g, slow-2g and Save-Data ask for no film; reduced motion none; a desk
+as before). MEASURED on a throttled iPhone-shaped phone (390 px, no connection reported, 1.6 Mbps,
+150 ms, 4x CPU, three runs each, our origin's bytes on a landing to load plus 3 s): before, 610 KB,
+first paint 2.54 to 2.61 s, load 3.4 s, no film; after, 1,269 KB (the film's 659 KB), first paint 2.42
+to 2.76 s, load 3.4 to 3.5 s, the film playing. First paint and load do not move because the phone
+asks for the film only after load, the poster already up. THE CRITIC'S CORRECTION, FOR THE CHIEF AND
+MICK: the Chief's 70 GB is the film alone; the whole page counts. From the Nov 7 measurements, a
+phone landing with the film is about 958 KB and a full scroll about 1,764 KB, so 100,000 phone visits
+cost about 96 GB (1,900 credits) on landings and about 176 GB (3,500 credits) on full scrolls, plus
+300 to 800 credits of web requests, against the plan's 3,000 credits a month (20 a GB, shared by every
+project on the team; at zero every project pauses and forms stop until the next cycle). Without the
+film the same week was 600 to 2,200 credits. So the reel's week needs Mick's own action on Netlify
+before it: auto recharge on (1,500 credits for $10 each time), or one bought pack (bought credits
+never expire). Shipped on his word regardless; the numbers are in js/global.js's comment and
+DIRECTION.md's Video section now reads the new rule with the date. Two more of the Critic's: the
+first-tap kick for iOS Low Power Mode now listens for touchend and click, which WebKit counts as a
+tap that may start a video (touchstart is not); and the browser check's iPhone shape (no
+navigator.connection) stands in for the connection rule, not for Safari's autoplay rules, so a real
+iPhone in Low Power Mode, one tap on the hero, is what would settle that. check_talk.js now reads
+the booking page's quote card as build_v2 writes it (the rating and the count line, never a
+platform), since the count line is live.
+
 **The dead pause icon (bug, shipped).** On an iPhone the hero film never plays (only a phone reporting
 4g gets it), yet a pause icon showed over the still: css/v2.css `.lf-hero__pause { display: grid }`
 overrode the hidden attribute. `.lf-hero__pause[hidden] { display: none; }` added, as .lf-loop__pause
