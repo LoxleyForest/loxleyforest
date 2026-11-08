@@ -40,7 +40,7 @@ GIFT_LINK = '<a href="/gift">The Golden Arrow</a>'
 # where /gift explains it (pages/gift.py reads this switch). The band's line is the Marketer's, for
 # Mick's ear. False: as it was, the one way to /gift beside "Questions". A build-time switch: one
 # line, a rebuild, the checks, one commit.
-GIVE_A_STAY = False
+GIVE_A_STAY = True
 # the build's day, Eastern, for the band's end (never a date in copy: those come from the date file)
 TODAY = __import__('datetime').datetime.now(__import__('zoneinfo').ZoneInfo('America/New_York')).date().isoformat()
 GIVE_LINK = '<a href="/gift">Give a Stay</a>'
