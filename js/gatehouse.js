@@ -35,6 +35,17 @@
   var CHECK_IN_TIME = '3:00 PM';
   var CHECK_OUT_TIME = '11:00 AM';
   var MONTHS_AHEAD = 12;
+  // OFFER THE STAY THAT WORKS (the Chief's route of 2026-11-08, item 1; 45 quotes refused on the
+  // minimum stay since Oct 22, the largest refusal). false: the calendar refuses a stay under a
+  // night's minimum, as before. true: a tap on a night with a minimum of two or more selects the
+  // shortest valid stay that includes it (the day itself first, then earlier when the nights after
+  // it are taken), says so, and shows its price; a tap on a check-out under the minimum extends
+  // the stay instead of refusing; a night that can make no stay offers the nearest that can; and
+  // each arrival night shows its minimum before the tap. The minimum rules themselves are the
+  // engine's and do not change here. scripts/site/check_offer_stay.js proves both states.
+  var OFFER_STAY = false;
+  var SUGGEST_MAX = 4;     // the longest stay the calendar offers on its own
+  var NEAREST_DAYS = 21;   // how far from a tapped night it looks for a stay that works
   var OFFLINE = "We couldn't reach our booking system just now. Nothing was charged. Please try again in a moment, or call or text " + PHONE + '.';
 
   // ---------------------------------------------------------------- helpers
@@ -140,7 +151,20 @@
 
   // Every call: a timeout, and a sentence a guest can read whatever goes wrong
   // (never "Failed to fetch" or "Unexpected token '<'").
+  // A GET the page started before the scripts (the early script in the head, build_v2.EARLY_SCRIPT,
+  // 2026-11-08: the calendar was live 3.0 to 4.0 s into a throttled phone visit, waiting on the
+  // scripts before it could even ask for the nights) is taken once, by its exact URL; if that early
+  // fetch failed, the normal call runs as before.
   function api(base, path, body, timeoutMs) {
+    var early = !body && window.__ghEarly && window.__ghEarly[base + path];
+    if (early) {
+      delete window.__ghEarly[base + path];
+      return early.catch(function () { return fresh(base, path, body, timeoutMs); });
+    }
+    return fresh(base, path, body, timeoutMs);
+  }
+
+  function fresh(base, path, body, timeoutMs) {
     var ctl = window.AbortController ? new AbortController() : null;
     var timer = ctl ? setTimeout(function () { ctl.abort(); }, timeoutMs || 15000) : null;
     var init = { cache: 'no-store' };
@@ -255,8 +279,59 @@
       return '';
     };
 
+    // ---- offer the stay that works (OFFER_STAY)
+    // Can a guest arrive on S and stay len nights? The engine's own rules, through stayOk.
+    function fits(S, len) {
+      var n = c.nights[S];
+      if (!n || n.no_arrival || S < today()) return false;
+      return c.stayOk(S, addDays(S, len)) === '';
+    }
+    // The shortest valid stay that includes the night `day`: lengths from one up, the day itself
+    // as the arrival first, then earlier days (a taken Sunday moves a Saturday to Friday).
+    c.suggest = function (day) {
+      for (var len = 1; len <= SUGGEST_MAX; len++) {
+        for (var back = 0; back < len; back++) {
+          var S = addDays(day, -back);
+          if (fits(S, len)) return { ci: S, co: addDays(S, len), shifted: back > 0 };
+        }
+      }
+      return null;
+    };
+    // For a night that can make no stay: the nearest night, by days away, that starts one.
+    c.nearest = function (day) {
+      for (var dist = 1; dist <= NEAREST_DAYS; dist++) {
+        var cands = [addDays(day, dist), addDays(day, -dist)];
+        for (var i = 0; i < cands.length; i++) {
+          var s = c.nights[cands[i]] ? c.suggest(cands[i]) : null;
+          if (s && !s.shifted) return s;
+        }
+      }
+      return null;
+    };
+    // The words. The minimum is the tapped night's; the price shows in the card below the calendar;
+    // a later tap lengthens the stay (the offer holds the arrival, c.offered).
+    var LONGER = ' Tap a later day to stay longer.';
+    function offered(day, s) {
+      var min = (c.nights[day] && c.nights[day].min_stay) || daysBetween(s.ci, s.co);
+      var head = 'Arriving ' + short(day) + ' takes ' + nightsWord(min) + '.';
+      if (s.shifted) return head + ' The nights after it are taken, so here\'s ' + span(s.ci, s.co) + ' instead; the price is below.' + LONGER;
+      return head + ' Here\'s ' + span(s.ci, s.co) + '; the price is below.' + LONGER;
+    }
+    function nearestWords(day, s) {
+      return 'No stay works around ' + short(day) + ': the nights beside it are taken. The nearest that does is ' +
+        span(s.ci, s.co) + '; the price is below.' + LONGER;
+    }
+    // The offer, told to our own server apart from a chosen stay (stay_offered: direct, shifted or
+    // nearest), so the Chief can read offers against choices and refusals.
+    function offer(ci, co, note, kind) {
+      c.checkIn = ci; c.checkOut = co; c.offered = true; c.note = note;
+      try { if (typeof step === 'function') step('gh_stay_offered', { gh_reason: kind }); } catch (e) {}
+      opts.onChange(c);
+    }
+
     c.pick = function (day) {
-      if (!c.checkIn || c.checkOut || day <= c.checkIn) {
+      // An offered stay keeps its arrival: a later tap lengthens it instead of starting over.
+      if (!c.checkIn || (c.checkOut && !c.offered) || day <= c.checkIn) {
         if (!c.nights[day]) return;
         // A night nobody may arrive on (the holidays): say so at the tap, not at the price.
         if (c.nights[day].no_arrival && (!c.checkIn || c.checkOut || day <= c.checkIn)) {
@@ -264,20 +339,38 @@
           if (opts.onRefuse) opts.onRefuse(c.note, day);
           opts.onChange(c); return;
         }
+        var night = c.nights[day];
+        c.offered = false;
+        if (OFFER_STAY && night.min_stay > 1 && !(night.gap && night.min_stay <= 2)) {
+          var s = c.suggest(day);
+          if (s) { offer(s.ci, s.co, offered(day, s), s.shifted ? 'shifted' : 'direct'); return; }
+          var near = c.nearest(day);
+          if (near) { offer(near.ci, near.co, nearestWords(day, near), 'nearest'); return; }
+        }
         c.checkIn = day; c.checkOut = null;
         // Inside the engine's lead time, by request (loxley-rescue GATEHOUSE-SPEC 20): the quote card says how.
         c.note = 'Arriving ' + short(day) + (c.nights[day].request ? ', by request' : '') + '. Now choose your check-out day.';
       } else {
+        c.offered = false; c.checkOut = null;
         var why = c.stayOk(c.checkIn, day);
-        if (why) { c.note = why; if (opts.onRefuse) opts.onRefuse(why, c.checkIn); opts.onChange(c); return; }
+        if (why) {
+          // Under the minimum: the shortest stay from that arrival, not a refusal.
+          if (OFFER_STAY && /at least/.test(why)) {
+            var min = c.nights[c.checkIn].min_stay;
+            if (fits(c.checkIn, min)) { offer(c.checkIn, addDays(c.checkIn, min), offered(c.checkIn, { ci: c.checkIn, co: addDays(c.checkIn, min), shifted: false }), 'direct'); return; }
+          }
+          c.note = why; if (opts.onRefuse) opts.onRefuse(why, c.checkIn); opts.onChange(c); return;
+        }
         c.checkOut = day; c.note = '';
       }
       opts.onChange(c);
     };
 
-    c.clear = function () { c.checkIn = null; c.checkOut = null; c.note = ''; opts.onChange(c); };
+    c.clear = function () { c.checkIn = null; c.checkOut = null; c.offered = false; c.note = ''; opts.onChange(c); };
 
     c.set = function (ci, co) {
+      // The same dates set again (the quote's round trip, the link) keep an offer's open arrival.
+      if (ci !== c.checkIn || co !== c.checkOut) c.offered = false;
       c.checkIn = ci || null; c.checkOut = co || null; c.note = '';
       if (ci) c.month = parse(ci.slice(0, 8) + '01');
     };
@@ -298,12 +391,16 @@
         var priced = night && night.rate_cents && day >= t;
         var cls = 'gh-day' + (night ? '' : ' gh-day--taken') + (night && night.own ? ' gh-day--own' : '') + (inRange ? ' gh-day--range' : '') +
           (isEdge ? ' gh-day--edge' : '') + (endable ? ' gh-day--endable' : '');
-        var sr = long(day) + (priced ? ', ' + money(night.rate_cents) + ' a night' : night && night.own ? ', one of your nights' : endable ? ', check-out' : ', not available');
+        // The minimum on an arrival night, before the tap (OFFER_STAY): "2+" in the corner.
+        var minimum = OFFER_STAY && priced && night.min_stay > 1 && !night.gap && !night.no_arrival ? night.min_stay : 0;
+        var sr = long(day) + (priced ? ', ' + money(night.rate_cents) + ' a night' : night && night.own ? ', one of your nights' : endable ? ', check-out' : ', not available')
+          + (minimum ? ', ' + nightsWord(minimum) + ' at least' : '');
         g.appendChild(el('button', {
           type: 'button', 'class': cls, 'data-day': day, 'aria-pressed': isEdge ? 'true' : 'false', disabled: usable ? null : 'disabled',
           onclick: (function (x) { return function () { c.pick(x); }; })(day)
         }, [el('span', { 'class': 'gh-num', text: String(d) }),
             el('span', { 'class': 'gh-rate', text: priced ? dollars(night.rate_cents) : '' }),
+            minimum ? el('span', { 'class': 'gh-min', 'aria-hidden': 'true', text: minimum + '+' }) : null,
             el('span', { 'class': 'gh-sr', text: ' ' + sr })]));
       }
       return el('div', { 'class': 'gh-month' }, [el('h3', { 'class': 'gh-month__name', text: label }), g]);
@@ -488,7 +585,10 @@
   var STEP_FOR = { gh_view: 'view', gh_dates_chosen: 'dates_chosen', gh_payment_mode: 'payment_mode',
     begin_checkout: 'begin_checkout', add_payment_info: 'add_payment_info', gh_fallback_shown: 'fallback_shown',
     // 2026-10-26 (the CEO's funnel piece): the "Book these nights" tap, and dates refused, by a code.
-    gh_handoff: 'handoff', gh_quote_refused: 'quote_refused' };
+    gh_handoff: 'handoff', gh_quote_refused: 'quote_refused',
+    // An offered stay (OFFER_STAY), apart from a chosen one; its reason is direct, shifted or nearest.
+    // The engine refuses it until the Forge adds the step, and the beacon never looks at the answer.
+    gh_stay_offered: 'stay_offered' };
 
   // Where this guest came from: a letter or trail marker (src, card), an ad (gclid and
   // friends), a campaign (utm_*). Kept for the visit, sent with the booking.
