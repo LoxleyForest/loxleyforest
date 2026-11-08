@@ -148,6 +148,29 @@ card, untouched) was: the 0.08 in bleed trimmed, 5 x 7 at 720 x 1008, JPEG 85, n
 
 ---
 
+# DONE · 2026-11-08 · Before the Bridge for the December 11 to 13 stay (The Vow), from the generator
+
+Mick's ask through the Chief ("I need to get their Before the Bridge out"). Made with
+scripts/before-the-bridge/new.py from the field guide and day book (loxley-rescue
+docs/guides/2026-12-11-to-13-*): The Vow, December 11 to 13, 2026, the ceremony Saturday the 12th at
+the Fire Circle with the rope bridge open ("Your vows are at the Fire Circle, and the rope bridge is
+yours to choose until the week of"), three boys for the day, no alcohol anywhere (the toast question
+offers fresh-squeezed orange juice), their own photographer, no waterfall row, The Morning After,
+the cake and pizza night given. The Chief's command said --site either, which writes "at the Fire
+Circle or on the deck"; the record (the call of 2026-10-27, log 2853 to 2856 and 2917) and the
+Chief's own reason are the Fire Circle with the bridge hers to choose, so the page was made with
+--site fire-circle --bridge-open and the Chief told; it is remade in a minute if the Chief wants the
+other. Every hold left out as the generator does: the laurel grove row, the pizza sentence ("The
+dough, the sauce and the cheese are ours..."), the children's overnight question. Nothing of the
+couple in the file: the names ride after the # in the link, which Mick adds. Checked: check.js (10
+shapes, 7 refusals, 0 failed); the page itself at 390 px (no sideways scroll, fonts loaded, no script
+error, no outside request, "Her and Him," from a test link) and in print (four US-letter sheets, each
+read). The page: private/before-the-bridge-2026-12-11-to-13-c344f7/ (noindex, robots blocks
+/private/, no Tag Manager, linked from nowhere). Mick sends the link from his own Gmail, in an email
+they can reply to.
+
+---
+
 # DONE · 2026-11-07 · The home page's phone weight, for the reel's burst (the Chief's bandwidth route)
 
 Why: Netlify bandwidth costs credits (about 150 GB a month on the plan; at zero the site pauses;
