@@ -111,10 +111,22 @@ def main():
             card_bad.append("not verbatim in all.md")
         if PLATFORM.search(line + " " + credit):
             card_bad.append("names a platform")
+        # the rating the pages show: Mick's 4.9 while the count line is off; with it on, the list's own
+        # average rounded to one decimal, never typed (build_v2.review_rating)
+        count_on = bool(re.search(r"^REVIEW_COUNT = True$", src, re.M))
+        stars = [int(s.group(1)) for s in (re.search(r"\b(\d) stars?\b", h) for h in re.findall(r"^### .*$", raw, re.M)) if s]
+        rating_want = "%.1f" % (round(sum(stars) / len(stars), 1) if count_on and stars else 4.9)
+        for n in sorted(os.listdir(os.path.join(HERE, "..", ".."))):
+            if not n.endswith(".html"):
+                continue
+            shown = set(re.findall(r'<span class="lf-rating__n" aria-hidden="true">([^<]*)</span>', open(os.path.join(HERE, "..", "..", n), encoding="utf-8").read()))
+            if shown and shown != {rating_want}:
+                card_bad.append("%s shows the rating as %s, the list gives %s" % (n, ", ".join(sorted(shown)), rating_want))
         page_html = open(os.path.join(HERE, "..", "..", "book.html"), encoding="utf-8").read()
         tpl = re.findall(r'<template id="gh-proof">(.*?)</template>', page_html, re.S)
         said = html.unescape(re.sub(r"<[^>]+>", "", tpl[0])) if len(tpl) == 1 else None
-        if said != "4.9" + "“" + line + "”" + credit:
+        count_line = re.search(r'<span class="lf-rating__count">([^<]*)</span>', tpl[0]) if len(tpl) == 1 else None
+        if said != rating_want + (html.unescape(count_line.group(1)) if count_line else "") + "“" + line + "”" + credit:
             card_bad.append("book.html's quote card says %r" % said)
     for pr in card_bad:
         print("QUOTE CARD: " + pr)

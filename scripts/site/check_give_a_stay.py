@@ -35,8 +35,9 @@ def check(ok, what):
 import build_v2 as B  # noqa: E402
 
 src = open(os.path.join(HERE, 'build_v2.py'), encoding='utf-8').read()
-check(len(re.findall(r'^GIVE_A_STAY = (True|False)$', src, re.M)) == 1 and 'GIVE_A_STAY = False' in src,
-      'the switch is one line, GIVE_A_STAY False as shipped')
+shipped = re.findall(r'^GIVE_A_STAY = (True|False)$', src, re.M)
+check(len(shipped) == 1, 'the switch is one line; shipped GIVE_A_STAY = ' + (shipped[0] if shipped else '?'))
+SHIPPED_ON = shipped == ['True']
 
 LINK = re.compile(r'<a href="([^"]+)">([^<]+)</a>')
 for on in (False, True):
@@ -62,13 +63,19 @@ for on in (False, True):
               'off: the menu as it was, "The Golden Arrow" beside Questions, no "Give a Stay"')
         check(B.give_band() == '', 'off: no home band')
 
-B.GIVE_A_STAY = False
+B.GIVE_A_STAY = SHIPPED_ON
 index = open(os.path.join(ROOT, 'index.html'), encoding='utf-8').read()
 gift = open(os.path.join(ROOT, 'gift.html'), encoding='utf-8').read()
 pages = [n for n in os.listdir(ROOT) if n.endswith('.html')]
-carrying = [n for n in pages if 'Give a Stay' in open(os.path.join(ROOT, n), encoding='utf-8').read()]
-check(not carrying and 'give-a-stay' not in index, 'as built (shipped): no page carries "Give a Stay" or the band' + (': ' + ', '.join(carrying) if carrying else ''))
-check('ga-what__gift' not in gift, 'as built (shipped): /gift does not say "gift card" yet')
+navved = [n for n in pages if 'aria-label="Menu"' in open(os.path.join(ROOT, n), encoding='utf-8').read()]
+carrying = [n for n in navved if 'Give a Stay' in open(os.path.join(ROOT, n), encoding='utf-8').read()]
+if SHIPPED_ON:
+    check(len(carrying) == len(navved) and 'id="give-a-stay"' in index and B.GIVE_BAND_LINE in index,
+          'as built (shipped on): every page with a menu carries "Give a Stay" (%d of %d), the home page its band with the Marketer\'s line' % (len(carrying), len(navved)))
+    check('ga-what__gift' in gift and 'gift card' in gift, 'as built (shipped on): /gift says "gift card" where it explains the gift')
+else:
+    check(not carrying and 'give-a-stay' not in index, 'as built (shipped off): no page carries "Give a Stay" or the band' + (': ' + ', '.join(carrying) if carrying else ''))
+    check('ga-what__gift' not in gift, 'as built (shipped off): /gift does not say "gift card" yet')
 
 # /gift's line, as the page module writes it with the switch on (pages/gift.py reads B.GIVE_A_STAY)
 spec = importlib.util.spec_from_file_location('lfpage_gift_check', os.path.join(HERE, 'pages', 'gift.py'))

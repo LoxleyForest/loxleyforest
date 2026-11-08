@@ -27,18 +27,22 @@ if (!chromium) { console.error('playwright-core not found (set PLAYWRIGHT_CORE)'
 const ROOT = path.resolve(__dirname, '..', '..');
 const EXE = process.env.CHROME || path.join(process.env.HOME, '.cache/ms-playwright/chromium-1243/chrome-linux64/chrome');
 const TYPES = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.webp': 'image/webp', '.png': 'image/png', '.jpg': 'image/jpeg', '.mp4': 'video/mp4', '.woff2': 'font/woff2' };
-const INDEX = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
-// the page as the builder writes it with GIVE_A_STAY on (build_v2.nav_links(menu=True), menu_gift_link): the
-// menu's second link "Give a Stay", "The Golden Arrow" gone from the menu, the row untouched
-const INDEX_ON = INDEX.replace(/(<nav aria-label="Menu">)(<a [^>]*>[^<]*<\/a>)/, '$1$2<a href="/gift">Give a Stay</a>')
+const BUILT = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+const BUILT_ON = BUILT.includes('<a href="/gift">Give a Stay</a>');
+// the page in the other state, as the builder writes it (build_v2.nav_links(menu=True), menu_gift_link): on, the
+// menu's second link "Give a Stay" and "The Golden Arrow" gone from the menu; off, the reverse; the row untouched
+const INDEX_ON = BUILT_ON ? BUILT : BUILT.replace(/(<nav aria-label="Menu">)(<a [^>]*>[^<]*<\/a>)/, '$1$2<a href="/gift">Give a Stay</a>')
   .replace(/(<nav aria-label="Menu">[^]*?)<a href="\/gift">The Golden Arrow<\/a>(<\/nav>)/, '$1$2');
-if (INDEX_ON === INDEX) { console.error('could not write the on state'); process.exit(2); }
+const INDEX = BUILT_ON ? BUILT.replace(/(<nav aria-label="Menu">[^]*?)<a href="\/gift">Give a Stay<\/a>/, '$1')
+  .replace(/(<nav aria-label="Menu">[^]*?<a href="\/faq">Questions<\/a>)(<\/nav>)/, '$1<a href="/gift">The Golden Arrow</a>$2') : BUILT;
+if (INDEX_ON === INDEX) { console.error('could not write the other state'); process.exit(2); }
+console.log('index.html as built: GIVE_A_STAY ' + (BUILT_ON ? 'on' : 'off'));
 
 function serve() {
   const srv = http.createServer((req, res) => {
     let p = decodeURIComponent(req.url.split(/[?#]/)[0]);
     if (p === '/on') { res.writeHead(200, { 'Content-Type': 'text/html' }); return res.end(INDEX_ON); }
-    if (p === '/') p = '/index.html';
+    if (p === '/' || p === '/index.html') { res.writeHead(200, { 'Content-Type': 'text/html' }); return res.end(INDEX); }
     let f = path.join(ROOT, p);
     if (!f.startsWith(ROOT)) { res.writeHead(403); return res.end(); }
     fs.readFile(f, (err, data) => {
@@ -58,7 +62,7 @@ async function main() {
   const base = 'http://127.0.0.1:' + srv.address().port;
   const browser = await chromium.launch({ executablePath: EXE });
   for (const on of [false, true]) {
-    console.log(on ? 'GIVE_A_STAY on (as the builder would write it)' : 'as built (GIVE_A_STAY off)');
+    console.log('GIVE_A_STAY ' + (on ? 'on' : 'off') + (on === BUILT_ON ? ' (as built)' : ' (as the builder would write it)'));
     for (const width of [1280, 1300, 1366]) {
       const ctx = await browser.newContext({ viewport: { width, height: 900 } });
       await ctx.route('**/*', (route) => {

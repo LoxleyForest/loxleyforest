@@ -370,8 +370,11 @@ REVIEW_LIST = [
 # platform. scripts/site/check_reviews.py proves it against REVIEW_LIST and docs/reviews/all.md.
 QUOTE_CARD = ('This was easily one of our most memorable stays!', 'James · Atlanta, GA')  # A9
 
-# The average, as Mick gave it (2026-10-21). Shown as the number and five acorns shaded to it.
-RATING = 4.9
+# The average, as Mick gave it (2026-10-21), shown while the count line is off. With it on, the
+# figure is computed from the review list's own star headings and rounded to one decimal, never
+# typed (Mick's word by the Chief, 2026-11-08: 126 of 129 five stars average 4.98, which is 5.0).
+# Shown as the number and five acorns shaded to it (RATING, set below the list's readers).
+RATING_GIVEN = 4.9
 # The count line under it, "129 reviews. 126 of them five stars." (the Marketer and the Critic's
 # site-audit sheet, 2026-11-08; the Chief's route: behind a switch until Mick's yes). The numbers are
 # never typed: they are read at build from the review list's own summary line in loxley-rescue
@@ -401,6 +404,35 @@ def review_count_line():
     if not counts:
         raise SystemExit('REVIEW_COUNT is on but the review list could not be read: ' + REVIEWS_ALL_MD)
     return f'{counts[0]} reviews. {counts[1]} of them five stars.'
+
+
+def review_stars(path=None):
+    """Every review's stars, read from the list's own headings ("### A1. ... · 5 stars ...")."""
+    try:
+        text = open(path or REVIEWS_ALL_MD, encoding='utf-8').read()
+    except OSError:
+        return []
+    stars = []
+    for h in re.findall(r'^### .*$', text, re.M):
+        m = re.search(r'\b(\d) stars?\b', h)
+        if m:
+            stars.append(int(m.group(1)))
+    return stars
+
+
+def review_rating():
+    """The average the page shows: computed from the list and rounded to one decimal while the count
+    line is on (the two must agree), else the figure Mick gave."""
+    if not REVIEW_COUNT:
+        return RATING_GIVEN
+    stars = review_stars()
+    counts = review_counts()
+    if not stars or not counts or len(stars) != counts[0]:
+        raise SystemExit('REVIEW_COUNT is on but the review list\'s headings (%d) do not match its summary line (%s)' % (len(stars), counts and counts[0]))
+    return round(sum(stars) / len(stars), 1)
+
+
+RATING = review_rating()
 # The acorn's body spans x 1.9 to 14.1 of its 16-wide box, so a part acorn is shaded across that
 # span, not the box: 0.9 of an acorn is 80.5% of the box, not 90%.
 ACORN_X0, ACORN_X1 = 1.9 / 16, 14.1 / 16
@@ -414,9 +446,9 @@ def _rating():
         cells += f'<i style="--f:{fill:g}%"></i>'
     line = review_count_line()
     count = f'<span class="lf-rating__count">{line}</span>' if line else ''
-    label = f'Rated {RATING:g} out of 5' + (f'. {line}' if line else '')
+    label = f'Rated {RATING:.1f} out of 5' + (f'. {line}' if line else '')
     return (f'<p class="lf-rating" role="img" aria-label="{label}">'
-            f'<span class="lf-rating__n" aria-hidden="true">{RATING:g}</span>'
+            f'<span class="lf-rating__n" aria-hidden="true">{RATING:.1f}</span>'
             f'<span class="lf-rating__acorns" aria-hidden="true">{cells}</span>{count}</p>')
 
 

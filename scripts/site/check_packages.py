@@ -38,8 +38,9 @@ def load():
 
 
 src = open(os.path.join(HERE, 'pages', 'elopements.py'), encoding='utf-8').read()
-check(len(re.findall(r'^PACKAGE_ORDER_V2 = (True|False)$', src, re.M)) == 1 and 'PACKAGE_ORDER_V2 = False' in src,
-      'the switch is one line, PACKAGE_ORDER_V2 False as shipped')
+shipped = re.findall(r'^PACKAGE_ORDER_V2 = (True|False)$', src, re.M)
+check(len(shipped) == 1, 'the switch is one line; shipped PACKAGE_ORDER_V2 = ' + (shipped[0] if shipped else '?'))
+SHIPPED_ON = shipped == ['True']
 
 mod = load()
 want = {False: ['The Vow', 'Firelight', 'The Crossing'], True: ['The Crossing', 'The Vow', 'Firelight']}
@@ -59,7 +60,7 @@ for on in (False, True):
 
 built = open(os.path.join(ROOT, 'elopements.html'), encoding='utf-8').read()
 built_cards = re.findall(r'class="lf-h3 lf-pkg__name"[^>]*>([^<]*)<', built)
-check(built_cards == want[False] + ['The Falls'], 'elopements.html as built matches the shipped state (' + ', '.join(built_cards) + ')')
+check(built_cards == want[SHIPPED_ON] + ['The Falls'], 'elopements.html as built matches the shipped state (' + ', '.join(built_cards) + ')')
 check('From $2,500' not in built, 'no "From $2,500" lead on the page')
 
 print('check_packages: %d failed' % fails)
