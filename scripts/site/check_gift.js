@@ -298,8 +298,8 @@ function statics() {
   check(has(gift, RATIFIED), '/gift carries the card\'s ratified terms line');
   // The page's own lines follow the sizes switch at build (gift.py SIZES_ON reads js/gift.js); the
   // "When" row keeps the card's ratified words either way (js/gift.js swaps it only while all three sell).
-  const sizesBuilt = has(GIFT_JS, 'var SIZES = true;');
-  check((GIFT_JS.match(/var SIZE_WORDS = (true|false);/g) || []).length === 1 && has(GIFT_JS, WORDS_SWITCH), 'the SIZE_WORDS switch is one line, false as shipped (the Writer\'s two card lines wait for Mick\'s ear)');
+  const sizesBuilt = SHIPPED.SIZES;
+  check(oneLine('SIZE_WORDS'), 'the SIZE_WORDS switch is one line; shipped SIZE_WORDS = ' + SHIPPED.SIZE_WORDS + ' (the Writer\'s two card lines wait for Mick\'s ear)');
   check(!has(prose, WHEN_SIZES) && PANEL.when_sizes === WHEN_SIZES && /data-ga-when>Good for any three nights/.test(gift), 'the "When" row is built with the card\'s ratified words; the one sentence for every size is in the page\'s words for the script alone');
   if (sizesBuilt) check(has(gift, NEUTRAL.h) && has(gift, NEUTRAL.lead) && has(gift, NEUTRAL.desc) && !has(gift, THREE.h) && has(card, NEUTRAL.desc), '/gift built with SIZES on: the lines that fit every size (the Writer\'s, for Mick\'s ear), on the card page\'s description too');
   else check(has(gift, THREE.h) && has(gift, THREE.lead) && has(gift, THREE.desc) && !has(gift, NEUTRAL.h) && !has(gift, NEUTRAL.lead) && has(card, THREE.desc), '/gift built with SIZES off: the three-night lines as today, none of the per-size lines on the page');
@@ -581,7 +581,7 @@ async function main() {
 
   console.log('/gift with the sales door on: the purchase panel');
   {
-    const { ctx, page, rec } = await open('gift-on', {});
+    const { ctx, page, rec } = await open('gift-on', { priceOn: false });
     await page.goto(BASE + '/gift');
     await page.waitForSelector('#ga-buy form', { timeout: 10000 });
     check(rec.health === 1 && rec.probes === 0, 'whether to sell read once from GET /v1/health (gift_sales), no empty order sent');
@@ -805,10 +805,10 @@ async function main() {
 
   // ------------------------------------------------- /gift in its sizes (js/gift.js SIZES, in shadow)
   console.log('/gift in its sizes (js/gift.js SIZES, in shadow): the switch, and shipped');
-  check((GIFT_JS.match(/var SIZES = (true|false);/g) || []).length === 1 && has(GIFT_JS, SIZES_SWITCH), 'the switch is one line, SIZES false as shipped');
+  check(oneLine('SIZES'), 'the switch is one line; shipped SIZES = ' + SHIPPED.SIZES);
   check(PANEL.size_legend === 'How many nights?' && !!PANEL.need_size && !/\d/.test(PANEL.size_legend + PANEL.need_size), 'the chooser\'s two lines are in the page\'s words (the Writer\'s, for Mick\'s ear), no digit in them');
   {
-    const { ctx, page, rec } = await open('gift-sizes-shipped', { sizes: ['golden-arrow', 'golden-arrow-1', 'golden-arrow-2'], sizesList: SIZES_ALL });
+    const { ctx, page, rec } = await open('gift-sizes-shipped', { sizesOn: false, priceOn: false, sizes: ['golden-arrow', 'golden-arrow-1', 'golden-arrow-2'], sizesList: SIZES_ALL });
     await page.goto(BASE + '/gift');
     await page.waitForSelector('#ga-buy form', { timeout: 10000 });
     await settle();
@@ -818,7 +818,7 @@ async function main() {
 
   console.log('/gift in its sizes, the switch on: the 3-night alone, as today');
   {
-    const { ctx, page, rec } = await open('gift-sizes-one', { sizesOn: true, sizes: ['golden-arrow'], sizesList: [SIZE_3] });
+    const { ctx, page, rec } = await open('gift-sizes-one', { sizesOn: true, priceOn: false, sizes: ['golden-arrow'], sizesList: [SIZE_3] });
     await page.goto(BASE + '/gift');
     await page.waitForSelector('#ga-buy form', { timeout: 10000 });
     check(rec.sizesReads === 1 && !(await page.$('.ga-sizes')) && !(await page.$('.ga-chosen')), 'the engine lists the 3-night alone: the sizes read once, no choice to make, the form as today');
@@ -937,7 +937,7 @@ async function main() {
   }
 
   console.log('/gift: the engine\'s price above the names (js/gift.js PRICE, in shadow)');
-  check((GIFT_JS.match(/var PRICE = (true|false);/g) || []).length === 1 && has(GIFT_JS, PRICE_SWITCH), 'the PRICE switch is one line, false as shipped (it reverses Mick\'s rule of 2026-10-19; his yes first)');
+  check(oneLine('PRICE'), 'the PRICE switch is one line; shipped PRICE = ' + SHIPPED.PRICE + ' (it reverses Mick\'s rule of 2026-10-19; on only on his yes)');
   {
     const one = await open('gift-price', { priceOn: true, sizes: ['golden-arrow'], sizesList: [SIZE_3] });
     await one.page.goto(BASE + '/gift');
@@ -1147,7 +1147,7 @@ async function main() {
       return { forL: q('.ga-for'), sub: q('.ga-subtitle'), gift: g.hidden ? null : g.innerText, nights: q('.ga-nights'), title: q('.ga-title'), status: st.hidden ? null : st.textContent, dates: !document.querySelector('[data-ga-dates]').hidden }; });
     const layoutOk = (page) => page.evaluate(() => { const r = (s) => document.querySelector(s).getBoundingClientRect(); return r('.ga-call').bottom <= r('.ga-foot').top && document.querySelector('.ga-side').scrollHeight <= document.querySelector('.ga-arch').offsetHeight + 1; });
     // shipped (both switches off): a two-night card opens with its own line and terms, the engine's; no gift line or status until Mick hears the Writer's
-    const off = await open('card-two-shipped', {});
+    const off = await open('card-two-shipped', { sizeWordsOn: false });
     await off.page.goto(BASE + '/gift/card#code=' + CODE_TWO);
     await off.page.waitForSelector('[data-ga-card]:not([hidden])', { timeout: 10000 });
     await off.page.evaluate(() => document.fonts.ready);
@@ -1159,7 +1159,7 @@ async function main() {
     await shot(off.page, 'card-two-nights.png');
     await off.ctx.close();
     // shipped: an older answer with the product alone: the site's copy of the printed card's words for one night
-    const one = await open('card-one-shipped', {});
+    const one = await open('card-one-shipped', { sizeWordsOn: false });
     await one.page.goto(BASE + '/gift/card#code=' + CODE_ONE);
     await one.page.waitForSelector('[data-ga-card]:not([hidden])', { timeout: 10000 });
     const c1 = await cardOf(one.page);

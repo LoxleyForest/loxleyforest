@@ -527,13 +527,13 @@ document.addEventListener('DOMContentLoaded', () => {
   if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
   const phone = window.matchMedia('(max-width: 767px)').matches;
-  // Never on Save-Data or 2g. On a phone, the poster alone until the connection is known to be
-  // fast (DIRECTION.md, Video; the Forge's tier rule, docs/log/2026-09.md): only a phone that reports
-  // 4g gets the film, so an iPhone, which reports nothing, keeps the poster. Applied 2026-11-07 for
-  // the reel's burst (the Chief's bandwidth route, the Critic's read); a still on an iPhone is the
-  // direction, not a fault.
-  if (c && (c.saveData || /(^|-)2g$/.test(c.effectiveType || ''))) return;
-  if (phone && !(c && c.effectiveType === '4g')) return;
+  // Every phone gets the film (Mick, 2026-11-08 about 18:45 ET, by the Chief: "I want the video we
+  // made for the hero"; it reverses the 2026-11-07 rule that only a phone reporting 4g got it, which
+  // kept it from every iPhone), unless the browser asks for less: Save-Data, or a connection it reports
+  // as slow (slow-2g, 2g, 3g). No report counts as fast: an iPhone reports nothing. The poster shows
+  // first so nothing jumps; muted, inline; the pause button once it is playing. hero-phone.mp4 is 659
+  // KB: at the reel's 100,000 phone visits that is about 70 GB, inside the plan's bandwidth.
+  if (c && (c.saveData || /^(slow-2g|2g|3g)$/.test(c.effectiveType || ''))) return;
   const btn = document.querySelector('.lf-hero__pause');
   const tryPlay = () => { const p = v.play(); if (p && p.catch) p.catch(() => {}); };
   const start = () => {

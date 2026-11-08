@@ -393,11 +393,18 @@ async function main() {
     });
     check(!!pf, tag + ': directly under the Book button, the guest line and rating (.gh-proof)');
     if (pf) {
-      check(pf.n === '4.9' && pf.label === 'Rated 4.9 out of 5' && pf.fills === '100%,100%,100%,100%,80.5%' && pf.carousel,
-        tag + ': 4.9 beside five acorns shaded to it, the very markup the reviews show');
+      // The rating as build_v2 writes it everywhere: Mick's 4.9 while the count line is off; with it on
+      // (his yes, 2026-11-08), the list's own average rounded to one decimal, 5.0, and the count line under
+      // it ("129 reviews. 126 of them five stars.", read from the list at build). Never a platform.
+      const n = pf.n, full = Math.floor(+n), part = +(+n - full).toFixed(2);
+      const fills = Array.from({ length: 5 }, (_, i) => (i < full ? '100%' : i === full && part > 0 ? (Math.round((1.9 / 16 + part * (12.2 / 16)) * 1000) / 10) + '%' : '0%')).join();
+      const count = (pf.label.match(/^Rated \d\.\d out of 5\. (.*)$/) || [])[1] || '';
+      check(/^\d\.\d$/.test(n) && pf.label.startsWith('Rated ' + n + ' out of 5') && pf.fills === fills && pf.carousel,
+        tag + ': ' + n + ' beside five acorns shaded to it (' + pf.fills + '), the very markup the reviews show');
+      check(!count || /^\d+ reviews\. \d+ of them five stars\.$/.test(count), tag + ': ' + (count ? 'the count line as the list gives it: "' + count + '"' : 'no count line (REVIEW_COUNT off)'));
       check(pf.quote === '“' + QC.line + '”' && pf.by === QC.by, tag + ': the guest line and credit as build_v2.QUOTE_CARD has them: ' + pf.quote + ' ' + pf.by);
-      check(pf.text === '4.9' + '“' + QC.line + '”' + QC.by, tag + ': nothing else in it: no count, no platform, no other words');
-      check(pf.gap >= 8 && pf.gap <= 24 && pf.h <= 110 && pf.size <= 19, tag + ': small and quiet: ' + pf.gap + ' px under the button, ' + pf.h + ' px tall, ' + pf.size + ' px type');
+      check(pf.text === n + count + '“' + QC.line + '”' + QC.by && !/airbnb|google|vrbo|tripadvisor/i.test(pf.text), tag + ': nothing else in it: no platform, no other words');
+      check(pf.gap >= 8 && pf.gap <= 24 && pf.h <= (count ? 140 : 110) && pf.size <= 19, tag + ': small and quiet: ' + pf.gap + ' px under the button, ' + pf.h + ' px tall, ' + pf.size + ' px type');
       // Mick, 2026-10-26 ("yes on both!"): his terms line comes first on the card; on a phone a deposit
       // stay's guest line may sit just under the first view. The Book button never may.
       check(pf.bTop >= pf.hdr && pf.bBottom <= pf.vh, tag + ': in the quote card\'s first view the Book button is whole on the screen');
