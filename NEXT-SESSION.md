@@ -46,8 +46,9 @@ tap could make a weekend stay longer than its minimum); a check-out tapped under
 the stay instead of refusing; a night that can make no stay offers the nearest that can; each
 arrival night with a minimum shows "2+" or "3+" (10 px) in its corner, "2 nights at least" to a
 screen reader. The engine's rules (min_stay, max_stay, gap, no_arrival) do not change; no engine
-change needed. A new funnel step stay_offered with reason direct, shifted or nearest (the Forge told;
-refused as unknown until it adds it, silently). THE WORDS, for the Chief and then Mick's ear (the
+change needed. A new funnel step stay_offered with reason direct, shifted or nearest: the engine takes it
+from 5f43e0c (the Forge, 2026-11-08; counts stay_offered and its reasons as distinct visits a day,
+apart from picked_dates and the refusals), once the droplet deploys it. THE WORDS, for the Chief and then Mick's ear (the
 dates in the calendar's own shapes): "Arriving Sat, Nov 28 takes 2 nights. Here's Sat, Nov 28 to
 Mon, Nov 30, 2026; the price is below. Tap a later day to stay longer." / "Arriving Fri, Dec 11 takes
 2 nights. The nights after it are taken, so here's Thu, Dec 10 to Sat, Dec 12, 2026 instead; the
@@ -79,8 +80,44 @@ by 0.9 s, so the calendar waits only on js/gatehouse.js (84 KB raw, about 1 s to
 link) and its boot. The next lever, not tonight: a lighter calendar script, the checkout and payment
 code split out of the calendar's path.
 
-**3. The month link** /book?month=2026-12, **4. the sticky inquire button on /elopements**, **5.
-/book's search words (the Writer, Mick's ear):** not started.
+**3. The month link, LIVE and inert.** /book?month=2026-12 opens the calendar on that month
+(js/gatehouse.js readUrl/applyMonth): a month before the calendar's first is clamped to the current
+one, one past its last to the last, a bad value is ignored, dates in the link win over it, and the
+parameter is dropped from the address once dates are tapped. No words change; no beacon (the utm
+marks the visit). Nothing uses it until the Christmas ad's final URL in Google Ads is edited to
+/book?month=2026-12&utm_campaign=christmas (the sheet still carries the plain /book URL; the Chief's
+or the Marketer's edit, not ours). Proven: check_offer_stay.js (now 36, five on the month link),
+check_checkout (124). The Critic: goes as is.
+
+**4. The sticky inquire button on /elopements (shadow, `var INQUIRE_FAB = false;` in js/global.js).**
+On a phone, every page's fixed gold button reads "Book your dates" to /book and shows once the
+reader is past the first screen. With the switch on, on /elopements alone it reads "Inquire about
+your date" (the page's own words), keeps its acorn, points at the form (#inquiry, which sits below
+the reviews and the questions; the site's anchor handler scrolls to it), and steps aside while the
+form is on screen (css .book-fab.is-away). The menu still carries "Book your dates". The swap is in
+the script, not the built page; PAGES in that block takes the five landing pages' #inquiry forms on
+the Chief's word, one line each. Proven: scripts/site/check_inquire_fab.js, 10 checks in both
+states. The Critic read it (its four test fixes and two code fixes are in: the acorn kept, a stray
+transition line cut); verdict: may ship dark. What would settle it once on: Netlify elopement
+submissions per /elopements phone visit, 14 days before against 14 days after.
+
+**5. /book's words for its searches (the Writer, 2026-11-08, Mick's ear, nothing on the page).** For
+the people arriving from "treehouse rental" and "romantic getaway" (Google rates the landing
+experience Below average on most keywords). Today's hero: "Dahlonega, Georgia" / "Book your stay" /
+"Book direct. No platform fees, no middleman. Just you, the forest, and the family who built it."
+The Writer's three sets, each shorter than today's, every claim already on the site (no rating, no
+review count, no price in words, "Book direct" kept): A, for the treehouse search: "Dahlonega,
+Georgia" / "Book the treehouse" / "Sixty feet up, reached by a hundred-foot rope bridge. Book direct,
+no platform fees." B, for the romance search: "Just over an hour from Atlanta" / "Just the two of
+you" / "Book direct. A private deck sixty feet up, and the creek below." (the Writer's warning: the
+treehouse sleeps four to six, and "the two of you" is an elopement phrase on the site). C, the
+Writer's pick, both searches: "Dahlonega, Georgia" / "A treehouse sixty feet up" / "Book direct. A
+private deck in the canopy, just over an hour from Atlanta." And one line to replace, not join, the
+line under "Choose your nights": "Every open night shows its rate. Tap your first night, then your
+check-out day: the whole price, taxes included." Notes: "A treehouse" stops being exact when
+Treehouse 2 opens; reread the calendar line if OFFER_STAY goes on (one tap then prices a stay); the
+words go into scripts/site/pages/book.py, built, never typed into book.html. Sent to the Chief for
+Mick's ear; nothing changes on the page until his yes on the exact words.
 
 ---
 
