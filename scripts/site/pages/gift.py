@@ -153,6 +153,11 @@ WORDS = {
     'need_their_email': 'Please add their email, so the card reaches them.',
     'need_day': 'Please choose a day within the next 12 months.',
     'need_future': 'Please choose a time that has not come yet.',
+    # The gift in its sizes (js/gift.js SIZES, in shadow; the Chief's route, 2026-11-08): the one
+    # line above the size cards, the Writer's pick (for Mick's ear), and the ask when none is chosen.
+    # Each card's own line, price and terms come from the engine, never from here.
+    'size_legend': 'How many nights?',
+    'need_size': 'Please choose how many nights.',
     'when_christmas': 'Christmas morning',
     'when_valentine': 'Valentine\u2019s Day',
     'when_at': '{day} at {hour}',
@@ -256,7 +261,8 @@ PANEL_KEYS = ('opening', 'off', 'down', 'call_mick', 'text_mick', 'for_label', '
               'pay', 'leaving', 'change', 'pay_fine', 'no_payment', 'questions', 'deliver_legend', 'deliver_me',
               'deliver_them', 'their_email_label', 'their_email_hint', 'day_label', 'hour_label', 'picks_label',
               'pick_christmas', 'pick_valentine', 'note_label', 'note_hint', 'note_count', 'need_their_email', 'need_day',
-              'need_future', 'when_christmas', 'when_valentine', 'when_at', 'confirm_them', 'confirm_note')
+              'need_future', 'when_christmas', 'when_valentine', 'when_at', 'confirm_them', 'confirm_note',
+              'size_legend', 'need_size')
 CARD_KEYS = ('card_none', 'card_unknown', 'card_off', 'card_down', 'card_void', 'state_unused', 'state_booked', 'state_used',
              'note_from', 'choose_dates', 'print', 'share', 'share_copied', 'share_manual', 'keep', 'questions',
              'lost_h', 'lost_label', 'lost_send', 'lost_sending', 'lost_need', 'lost_off', 'lost_sent')
@@ -639,6 +645,29 @@ CSS = '''
 .ga-form .gh-field textarea:focus { outline: 2px solid var(--gold); border-color: var(--gold); }
 .ga-count { display: block; margin-top: 6px; text-align: right; font: 13px/1.3 'Montserrat', Arial, sans-serif; color: var(--stone); font-variant-numeric: tabular-nums; }
 .ga-confirm__note { margin: 0; padding: 12px 14px; border-left: 2px solid var(--gold); background: var(--cream); font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 1.15rem; line-height: 1.5; color: var(--bark); white-space: pre-line; overflow-wrap: anywhere; }
+
+/* ---- the gift in its sizes (in shadow, js/gift.js SIZES): one card per size the engine sells ---- */
+.ga-sizes { border: 0; margin: 0; padding: 0; min-width: 0; display: grid; gap: 12px; }
+.ga-sizes legend { padding: 0; margin-bottom: 8px; font-family: 'Montserrat', Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 1px; color: var(--forest); }
+.ga-size { position: relative; display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 14px; align-items: start; padding: 12px 14px; border: 1px solid var(--driftwood); background: var(--cream); cursor: pointer; color: var(--bark); }
+.ga-size:has(input:checked) { border-color: var(--forest-deep); background: var(--white); box-shadow: inset 0 0 0 1px var(--forest-deep); }
+.ga-size:has(input:focus-visible) { outline: 2px solid var(--forest-deep); outline-offset: 3px; }
+/* the card is the control: its radio stays for the keyboard and the screen reader, out of sight */
+.ga-size input { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.ga-size__front { display: block; width: 84px; height: auto; aspect-ratio: 5 / 7; object-fit: cover; box-shadow: 0 6px 18px rgba(20, 36, 24, 0.18); }
+.ga-size__text { display: grid; gap: 5px; min-width: 0; }
+.ga-size__name { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 1.3rem; line-height: 1.2; color: var(--forest-deep); }
+.ga-size__price { font: 600 15px/1.3 'Montserrat', Arial, sans-serif; color: var(--bark); font-variant-numeric: lining-nums; }
+.ga-size__price small { font-weight: 400; font-size: 13px; color: var(--stone); }
+.ga-size__terms { font-size: 15px; line-height: 1.45; color: var(--stone); }
+.ga-size__out { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 1.1rem; line-height: 1.4; color: var(--forest-deep); }
+.ga-size--out { cursor: default; }
+.ga-size--out .ga-size__front { filter: grayscale(1); opacity: 0.6; }
+.ga-size--noart { grid-template-columns: minmax(0, 1fr); }   /* a size the page has no front for yet: its words take the width */
+.ga-chosen { margin: 0; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; font-size: 15px; line-height: 1.4; color: var(--stone); }
+.ga-chosen strong { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 1.25rem; color: var(--forest-deep); }
+.ga-confirm__size { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 1.2rem; color: var(--stone); }
+.ga-terms-line[hidden] { display: none; }
 
 .ga-mail-hint { margin: 6px 0 0 34px; font-size: 15px; line-height: 1.45; color: var(--stone); }
 .ga-mine { overflow-wrap: anywhere; }

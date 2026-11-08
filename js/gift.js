@@ -8,8 +8,14 @@
 
    The engine (book.loxleyforest.com, loxley-rescue ceo/golden-arrow,
    cdb68bc):
-     GET  /v1/health -> {..., gift_sales, gift_delivery}: whether to
-          sell, and whether to offer "a day I choose".
+     GET  /v1/health -> {..., gift_sales, gift_delivery, gift_sizes}:
+          whether to sell, whether to offer "a day I choose", and each
+          open size that still sells (main c78de5b).
+     GET  /v1/gift/sizes -> {sizes: [{product, nights, name, subtitle,
+          price_cents (all in, what the checkout charges), terms, includes,
+          sold_out, sentence}]} in nights order, the sizes on sale alone
+          (the Forge, 2026-11-08); 404 while the sales door is off. Read
+          once a page load, only with SIZES on.
      POST /v1/gift/checkout {product, email, giver_name,
           recipient_names, ship_to?{name, line1, line2, city, state
           (two letters), zip (five digits)}, deliver?{email, date
@@ -196,8 +202,10 @@
     // The engine's sizes, kept only as it sent them: a product, its nights, its price in cents,
     // its words. Buyable while health names it and it is not at the cap; at the cap it shows only
     // with the engine's own sentence; anything else is not shown.
-    function usable(list, named) {
-      if (!Array.isArray(list)) return [];
+    function usable(answer, named) {
+      // GET /v1/gift/sizes -> {sizes: [...]} (the Forge, 2026-11-08, forge/gift-sizes-read)
+      var list = answer && Array.isArray(answer.sizes) ? answer.sizes : null;
+      if (!list) return [];
       var out = [];
       list.forEach(function (s) {
         if (!s || typeof s.product !== 'string' || !s.product) return;
@@ -224,17 +232,18 @@
       var err = el('p', { 'class': 'gh-error', id: 'ga-size-error', role: 'alert', text: error });
       var options = sizes.map(function (s) {
         var id = 'ga-size-' + s.product;
+        var front = FRONTS[s.product] || '';
         var input = el('input', { type: 'radio', id: id, name: 'size', value: s.product, disabled: s.buyable ? null : 'disabled',
-          checked: size && size.product === s.product ? 'checked' : null, 'aria-describedby': id + '-terms',
+          checked: size && size.product === s.product ? 'checked' : null, 'aria-describedby': id + '-terms' + (s.buyable ? '' : ' ' + id + '-out'),
           onchange: function () { error = ''; err.textContent = ''; choose(s); } });
-        return el('label', { 'class': 'ga-size' + (s.buyable ? '' : ' ga-size--out'), 'for': id }, [
+        return el('label', { 'class': 'ga-size' + (s.buyable ? '' : ' ga-size--out') + (front ? '' : ' ga-size--noart'), 'for': id }, [
           input,
-          FRONTS[s.product] ? el('img', { 'class': 'ga-size__front', src: FRONTS[s.product], width: '720', height: '1008', alt: '', loading: 'lazy', decoding: 'async' }) : null,
+          front ? el('img', { 'class': 'ga-size__front', src: front, width: '720', height: '1008', alt: '', loading: 'lazy', decoding: 'async' }) : null,
           el('span', { 'class': 'ga-size__text' }, [
             el('span', { 'class': 'ga-size__name', text: s.subtitle }),
             s.buyable ? el('span', { 'class': 'ga-size__price' }, [G.money(s.price_cents), el('small', { text: ' ' + w('all_in') })]) : null,
             el('span', { 'class': 'ga-size__terms', id: id + '-terms', text: s.terms }),
-            s.buyable ? null : el('span', { 'class': 'ga-size__out', role: 'status', text: s.sentence })])]);
+            s.buyable ? null : el('span', { 'class': 'ga-size__out', id: id + '-out', role: 'status', text: s.sentence })])]);
       });
       var btn = el('button', { type: 'submit', 'class': 'lf-btn gh-btn--dark gh-cta', text: w('continue') });
       return el('form', { 'class': 'ga-form ga-sizes-form', novalidate: 'novalidate', onsubmit: function (ev) {
@@ -449,18 +458,23 @@
     // 002ab6c). A missing field or a failed read counts as closed: the call-or-text panel.
     G.api(API, '/v1/health', null, 8000).then(function (h) {
       canDeliver = !!(h && h.gift_delivery === true);
-      if (!(h && h.gift_sales === true)) return off('off');
-      if (!SIZES) return show([form()]);
-      // The sizes on sale, each with its price and its words, from the engine alone. The 3-night
-      // card by itself is the page as it was; anything else is the choice first. A read that fails
-      // or lists nothing usable leaves the page as it was.
-      var named = Array.isArray(h.gift_sizes) ? h.gift_sizes.map(String) : null;
-      return G.api(API, '/v1/gift/sizes', null, 8000).then(function (list) {
-        var got = usable(list, named);
-        if (!got.length || (got.length === 1 && got[0].product === PRODUCT && got[0].buyable)) return show([form()]);
+      var selling = !!(h && h.gift_sales === true);
+      // The page as it was: the 3-night form while the engine sells that card, else call or text Mick.
+      function asIs() { return selling ? show([form()]) : off('off'); }
+      if (!SIZES) return asIs();
+      // health's gift_sales speaks for the 3-night card alone (false at its cap), so the sizes are
+      // read whenever it or gift_sizes says anything sells; closed only when both say closed (the
+      // Critic, 2026-11-08). The sizes on sale, each with its price and its words, from the engine
+      // alone. The 3-night card by itself is the page as it was; anything else is the choice first.
+      // A read that fails or lists nothing usable leaves the page as it was.
+      var named = h && Array.isArray(h.gift_sizes) ? h.gift_sizes.map(String) : null;
+      if (!selling && !(named && named.length)) return off('off');
+      return G.api(API, '/v1/gift/sizes', null, 8000).then(function (answer) {
+        var got = usable(answer, named);
+        if (!got.length || (got.length === 1 && got[0].product === PRODUCT && got[0].buyable)) return asIs();
         sizes = got;
         show([chooser()]);
-      }, function () { show([form()]); });
+      }, asIs);
     }, function (e) { off(unreachable(e) ? 'down' : 'off'); });
   }
 

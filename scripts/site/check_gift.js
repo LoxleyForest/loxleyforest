@@ -111,6 +111,21 @@ const BLACKOUT = 'The Golden Arrow covers any nights but Valentine\'s weekend, t
 const PAY_503 = 'Payments are unavailable for a moment; nothing was charged, so please try again.';
 // The engine's sales cap (coming): its own sentence, 409.
 const SOLD = 'The Golden Arrow is spoken for this season. Call or text Mick at 706-502-4823.';
+// The gift in its sizes (js/gift.js SIZES, in shadow): GET /v1/gift/sizes -> {sizes: [...]} (the
+// Forge, 2026-11-08, forge/gift-sizes-read), each size on sale with its price all in and the card's
+// own words; sold_out and the engine's sentence for one at the season's cap (gifts.FEWER_NIGHTS
+// while a shorter size still fits). The shipped file has SIZES false; the "on" checks serve
+// js/gift.js with it true, and say so.
+const GIFT_JS = read('js/gift.js'), SIZES_SWITCH = 'var SIZES = false;';
+const GIFT_JS_ON = GIFT_JS.replace(SIZES_SWITCH, 'var SIZES = true;');
+const TERMS_1 = 'Good for any weeknight, Monday to Thursday, within twelve months of purchase. After that it never expires; we ask only the difference if rates have risen.';
+const TERMS_2 = 'Good for any two nights, weekends included, within twelve months of purchase. After that it never expires; we ask only the difference if rates have risen.';
+const FEWER = 'There are not enough nights left this season for this Golden Arrow. A shorter one is still open, or call or text Mick at 706-502-4823.';
+const SIZE_1 = { product: 'golden-arrow-1', nights: 1, name: 'The Golden Arrow', subtitle: 'A gift of a night in the trees', price_cents: 75320, terms: TERMS_1, includes: 'the Dawn Table', sold_out: false, sentence: '' };
+const SIZE_2 = { product: 'golden-arrow-2', nights: 2, name: 'The Golden Arrow', subtitle: 'A gift of two nights in the trees', price_cents: 150640, terms: TERMS_2, includes: 'the Dawn Table', sold_out: false, sentence: '' };
+const SIZE_3 = { product: 'golden-arrow', nights: 3, name: 'The Golden Arrow', subtitle: 'A gift of three nights in the trees', price_cents: 200000, terms: RATIFIED, includes: 'the Dawn Table', sold_out: false, sentence: '' };
+const SIZES_ALL = [SIZE_3, SIZE_1, SIZE_2];   // out of nights order on purpose: the page sorts
+const priceOf = (product) => ([SIZE_1, SIZE_2, SIZE_3].find((s) => s.product === product) || SIZE_3).price_cents;
 
 // ---- made-up data
 function day(n) { const d = new Date(); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); }
@@ -263,6 +278,7 @@ async function main() {
       dv: { recipient_names: 'Ana & Luis', giver_name: 'Aunt June', email: THEM, date: nextMorning('12-25').slice(0, 10), hour: 8, message: NOTE, sent: !!engine.sent }, quotes: [], checkouts: [], stays: [], outside: [], stripePages: [], solds: [] };
     await ctx.route('**/*', (route) => {
       const req = route.request(), u = new URL(req.url());
+      if (u.hostname === '127.0.0.1' && u.pathname === '/js/gift.js' && engine.sizesOn) return route.fulfill({ status: 200, contentType: 'text/javascript', body: GIFT_JS_ON });
       if (u.hostname === '127.0.0.1') return route.continue();
       if (u.hostname === 'fonts.googleapis.com' || u.hostname === 'fonts.gstatic.com') return route.continue();
       if (u.hostname === 'book.loxleyforest.com') {
@@ -276,9 +292,21 @@ async function main() {
           rec.health++;
           if (engine.down) return route.abort('failed');
           const h = { ok: true, units: 1, agreement: true, stripe: true, live: false, payments: true };
-          if (engine.sales !== 'nofield') h.gift_sales = engine.sales === 'on';
+          // as api.py health computes it: the sales door, and the 3-night card not at its cap
+          const capped3 = (engine.sizesList || []).some((s) => s.product === 'golden-arrow' && s.sold_out === true);
+          if (engine.sales !== 'nofield') h.gift_sales = engine.sales === 'on' && !capped3;
           h.gift_delivery = engine.delivery !== 'off';
+          // each open size that still sells (main c78de5b): [] while the sales door is off
+          h.gift_sizes = engine.sales === 'on' ? (engine.sizes || ['golden-arrow']) : [];
+          rec.healthSaid = h;
           return json(h);
+        }
+        // The sizes on sale, with their prices and words (the Forge, 2026-11-08).
+        if (u.pathname === '/v1/gift/sizes') {
+          rec.sizesReads = (rec.sizesReads || 0) + 1;
+          if (engine.sales === 'off' || engine.sizesRoute === 'off') return json({ error: 'not found' }, 404);
+          if (engine.sizesRoute === 'down') return route.abort('failed');
+          return json('sizesAnswer' in engine ? engine.sizesAnswer : { sizes: engine.sizesList || [SIZE_3] });
         }
         if (u.pathname === '/v1/gift') {
           if (engine.lookup === 'off') return json({ error: 'not found' }, 404);
@@ -294,7 +322,7 @@ async function main() {
           if (engine.sale503) return json({ error: PAY_503 }, 503);
           if (engine.soldOut) return json({ error: SOLD }, 409);
           if (b.deliver && engine.delivery === 'off') return json({ error: DELIVERY_OFF }, 400);
-          return json({ url: engine.checkoutUrl, total_cents: 200000 });
+          return json({ url: engine.checkoutUrl, total_cents: priceOf(b.product) });
         }
         if (u.pathname === '/v1/gift/resend') {
           if (engine.resend === 'off') return json({ error: 'not found' }, 404);
@@ -321,7 +349,8 @@ async function main() {
           const sid = u.searchParams.get('session_id') || '';
           rec.solds.push(sid);
           if (engine.sold === 'none' || sid !== SESSION) return json({ error: 'not found' }, 404);
-          return json(engine.sold === 'unpaid' ? { paid: false, cents: 0 } : { paid: true, cents: 200000 });
+          // paid at the price of the size the last sale asked for (the 3-night's when none was made in this run)
+          return json(engine.sold === 'unpaid' ? { paid: false, cents: 0 } : { paid: true, cents: rec.sales.length ? priceOf(rec.sales[rec.sales.length - 1].product) : 200000 });
         }
         if (u.pathname === '/v1/availability') return json(NIGHTS);
         if (u.pathname === '/v1/agreement') return json(AGREEMENT);
@@ -716,6 +745,139 @@ async function main() {
     check(rec.sales.length === 1 && Object.keys(sent).sort().join() === 'email,giver_name,product,recipient_names',
       what + ': neither src nor referrer sent, and the sale still starts');
     check(!has(JSON.stringify(sent), 'instagram') && !has(JSON.stringify(sent), 'old-click'), what + ': never the long-lived attribution (gh_attr, loxley_attribution)');
+    await ctx.close();
+  }
+
+  // ------------------------------------------------- /gift in its sizes (js/gift.js SIZES, in shadow)
+  console.log('/gift in its sizes (js/gift.js SIZES, in shadow): the switch, and shipped');
+  check((GIFT_JS.match(/var SIZES = (true|false);/g) || []).length === 1 && has(GIFT_JS, SIZES_SWITCH), 'the switch is one line, SIZES false as shipped');
+  check(PANEL.size_legend === 'How many nights?' && !!PANEL.need_size && !/\d/.test(PANEL.size_legend + PANEL.need_size), 'the chooser\'s two lines are in the page\'s words (the Writer\'s, for Mick\'s ear), no digit in them');
+  {
+    const { ctx, page, rec } = await open('gift-sizes-shipped', { sizes: ['golden-arrow', 'golden-arrow-1', 'golden-arrow-2'], sizesList: SIZES_ALL });
+    await page.goto(BASE + '/gift');
+    await page.waitForSelector('#ga-buy form', { timeout: 10000 });
+    await settle();
+    check(!rec.sizesReads && !(await page.$('.ga-sizes')) && !(await page.$('.ga-chosen')), 'shipped (SIZES false), three sizes open: the sizes never asked for, the 3-night form as today');
+    await ctx.close();
+  }
+
+  console.log('/gift in its sizes, the switch on: the 3-night alone, as today');
+  {
+    const { ctx, page, rec } = await open('gift-sizes-one', { sizesOn: true, sizes: ['golden-arrow'], sizesList: [SIZE_3] });
+    await page.goto(BASE + '/gift');
+    await page.waitForSelector('#ga-buy form', { timeout: 10000 });
+    check(rec.sizesReads === 1 && !(await page.$('.ga-sizes')) && !(await page.$('.ga-chosen')), 'the engine lists the 3-night alone: the sizes read once, no choice to make, the form as today');
+    check(!/\$\s?\d/.test(await page.evaluate(() => document.body.innerText)), 'no amount on the page before the purchase step');
+    check(await text(page, '.ga-terms-line') === RATIFIED, 'the card\'s words under the panel as they were');
+    await ctx.close();
+  }
+
+  console.log('/gift in its sizes, the switch on: three sizes');
+  {
+    const { ctx, page, rec } = await open('gift-sizes-three', { sizesOn: true, sizes: ['golden-arrow', 'golden-arrow-1', 'golden-arrow-2'], sizesList: SIZES_ALL });
+    await page.goto(BASE + '/gift');
+    await page.waitForSelector('#ga-buy .ga-sizes', { timeout: 10000 });
+    const cards = await page.evaluate(() => [...document.querySelectorAll('.ga-size')].map((l) => ({
+      product: l.querySelector('input').value, disabled: l.querySelector('input').disabled, front: l.querySelector('img') ? l.querySelector('img').getAttribute('src') : '',
+      name: l.querySelector('.ga-size__name').textContent, price: l.querySelector('.ga-size__price') ? l.querySelector('.ga-size__price').textContent : '',
+      terms: l.querySelector('.ga-size__terms').textContent, out: l.querySelector('.ga-size__out') ? l.querySelector('.ga-size__out').textContent : '' })));
+    check(rec.sizesReads === 1 && rec.health === 1, 'the sizes and health each read once');
+    check(await text(page, '.ga-sizes legend') === PANEL.size_legend, 'the legend: "' + PANEL.size_legend + '"');
+    check(cards.map((c) => c.product).join() === 'golden-arrow-1,golden-arrow-2,golden-arrow', 'three cards in nights order, whatever order the engine listed them');
+    check(cards.map((c) => c.front).join() === '/images/gift/golden-arrow-card-front-1-night.jpg,/images/gift/golden-arrow-card-front-2-nights.jpg,/images/gift/golden-arrow-card-front.jpg', 'each with its own front');
+    check(cards.map((c) => c.name).join('|') === 'A gift of a night in the trees|A gift of two nights in the trees|A gift of three nights in the trees', 'each with its own line, the engine\'s');
+    check(cards.map((c) => c.price.replace(/\s+/g, ' ').trim()).join('|') === '$753.20 ' + PANEL.all_in + '|$1,506.40 ' + PANEL.all_in + '|$2,000.00 ' + PANEL.all_in, 'each price the engine\'s, all in (' + cards.map((c) => c.price.replace(/\s+/g, ' ').trim()).join(', ') + ')');
+    check(cards[0].terms === TERMS_1 && cards[1].terms === TERMS_2 && cards[2].terms === RATIFIED, 'each with its terms in the card\'s own words, the engine\'s');
+    check(cards.every((c) => !c.disabled && !c.out), 'all three buyable');
+    check(await page.evaluate(() => document.querySelector('.ga-terms-line').hidden), 'the 3-night terms line under the panel steps aside while the choice is open');
+    check(await overflow(page) <= 0, 'no sideways scroll at 390');
+    await page.locator('#ga-buy').scrollIntoViewIfNeeded();
+    await shot(page, 'gift-sizes.png', false);
+    await press(page, '#ga-buy button[type=submit]');
+    check(await text(page, '#ga-size-error') === PANEL.need_size && rec.sales.length === 0, 'Continue with no choice: it asks for one, sends nothing');
+    await press(page, 'label[for="ga-size-golden-arrow-2"]');
+    await press(page, '#ga-buy button[type=submit]');
+    await page.waitForSelector('#ga-buy form .ga-chosen', { timeout: 5000 });
+    check(await text(page, '.ga-chosen') === 'A gift of two nights in the trees $1,506.40 ' + PANEL.all_in + ' ' + PANEL.confirm_change, 'the two-night card chosen: its line and price above the names, with "Change"');
+    check(await text(page, '.ga-terms-line') === TERMS_2 && !(await page.evaluate(() => document.querySelector('.ga-terms-line').hidden)), 'the words under the panel are now the two-night card\'s');
+    await press(page, '.ga-chosen .ga-inline');
+    await page.waitForSelector('#ga-buy .ga-sizes');
+    check(await page.evaluate(() => document.querySelector('#ga-size-golden-arrow-2').checked), '"Change": back to the choice, the two-night card still chosen');
+    await press(page, '#ga-buy button[type=submit]');
+    await page.waitForSelector('#ga-buy form .ga-chosen');
+    await page.fill('#ga-for', BUYER.names); await page.fill('#ga-from', BUYER.giver); await page.fill('#ga-email', BUYER.email);
+    await press(page, '#ga-buy button[type=submit]');
+    await page.waitForSelector('#ga-buy .ga-confirm', { timeout: 5000 });
+    const sent = rec.sales[0] || {};
+    check(sent.product === 'golden-arrow-2' && Object.keys(sent).sort().join() === 'email,giver_name,product,recipient_names', 'POST /v1/gift/checkout asks for golden-arrow-2, nothing else new');
+    const conf = await text(page, '#ga-buy .ga-confirm');
+    check(has(conf, 'A gift of two nights in the trees') && has(conf, 'Total $1,506.40'), 'the purchase step names the size and shows the engine\'s amount for it');
+    await page.locator('#ga-buy .ga-confirm').scrollIntoViewIfNeeded();
+    await shot(page, 'gift-sizes-purchase-step.png', false);
+    await Promise.all([page.waitForURL(/checkout\.stripe\.com/, { timeout: 5000 }), press(page, '#ga-buy .ga-pay')]);
+    check(rec.stripePages.length === 1, 'Pay: on to Stripe');
+    await page.goto(BASE + '/gift/thanks?session_id=' + SESSION);
+    await page.waitForSelector('h1');
+    await until(async () => (await sold(page)).length > 0);
+    const bought = await sold(page);
+    check(bought.length === 1 && bought[0].item === 'golden-arrow-2' && bought[0].value === 1506.4, 'the thank-you counts the sale as the size bought (item golden-arrow-2), at the engine\'s paid amount');
+    leaks(rec, await dataLayer(page), 'the sizes');
+    await ctx.close();
+  }
+
+  console.log('/gift in its sizes, the switch on: a size at the season\'s cap');
+  {
+    const list = [SIZE_1, SIZE_2, Object.assign({}, SIZE_3, { sold_out: true, sentence: FEWER })];
+    const { ctx, page, rec } = await open('gift-sizes-cap', { sizesOn: true, sizes: ['golden-arrow-1', 'golden-arrow-2'], sizesList: list });
+    await page.goto(BASE + '/gift');
+    await page.waitForSelector('#ga-buy .ga-sizes', { timeout: 10000 });
+    check(rec.healthSaid.gift_sales === false && rec.healthSaid.gift_sizes.join() === 'golden-arrow-1,golden-arrow-2', 'the engine\'s own pair at the 3-night\'s cap: health says gift_sales false and names the two shorter sizes (the Critic, 2026-11-08)');
+    check(rec.sizesReads === 1 && !(await page.$('#ga-buy .ga-panel')), 'and the page still reads the sizes and offers the choice, not "can\'t be bought online just yet"');
+    const c3 = await page.evaluate(() => { const l = document.querySelector('label[for="ga-size-golden-arrow"]'); const i = l.querySelector('input'); return { disabled: i.disabled, described: i.getAttribute('aria-describedby'), out: l.querySelector('.ga-size__out').textContent, outId: l.querySelector('.ga-size__out').id, price: !!l.querySelector('.ga-size__price'), cls: l.className }; });
+    check(c3.disabled && c3.out === FEWER && !c3.price && /ga-size--out/.test(c3.cls), 'the 3-night at the cap: the engine\'s sentence ("A shorter one is still open"), no price, no tap');
+    check(c3.described === 'ga-size-golden-arrow-terms ga-size-golden-arrow-out' && c3.outId === 'ga-size-golden-arrow-out', 'the sentence is named to a screen reader with the terms');
+    await press(page, 'label[for="ga-size-golden-arrow"]');
+    check(!(await page.evaluate(() => document.querySelector('#ga-size-golden-arrow').checked)), 'a tap on it chooses nothing');
+    check(await page.evaluate(() => document.querySelectorAll('.ga-size input:not([disabled])').length) === 2, 'the two shorter cards stay buyable');
+    await page.locator('#ga-buy').scrollIntoViewIfNeeded();
+    await shot(page, 'gift-sizes-cap.png', false);
+    await ctx.close();
+    // health names fewer sizes than the list: a size health does not name is not buyable, and with no sentence it is not shown
+    const two = await open('gift-sizes-unnamed', { sizesOn: true, sizes: ['golden-arrow'], sizesList: SIZES_ALL });
+    await two.page.goto(BASE + '/gift');
+    await two.page.waitForSelector('#ga-buy form', { timeout: 10000 });
+    check(!(await two.page.$('.ga-sizes')), 'health names the 3-night alone: the other two are not shown, the form as today');
+    await two.ctx.close();
+    // the 3-night at its cap and the sizes read failing: the page as it was, the call-or-text panel
+    const three = await open('gift-sizes-cap-noread', { sizesOn: true, sizes: ['golden-arrow-1', 'golden-arrow-2'], sizesList: list, sizesRoute: 'down' });
+    await three.page.goto(BASE + '/gift');
+    await three.page.waitForSelector('#ga-buy .ga-panel', { timeout: 10000 });
+    check(await text(three.page, '#ga-buy .ga-panel__lead') === PANEL.off && !(await three.page.$('#ga-buy form')), 'the 3-night at the cap and the sizes unreachable: the page as it was, call or text Mick, no form');
+    await three.ctx.close();
+    // the sales door off: health says gift_sales false and names nothing; closed, the sizes never asked for
+    const four = await open('gift-sizes-door-off', { sizesOn: true, sales: 'off', sizesList: SIZES_ALL });
+    await four.page.goto(BASE + '/gift');
+    await four.page.waitForSelector('#ga-buy .ga-panel', { timeout: 10000 });
+    await settle();
+    check(await text(four.page, '#ga-buy .ga-panel__lead') === PANEL.off && !four.rec.sizesReads, 'the sales door off: closed as today, the sizes never asked for');
+    await four.ctx.close();
+    // a size the page has no front for yet: its words take the card's width
+    const five = await open('gift-sizes-noart', { sizesOn: true, sizes: ['golden-arrow', 'golden-arrow-9'], sizesList: [SIZE_3, Object.assign({}, SIZE_2, { product: 'golden-arrow-9', nights: 9, subtitle: 'A made-up size' })] });
+    await five.page.goto(BASE + '/gift');
+    await five.page.waitForSelector('#ga-buy .ga-sizes', { timeout: 10000 });
+    const noart = await five.page.evaluate(() => { const l = document.querySelector('label[for="ga-size-golden-arrow-9"]'); const t = l.querySelector('.ga-size__text').getBoundingClientRect(); return { cls: l.className, img: !!l.querySelector('img'), textLeft: t.left - l.getBoundingClientRect().left, textWidth: t.width, cardWidth: l.getBoundingClientRect().width }; });
+    check(!noart.img && /ga-size--noart/.test(noart.cls) && noart.textLeft < 30 && noart.textWidth > noart.cardWidth * 0.8, 'a size with no front yet: no picture, its words across the card (' + Math.round(noart.textWidth) + ' of ' + Math.round(noart.cardWidth) + ' px)');
+    check(await overflow(five.page) <= 0, 'no sideways scroll at 390');
+    await five.ctx.close();
+  }
+
+  console.log('/gift in its sizes, the switch on: the sizes read fails');
+  for (const [what, engine] of [['answers 404 (the route not there)', { sizesRoute: 'off' }], ['is unreachable', { sizesRoute: 'down' }],
+    ['answers something that is not the shape', { sizesAnswer: { nope: 1 } }], ['lists a size with no price', { sizesList: [Object.assign({}, SIZE_2, { price_cents: null })] }]]) {
+    const { ctx, page, rec } = await open('gift-sizes-fail', Object.assign({ sizesOn: true, sizes: ['golden-arrow', 'golden-arrow-2'] }, engine));
+    await page.goto(BASE + '/gift');
+    await page.waitForSelector('#ga-buy form', { timeout: 10000 });
+    check(!(await page.$('.ga-sizes')) && !(await page.$('.ga-chosen')) && rec.sales.length === 0, 'the sizes read ' + what + ': the page as it was, the 3-night form');
     await ctx.close();
   }
 
