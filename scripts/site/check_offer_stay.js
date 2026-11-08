@@ -186,7 +186,8 @@ async function main() {
     // the offer holds the arrival: a later tap lengthens the stay (the Critic, 2026-11-08)
     await tap(page, day(SAT1 + 3)); await waitTotal(page);
     s = await state(page);
-    check(s.edges.join(',') === day(SAT1) + ',' + day(SAT1 + 3), 'a later tap makes it Saturday to Tuesday, not a new arrival');
+    // the link holds both dates whatever month the phone is showing (a turned page drops the other month's grid)
+    check(s.url === '?checkIn=' + day(SAT1) + '&checkOut=' + day(SAT1 + 3), 'a later tap makes it Saturday to Tuesday, not a new arrival: ' + s.url);
     check(/\$/.test(s.total) && s.note === '', 'priced, with no note');
 
     await page.click('.gh-clear'); await page.waitForTimeout(300);
@@ -267,6 +268,42 @@ async function main() {
     check(s.edges.length === 2 && s.edges[0] !== W && /^No stay works around .*: the nights beside it are taken\. The nearest that does is .*; the price is below\. Tap a later day to stay longer\.$/.test(s.note), 'a walled-in Saturday offers the nearest stay that works: ' + JSON.stringify(s.note));
     check(/\$/.test(s.total), 'with its price: ' + s.total);
     await ctxN.close();
+  }
+
+  // ---- the month link (item 3): /book?month=YYYY-MM opens that month; dates in the link still win
+  console.log('the month link');
+  {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    await ctx.route('**/*', async (route) => {
+      const req = route.request(); const u = new URL(req.url());
+      if (u.origin === base) return route.continue();
+      if (u.hostname === 'book.loxleyforest.com') {
+        const json = (o) => route.fulfill({ status: 200, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify(o) });
+        if (u.pathname === '/v1/availability') return json(nights());
+        if (u.pathname === '/v1/quote') return json(quote(u.searchParams.get('check_in'), u.searchParams.get('check_out')));
+        if (u.pathname === '/v1/funnel') return route.fulfill({ status: 204, body: '' });
+        return route.fulfill({ status: 404, headers: { 'Access-Control-Allow-Origin': '*' }, body: '{}' });
+      }
+      return route.abort();
+    });
+    const page = await ctx.newPage();
+    const shown = async () => page.evaluate(() => document.querySelector('.gh-month__name').textContent);
+    const label = (ym) => new Date(ym + '-15T12:00:00').toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    const plus = (n) => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() + n); return d.toISOString().slice(0, 7); };
+    const open = async (q) => { await page.goto(base + '/book' + q, { waitUntil: 'load' }); await page.waitForSelector('.gh-calendar .gh-day', { timeout: 15000 }); await page.waitForTimeout(200); };
+    await open('?month=' + plus(2));
+    check((await shown()) === label(plus(2)), '?month=' + plus(2) + ' opens ' + label(plus(2)));
+    await open('?month=2026-13');
+    check((await shown()) === label(plus(0)), 'a month that is not one opens the current month');
+    await open('?month=' + plus(30));
+    check((await shown()) === label(plus(12)), 'a month past the calendar\'s last opens the last: ' + (await shown()));
+    await open('?month=' + plus(4) + '&checkIn=' + day(SAT1) + '&checkOut=' + day(SAT1 + 2));
+    check((await shown()) === label(day(SAT1).slice(0, 7)), 'dates in the link win over the month');
+    await open('?month=' + plus(1));
+    const d1 = await page.evaluate(() => { const b = [...document.querySelectorAll('.gh-day:not(:disabled)')].find(b => b.offsetParent !== null); return b && b.getAttribute('data-day'); });
+    await page.click(`.gh-day[data-day="${d1}"]`); await page.waitForTimeout(300);
+    check(!/month=/.test(await page.evaluate(() => location.search)), 'once a date is tapped the link drops the month and carries the date');
+    await ctx.close();
   }
 
   await browser.close();

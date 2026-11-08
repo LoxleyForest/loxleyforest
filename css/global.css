@@ -1532,6 +1532,9 @@ html.lenis, html.lenis body { height: auto; }
     transition: opacity 0.3s var(--ease-natural), transform 0.3s var(--ease-natural);
   }
   .book-fab svg { width: 13px; height: 16px; flex: none; }
+  /* On the elopement page the button points at the inquiry form and steps aside while the form is on screen (js/global.js INQUIRE_FAB). */
+  .book-fab { transition: opacity 0.25s ease, transform 0.25s ease; }
+  .book-fab.is-away { opacity: 0; transform: translateY(10px); pointer-events: none; }
   .book-fab:focus-visible { outline: 2px solid var(--linen); outline-offset: 3px; }
   .book-fab.is-hidden { opacity: 0; transform: translateY(16px); pointer-events: none; }
 }

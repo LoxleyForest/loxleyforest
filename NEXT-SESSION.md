@@ -30,6 +30,60 @@ The Janitor (chief docs/v2/janitor.md) runs here weekly: this file keeps this bl
 
 ---
 
+# IN FLIGHT · 2026-11-08 · The booking funnel's five fixes (the Chief's route from the ads overnight sheet)
+
+The route (chief docs/briefs/2026-11-08-ads-overnight/sheet.md, "For the website seat"; the memo):
+since Oct 22 Google Ads brought 1,631 visits, 232 picked dates, 213 got a price, 16 started
+checkout, 2 booked; 45 quotes were refused on the minimum stay, the largest refusal; 93% of ad clicks
+are phones. Five fixes, in the Chief's order, nothing live without its word; estimates sent first.
+
+**1. Offer the stay that works (shadow, `var OFFER_STAY = false;` in js/gatehouse.js).** With the
+switch on: a tap on a night whose minimum is two or more selects the shortest valid stay that
+includes it (the day itself as arrival first, then earlier days when the nights after are taken),
+says so in the calendar's note, and the price card shows its total; the offer keeps its arrival, so
+a later tap lengthens the stay instead of starting over (the Critic's weakest claim: without that no
+tap could make a weekend stay longer than its minimum); a check-out tapped under the minimum extends
+the stay instead of refusing; a night that can make no stay offers the nearest that can; each
+arrival night with a minimum shows "2+" or "3+" (10 px) in its corner, "2 nights at least" to a
+screen reader. The engine's rules (min_stay, max_stay, gap, no_arrival) do not change; no engine
+change needed. A new funnel step stay_offered with reason direct, shifted or nearest (the Forge told;
+refused as unknown until it adds it, silently). THE WORDS, for the Chief and then Mick's ear (the
+dates in the calendar's own shapes): "Arriving Sat, Nov 28 takes 2 nights. Here's Sat, Nov 28 to
+Mon, Nov 30, 2026; the price is below. Tap a later day to stay longer." / "Arriving Fri, Dec 11 takes
+2 nights. The nights after it are taken, so here's Thu, Dec 10 to Sat, Dec 12, 2026 instead; the
+price is below. Tap a later day to stay longer." / "No stay works around Sat, Dec 19: the nights
+beside it are taken. The nearest that does is Thu, Dec 17 to Fri, Dec 18, 2026; the price is below.
+Tap a later day to stay longer." The Critic's verdict: the switch stays off until Mick hears the
+words, and "nearest" (it moves a guest to other dates from one tap) needs his yes on whether it ships
+at all; it can be cut to the first two cases with one line. Proven: scripts/site/check_offer_stay.js,
+31 checks in both states (shipped: the old refusal and its quote_refused step; offered: every rule
+above, the words, the step reasons); check_checkout (124) with the switch off.
+
+**2. /book on a phone, the calendar first.** PageSpeed Insights' API refused us on its shared daily
+quota (retry Nov 9). Measured live on a throttled phone (1.6 Mbps, 150 ms RTT, 4x CPU): /book first
+paint 2.1 to 2.2 s, largest paint 3.0 to 3.7 s, the calendar live at 2.9 to 4.0 s, load 4.0 to 4.5 s;
+the scripts took 1.3 s to arrive and the two API calls (availability, agreement) started only at 1.7
+to 1.9 s. /elopements: first paint 1.6 to 1.8 s, largest paint 3.2 to 3.4 s, load 8.8 to 9.2 s (the
+reviews and photos below the fold). THE FIRST CUT, cleared by the Chief to go live once the Critic
+read it and the checks were green: build_v2.early_script() puts a few lines in the head of the four
+pages that mount the calendar (/book, /, /treehouses, /experiences; never the gift, booked, manage
+or offer pages), right after the preconnect, starting the availability fetch (and on /book the
+agreement) with the exact URL gatehouse.js builds; gatehouse.api() takes a matching GET once and
+falls back to a fresh fetch if the early one failed; the early fetch gives up at 8 s so a stalled
+engine still reaches the fallback form (proven: a 20 s stall shows the form at 23 s); a hold in the
+link skips the early availability call. The second cut (preconnects) was already in place; the third
+(the stylesheets) is dropped: the calendar now waits on gatehouse.js itself, not the stylesheets.
+LIVE, 6c7efaf, measured again the same way: the calendar live at 2.1 to 2.3 s (from 2.9 to 4.0), the
+availability and agreement calls starting at 0.5 s with the stylesheets (from 1.7 to 1.9 s) and done
+by 0.9 s, so the calendar waits only on js/gatehouse.js (84 KB raw, about 1 s to arrive on that
+link) and its boot. The next lever, not tonight: a lighter calendar script, the checkout and payment
+code split out of the calendar's path.
+
+**3. The month link** /book?month=2026-12, **4. the sticky inquire button on /elopements**, **5.
+/book's search words (the Writer, Mick's ear):** not started.
+
+---
+
 # DONE · 2026-11-07 · The home page's phone weight, for the reel's burst (the Chief's bandwidth route)
 
 Why: Netlify bandwidth costs credits (about 150 GB a month on the plan; at zero the site pauses;
