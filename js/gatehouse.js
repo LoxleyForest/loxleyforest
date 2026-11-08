@@ -35,6 +35,17 @@
   var CHECK_IN_TIME = '3:00 PM';
   var CHECK_OUT_TIME = '11:00 AM';
   var MONTHS_AHEAD = 12;
+  // OFFER THE STAY THAT WORKS (the Chief's route of 2026-11-08, item 1; 45 quotes refused on the
+  // minimum stay since Oct 22, the largest refusal). false: the calendar refuses a stay under a
+  // night's minimum, as before. true: a tap on a night with a minimum of two or more selects the
+  // shortest valid stay that includes it (the day itself first, then earlier when the nights after
+  // it are taken), says so, and shows its price; a tap on a check-out under the minimum extends
+  // the stay instead of refusing; a night that can make no stay offers the nearest that can; and
+  // each arrival night shows its minimum before the tap. The minimum rules themselves are the
+  // engine's and do not change here. scripts/site/check_offer_stay.js proves both states.
+  var OFFER_STAY = false;
+  var SUGGEST_MAX = 4;     // the longest stay the calendar offers on its own
+  var NEAREST_DAYS = 21;   // how far from a tapped night it looks for a stay that works
   var OFFLINE = "We couldn't reach our booking system just now. Nothing was charged. Please try again in a moment, or call or text " + PHONE + '.';
 
   // ---------------------------------------------------------------- helpers
@@ -255,6 +266,47 @@
       return '';
     };
 
+    // ---- offer the stay that works (OFFER_STAY)
+    // Can a guest arrive on S and stay len nights? The engine's own rules, through stayOk.
+    function fits(S, len) {
+      var n = c.nights[S];
+      if (!n || n.no_arrival || S < today()) return false;
+      return c.stayOk(S, addDays(S, len)) === '';
+    }
+    // The shortest valid stay that includes the night `day`: lengths from one up, the day itself
+    // as the arrival first, then earlier days (a taken Sunday moves a Saturday to Friday).
+    c.suggest = function (day) {
+      for (var len = 1; len <= SUGGEST_MAX; len++) {
+        for (var back = 0; back < len; back++) {
+          var S = addDays(day, -back);
+          if (fits(S, len)) return { ci: S, co: addDays(S, len), shifted: back > 0 };
+        }
+      }
+      return null;
+    };
+    // For a night that can make no stay: the nearest night, by days away, that starts one.
+    c.nearest = function (day) {
+      for (var dist = 1; dist <= NEAREST_DAYS; dist++) {
+        var cands = [addDays(day, dist), addDays(day, -dist)];
+        for (var i = 0; i < cands.length; i++) {
+          var s = c.nights[cands[i]] ? c.suggest(cands[i]) : null;
+          if (s && !s.shifted) return s;
+        }
+      }
+      return null;
+    };
+    // The words. A minimum is the arrival night's; the price shows in the card below the calendar.
+    function offered(day, s) {
+      var min = (c.nights[s.ci] && c.nights[s.ci].min_stay) || daysBetween(s.ci, s.co);
+      var head = 'Arriving ' + short(day) + ' takes ' + nightsWord(min) + '.';
+      if (s.shifted) return head + ' The nights after it are taken, so here\'s ' + span(s.ci, s.co) + ' instead; the price is below.';
+      return head + ' Here\'s ' + span(s.ci, s.co) + '; the price is below.';
+    }
+    function nearestWords(day, s) {
+      return 'No stay works around ' + short(day) + ': the nights beside it are taken. The nearest that does is ' +
+        span(s.ci, s.co) + '; the price is below.';
+    }
+
     c.pick = function (day) {
       if (!c.checkIn || c.checkOut || day <= c.checkIn) {
         if (!c.nights[day]) return;
@@ -264,12 +316,26 @@
           if (opts.onRefuse) opts.onRefuse(c.note, day);
           opts.onChange(c); return;
         }
+        var night = c.nights[day];
+        if (OFFER_STAY && night.min_stay > 1 && !(night.gap && night.min_stay <= 2)) {
+          var s = c.suggest(day);
+          if (s) { c.checkIn = s.ci; c.checkOut = s.co; c.note = offered(day, s); opts.onChange(c); return; }
+          var near = c.nearest(day);
+          if (near) { c.checkIn = near.ci; c.checkOut = near.co; c.note = nearestWords(day, near); opts.onChange(c); return; }
+        }
         c.checkIn = day; c.checkOut = null;
         // Inside the engine's lead time, by request (loxley-rescue GATEHOUSE-SPEC 20): the quote card says how.
         c.note = 'Arriving ' + short(day) + (c.nights[day].request ? ', by request' : '') + '. Now choose your check-out day.';
       } else {
         var why = c.stayOk(c.checkIn, day);
-        if (why) { c.note = why; if (opts.onRefuse) opts.onRefuse(why, c.checkIn); opts.onChange(c); return; }
+        if (why) {
+          // Under the minimum: the shortest stay from that arrival, not a refusal.
+          if (OFFER_STAY && /at least/.test(why)) {
+            var min = c.nights[c.checkIn].min_stay;
+            if (fits(c.checkIn, min)) { c.checkOut = addDays(c.checkIn, min); c.note = offered(c.checkIn, { ci: c.checkIn, co: c.checkOut, shifted: false }); opts.onChange(c); return; }
+          }
+          c.note = why; if (opts.onRefuse) opts.onRefuse(why, c.checkIn); opts.onChange(c); return;
+        }
         c.checkOut = day; c.note = '';
       }
       opts.onChange(c);
@@ -298,12 +364,16 @@
         var priced = night && night.rate_cents && day >= t;
         var cls = 'gh-day' + (night ? '' : ' gh-day--taken') + (night && night.own ? ' gh-day--own' : '') + (inRange ? ' gh-day--range' : '') +
           (isEdge ? ' gh-day--edge' : '') + (endable ? ' gh-day--endable' : '');
-        var sr = long(day) + (priced ? ', ' + money(night.rate_cents) + ' a night' : night && night.own ? ', one of your nights' : endable ? ', check-out' : ', not available');
+        // The minimum on an arrival night, before the tap (OFFER_STAY): "2+" in the corner.
+        var minimum = OFFER_STAY && priced && night.min_stay > 1 && !night.gap && !night.no_arrival ? night.min_stay : 0;
+        var sr = long(day) + (priced ? ', ' + money(night.rate_cents) + ' a night' : night && night.own ? ', one of your nights' : endable ? ', check-out' : ', not available')
+          + (minimum ? ', ' + nightsWord(minimum) + ' at least' : '');
         g.appendChild(el('button', {
           type: 'button', 'class': cls, 'data-day': day, 'aria-pressed': isEdge ? 'true' : 'false', disabled: usable ? null : 'disabled',
           onclick: (function (x) { return function () { c.pick(x); }; })(day)
         }, [el('span', { 'class': 'gh-num', text: String(d) }),
             el('span', { 'class': 'gh-rate', text: priced ? dollars(night.rate_cents) : '' }),
+            minimum ? el('span', { 'class': 'gh-min', 'aria-hidden': 'true', text: minimum + '+' }) : null,
             el('span', { 'class': 'gh-sr', text: ' ' + sr })]));
       }
       return el('div', { 'class': 'gh-month' }, [el('h3', { 'class': 'gh-month__name', text: label }), g]);
