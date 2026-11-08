@@ -908,7 +908,9 @@
     var n = Number(c.nights) || 0;
     var say = [n && q.quote.nights > n ? gw('book_covers_some').replace('{n}', COUNT[n] || String(n)) : gw('book_covers')];
     if (c.includes) say.push(gw('book_includes').replace('{x}', String(c.includes).charAt(0).toUpperCase() + String(c.includes).slice(1)));
-    if (c.after_window) say.push(gw('book_after_window'));
+    // Past the card's twelve months: the engine's own sentence names the card's last night
+    // (gift_card.after_window_line, 2026-10-27); the site's dateless words only if it sends none.
+    if (c.after_window) say.push(c.after_window_line || gw('book_after_window'));
     if (!leftToPay(q)) say.push(gw('book_nothing_left'));
     return el('p', { 'class': 'gh-credit gh-gift', role: 'status', text: say.join(' ') });
   }
