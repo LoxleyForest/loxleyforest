@@ -159,7 +159,34 @@ WORDS = {
     'entered_lead': 'We have your entry. One counts per email address.',
     'entered_1': ('We draw on Monday, December 14. If it\'s you, you\'ll hear from an @loxleyforest.com address, '
                   'and from nowhere else. Until then, there\'s nothing to do.'),
+    # The reel's door (the Marketer's teardown and the Critic's site-audit sheet, 2026-11-08, the Chief's
+    # route): the bridge they just watched, and three doors on, on /giveaway and on /giveaway-entered.
+    # The links carry ?src=giveaway-site, as the entered page's open-nights link does. Behind the
+    # gate with the rest: these words change the hash, so they reach Mick's ear with the others.
+    'doors_h': 'While you’re here',
+    'door_stay': 'Stay',
+    'door_stay_p': 'The open nights, and what each costs.',
+    'door_elope': 'Elope',
+    'door_elope_p': 'Your vows on the bridge, or by the fire.',
+    'door_give': 'Give a stay',
+    'door_give_p': 'The Golden Arrow: nights in the trees, as a gift.',
 }
+# The bridge, as the reel shows it, over the rules and on the entered page (the one photograph).
+BRIDGE_PHOTO = ('aerial-bridge', 'From above: the hundred-foot rope bridge through the canopy to the treehouse')
+DOORS = (('/book?src=giveaway-site', 'door_stay', 'door_stay_p'),
+         ('/elopements?src=giveaway-site', 'door_elope', 'door_elope_p'),
+         ('/gift?src=giveaway-site', 'door_give', 'door_give_p'))
+
+
+def doors_html():
+    e = lambda k: escape(WORDS[k], quote=False)
+    items = ''.join(f'\n        <a class="gw-door" href="{href}"><strong>{e(h)}</strong><span>{e(p)}</span></a>' for href, h, p in DOORS)
+    return f'''
+    <nav class="gw-doors" aria-labelledby="gw-doors-h">
+      <p class="lf-eyebrow" id="gw-doors-h">{e('doors_h')}</p>
+      <div class="gw-doors__row">{items}
+      </div>
+    </nav>'''
 # The SHA-256 of WORDS (words_sha256) once Mick has approved every word. None: not yet.
 APPROVED_SHA256 = None
 
@@ -266,11 +293,12 @@ def page_giveaway():
               f'\n      <p class="gw-result">{e("result", result=RESULT)}</p>' if RESULT else '')
     closed_soon = '' if open_now else f'\n        <p class="gw-closed" id="gw-soon">{e("closed_soon")}</p>'
     body = f'''
-    <section class="lf-sec lf-dark lf-legal-top" aria-labelledby="gw-h">
+    <section class="lf-sec lf-dark lf-legal-top gw-top" aria-labelledby="gw-h">
       <div class="lf-wrap">
         <p class="lf-eyebrow">{e('eyebrow')}</p>
         <h1 class="lf-h1" id="gw-h">{e('h1')}</h1>
         <p class="lf-lead">{e('lead')}</p>
+        <figure class="gw-bridge">{B.pic(BRIDGE_PHOTO[0], BRIDGE_PHOTO[1], '(min-width: 900px) 60vw, 100vw', eager=True)}</figure>
       </div>
     </section>
 
@@ -301,6 +329,10 @@ def page_giveaway():
         <p class="gw-closed" id="gw-after" hidden>{e('closed_after')}</p>{form_html(open_now)}
       </div>
     </section>
+    <section class="lf-sec lf-parch" aria-label="{e('doors_h')}">
+      <div class="lf-wrap">{doors_html()}
+      </div>
+    </section>
     {SCRIPT}
 '''
     return 'giveaway.html', head, gtm, body, '/book', False
@@ -311,17 +343,36 @@ def page_giveaway_entered():
     head, gtm = sys.modules['lfpage_gift'].head_for('Entered | Loxley Forest', WORDS['entered_lead'], ENTERED_URL, noindex=True)
     e = lambda k: escape(WORDS[k], quote=False)
     body = c.note(e('entered_eyebrow'), e('entered_h'), e('entered_lead'), [e('entered_1')],
-                  B.pic('eq3a0907', 'The treehouse at dusk, its canvas glowing, the rope bridge strung with lights', '(min-width: 900px) 50vw, 100vw', eager=True))
+                  B.pic(BRIDGE_PHOTO[0], BRIDGE_PHOTO[1], '(min-width: 900px) 50vw, 100vw', eager=True))
     # The Marketer's move (the table of 2026-11-07): the open nights, in place of the treehouse link.
     old = '<a href="/treehouses" class="lf-link">See the treehouse</a>'
     assert body.count(old) == 1, 'the thank-you note lost its second link; the entered page replaces it'
     body = body.replace(old, f'<a href="/book?src=giveaway-site" class="lf-link">{e("entered_link")}</a>')
+    # and the three doors on (2026-11-08), under the note
+    body += f'''
+    <section class="lf-sec lf-parch" aria-label="{e('doors_h')}">
+      <div class="lf-wrap">{doors_html()}
+      </div>
+    </section>
+'''
     return 'giveaway-entered.html', head, gtm, body, '/book', False
 
 
 PAGES = [page_giveaway, page_giveaway_entered]
 
 CSS = '''
+/* the reel's door (2026-11-08): the bridge over the rules, and three doors on */
+.gw-top .lf-wrap { max-width: 60rem; }
+.gw-bridge { margin: clamp(28px, 5vw, 44px) auto 0; max-width: 56rem; }
+.gw-bridge img { display: block; width: 100%; height: auto; border-radius: 4px; box-shadow: 0 18px 50px rgba(10, 20, 10, 0.35); }
+.gw-doors .lf-eyebrow { text-align: center; }
+.gw-doors__row { display: grid; gap: 14px; margin-top: 18px; }
+@media (min-width: 720px) { .gw-doors__row { grid-template-columns: repeat(3, 1fr); } }
+.gw-door { display: grid; gap: 6px; padding: 20px 22px; min-height: 48px; background: var(--linen); border: 1px solid rgba(44, 34, 25, 0.12); text-decoration: none; color: var(--bark); }
+.gw-door:hover, .gw-door:focus-visible { border-color: var(--forest-deep); outline: none; }
+.gw-door:focus-visible { outline: 2px solid var(--forest-deep); outline-offset: 3px; }
+.gw-door strong { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 1.5rem; line-height: 1.15; color: var(--forest-deep); }
+.gw-door span { font-size: 1rem; line-height: 1.45; color: var(--stone); }
 .gw .lf-legal__text .gw-result { margin-top: 1em; font-family: 'Montserrat', sans-serif; font-size: 0.95rem; letter-spacing: 0.02em; }
 .gw-entry { max-width: 40rem; margin: clamp(40px, 6vw, 64px) auto 0; }
 .gw-fields { border: 0; padding: 0; margin: 0; display: grid; gap: 22px; min-width: 0; }

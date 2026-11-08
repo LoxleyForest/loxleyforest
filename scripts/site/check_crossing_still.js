@@ -11,9 +11,11 @@
    in each state in turn.
 
    It proves: off, a phone walks the bridge (the section pinned over several screens, the words
-   fading in along the way, "Skip to your dates"); on, a phone gets the still: one screen, the
-   engraving drawn once, every line of the words shown, the calendar the next thing on the page, no
-   pin; a desk stays animated either way; reduced motion is the still either way; no script error. */
+   fading in along the way, "Skip to your dates"); on, a phone gets the poster: one screen, the
+   picture already drawn for no-script browsers on the stage, no scene built and no canvas shown,
+   every line of the words shown, no skip link, the calendar the next thing on the page, no pin; a
+   desk stays animated either way; reduced motion is the still engraving either way; no script
+   error. */
 'use strict';
 const http = require('http');
 const fs = require('fs');
@@ -85,9 +87,11 @@ async function main() {
       const words = [...s.querySelectorAll('.lf-walk__line')].map((w) => +getComputedStyle(w).opacity);
       const next = s.nextElementSibling;
       const cv = s.querySelector('canvas'), data = (() => { try { const c = cv.getContext('2d'); const px = c.getImageData(0, 0, cv.width, Math.min(cv.height, 40)).data; let lit = 0; for (let i = 0; i < px.length; i += 4) if (px[i] + px[i + 1] + px[i + 2] > 120) lit++; return lit; } catch (e) { return -1; } })();
-      return { ready: s.classList.contains('is-ready'), still: s.classList.contains('is-still'), screens: +(r.height / innerHeight).toFixed(2),
-        sticky: getComputedStyle(s.querySelector('.lf-walk__stage')).position, words: words, skip: (s.querySelector('.lf-walk__skip') || {}).textContent,
-        nextId: next && (next.id || next.className), litTop: data, marks: window.lfCrossing ? window.lfCrossing.stats().marks : -1 };
+      const stage = s.querySelector('.lf-walk__stage'), skip = s.querySelector('.lf-walk__skip');
+      return { ready: s.classList.contains('is-ready'), still: s.classList.contains('is-still'), poster: s.classList.contains('is-poster'), screens: +(r.height / innerHeight).toFixed(2),
+        sticky: getComputedStyle(stage).position, words: words, skip: skip ? skip.textContent : '', skipShown: !!skip && getComputedStyle(skip).display !== 'none',
+        bg: getComputedStyle(stage).backgroundImage, canvasShown: getComputedStyle(cv).display !== 'none',
+        nextId: next && (next.id || next.className), litTop: data, marks: window.lfCrossing ? window.lfCrossing.stats().marks : -1, api: !!window.lfCrossing };
     });
   }
 
@@ -99,11 +103,13 @@ async function main() {
       check(w.ready && !w.still && w.screens > 4 && w.sticky === 'sticky', 'a phone walks the bridge: pinned over ' + w.screens + ' screens, the stage sticky');
       check(w.words.some((o) => o < 0.5), 'the words wait for their place on the bridge (opacities ' + w.words.join(', ') + ')');
     } else {
-      check(w.ready && w.still && w.screens <= 1.05 && w.sticky !== 'sticky', 'a phone gets the still: one screen (' + w.screens + '), no pin');
+      check(w.ready && w.still && w.poster && w.screens <= 1.05 && w.sticky !== 'sticky', 'a phone gets the poster: one screen (' + w.screens + '), no pin');
+      check(/crossing-still-phone\.webp/.test(w.bg) && !w.canvasShown, 'the picture already drawn for no-script browsers on the stage, the canvas not shown');
+      check(!w.api && w.marks === -1, 'no scene built, no engraving drawn: the script stops at the poster');
       check(w.words.every((o) => o > 0.95), 'every line of the words shown at once');
-      check(w.marks > 0, 'the engraving drawn (' + w.marks + ' marks)');
+      check(!w.skipShown, 'no "Skip to your dates" on a one-screen picture');
     }
-    check(/Skip to your dates|Pick your nights/.test(w.skip || ''), '"' + (w.skip || '') + '" is there');
+    if (!on) check(/Skip to your dates|Pick your nights/.test(w.skip || ''), '"' + (w.skip || '') + '" is there');
     check(/book|gatehouse|lf-book/i.test(String(w.nextId)), 'the calendar is the next thing on the page (' + w.nextId + ')');
     check(p.errors.length === 0, 'no script errors' + (p.errors.length ? ': ' + p.errors.join('; ') : ''));
     await p.ctx.close();

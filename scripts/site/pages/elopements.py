@@ -66,8 +66,8 @@ def slug(name):
 SPACES = [
     ('eq3a0154', 'The rope bridge from the side, an oak trunk in the foreground', 'The Rope Bridge', 'The crossing',
      'One hundred feet of suspended pathway between two ancient white oaks. The bridge becomes the aisle. The canopy becomes the cathedral. There is no other wedding aisle like this in the Southeast.',
-     # "The aisle in every package" was false for Firelight, whose vows are at the Fire Circle (the audit and the Critic, 2026-11-08): scoped to the package whose vows are on the bridge.
-     'The aisle in The Crossing.'),
+     # "The aisle in every package" was false for Firelight, whose vows are at the Fire Circle (the audit and the Critic, 2026-11-08): cut to the claim that holds. Naming a package here is new words for Mick's ear.
+     'The aisle.'),
     ('img_1717', 'The stone fire pit on the forest floor, ringed with ferns', 'The Fire Circle', 'Fire as witness',
      'A boulder fire pit that looks like it emerged from the earth centuries ago, set at the four compass points. It echoes traditions that have existed for thousands of years.',
      'With every package.'),
@@ -176,6 +176,22 @@ FAQ = [
 ]
 
 
+# The cards' order (the Critic's site-audit sheet and the Marketer, 2026-11-08: high to low, Crossing,
+# Vow, Firelight, the Falls after as the card that takes no date yet; Mick placed Firelight second on
+# 2026-11-02, so this waits for his ear). False: Vow, Firelight, Crossing, as he placed them. One line.
+PACKAGE_ORDER_V2 = False
+ORDER_V2 = ('The Crossing', 'The Vow', FIRELIGHT_NAME)
+
+
+def ordered_packages():
+    """PACKAGES in the order the page shows them: as placed, or high to low behind the switch."""
+    if not PACKAGE_ORDER_V2:
+        return list(PACKAGES)
+    by_name = {p[0]: p for p in PACKAGES}
+    assert set(by_name) == set(ORDER_V2), 'ORDER_V2 must name every card once'
+    return [by_name[n] for n in ORDER_V2]
+
+
 def package(name, price, when, lead, items, close, links=None):
     # The Crossing keeps the dark card; no badge, no claim on it.
     featured = name == 'The Crossing'
@@ -191,7 +207,8 @@ def package(name, price, when, lead, items, close, links=None):
             + f' data-package="{slug(name)}">{words}</a>'
             for words, lst in links)
     else:
-        go_html = '<a href="#inquiry" class="lf-link lf-pkg__go">Inquire for your date</a>'
+        # every card's link carries its package into the form (the audit, 2026-11-08: only Firelight's did)
+        go_html = f'<a href="#inquiry" class="lf-link lf-pkg__go" data-package="{slug(name)}">Inquire for your date</a>'
     return f'''          <article class="lf-pkg{' lf-pkg--featured' if featured else ''} lf-rise">
             <h3 class="lf-h3 lf-pkg__name">{name}</h3>
             <p class="lf-pkg__price">{price} <span>plus tax</span></p>
@@ -229,7 +246,7 @@ def page_elopements():
         f'<figure class="lf-space lf-rise">{B.pic(img, alt, "(min-width: 900px) 33vw, 100vw")}<figcaption>'
         f'<span class="lf-chapter__n">{kicker}</span><h3 class="lf-h3">{title}</h3><p>{words}</p><p class="lf-space__note">{note}</p></figcaption></figure>'
         for img, alt, title, kicker, words, note in SPACES)
-    packages = ''.join(package(*p) for p in PACKAGES) + waterfall()
+    packages = ''.join(package(*p) for p in ordered_packages()) + waterfall()
     faq = ''.join(f'<details class="lf-faq__item"><summary>{q}</summary><p>{a}</p></details>' for q, a in FAQ)
     body = f'''
     <!-- ========== HERO: the aisle ========== -->
@@ -341,9 +358,7 @@ def page_elopements():
               <label for="el-package">Which package interests you?</label>
               <select id="el-package" name="package">
                 <option value="">Select...</option>
-                <option value="the-vow">The Vow</option>
-                <option value="{slug(FIRELIGHT_NAME)}">{FIRELIGHT_NAME}</option>
-                <option value="the-crossing">The Crossing</option>
+                {''.join(f'<option value="{slug(p[0])}">{p[0]}</option>' for p in ordered_packages())}
                 <option value="{slug(WATERFALL_NAME)}" data-list="{WATERFALL_LIST}">{WATERFALL_NAME}</option>
                 <option value="not-sure">Not sure yet, help me decide</option>
               </select>

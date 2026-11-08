@@ -56,7 +56,11 @@ price is below. Tap a later day to stay longer." / "No stay works around Sat, De
 beside it are taken. The nearest that does is Thu, Dec 17 to Fri, Dec 18, 2026; the price is below.
 Tap a later day to stay longer." The Critic's verdict: the switch stays off until Mick hears the
 words, and "nearest" (it moves a guest to other dates from one tap) needs his yes on whether it ships
-at all; it can be cut to the first two cases with one line. Proven: scripts/site/check_offer_stay.js,
+at all; it can be cut to the first two cases with one line. CUT 2026-11-08 (the Critic's site-audit
+sheet, the Chief's route): `var OFFER_NEAREST = false;` in js/gatehouse.js, the first two cases
+alone; a night that can make no stay now starts a stay there as it always did; the third case
+flips on Mick's own yes. No fixed minimum sentence is added above the calendar (false inside 7
+days, where a weekend sells one night; the calendar prints each night's real minimum). Proven: scripts/site/check_offer_stay.js,
 31 checks in both states (shipped: the old refusal and its quote_refused step; offered: every rule
 above, the words, the step reasons); check_checkout (124) with the switch off.
 
@@ -185,22 +189,54 @@ drawn; a desk: shown only once playing).
 
 **The floating button clear of the words (bug, shipped).** It sat over package text on /elopements
 and over the bridge's lines on the home page. js/global.js: a second observer whose root is the band
-at the foot of the screen where the button sits (its height plus 32 px); while any text block in main
-(p, li, dd, dt, h1 to h4, blockquote, figcaption, label, summary, td, th) runs through the band the
-button steps aside (is-hidden, as over the first screen or another Book button), and returns over a
-photograph or a gap; re-armed on resize; nothing on a desk. Proven in check_inquire_fab.js on
-/elopements and the home page, both states of INQUIRE_FAB.
+at the foot of the screen where the button sits (its height plus 32 px); while any words in main (p,
+li, dd, dt, h1 to h4, blockquote, figcaption, label, summary, td, th, and after the Critic's read a,
+span, b, button, so it never covers the links it stands for) run through the band the button steps
+aside (is-hidden, as over the first screen or another Book button), and returns over a photograph or
+a gap. The Critic's first read measured it blinking (29 flips across /elopements, gaps of 16 px) and
+unhiding for a frame on an address bar's resize; so now it hides at once and shows only after the
+way has been clear 250 ms, the observer is re-armed only when the width changes or the height moves
+more than 120 px, and the set of words under the band is rebuilt from the new observer's first
+report, never emptied first. Proven in check_inquire_fab.js on /elopements and the home page, both
+states of INQUIRE_FAB: a flick through the shortest gap never blinks it on, a long clear stretch
+shows it only after a moment, an address bar's resize over words never unhides it; the check prints
+the share of the scroll where the band is clear, for the Chief to judge whether a button that shows
+that little earns its place there.
 
 **Truth fixes (shipped on the Chief's word; cuts and one narrowing, no new words).** elopements.html's
 head no longer tells Google the place is an "EventVenue" (the agreement: "We are not a commercial or
 licensed wedding venue"; the head is kept from the file by the builder, so it was cut there). The
-rope bridge's tag "The aisle in every package." is now "The aisle in The Crossing." (false for
-Firelight, whose vows are at the Fire Circle; the Crossing is the one package whose vows are on the
-bridge). "Every guest is part of your private celebration: your closest people, sharing your night
+rope bridge's tag "The aisle in every package." is cut to "The aisle." (false for Firelight, whose
+vows are at the Fire Circle; the Critic struck "The aisle in The Crossing." as reading as the bridge
+itself under the card's eyebrow "The crossing", and naming a package there is new words for Mick's
+ear). "Every guest is part of your private celebration: your closest people, sharing your night
 in the canopy." cut from the elopement FAQ's guest answer and from the inquiry form's help line
 (four pages share it): it read as eight overnight in a treehouse that holds six. "The canopy
 provides natural protection." cut from the elopement FAQ and "and the canopy gives the deck natural
 protection" from /faq: no source.
+
+**OFFER_STAY, the first two cases (item 2):** `var OFFER_NEAREST = false;` in js/gatehouse.js (see the
+five-fixes block above); check_offer_stay.js 38, check_checkout 124.
+
+**The package order (item 3, shadow, `PACKAGE_ORDER_V2 = False` in scripts/site/pages/elopements.py,
+a build-time switch).** On: the cards read The Crossing, The Vow, Firelight, then The Falls as the
+dimmed card that takes no date ("From October 2027"); the form's options follow. Off: as Mick placed
+them 2026-11-02 (The Vow, Firelight, The Crossing). In both states, and shipped now since it changes
+no words: every card's "Inquire for your date" link carries its package into the form (only
+Firelight's did). No "From $2,500" lead is added (the Critic cut it). Proven:
+scripts/site/check_packages.py, both states, and the built page matching the shipped one. Flipping
+it: the one line, python3 scripts/site/build_v2.py, the checks, one commit, on Mick's yes (he placed
+Firelight second). The heading "Four tiers." stays as it is (words).
+
+**The review count line (item 4, shadow, `REVIEW_COUNT = False` in scripts/site/build_v2.py, a
+build-time switch).** On: under the 4.9 and its acorns, wherever the rating shows (the reviews
+section on /, /elopements and the landing pages; /book's quote card), "129 reviews. 126 of them five
+stars.", the numbers never typed: read at build from the review list's own summary line
+(loxley-rescue docs/reviews/all.md, "129 reviews in all: 126 five stars, 3 four stars."), so a build
+on the day it ships carries that day's counts, and the build stops if the switch is on and the list
+cannot be read. The 4.9 stays (Mick gave it 2026-10-21); the Marketer's "replaces the bare 4.9" is
+for his ear. Proven: check_reviews.py (the built line equals the list's counts, or no page carries
+one while the switch is off). Flipping it: the line, a rebuild the same day, the checks, one commit.
 
 **The bridge as a still on phones (shadow, `const PHONE_STILL = false;` in js/crossing.js).** Mick:
 "the animated bridge is too clunky"; the audit: pinned 5.6 screens, about 5 fps under a 4x CPU

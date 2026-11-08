@@ -24,14 +24,20 @@
   const countEl = sec.querySelector('[data-walk-count]');
   const markEl = sec.querySelector('[data-walk-mark]');
   const skipEl = sec.querySelector('.lf-walk__skip');
-  // On a phone the walk becomes the still (Mick, 2026-11-08: "the animated bridge is too clunky"; the
-  // audit measured it pinning 5.6 screens at about 5 fps under a 4x CPU slowdown, long tasks to 770 ms).
-  // PHONE_STILL false: as it was. true on the Chief's word: a phone gets the one engraving and its
-  // words, the calendar right after; a desk stays animated. scripts/site/check_crossing_still.js proves both.
+  // On a phone the walk becomes one picture (Mick, 2026-11-08: "the animated bridge is too clunky"; the
+  // audit measured it pinning 5.6 screens at about 5 fps under a 4x CPU slowdown, long tasks to 770 ms;
+  // the still engraving would still build the whole scene, a 0.9 s long task on a throttled phone, so
+  // the poster already drawn for no-script browsers, images/crossing/crossing-still-phone.webp, stands
+  // in its place: no scene, no canvas, the words shown, the calendar right after, one screen).
+  // PHONE_STILL false: as it was. true on the Chief's word. A desk stays animated either way.
+  // scripts/site/check_crossing_still.js proves both.
   const PHONE_STILL = false;
+  if (PHONE_STILL && window.matchMedia('(max-width: 767px)').matches && !sec.hasAttribute('data-steady')) {
+    sec.classList.add('is-still', 'is-poster', 'is-ready');
+    return;
+  }
   // the still engraving for reduced motion, and for browsers that cannot pin the stage
   const STILL = sec.hasAttribute('data-still') || window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
-    (PHONE_STILL && window.matchMedia('(max-width: 767px)').matches) ||
     !(window.CSS && CSS.supports('overflow-x', 'clip'));
   const STEADY = sec.hasAttribute('data-steady'); // full detail always: for rendering the still posters
 
