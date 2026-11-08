@@ -72,7 +72,12 @@ agreement) with the exact URL gatehouse.js builds; gatehouse.api() takes a match
 falls back to a fresh fetch if the early one failed; the early fetch gives up at 8 s so a stalled
 engine still reaches the fallback form (proven: a 20 s stall shows the form at 23 s); a hold in the
 link skips the early availability call. The second cut (preconnects) was already in place; the third
-(the stylesheets) waits on the measured number. Before and after on the live site, below once pushed.
+(the stylesheets) is dropped: the calendar now waits on gatehouse.js itself, not the stylesheets.
+LIVE, 6c7efaf, measured again the same way: the calendar live at 2.1 to 2.3 s (from 2.9 to 4.0), the
+availability and agreement calls starting at 0.5 s with the stylesheets (from 1.7 to 1.9 s) and done
+by 0.9 s, so the calendar waits only on js/gatehouse.js (84 KB raw, about 1 s to arrive on that
+link) and its boot. The next lever, not tonight: a lighter calendar script, the checkout and payment
+code split out of the calendar's path.
 
 **3. The month link** /book?month=2026-12, **4. the sticky inquire button on /elopements**, **5.
 /book's search words (the Writer, Mick's ear):** not started.
