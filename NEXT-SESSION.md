@@ -228,9 +228,14 @@ section on /, /elopements and the landing pages; /book's quote card), "129 revie
 stars.", the numbers never typed: read at build from the review list's own summary line
 (loxley-rescue docs/reviews/all.md, "129 reviews in all: 126 five stars, 3 four stars."), so a build
 on the day it ships carries that day's counts, and the build stops if the switch is on and the list
-cannot be read. The 4.9 stays (Mick gave it 2026-10-21); the Marketer's "replaces the bare 4.9" is
-for his ear. Proven: check_reviews.py (the built line equals the list's counts, or no page carries
-one while the switch is off). Flipping it: the line, a rebuild the same day, the checks, one commit.
+cannot be read. FOR MICK'S EAR, PLAINLY (the Critic): his ruling in the review list's own notes
+(docs/reviews/all.md, 2026-10-23) was "no count and no platform name, just 4.9 with acorns", so this
+line reverses that ruling, as item 7 reverses his Oct 19 one; and 126 five stars of 129 average 4.98,
+which rounds to 5.0, so the 4.9 beside the line will read wrong: his call whether the 4.9 stays, goes,
+or becomes 5.0 (the Marketer wanted the count line in the 4.9's place). Proven: check_reviews.py
+(the built line equals the list's counts, or no page carries one while the switch is off; and the
+list's typed summary line must agree with its own headings, 129 and 126 today). Flipping it: the
+line, a rebuild the same day, the checks, one commit.
 
 **/giveaway and /giveaway-entered, the reel's door (item 5, behind the giveaway's own gate).** One
 bridge photograph (aerial-bridge, as the reel shows it) over the rules and on the entered page in
@@ -243,8 +248,11 @@ so the words hash moved and they reach Mick's ear with the rest; the form stays 
 on the link; the page already keeps any ?src= for the entry. check_giveaway.py green.
 
 **"Give a Stay" (item 6, shadow, `GIVE_A_STAY = False` in scripts/site/build_v2.py, a build-time
-switch).** On: "Give a Stay" (/gift) is the second link of the header row and the menu on every page
-(the one way beside "Questions" stays); the home page carries a band after the reviews through
+switch).** On: "Give a Stay" (/gift) is the menu's second link on every page and /gift's one name
+there ("The Golden Arrow" leaves the menu; the footer keeps it). Not the header row: it keeps its six
+links, since a seventh pushes the Book button 36 px off a 1280 px screen (the Critic measured; if
+Mick wants it in the row, he names the link that leaves; scripts/site/check_header_fit.js lays the
+header out at 1280, 1300 and 1366 px in both states). The home page carries a band after the reviews through
 December 24 with the Marketer's line "They don't need another thing. Give them a night in the trees."
 and a Give a Stay button (built only until that day, Eastern, and the page drops it itself after it);
 /gift's "What it is" opens with "The Golden Arrow is our gift card: nights in the treehouse, given."

@@ -3,12 +3,14 @@
 
     python3 scripts/site/check_give_a_stay.py
 
-Proves: as shipped the switch is one line and false; off, the header row and the menu carry the six
-links as they were and no page carries "Give a Stay", the home band or the words "gift card"; on,
-"Give a Stay" is the second link of the header row and the menu, the home page carries the band
-after the reviews with the Marketer's line and a link to /gift, the band is left out of a build after
-December 24 and carries the script that drops it after that day, and /gift's "What it is" opens with
-the words "gift card". Nothing is written.
+Proves: as shipped the switch is one line and false; the header row keeps its six links in both
+states (a seventh pushed the Book button off a 1280 px screen, the Critic measured; check_header_fit.js
+lays it out); off, the menu carries the six, "Questions" and "The Golden Arrow", and no page carries
+"Give a Stay", the home band or the words "gift card"; on, "Give a Stay" is the menu's second link
+and /gift's one name there ("The Golden Arrow" leaves the menu, the footer keeps it), the home page
+carries the band after the reviews with the Marketer's line and a link to /gift, the band is left out
+of a build after December 24 and carries the script that drops it after that day, and /gift's "What
+it is" opens with the words "gift card". Nothing is written.
 """
 import importlib.util
 import os
@@ -33,16 +35,22 @@ def check(ok, what):
 import build_v2 as B  # noqa: E402
 
 src = open(os.path.join(HERE, 'build_v2.py'), encoding='utf-8').read()
-check(len(re.findall(r'^GIVE_A_STAY = (True|False)$', src, re.M)) == 1 and 'GIVE_A_STAY = False' in src,
-      'the switch is one line, GIVE_A_STAY False as shipped')
+shipped = re.findall(r'^GIVE_A_STAY = (True|False)$', src, re.M)
+check(len(shipped) == 1, 'the switch is one line; shipped GIVE_A_STAY = ' + (shipped[0] if shipped else '?'))
+SHIPPED_ON = shipped == ['True']
 
+LINK = re.compile(r'<a href="([^"]+)">([^<]+)</a>')
 for on in (False, True):
     B.GIVE_A_STAY = on
-    links = re.findall(r'<a href="([^"]+)">([^<]+)</a>', B.nav_links())
     head = B.header('/book')
+    row = LINK.findall(re.search(r'<nav class="lf-hdr__nav" aria-label="Main">(.*?)</nav>', head, re.S).group(1))
+    menu = LINK.findall(re.search(r'<nav aria-label="Menu">(.*?)</nav>', head, re.S).group(1))
+    state = 'on' if on else 'off'
+    check(row == list(B.NAV), state + ': the header row keeps its six links (' + ', '.join(t for _, t in row) + ')')
+    gift_in_menu = [t for h, t in menu if h == '/gift']
     if on:
-        check(links[1] == ('/gift', 'Give a Stay') and len(links) == len(B.NAV) + 1, 'on: "Give a Stay" is the second link (' + ', '.join(t for _, t in links) + ')')
-        check(head.count('<a href="/gift">Give a Stay</a>') == 2 and head.index('Give a Stay') < head.index('Experiences'), 'on: in the header row and the menu, second in each')
+        check(menu[1] == ('/gift', 'Give a Stay') and gift_in_menu == ['Give a Stay'] and menu[-1] == ('/faq', 'Questions'),
+              'on: the menu has "Give a Stay" second, /gift once, and ends with Questions (' + ', '.join(t for _, t in menu) + ')')
         band = B.give_band()
         check('id="give-a-stay"' in band and B.GIVE_BAND_LINE in band and 'href="/gift"' in band and 'data-until="2026-12-24"' in band and 's.remove()' in band,
               'on: the home band carries the Marketer\'s line, a link to /gift, its end date and the script that drops it after')
@@ -51,16 +59,23 @@ for on in (False, True):
         check(B.give_band() == '', 'on: a build after December 24 leaves the band out')
         B.TODAY = saved
     else:
-        check([t for _, t in links] == [t for _, t in B.NAV] and 'Give a Stay' not in head, 'off: the six links as they were, no "Give a Stay"')
+        check(menu == list(B.NAV) + [('/faq', 'Questions'), ('/gift', 'The Golden Arrow')] and 'Give a Stay' not in head,
+              'off: the menu as it was, "The Golden Arrow" beside Questions, no "Give a Stay"')
         check(B.give_band() == '', 'off: no home band')
 
-B.GIVE_A_STAY = False
+B.GIVE_A_STAY = SHIPPED_ON
 index = open(os.path.join(ROOT, 'index.html'), encoding='utf-8').read()
 gift = open(os.path.join(ROOT, 'gift.html'), encoding='utf-8').read()
 pages = [n for n in os.listdir(ROOT) if n.endswith('.html')]
-carrying = [n for n in pages if 'Give a Stay' in open(os.path.join(ROOT, n), encoding='utf-8').read()]
-check(not carrying and 'give-a-stay' not in index, 'as built (shipped): no page carries "Give a Stay" or the band' + (': ' + ', '.join(carrying) if carrying else ''))
-check('gift card' not in gift.lower().split('<script')[0] or 'ga-what__gift' not in gift, 'as built (shipped): /gift does not say "gift card" yet')
+navved = [n for n in pages if 'aria-label="Menu"' in open(os.path.join(ROOT, n), encoding='utf-8').read()]
+carrying = [n for n in navved if 'Give a Stay' in open(os.path.join(ROOT, n), encoding='utf-8').read()]
+if SHIPPED_ON:
+    check(len(carrying) == len(navved) and 'id="give-a-stay"' in index and B.GIVE_BAND_LINE in index,
+          'as built (shipped on): every page with a menu carries "Give a Stay" (%d of %d), the home page its band with the Marketer\'s line' % (len(carrying), len(navved)))
+    check('ga-what__gift' in gift and 'gift card' in gift, 'as built (shipped on): /gift says "gift card" where it explains the gift')
+else:
+    check(not carrying and 'give-a-stay' not in index, 'as built (shipped off): no page carries "Give a Stay" or the band' + (': ' + ', '.join(carrying) if carrying else ''))
+    check('ga-what__gift' not in gift, 'as built (shipped off): /gift does not say "gift card" yet')
 
 # /gift's line, as the page module writes it with the switch on (pages/gift.py reads B.GIVE_A_STAY)
 spec = importlib.util.spec_from_file_location('lfpage_gift_check', os.path.join(HERE, 'pages', 'gift.py'))

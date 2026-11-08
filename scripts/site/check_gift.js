@@ -116,11 +116,16 @@ const SOLD = 'The Golden Arrow is spoken for this season. Call or text Mick at 7
 // own words; sold_out and the engine's sentence for one at the season's cap (gifts.FEWER_NIGHTS
 // while a shorter size still fits). The shipped file has SIZES false; the "on" checks serve
 // js/gift.js with it true, and say so.
-const GIFT_JS = read('js/gift.js'), SIZES_SWITCH = 'var SIZES = false;', WORDS_SWITCH = 'var SIZE_WORDS = false;', PRICE_SWITCH = 'var PRICE = false;';
-// js/gift.js with its switches set as a run asks: SIZES (the gift page in its sizes), SIZE_WORDS (the
-// Writer's gift line and status for a card of one night or two, for Mick's ear) and PRICE (the engine's
-// price above the names, which reverses Mick's rule of 2026-10-19 and waits for his yes).
-const withSwitches = (sizes, words, price) => GIFT_JS.replace(SIZES_SWITCH, 'var SIZES = ' + !!sizes + ';').replace(WORDS_SWITCH, 'var SIZE_WORDS = ' + !!words + ';').replace(PRICE_SWITCH, 'var PRICE = ' + !!price + ';');
+const GIFT_JS = read('js/gift.js');
+// js/gift.js's three switches, each one line: SIZES (the gift page in its sizes), SIZE_WORDS (the Writer's
+// gift line and status for a card of one night or two) and PRICE (the engine's price above the names).
+// The check reads each one's shipped value and serves the script with any of them set as a run asks
+// (true or false; undefined keeps the shipped value), so every state is proven whatever is shipped.
+const shippedSwitch = (name) => ((GIFT_JS.match(new RegExp('var ' + name + ' = (true|false);')) || [])[1]);
+const SHIPPED = { SIZES: shippedSwitch('SIZES') === 'true', SIZE_WORDS: shippedSwitch('SIZE_WORDS') === 'true', PRICE: shippedSwitch('PRICE') === 'true' };
+const setSwitch = (src, name, on) => on === undefined ? src : src.replace(new RegExp('var ' + name + ' = (true|false);'), 'var ' + name + ' = ' + !!on + ';');
+const withSwitches = (sizes, words, price) => setSwitch(setSwitch(setSwitch(GIFT_JS, 'SIZES', sizes), 'SIZE_WORDS', words), 'PRICE', price);
+const oneLine = (name) => (GIFT_JS.match(new RegExp('var ' + name + ' = (true|false);', 'g')) || []).length === 1;
 // The page's own lines follow the SIZES switch at build (gift.py SIZES_ON reads js/gift.js): the
 // three-night lines while it is off, the Writer's lines that fit every size while it is on. The "on"
 // runs serve gift.html with those lines swapped in, as the builder would write it, so the page as it
@@ -283,9 +288,11 @@ function statics() {
     return giveOn ? (links(menu)[1] !== GIVE || giftLinks(menu) !== 1 || !menu.endsWith('<a href="/faq">Questions</a>')) : (has(menu, GIVE) || giftLinks(menu) !== 1);
   });
   check(giveWrong.length === 0, (giveOn ? 'the header row keeps its six links; "Give a Stay" is the menu\'s second link and /gift\'s one name there, on every page' : 'no page carries "Give a Stay" (GIVE_A_STAY off); the row\'s six links, /gift once in the menu') + (giveWrong.length ? ': wrong on ' + giveWrong.join(', ') : ''));
+  // (the giveaway's third door, "Give a stay" to /gift?src=giveaway-site, is the reel's way in, 2026-11-08)
   const linking = pages.filter((n) => !/^gift/.test(n))
-    .filter((n) => /href="\/?gift(?:[\/"#?.-])/i.test(read(n).split(ONE_WAY).join('</nav>').split(GIVE).join('').replace(/<section class="lf-sec lf-dark lf-center lf-give"[^]*?<\/section>/, '')));
-  check(linking.length === 0, 'no other link to the gift pages' + (giveOn ? ' beyond "Give a Stay" and the home band' : '') + (linking.length ? ': ' + linking.join(', ') : ''));
+    .filter((n) => /href="\/?gift(?:[\/"#?.-])/i.test(read(n).split(ONE_WAY).join('</nav>').split(GIVE).join('')
+      .replace(/<section class="lf-sec lf-dark lf-center lf-give"[^]*?<\/section>/, '').replace(/<nav class="gw-doors"[^]*?<\/nav>/g, '')));
+  check(linking.length === 0, 'no other link to the gift pages beyond the giveaway\'s door' + (giveOn ? ', "Give a Stay" and the home band' : '') + (linking.length ? ': ' + linking.join(', ') : ''));
   check(giveOn ? has(gift, 'ga-what__gift') && /gift card/i.test(gift) : !has(gift, 'ga-what__gift'), giveOn ? '/gift says "gift card" where it explains the gift' : '/gift does not say "gift card" yet (GIVE_A_STAY off)');
   check(!/\/gift/.test(read('sitemap.xml')), 'not in sitemap.xml');
   check(has(gift, RATIFIED), '/gift carries the card\'s ratified terms line');
@@ -325,8 +332,8 @@ async function main() {
       dv: { recipient_names: 'Ana & Luis', giver_name: 'Aunt June', email: THEM, date: nextMorning('12-25').slice(0, 10), hour: 8, message: NOTE, sent: !!engine.sent }, quotes: [], checkouts: [], stays: [], outside: [], stripePages: [], solds: [] };
     await ctx.route('**/*', (route) => {
       const req = route.request(), u = new URL(req.url());
-      if (u.hostname === '127.0.0.1' && u.pathname === '/js/gift.js' && (engine.sizesOn || engine.sizeWordsOn || engine.priceOn)) return route.fulfill({ status: 200, contentType: 'text/javascript', body: withSwitches(engine.sizesOn, engine.sizeWordsOn, engine.priceOn) });
-      if (u.hostname === '127.0.0.1' && (u.pathname === '/gift' || u.pathname === '/gift.html') && engine.sizesOn && !has(GIFT_JS, 'var SIZES = true;')) return route.fulfill({ status: 200, contentType: 'text/html', body: giftBuiltOn() });
+      if (u.hostname === '127.0.0.1' && u.pathname === '/js/gift.js' && [engine.sizesOn, engine.sizeWordsOn, engine.priceOn].some((v) => typeof v === 'boolean')) return route.fulfill({ status: 200, contentType: 'text/javascript', body: withSwitches(engine.sizesOn, engine.sizeWordsOn, engine.priceOn) });
+      if (u.hostname === '127.0.0.1' && (u.pathname === '/gift' || u.pathname === '/gift.html') && engine.sizesOn && !SHIPPED.SIZES) return route.fulfill({ status: 200, contentType: 'text/html', body: giftBuiltOn() });
       if (u.hostname === '127.0.0.1') return route.continue();
       if (u.hostname === 'fonts.googleapis.com' || u.hostname === 'fonts.gstatic.com') return route.continue();
       if (u.hostname === 'book.loxleyforest.com') {
