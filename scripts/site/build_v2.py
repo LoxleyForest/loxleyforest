@@ -381,7 +381,7 @@ RATING_GIVEN = 4.9
 # docs/reviews/all.md ("129 reviews in all: 126 five stars, 3 four stars."), so a build on the day it
 # ships carries that day's counts, and the build refuses to run with the switch on and no list to
 # read. scripts/site/check_reviews.py proves the built line against the list.
-REVIEW_COUNT = False
+REVIEW_COUNT = True
 REVIEWS_ALL_MD = os.path.join(ROOT, '..', 'loxley-rescue', 'docs', 'reviews', 'all.md')
 
 
