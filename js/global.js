@@ -499,7 +499,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!target || !fab || !form) return;
   fab.setAttribute('href', target);
   fab.classList.add('book-fab--inquire');
-  fab.textContent = 'Inquire about your date';
+  var t = fab.lastChild; // the words after the acorn
+  if (t && t.nodeType === 3) t.nodeValue = 'Inquire about your date'; else fab.textContent = 'Inquire about your date';
   if (!('IntersectionObserver' in window)) return;
   new IntersectionObserver(function (entries) {
     entries.forEach(function (e) { fab.classList.toggle('is-away', e.isIntersecting); });

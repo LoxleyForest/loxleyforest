@@ -10,10 +10,10 @@
    false; the "on" checks serve js/global.js with it set to true, and say so.
 
    It proves: shipped, /elopements keeps "Book your dates" to /book on a phone, as every page; on,
-   the one fixed button on /elopements reads "Inquire about your date", points at #inquiry, is on
-   screen at the top of the page, steps aside while the form is on screen and returns above it, and
-   a tap lands on the form; /book and the home page keep their button either way; on a desktop the
-   button is not shown, as before. */
+   the one fixed button on /elopements reads "Inquire about your date" (the acorn kept), points at
+   #inquiry, is on screen once the reader is past the first screen (as every page's button), a tap
+   lands on the form, the button steps aside while the form is on screen and returns above it;
+   /book and the home page keep their button either way; on a desktop the button is not shown. */
 'use strict';
 const http = require('http');
 const fs = require('fs');
@@ -68,14 +68,15 @@ async function main() {
     return { ctx, page: await ctx.newPage() };
   }
   const fab = (page) => page.evaluate(() => { const f = document.querySelector('.book-fab'); if (!f) return null; const r = f.getBoundingClientRect(); const cs = getComputedStyle(f);
-    return { text: f.textContent.trim(), href: f.getAttribute('href'), shown: cs.display !== 'none' && cs.opacity !== '0', away: f.classList.contains('is-away'), onScreen: r.top >= 0 && r.bottom <= innerHeight }; });
+    return { text: f.textContent.trim(), href: f.getAttribute('href'), icon: !!f.querySelector('svg'), shown: cs.display !== 'none' && cs.opacity !== '0', away: f.classList.contains('is-away'), onScreen: r.top >= 0 && r.bottom <= innerHeight }; });
 
   console.log('shipped (INQUIRE_FAB false), a phone');
   {
     const { ctx, page } = await visitor(false, true);
     await page.goto(base + '/elopements', { waitUntil: 'load' }); await page.waitForTimeout(400);
+    await page.evaluate(() => window.scrollTo(0, Math.round(innerHeight * 1.6))); await page.waitForTimeout(700);
     const f = await fab(page);
-    check(f && f.text === 'Book your dates' && f.href === '/book' && f.shown, '/elopements keeps "Book your dates" to /book: ' + JSON.stringify(f));
+    check(f && f.text === 'Book your dates' && f.href === '/book' && f.shown && f.icon, '/elopements keeps "Book your dates" to /book, with its acorn: ' + JSON.stringify(f));
     await ctx.close();
   }
 
@@ -84,20 +85,24 @@ async function main() {
     const { ctx, page } = await visitor(true, true);
     await page.goto(base + '/elopements', { waitUntil: 'load' }); await page.waitForTimeout(400);
     let f = await fab(page);
-    check(f && f.text === 'Inquire about your date' && f.href === '#inquiry', 'the one fixed button reads "Inquire about your date" and points at the form');
-    check(f && f.shown && f.onScreen && !f.away, 'and is on screen at the top of the page');
-    await page.evaluate(() => document.getElementById('inquiry').scrollIntoView()); await page.waitForTimeout(600);
+    check(f && f.text === 'Inquire about your date' && f.href === '#inquiry' && f.icon, 'the one fixed button reads "Inquire about your date", keeps its acorn, and points at the form');
+    // the button shows after the first screen, as on every page (global.js keeps it hidden over the hero)
+    await page.evaluate(() => window.scrollTo(0, Math.round(innerHeight * 1.6))); await page.waitForTimeout(700);
     f = await fab(page);
-    check(f && f.away, 'it steps aside while the form is on screen');
-    await page.evaluate(() => window.scrollTo(0, 0)); await page.waitForTimeout(600);
+    check(f && f.shown && f.onScreen && !f.away, 'and is on screen once the reader is past the first screen: ' + JSON.stringify(f));
+    // the guest's own path: a tap, which the site's anchor handler turns into its own smooth scroll (the address bar does not change)
+    await page.tap('.book-fab'); await page.waitForTimeout(1500);
+    const landed = await page.evaluate(() => { const r = document.getElementById('inquiry').getBoundingClientRect(); return r.top <= 120 && r.bottom > 0; });
+    check(landed, 'a tap lands on the form');
+    f = await fab(page);
+    check(f && f.away, 'and the button steps aside while the form is on screen');
+    // back up the page the way the smooth-scroll library allows once it has taken the wheel
+    await page.evaluate(() => { const y = Math.round(innerHeight * 1.6); if (window.lfLenis) window.lfLenis.scrollTo(y, { immediate: true }); else window.scrollTo(0, y); }); await page.waitForTimeout(900);
     f = await fab(page);
     check(f && !f.away && f.shown, 'and returns when the form has gone');
-    await page.click('.book-fab'); await page.waitForTimeout(700);
-    const landed = await page.evaluate(() => { const r = document.getElementById('inquiry').getBoundingClientRect(); return r.top <= 120 && r.bottom > 0; });
-    check(landed && /#inquiry$/.test(page.url()), 'a tap lands on the form');
     await page.goto(base + '/book', { waitUntil: 'load' }); await page.waitForTimeout(300);
     f = await fab(page);
-    check(f && f.text === 'Book your dates' && f.href === '/book', '/book keeps "Book your dates"');
+    check(f && f.text === 'Book your dates' && f.href === '#book', '/book keeps "Book your dates" to its own calendar');
     await page.goto(base + '/', { waitUntil: 'load' }); await page.waitForTimeout(300);
     f = await fab(page);
     check(f && f.text === 'Book your dates', 'the home page keeps "Book your dates"');
