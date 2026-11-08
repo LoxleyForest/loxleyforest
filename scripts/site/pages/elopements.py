@@ -66,7 +66,8 @@ def slug(name):
 SPACES = [
     ('eq3a0154', 'The rope bridge from the side, an oak trunk in the foreground', 'The Rope Bridge', 'The crossing',
      'One hundred feet of suspended pathway between two ancient white oaks. The bridge becomes the aisle. The canopy becomes the cathedral. There is no other wedding aisle like this in the Southeast.',
-     'The aisle in every package.'),
+     # "The aisle in every package" was false for Firelight, whose vows are at the Fire Circle (the audit and the Critic, 2026-11-08): cut to the claim that holds. Naming a package here is new words for Mick's ear.
+     'The aisle.'),
     ('img_1717', 'The stone fire pit on the forest floor, ringed with ferns', 'The Fire Circle', 'Fire as witness',
      'A boulder fire pit that looks like it emerged from the earth centuries ago, set at the four compass points. It echoes traditions that have existed for thousands of years.',
      'With every package.'),
@@ -155,7 +156,8 @@ UNDER_CARDS = 'Each is for the two of you and up to six guests. For The Vow, Fir
 
 FAQ = [
     ('How many guests can attend?',
-     'Each package is for the two of you and up to six guests. Intimate by design. The bridge is rated for eight people at one time, everyone counted: on the bridge that is the two of you, your officiant, and up to five more, your photographer among them. Every guest is part of your private celebration: your closest people, sharing your night in the canopy. Because Loxley Forest is our home and yours during your stay, all ceremony guests are welcomed as part of your booking party.'),
+     # "sharing your night in the canopy" cut (the Critic, 2026-11-08): it read as eight overnight in a treehouse that holds six.
+     'Each package is for the two of you and up to six guests. Intimate by design. The bridge is rated for eight people at one time, everyone counted: on the bridge that is the two of you, your officiant, and up to five more, your photographer among them. Because Loxley Forest is our home and yours during your stay, all ceremony guests are welcomed as part of your booking party.'),
     # No officiant is named in the record: the answer says only what the agreement does.
     ('Do you provide an officiant?',
      'We arrange your officiant.'),
@@ -167,7 +169,8 @@ FAQ = [
      'We have seven seasons, and every one is dramatic. Wildflower brings soft light and mountain laurel. Canopy Green brings fireflies. Color Turn is a cathedral of gold and crimson. Frost Season strips the canopy to its bones and reveals views you can\'t see the rest of the year.'),
     # "We've hosted ceremonies in every kind of weather" is off: the first ceremony is Dec 15, 2026.
     ('What about weather?',
-     'Rain in the mountains is its own kind of magic, and your photographer will love it. Every couple receives a weather contingency plan. The canopy provides natural protection.'),
+     # "The canopy provides natural protection" cut (the Critic, 2026-11-08): no source for it.
+     'Rain in the mountains is its own kind of magic, and your photographer will love it. Every couple receives a weather contingency plan.'),
     ('Can we elope on a weekday?',
      "Absolutely, and we'll love you for it. Weekday ceremonies get the best light and the quietest forest."),
 ]
@@ -331,7 +334,7 @@ def page_elopements():
                 <option value="just-us">Just us</option>
                 <option value="2-6">2 to 6 guests</option>
               </select>
-              <p class="lf-form__help">Every guest is part of your private celebration: your closest people, sharing your night in the canopy. Because Loxley Forest is our home and yours during your stay, all ceremony guests are welcomed as part of your booking party.</p>
+              <p class="lf-form__help">Because Loxley Forest is our home and yours during your stay, all ceremony guests are welcomed as part of your booking party.</p>
             </div>
 
             <div class="lf-form__row">
