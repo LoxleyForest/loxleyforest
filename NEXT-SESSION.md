@@ -207,9 +207,11 @@ computed as api.py computes it, health naming fewer than the list, the sales doo
 the read failing, a size with no front, the read failing four ways).
 BEFORE THE SWITCH GOES ON (the Writer's flag): the page's own copy still says three nights in six
 places (the card subtitle, the description, the lead, "Three nights in the trees", the card's gift
-line, "Unused, ready for three nights"); each needs Mick's words per size or words that fit all
-three, and his word on whether the smaller cards carry the Dawn Table (the engine says they do).
-The switch flips only on the Chief's word, after Mick types the open line on the engine.
+line, "Unused, ready for three nights"). The Chief (2026-11-08): the Writer is drafting those six
+to fit every size, with a verdict on "How many nights?" and "Please choose how many nights."; the
+words come here after Mick hears them, and the page is rebuilt from gift.py WORDS then. The Dawn
+Table is ruled, not a question: Mick, 2026-11-08, "Golden Arrow as written", the brunch given in
+every size. The switch flips only on the Chief's word, after Mick types the open line on the engine.
 
 ---
 
