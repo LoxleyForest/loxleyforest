@@ -56,7 +56,11 @@ price is below. Tap a later day to stay longer." / "No stay works around Sat, De
 beside it are taken. The nearest that does is Thu, Dec 17 to Fri, Dec 18, 2026; the price is below.
 Tap a later day to stay longer." The Critic's verdict: the switch stays off until Mick hears the
 words, and "nearest" (it moves a guest to other dates from one tap) needs his yes on whether it ships
-at all; it can be cut to the first two cases with one line. Proven: scripts/site/check_offer_stay.js,
+at all; it can be cut to the first two cases with one line. CUT 2026-11-08 (the Critic's site-audit
+sheet, the Chief's route): `var OFFER_NEAREST = false;` in js/gatehouse.js, the first two cases
+alone; a night that can make no stay now starts a stay there as it always did; the third case
+flips on Mick's own yes. No fixed minimum sentence is added above the calendar (false inside 7
+days, where a weekend sells one night; the calendar prints each night's real minimum). Proven: scripts/site/check_offer_stay.js,
 31 checks in both states (shipped: the old refusal and its quote_refused step; offered: every rule
 above, the words, the step reasons); check_checkout (124) with the switch off.
 
@@ -168,6 +172,118 @@ error, no outside request, "Her and Him," from a test link) and in print (four U
 read). The page: private/before-the-bridge-2026-12-11-to-13-c344f7/ (noindex, robots blocks
 /private/, no Tag Manager, linked from nowhere). Mick sends the link from his own Gmail, in an email
 they can reply to.
+
+---
+
+# IN FLIGHT · 2026-11-08 · The site audit's eight (the Chief's route from chief docs/briefs/2026-11-08-site-walkthrough.md and 2026-11-08-critic-site-audit.md, "Thursday's eight", one commit each, before the Nov 12 freeze)
+
+The Chief's ship rules: truth fixes and the two bugs ship on green on its word; everything else behind
+a switch until Mick's yes. Too risky for the freeze, not started: the toast move, the /book price card
+and calendar layout, "Buying for someone else?", cancellation rewording.
+
+**The dead pause icon (bug, shipped).** On an iPhone the hero film never plays (only a phone reporting
+4g gets it), yet a pause icon showed over the still: css/v2.css `.lf-hero__pause { display: grid }`
+overrode the hidden attribute. `.lf-hero__pause[hidden] { display: none; }` added, as .lf-loop__pause
+has it; js/global.js unhides it on "playing". Proven in check_inquire_fab.js (a phone: hidden and not
+drawn; a desk: shown only once playing).
+
+**The floating button clear of the words (bug, shipped twice).** It sat over package text on
+/elopements and over the bridge's lines on the home page. The first fix (c79e23c) stepped it aside
+whenever words ran under its band; the Critic measured it blinking, the rework fixed that, and the
+number it left (shown on 21% of /elopements' scroll) made the Chief strike the approach: "a button
+that shows a fifth of the time doesn't earn its place." Now the pattern guests know: hidden over the
+first screen, hidden while the thumb scrolls down, back on a scroll up (6 px of movement, so a tremor
+is not a scroll) and at the page's end, out of the way of the open menu and any other Book button,
+and on /elopements with INQUIRE_FAB still stepping aside while the form itself is on screen. Proven
+in check_inquire_fab.js on /elopements and the home page, both states of INQUIRE_FAB.
+
+**Truth fixes (shipped on the Chief's word; cuts and one narrowing, no new words).** elopements.html's
+head no longer tells Google the place is an "EventVenue" (the agreement: "We are not a commercial or
+licensed wedding venue"; the head is kept from the file by the builder, so it was cut there). The
+rope bridge's tag "The aisle in every package." is cut to "The aisle." (false for Firelight, whose
+vows are at the Fire Circle; the Critic struck "The aisle in The Crossing." as reading as the bridge
+itself under the card's eyebrow "The crossing", and naming a package there is new words for Mick's
+ear). "Every guest is part of your private celebration: your closest people, sharing your night
+in the canopy." cut from the elopement FAQ's guest answer and from the inquiry form's help line
+(four pages share it): it read as eight overnight in a treehouse that holds six. "The canopy
+provides natural protection." cut from the elopement FAQ and "and the canopy gives the deck natural
+protection" from /faq: no source.
+
+**OFFER_STAY, the first two cases (item 2):** `var OFFER_NEAREST = false;` in js/gatehouse.js (see the
+five-fixes block above); check_offer_stay.js 38, check_checkout 124.
+
+**The package order (item 3, shadow, `PACKAGE_ORDER_V2 = False` in scripts/site/pages/elopements.py,
+a build-time switch).** On: the cards read The Crossing, The Vow, Firelight, then The Falls as the
+dimmed card that takes no date ("From October 2027"); the form's options follow. Off: as Mick placed
+them 2026-11-02 (The Vow, Firelight, The Crossing). In both states, and shipped now since it changes
+no words: every card's "Inquire for your date" link carries its package into the form (only
+Firelight's did). No "From $2,500" lead is added (the Critic cut it). Proven:
+scripts/site/check_packages.py, both states, and the built page matching the shipped one. Flipping
+it: the one line, python3 scripts/site/build_v2.py, the checks, one commit, on Mick's yes (he placed
+Firelight second). The heading "Four tiers." stays as it is (words).
+
+**The review count line (item 4, shadow, `REVIEW_COUNT = False` in scripts/site/build_v2.py, a
+build-time switch).** On: under the 4.9 and its acorns, wherever the rating shows (the reviews
+section on /, /elopements and the landing pages; /book's quote card), "129 reviews. 126 of them five
+stars.", the numbers never typed: read at build from the review list's own summary line
+(loxley-rescue docs/reviews/all.md, "129 reviews in all: 126 five stars, 3 four stars."), so a build
+on the day it ships carries that day's counts, and the build stops if the switch is on and the list
+cannot be read. FOR MICK'S EAR, PLAINLY (the Critic): his ruling in the review list's own notes
+(docs/reviews/all.md, 2026-10-23) was "no count and no platform name, just 4.9 with acorns", so this
+line reverses that ruling, as item 7 reverses his Oct 19 one; and 126 five stars of 129 average 4.98,
+which rounds to 5.0, so the 4.9 beside the line will read wrong: his call whether the 4.9 stays, goes,
+or becomes 5.0 (the Marketer wanted the count line in the 4.9's place). Proven: check_reviews.py
+(the built line equals the list's counts, or no page carries one while the switch is off; and the
+list's typed summary line must agree with its own headings, 129 and 126 today). Flipping it: the
+line, a rebuild the same day, the checks, one commit.
+
+**/giveaway and /giveaway-entered, the reel's door (item 5, behind the giveaway's own gate).** One
+bridge photograph (aerial-bridge, as the reel shows it) over the rules and on the entered page in
+the dusk photograph's place, and three doors on under each page: Stay (/book), Elope (/elopements),
+Give a stay (/gift), each with ?src=giveaway-site. The door words are new, in giveaway.py WORDS
+(eyebrow "While you're here"; "Stay" / "The open nights, and what each costs."; "Elope" / "Your vows
+on the bridge, or by the fire."; "Give a stay" / "The Golden Arrow: nights in the trees, as a gift."),
+so the words hash moved and they reach Mick's ear with the rest; the form stays closed as before
+(APPROVED_SHA256 None, OPENS None). The bio link's tag is Mick's to set in Instagram: ?src=giveaway-bio
+on the link; the page already keeps any ?src= for the entry. check_giveaway.py green.
+
+**"Give a Stay" (item 6, shadow, `GIVE_A_STAY = False` in scripts/site/build_v2.py, a build-time
+switch).** On: "Give a Stay" (/gift) is the menu's second link on every page and /gift's one name
+there ("The Golden Arrow" leaves the menu; the footer keeps it). Not the header row: it keeps its six
+links, since a seventh pushes the Book button 36 px off a 1280 px screen (the Critic measured; if
+Mick wants it in the row, he names the link that leaves; scripts/site/check_header_fit.js lays the
+header out at 1280, 1300 and 1366 px in both states). The home page carries a band after the reviews through
+December 24 with the Marketer's line "They don't need another thing. Give them a night in the trees."
+and a Give a Stay button (built only until that day, Eastern, and the page drops it itself after it);
+/gift's "What it is" opens with "The Golden Arrow is our gift card: nights in the treehouse, given."
+(my draft, since no page said "gift card"; the Chief said the band's line comes by Mick's ear, so all
+three are for his ear). Proven: scripts/site/check_give_a_stay.py (both states, the built pages in the
+shipped one); check_gift.js's statics follow the state the built pages are in. Flipping it: the line,
+a rebuild, the checks, one commit.
+
+**The engine's price on /gift (item 7, shadow, `var PRICE = false;` in js/gift.js).** On: the price of
+the card the form sells, read from /v1/gift/sizes (one read a page load, shared with SIZES), stands
+above the names as "$2,000.00 Taxes and fees included." (the engine's figure and the page's existing
+words); typed nowhere; nothing shown if the read fails, answers 404, or lists the 3-night at its cap;
+with SIZES on too the cards carry the prices and no line doubles them. It reverses Mick's rule of
+2026-10-19 (the amount only right before Stripe), so it waits on his yes. Proven: check_gift.js.
+
+**The bridge as a still on phones (shadow, `const PHONE_STILL = false;` in js/crossing.js).** Mick:
+"the animated bridge is too clunky"; the audit: pinned 5.6 screens, about 5 fps under a 4x CPU
+slowdown, long tasks to 770 ms. With the switch on a phone takes the existing still path (the one
+engraving, every line of the words, no pin, one screen, the calendar next); a desk stays animated;
+reduced motion is the still either way. Proven: scripts/site/check_crossing_still.js, both states.
+MEASURED on a throttled phone (390 px, 1.6 Mbps, 150 ms, 4x CPU, three runs each, the engine
+faked): the calendar live at 3.5 to 3.6 s animated and 3.3 to 3.5 s as the still (the walk builds
+only when scrolled near, so it never held the calendar back); the walk itself, a thumb's scroll
+through it: animated, 5.6 screens, 4.7 to 6 frames a second, 70 to 74 long tasks, the longest 0.9
+to 1.0 s, the script's own governor already down to its low-detail mode; the still engraving, 1
+screen, 37 to 43 frames a second on the scroll, but its scene still built when the walk came near,
+2 long tasks, the longest 0.9 s (the Critic's test: at that, the poster wins); so the switch takes
+the POSTER already drawn for no-script browsers (images/crossing/crossing-still-phone.webp, 129 KB)
+in place of the engraving: no scene, no canvas, the words shown, no skip link, one screen: no long
+task at all when the walk comes near, 43 to 56 frames a second on the scroll, the calendar live at
+3.2 to 3.4 s (from 3.5 to 3.7). Flips on the Chief's word.
 
 ---
 
