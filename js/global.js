@@ -448,9 +448,19 @@ document.addEventListener('DOMContentLoaded', () => {
   // One gold Book button per screen: step aside while another one is in view, or the menu is open.
   let menuOpen = false;
   const inView = new Set();
-  // it waits until the first screen has been read, then stays out of the way of any other Book button
+  const textUnder = new Set();   // the words running under the button's band right now
+  // it waits until the first screen has been read, then stays out of the way of any other Book button, and of the words
   const pastFirst = () => window.scrollY > window.innerHeight * 0.6;
-  const update = () => fab.classList.toggle('is-hidden', !pastFirst() || menuOpen || document.documentElement.classList.contains('lf-menu-open') || inView.size > 0);
+  const wantHidden = () => !pastFirst() || menuOpen || document.documentElement.classList.contains('lf-menu-open') || inView.size > 0 || textUnder.size > 0;
+  // Hide at once; show only once the way has been clear for a moment, so a thumb's flick through a
+  // short gap between paragraphs never blinks it (the Critic, 2026-11-08).
+  const SHOW_AFTER = 250;
+  let showTimer = 0;
+  const update = () => {
+    if (wantHidden()) { if (showTimer) { clearTimeout(showTimer); showTimer = 0; } fab.classList.add('is-hidden'); return; }
+    if (!fab.classList.contains('is-hidden') || showTimer) return;
+    showTimer = setTimeout(() => { showTimer = 0; if (!wantHidden()) fab.classList.remove('is-hidden'); }, SHOW_AFTER);
+  };
   window.addEventListener('scroll', update, { passive: true });
   update();
   if ('MutationObserver' in window) new MutationObserver(update).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
@@ -461,6 +471,38 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     document.querySelectorAll('main a.btn--primary[href="/book"], main a.lf-btn[href="#book"], main #book').forEach((el) => io.observe(el));
   }
+  // Clear of the words (the audit, 2026-11-08: it sat over package text on /elopements and over the
+  // bridge's lines on the home page): while any words run through the band at the foot of the screen
+  // where the button sits (paragraphs, lists, headings, links, buttons, labels), the button steps
+  // aside, and returns over a photograph or a gap. The observer is re-armed only when the screen's
+  // width changes or its height moves more than an address bar's worth, and the set of words under
+  // the band is rebuilt from the new observer's first report, never emptied first (the Critic).
+  const TEXT_SEL = 'main :is(p, li, dd, dt, h1, h2, h3, h4, blockquote, figcaption, label, summary, td, th, a, span, b, button)';
+  let textIO = null, armedW = 0, armedH = 0;
+  const watchText = () => {
+    if (!('IntersectionObserver' in window)) return;
+    const W = window.innerWidth, H = window.innerHeight;
+    if (textIO && W === armedW && Math.abs(H - armedH) <= 120) return;
+    armedW = W; armedH = H;
+    if (getComputedStyle(fab).display === 'none') {   // a desk: the button is not shown
+      if (textIO) { textIO.disconnect(); textIO = null; }
+      textUnder.clear(); update(); return;
+    }
+    const band = fab.offsetHeight + 32;   // the button and a little air above it
+    let first = true;
+    const next = new IntersectionObserver((entries) => {
+      if (textIO !== next) return;   // replaced since
+      if (first) { first = false; textUnder.clear(); }   // the first report names every watched node: rebuild from it
+      entries.forEach((e) => { if (e.isIntersecting) textUnder.add(e.target); else textUnder.delete(e.target); });
+      update();
+    }, { rootMargin: '-' + Math.max(0, H - band) + 'px 0px 0px 0px' });
+    const old = textIO;
+    textIO = next;
+    document.querySelectorAll(TEXT_SEL).forEach((el) => next.observe(el));
+    if (old) old.disconnect();
+  };
+  watchText();
+  window.addEventListener('resize', watchText);
   if (overlay && 'MutationObserver' in window) {
     new MutationObserver(() => {
       menuOpen = overlay.classList.contains('open');
