@@ -145,7 +145,41 @@ def main():
             print("LANDING PAGE /%s (%s): %s" % (p.get("slug"), q.get("credit"), pr))
         land_bad += bool(problems)
     print("landing pages: %d quotes checked, %d failing" % (checked, land_bad))
-    return 1 if bad or page_bad or card_bad or land_bad else 0
+
+    # The count line under the rating (build_v2.REVIEW_COUNT, 2026-11-08): never typed, read at build
+    # from this list's own summary line. With the switch off no page carries one; with it on, every
+    # rating carries the list's counts, word for word.
+    count_bad = []
+    m = re.search(r"^(\d+) reviews in all: (\d+) five stars", raw, re.M)
+    want = "%s reviews. %s of them five stars." % (m.group(1), m.group(2)) if m else None
+    on = bool(re.search(r"^REVIEW_COUNT = True$", src, re.M))
+    root = os.path.join(HERE, "..", "..")
+    pages = [n for n in os.listdir(root) if n.endswith(".html")]
+    with_line = {}
+    for n in pages:
+        h = open(os.path.join(root, n), encoding="utf-8").read()
+        lines = re.findall(r'<span class="lf-rating__count">([^<]*)</span>', h)
+        if lines:
+            with_line[n] = lines
+        if on and 'class="lf-rating"' in h and not lines:
+            count_bad.append("%s shows the rating without the count line" % n)
+    if not on and with_line:
+        count_bad.append("REVIEW_COUNT is off but the line is built into: " + ", ".join(sorted(with_line)))
+    if on and not want:
+        count_bad.append("the list has no summary line to read the counts from")
+    # the summary line is typed by a person: it must agree with the list's own headings (the Critic)
+    heads = [re.search(r"\b(\d) stars?\b", h) for h in re.findall(r"^### .*$", raw, re.M)]
+    heads = [h.group(1) if h else "?" for h in heads]
+    if m and (len(heads) != int(m.group(1)) or heads.count("5") != int(m.group(2))):
+        count_bad.append("the list's summary line says %s reviews, %s five stars; its headings count %d and %d" % (m.group(1), m.group(2), len(heads), heads.count("5")))
+    for n, lines in sorted(with_line.items()):
+        for ln in lines:
+            if html.unescape(ln) != want:
+                count_bad.append("%s says %r, the list says %r" % (n, ln, want))
+    for pr in count_bad:
+        print("COUNT LINE: " + pr)
+    print("count line: %s, %d pages carry it, %d failing" % ("on" if on else "off", len(with_line), len(count_bad)))
+    return 1 if bad or page_bad or card_bad or land_bad or count_bad else 0
 
 
 if __name__ == "__main__":

@@ -34,6 +34,7 @@ NAV = [('/treehouses', 'The Treehouse'), ('/experiences', 'Experiences'), ('/elo
 # footer only, never the desktop header row (its six links are measured to fit). The words are the
 # card's ratified title (scripts/site/pages/gift.py CARD); the link itself awaits Mick's yes.
 GIFT_LINK = '<a href="/gift">The Golden Arrow</a>'
+
 FONTS = ('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500'
          '&family=Montserrat:wght@300;400;500;600;700&display=swap')
 
@@ -326,6 +327,35 @@ QUOTE_CARD = ('This was easily one of our most memorable stays!', 'James · Atla
 
 # The average, as Mick gave it (2026-10-21). Shown as the number and five acorns shaded to it.
 RATING = 4.9
+# The count line under it, "129 reviews. 126 of them five stars." (the Marketer and the Critic's
+# site-audit sheet, 2026-11-08; the Chief's route: behind a switch until Mick's yes). The numbers are
+# never typed: they are read at build from the review list's own summary line in loxley-rescue
+# docs/reviews/all.md ("129 reviews in all: 126 five stars, 3 four stars."), so a build on the day it
+# ships carries that day's counts, and the build refuses to run with the switch on and no list to
+# read. scripts/site/check_reviews.py proves the built line against the list.
+REVIEW_COUNT = False
+REVIEWS_ALL_MD = os.path.join(ROOT, '..', 'loxley-rescue', 'docs', 'reviews', 'all.md')
+
+
+def review_counts(path=None):
+    """(reviews, five_stars) from the review list's summary line, or None when it cannot be read."""
+    try:
+        text = open(path or REVIEWS_ALL_MD, encoding='utf-8').read()
+    except OSError:
+        return None
+    m = re.search(r'^(\d+) reviews in all: (\d+) five stars', text, re.M)
+    return (int(m.group(1)), int(m.group(2))) if m else None
+
+
+def review_count_line():
+    """The sentence, from the list; '' with the switch off. The build stops if the switch is on and
+    the list cannot be read, so no stale or guessed number can ship."""
+    if not REVIEW_COUNT:
+        return ''
+    counts = review_counts()
+    if not counts:
+        raise SystemExit('REVIEW_COUNT is on but the review list could not be read: ' + REVIEWS_ALL_MD)
+    return f'{counts[0]} reviews. {counts[1]} of them five stars.'
 # The acorn's body spans x 1.9 to 14.1 of its 16-wide box, so a part acorn is shaded across that
 # span, not the box: 0.9 of an acorn is 80.5% of the box, not 90%.
 ACORN_X0, ACORN_X1 = 1.9 / 16, 14.1 / 16
@@ -337,9 +367,12 @@ def _rating():
         part = max(0.0, min(1.0, RATING - i))
         fill = 0 if part == 0 else 100 if part == 1 else round((ACORN_X0 + part * (ACORN_X1 - ACORN_X0)) * 100, 1)
         cells += f'<i style="--f:{fill:g}%"></i>'
-    return (f'<p class="lf-rating" role="img" aria-label="Rated {RATING:g} out of 5">'
+    line = review_count_line()
+    count = f'<span class="lf-rating__count">{line}</span>' if line else ''
+    label = f'Rated {RATING:g} out of 5' + (f'. {line}' if line else '')
+    return (f'<p class="lf-rating" role="img" aria-label="{label}">'
             f'<span class="lf-rating__n" aria-hidden="true">{RATING:g}</span>'
-            f'<span class="lf-rating__acorns" aria-hidden="true">{cells}</span></p>')
+            f'<span class="lf-rating__acorns" aria-hidden="true">{cells}</span>{count}</p>')
 
 
 def quote_card():
