@@ -85,6 +85,13 @@
   // sentence for a size at the season's cap. Only sizes the engine lists ever show; a read that
   // fails leaves the page as it was. scripts/site/check_gift.js proves both states.
   var SIZES = false;
+  // The Writer's two lines for a card of one night or two (its gift line and its "Unused, ready
+  // for ..." status, gift.py card_gift_N and state_unused_N), for Mick's ear: SIZE_WORDS false, a
+  // card of another size shows its own subtitle and terms (the printed card's words, the engine's)
+  // and no gift line or unused status at all; true on the Chief's word once Mick has heard them.
+  // Apart from SIZES: a hand-issued card of another size can exist before /gift offers the sizes
+  // (the Critic, 2026-11-08), and the card page must never read "three nights" for it.
+  var SIZE_WORDS = false;
   var FRONTS = { 'golden-arrow-1': '/images/gift/golden-arrow-card-front-1-night.jpg',
                  'golden-arrow-2': '/images/gift/golden-arrow-card-front-2-nights.jpg',
                  'golden-arrow': '/images/gift/golden-arrow-card-front.jpg' };
@@ -224,6 +231,26 @@
     function choose(s) {
       size = s; product = s.product; opened = null;
       if (termsLine) { termsLine.textContent = s.terms; termsLine.hidden = false; }
+      // The sample card above shows the size chosen: its line and its terms the engine's, its gift
+      // line the site's by its nights (the Chief, 2026-11-08).
+      var sample = document.querySelector('.ga-show .ga-card');
+      if (sample) {
+        var st = sample.querySelector('.ga-subtitle'), gl = sample.querySelector('.ga-gift'), nt = sample.querySelector('.ga-nights');
+        if (st) st.textContent = s.subtitle;
+        // the gift line: the 3-night card's own, or the Writer's for its size once heard (SIZE_WORDS), else none
+        if (gl) { var t = s.nights === 3 ? w('card_gift_3') : (SIZE_WORDS ? w('card_gift_' + s.nights) : ''); gl.textContent = t; gl.hidden = !t; }
+        if (nt) nt.textContent = s.terms;
+        fit(sample);
+      }
+    }
+    // The "When" row above the panel: the Writer's one sentence for every size, only while all
+    // three sizes sell (it names the one-night card's weeknights); else the 3-night card's words as built.
+    function whenRow(got) {
+      var dd = document.querySelector('[data-ga-when]');
+      if (!dd || !w('when_sizes')) return;
+      var nights = {};
+      got.forEach(function (s) { if (s.buyable) nights[s.nights] = true; });
+      if (nights[1] && nights[2] && nights[3]) dd.textContent = w('when_sizes');
     }
     // One card per size: its front, its line, its price (the engine's, with "taxes and fees
     // included"), its terms; a size at the cap carries the engine's sentence and takes no tap.
@@ -473,6 +500,7 @@
         var got = usable(answer, named);
         if (!got.length || (got.length === 1 && got[0].product === PRODUCT && got[0].buyable)) return asIs();
         sizes = got;
+        whenRow(got);
         show([chooser()]);
       }, asIs);
     }, function (e) { off(unreachable(e) ? 'down' : 'off'); });
@@ -494,9 +522,29 @@
       var m = String(g.month || g.check_in || '').trim(), x = /^(\d{4})-(\d{2})/.exec(m);
       return x ? new Date(+x[1], +x[2] - 1, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : m;
     }
-    function stateLine(state, g) {
+    // The status line; "" for an unused card of another size until its words are heard (the line hides).
+    function stateLine(state, g, sw) {
+      if (state === 'unused' && sw) return sw.unused || '';
       var m = monthOf(g), t = w('state_' + state);
       return m ? t.replace('{month}', m) : t.replace(/\s*\S+ \{month\}/, '');
+    }
+    // Which Golden Arrow this is, by nights: the engine's nights, else its product's (-1, -2), else three.
+    function nightsOf(g) {
+      var n = Number(g && g.nights);
+      if (isFinite(n) && n > 0) return Math.round(n);
+      var m = /^golden-arrow-(\d+)$/.exec(String((g && g.product) || ''));
+      return m ? +m[1] : 3;
+    }
+    // The card's words for its size (the Chief, 2026-11-08). The 3-night card is as it was. Any
+    // other size: its subtitle and terms as the engine sends them (the printed card's own words,
+    // ruled 2026-10-27), else the site's copy of those words by nights; its gift line and unused
+    // status the Writer's, only once SIZE_WORDS is on, else none (never the 3-night's).
+    function sizeWords(g) {
+      var n = nightsOf(g);
+      if (n === 3) return null;
+      var sub = typeof g.subtitle === 'string' && g.subtitle.trim() ? g.subtitle.trim() : w('card_subtitle_' + n);
+      var terms = typeof g.terms === 'string' && g.terms.trim() ? g.terms.trim() : w('card_nights_' + n);
+      return { n: n, subtitle: sub, terms: terms, gift: SIZE_WORDS ? w('card_gift_' + n) : '', unused: SIZE_WORDS ? w('state_unused_' + n) : '' };
     }
     // The reveal plays once per card on this device: a short hash of the code, never the code.
     function firstOpen() {
@@ -522,6 +570,13 @@
       var giver = String(g.giver_name || '').trim();
       card.querySelector('[data-fill="names"]').textContent = String(g.recipient_names || '').trim();
       card.querySelector('[data-fill="giver"]').textContent = giver;
+      // Its size's words (sizeWords: null for the 3-night card, which is as it was).
+      var sw = sizeWords(g);
+      if (sw) {
+        var subEl = card.querySelector('.ga-subtitle'), giftEl = card.querySelector('.ga-gift');
+        if (subEl && sw.subtitle) subEl.textContent = sw.subtitle;
+        if (giftEl) { giftEl.textContent = sw.gift; giftEl.hidden = !sw.gift; }
+      }
       // The giver's note, under the dedication, as they wrote it (text only, line breaks kept).
       var msg = String(g.message || '').trim(), box = fig.querySelector('[data-ga-message]');
       if (msg && box) {
@@ -538,13 +593,14 @@
       if (nights && g.window) {
         var line = String(g.window.line || '').trim();
         if (line) nights.textContent = line; else nights.hidden = true;
-      }
+      } else if (nights && sw && sw.terms) nights.textContent = sw.terms;   // its size's terms, the engine's
       wait.hidden = true; note.hidden = true;
       fig.hidden = false;
       fit(card);
       reveal(card);
-      status.textContent = stateLine(state, g);
-      status.hidden = false;
+      var line = stateLine(state, g, sw);
+      status.textContent = line;
+      status.hidden = !line;
       actions.hidden = false;
       root.querySelector('[data-ga-dates]').hidden = !usable;
       keep.hidden = !usable;
@@ -576,7 +632,8 @@
 
     function load() {
       G.api(API, '/v1/gift?code=' + encodeURIComponent(CODE), null, 12000).then(function (g) {
-        if (!g || g.product !== PRODUCT) return say('card_unknown');
+        // Every Golden Arrow, whatever its size (the Chief, 2026-11-08); anything else is not a card this page knows.
+        if (!g || !/^golden-arrow(-[a-z0-9]+)?$/i.test(String(g.product || ''))) return say('card_unknown');
         var st = String(g.status || '').toLowerCase(), state = String(g.state || '').toLowerCase();
         if (st === 'void') return say('card_void');
         // The engine's state (unused, booked, used); from the status when an older answer lacks it.

@@ -116,8 +116,20 @@ const SOLD = 'The Golden Arrow is spoken for this season. Call or text Mick at 7
 // own words; sold_out and the engine's sentence for one at the season's cap (gifts.FEWER_NIGHTS
 // while a shorter size still fits). The shipped file has SIZES false; the "on" checks serve
 // js/gift.js with it true, and say so.
-const GIFT_JS = read('js/gift.js'), SIZES_SWITCH = 'var SIZES = false;';
-const GIFT_JS_ON = GIFT_JS.replace(SIZES_SWITCH, 'var SIZES = true;');
+const GIFT_JS = read('js/gift.js'), SIZES_SWITCH = 'var SIZES = false;', WORDS_SWITCH = 'var SIZE_WORDS = false;';
+// js/gift.js with its two switches set as a run asks: SIZES (the gift page in its sizes) and SIZE_WORDS
+// (the Writer's gift line and status for a card of one night or two, for Mick's ear).
+const withSwitches = (sizes, words) => GIFT_JS.replace(SIZES_SWITCH, 'var SIZES = ' + !!sizes + ';').replace(WORDS_SWITCH, 'var SIZE_WORDS = ' + !!words + ';');
+// The page's own lines follow the SIZES switch at build (gift.py SIZES_ON reads js/gift.js): the
+// three-night lines while it is off, the Writer's lines that fit every size while it is on. The "on"
+// runs serve gift.html with those lines swapped in, as the builder would write it, so the page as it
+// would be built is the page rendered.
+const NEUTRAL = { h: 'Nights <em>in the trees</em>', lead: 'Nights in the treehouse, and the Dawn Table: champagne brunch carried across the bridge to their door.',
+  desc: 'A gift of nights in the treehouse at Loxley Forest, and the Dawn Table.' };
+const THREE = { h: 'Three nights <em>in the trees</em>', lead: 'Three nights in the treehouse, and the Dawn Table: champagne brunch carried across the bridge to their door.',
+  desc: 'A gift of three nights in the treehouse at Loxley Forest, and the Dawn Table.' };
+const WHEN_SIZES = 'Any weeknight for one night, Monday to Thursday; any two or three nights, weekends included. Good within twelve months of purchase. After that it never expires; we ask only the difference if rates have risen.';
+const giftBuiltOn = () => ['h', 'lead', 'desc'].reduce((h, k) => h.split(THREE[k]).join(NEUTRAL[k]), read('gift.html'));
 const TERMS_1 = 'Good for any weeknight, Monday to Thursday, within twelve months of purchase. After that it never expires; we ask only the difference if rates have risen.';
 const TERMS_2 = 'Good for any two nights, weekends included, within twelve months of purchase. After that it never expires; we ask only the difference if rates have risen.';
 const FEWER = 'There are not enough nights left this season for this Golden Arrow. A shorter one is still open, or call or text Mick at 706-502-4823.';
@@ -149,8 +161,13 @@ function giftRow(code, status, names, giver, more) {
   return Object.assign({ code, product: 'golden-arrow', name: 'The Golden Arrow', status, recipient_names: names, giver_name: giver,
     covers: COVERS, never_expires: true, includes: 'the Dawn Table', state: status === 'issued' ? 'unused' : 'used' }, more || {});
 }
+// A card of another size (the Chief, 2026-11-08): the engine's new fields on GET /v1/gift (nights,
+// subtitle, terms, includes; the Forge adding them), and an older answer with the product alone.
+const CODE_TWO = 'LF-TEST-TWO2', CODE_ONE = 'LF-TEST-ONE1';
 const GIFTS = {
   [CODE]: giftRow(CODE, 'issued', 'Ana & Luis', 'Aunt June', { message: NOTE }),
+  [CODE_TWO]: giftRow(CODE_TWO, 'issued', 'Ana & Luis', 'Aunt June', { product: 'golden-arrow-2', nights: 2, subtitle: 'A gift of two nights in the trees', terms: TERMS_2 }),
+  [CODE_ONE]: giftRow(CODE_ONE, 'issued', 'Ana & Luis', 'Aunt June', { product: 'golden-arrow-1' }),
   [CODE_USED]: giftRow(CODE_USED, 'redeemed', 'Ana & Luis', 'Aunt June', { state: 'used', month: 'March 2027' }),
   [CODE_BOOKED]: giftRow(CODE_BOOKED, 'redeemed', 'Ana & Luis', 'Aunt June', { state: 'booked', month: 'February 2027' }),
   [CODE_VOID]: giftRow(CODE_VOID, 'void', 'Ana & Luis', 'Aunt June'),
@@ -249,6 +266,13 @@ function statics() {
   check(linking.length === 0, 'no other link to the gift pages' + (linking.length ? ': ' + linking.join(', ') : ''));
   check(!/\/gift/.test(read('sitemap.xml')), 'not in sitemap.xml');
   check(has(gift, RATIFIED), '/gift carries the card\'s ratified terms line');
+  // The page's own lines follow the sizes switch at build (gift.py SIZES_ON reads js/gift.js); the
+  // "When" row keeps the card's ratified words either way (js/gift.js swaps it only while all three sell).
+  const sizesBuilt = has(GIFT_JS, 'var SIZES = true;');
+  check((GIFT_JS.match(/var SIZE_WORDS = (true|false);/g) || []).length === 1 && has(GIFT_JS, WORDS_SWITCH), 'the SIZE_WORDS switch is one line, false as shipped (the Writer\'s two card lines wait for Mick\'s ear)');
+  check(!has(prose, WHEN_SIZES) && PANEL.when_sizes === WHEN_SIZES && /data-ga-when>Good for any three nights/.test(gift), 'the "When" row is built with the card\'s ratified words; the one sentence for every size is in the page\'s words for the script alone');
+  if (sizesBuilt) check(has(gift, NEUTRAL.h) && has(gift, NEUTRAL.lead) && has(gift, NEUTRAL.desc) && !has(gift, THREE.h) && has(card, NEUTRAL.desc), '/gift built with SIZES on: the lines that fit every size (the Writer\'s, for Mick\'s ear), on the card page\'s description too');
+  else check(has(gift, THREE.h) && has(gift, THREE.lead) && has(gift, THREE.desc) && !has(gift, NEUTRAL.h) && !has(gift, NEUTRAL.lead) && has(card, THREE.desc), '/gift built with SIZES off: the three-night lines as today, none of the per-size lines on the page');
   check(BOOK_W.book_covers === 'The Golden Arrow covers these nights.' && STAY_W.stay_gift_move === 'To move or change a gift stay, call or text Mick at 706-502-4823.', 'the CEO\'s two lines, word for word');
 }
 
@@ -278,7 +302,8 @@ async function main() {
       dv: { recipient_names: 'Ana & Luis', giver_name: 'Aunt June', email: THEM, date: nextMorning('12-25').slice(0, 10), hour: 8, message: NOTE, sent: !!engine.sent }, quotes: [], checkouts: [], stays: [], outside: [], stripePages: [], solds: [] };
     await ctx.route('**/*', (route) => {
       const req = route.request(), u = new URL(req.url());
-      if (u.hostname === '127.0.0.1' && u.pathname === '/js/gift.js' && engine.sizesOn) return route.fulfill({ status: 200, contentType: 'text/javascript', body: GIFT_JS_ON });
+      if (u.hostname === '127.0.0.1' && u.pathname === '/js/gift.js' && (engine.sizesOn || engine.sizeWordsOn)) return route.fulfill({ status: 200, contentType: 'text/javascript', body: withSwitches(engine.sizesOn, engine.sizeWordsOn) });
+      if (u.hostname === '127.0.0.1' && (u.pathname === '/gift' || u.pathname === '/gift.html') && engine.sizesOn && !has(GIFT_JS, 'var SIZES = true;')) return route.fulfill({ status: 200, contentType: 'text/html', body: giftBuiltOn() });
       if (u.hostname === '127.0.0.1') return route.continue();
       if (u.hostname === 'fonts.googleapis.com' || u.hostname === 'fonts.gstatic.com') return route.continue();
       if (u.hostname === 'book.loxleyforest.com') {
@@ -768,7 +793,8 @@ async function main() {
     await page.waitForSelector('#ga-buy form', { timeout: 10000 });
     check(rec.sizesReads === 1 && !(await page.$('.ga-sizes')) && !(await page.$('.ga-chosen')), 'the engine lists the 3-night alone: the sizes read once, no choice to make, the form as today');
     check(!/\$\s?\d/.test(await page.evaluate(() => document.body.innerText)), 'no amount on the page before the purchase step');
-    check(await text(page, '.ga-terms-line') === RATIFIED, 'the card\'s words under the panel as they were');
+    check(await text(page, '.ga-terms-line') === RATIFIED && await text(page, '[data-ga-when]') === RATIFIED, 'the card\'s words under the panel and in the "When" row as they were');
+    check(await text(page, '#ga-what-h') === 'Nights in the trees' && has(await page.evaluate(() => document.querySelector('.lf-lead').innerText), 'Nights in the treehouse'), 'the page as built with SIZES on: "Nights in the trees", the lead that fits every size');
     await ctx.close();
   }
 
@@ -789,12 +815,20 @@ async function main() {
     check(cards.map((c) => c.price.replace(/\s+/g, ' ').trim()).join('|') === '$753.20 ' + PANEL.all_in + '|$1,506.40 ' + PANEL.all_in + '|$2,000.00 ' + PANEL.all_in, 'each price the engine\'s, all in (' + cards.map((c) => c.price.replace(/\s+/g, ' ').trim()).join(', ') + ')');
     check(cards[0].terms === TERMS_1 && cards[1].terms === TERMS_2 && cards[2].terms === RATIFIED, 'each with its terms in the card\'s own words, the engine\'s');
     check(cards.every((c) => !c.disabled && !c.out), 'all three buyable');
+    check(await text(page, '[data-ga-when]') === WHEN_SIZES, 'all three on sale: the "When" row reads the one sentence for every size');
     check(await page.evaluate(() => document.querySelector('.ga-terms-line').hidden), 'the 3-night terms line under the panel steps aside while the choice is open');
     check(await overflow(page) <= 0, 'no sideways scroll at 390');
     await page.locator('#ga-buy').scrollIntoViewIfNeeded();
     await shot(page, 'gift-sizes.png', false);
     await press(page, '#ga-buy button[type=submit]');
     check(await text(page, '#ga-size-error') === PANEL.need_size && rec.sales.length === 0, 'Continue with no choice: it asks for one, sends nothing');
+    const sampleOf = (page) => page.evaluate(() => { const c = document.querySelector('.ga-show .ga-card'); const q = (s) => c.querySelector(s).innerText; const g = c.querySelector('.ga-gift'); return { sub: q('.ga-subtitle'), gift: g.hidden ? null : g.innerText, nights: q('.ga-nights') }; });
+    await press(page, 'label[for="ga-size-golden-arrow-2"]');
+    const s2 = await sampleOf(page);
+    check(s2.sub === 'A gift of two nights in the trees' && s2.gift === null && s2.nights === TERMS_2, 'the sample card above shows the two-night card: its line and terms the engine\'s, no gift line until Mick hears the Writer\'s');
+    await press(page, 'label[for="ga-size-golden-arrow"]');
+    const s3 = await sampleOf(page);
+    check(s3.sub === 'A gift of three nights in the trees' && s3.gift === RATIFIED_GIFT && s3.nights === RATIFIED, 'the three-night chosen again: the sample card back to its ratified lines');
     await press(page, 'label[for="ga-size-golden-arrow-2"]');
     await press(page, '#ga-buy button[type=submit]');
     await page.waitForSelector('#ga-buy form .ga-chosen', { timeout: 5000 });
@@ -836,6 +870,7 @@ async function main() {
     const c3 = await page.evaluate(() => { const l = document.querySelector('label[for="ga-size-golden-arrow"]'); const i = l.querySelector('input'); return { disabled: i.disabled, described: i.getAttribute('aria-describedby'), out: l.querySelector('.ga-size__out').textContent, outId: l.querySelector('.ga-size__out').id, price: !!l.querySelector('.ga-size__price'), cls: l.className }; });
     check(c3.disabled && c3.out === FEWER && !c3.price && /ga-size--out/.test(c3.cls), 'the 3-night at the cap: the engine\'s sentence ("A shorter one is still open"), no price, no tap');
     check(c3.described === 'ga-size-golden-arrow-terms ga-size-golden-arrow-out' && c3.outId === 'ga-size-golden-arrow-out', 'the sentence is named to a screen reader with the terms');
+    check(await text(page, '[data-ga-when]') === RATIFIED, 'not all three sell: the "When" row keeps the card\'s ratified words');
     await press(page, 'label[for="ga-size-golden-arrow"]');
     check(!(await page.evaluate(() => document.querySelector('#ga-size-golden-arrow').checked)), 'a tap on it chooses nothing');
     check(await page.evaluate(() => document.querySelectorAll('.ga-size input:not([disabled])').length) === 2, 'the two shorter cards stay buyable');
@@ -1028,6 +1063,65 @@ async function main() {
     check(await text(page, '#gatehouse .gh-gift') === BOOK_W.book_with, 'and /book says the Golden Arrow is with them');
     leaks(rec, await dataLayer(page), 'card to /book');
     await ctx.close();
+  }
+
+  console.log('/gift/card: a card of another size (the Chief, 2026-11-08: every Golden Arrow product accepted)');
+  {
+    const cardOf = (page) => page.evaluate(() => { const q = (s) => (document.querySelector(s) || {}).innerText; const g = document.querySelector('.ga-gift'), st = document.querySelector('[data-ga-status]');
+      return { forL: q('.ga-for'), sub: q('.ga-subtitle'), gift: g.hidden ? null : g.innerText, nights: q('.ga-nights'), title: q('.ga-title'), status: st.hidden ? null : st.textContent, dates: !document.querySelector('[data-ga-dates]').hidden }; });
+    const layoutOk = (page) => page.evaluate(() => { const r = (s) => document.querySelector(s).getBoundingClientRect(); return r('.ga-call').bottom <= r('.ga-foot').top && document.querySelector('.ga-side').scrollHeight <= document.querySelector('.ga-arch').offsetHeight + 1; });
+    // shipped (both switches off): a two-night card opens with its own line and terms, the engine's; no gift line or status until Mick hears the Writer's
+    const off = await open('card-two-shipped', {});
+    await off.page.goto(BASE + '/gift/card#code=' + CODE_TWO);
+    await off.page.waitForSelector('[data-ga-card]:not([hidden])', { timeout: 10000 });
+    await off.page.evaluate(() => document.fonts.ready);
+    const c0 = await cardOf(off.page);
+    check(c0.forL === 'For Ana & Luis' && c0.title === 'The Golden Arrow' && c0.dates, 'shipped: a golden-arrow-2 card opens (no "could not find a gift"), the names filled, "Book your nights" offered');
+    check(c0.sub === 'A gift of two nights in the trees' && c0.nights === TERMS_2, 'its own line and terms, the engine\'s (the printed card\'s words), never the three-night\'s');
+    check(c0.gift === null && c0.status === null, 'no gift line and no status line until Mick hears the Writer\'s two (never "three nights")');
+    check(await layoutOk(off.page), 'nothing on the two-night card runs into anything');
+    await shot(off.page, 'card-two-nights.png');
+    await off.ctx.close();
+    // shipped: an older answer with the product alone: the site's copy of the printed card's words for one night
+    const one = await open('card-one-shipped', {});
+    await one.page.goto(BASE + '/gift/card#code=' + CODE_ONE);
+    await one.page.waitForSelector('[data-ga-card]:not([hidden])', { timeout: 10000 });
+    const c1 = await cardOf(one.page);
+    check(c1.sub === CARD_W.card_subtitle_1 && c1.nights === CARD_W.card_nights_1 && c1.gift === null && c1.status === null, 'an answer with the product alone (golden-arrow-1): the card\'s own words for one night by product, no gift line, no status');
+    check(await layoutOk(one.page), 'nothing on the one-night card runs into anything');
+    await one.ctx.close();
+    // SIZE_WORDS on (Mick has heard them): the Writer's gift line and status for each size
+    const two = await open('card-two-words', { sizeWordsOn: true });
+    await two.page.goto(BASE + '/gift/card#code=' + CODE_TWO);
+    await two.page.waitForSelector('[data-ga-card]:not([hidden])', { timeout: 10000 });
+    await two.page.evaluate(() => document.fonts.ready);
+    const c2 = await cardOf(two.page);
+    check(c2.sub === 'A gift of two nights in the trees' && c2.nights === TERMS_2 && c2.gift === CARD_W.card_gift_2, 'SIZE_WORDS on: the two-night card\'s gift line "' + CARD_W.card_gift_2 + '"');
+    check(c2.status === CARD_W.state_unused_2, 'and its status "' + CARD_W.state_unused_2 + '"');
+    check(await layoutOk(two.page), 'nothing on the card runs into anything with its gift line');
+    await shot(two.page, 'card-two-nights-words.png');
+    await two.ctx.close();
+    const oneW = await open('card-one-words', { sizeWordsOn: true });
+    await oneW.page.goto(BASE + '/gift/card#code=' + CODE_ONE);
+    await oneW.page.waitForSelector('[data-ga-card]:not([hidden])', { timeout: 10000 });
+    const c1w = await cardOf(oneW.page);
+    check(c1w.gift === CARD_W.card_gift_1 && c1w.status === CARD_W.state_unused_1, 'the one-night card: "' + CARD_W.card_gift_1 + '", "' + CARD_W.state_unused_1 + '"');
+    await oneW.ctx.close();
+    // the three-night card with both switches on: as it was
+    const three = await open('card-three-on', { sizesOn: true, sizeWordsOn: true });
+    await three.page.goto(BASE + '/gift/card#code=' + CODE);
+    await three.page.waitForSelector('[data-ga-card]:not([hidden])', { timeout: 10000 });
+    const c3 = await cardOf(three.page);
+    check(c3.sub === 'A gift of three nights in the trees' && c3.gift === RATIFIED_GIFT && c3.nights === RATIFIED && c3.status === CARD_W.state_unused, 'the three-night card, both switches on: its ratified words as they were');
+    await three.ctx.close();
+    // on /gift with both switches on, the sample card takes the Writer's gift line for the size chosen
+    const both = await open('gift-sizes-words', { sizesOn: true, sizeWordsOn: true, sizes: ['golden-arrow', 'golden-arrow-1', 'golden-arrow-2'], sizesList: SIZES_ALL });
+    await both.page.goto(BASE + '/gift');
+    await both.page.waitForSelector('#ga-buy .ga-sizes', { timeout: 10000 });
+    await press(both.page, 'label[for="ga-size-golden-arrow-1"]');
+    const sw = await both.page.evaluate(() => { const c = document.querySelector('.ga-show .ga-card'); const g = c.querySelector('.ga-gift'); return { sub: c.querySelector('.ga-subtitle').innerText, gift: g.hidden ? null : g.innerText, nights: c.querySelector('.ga-nights').innerText }; });
+    check(sw.sub === 'A gift of a night in the trees' && sw.gift === PANEL.card_gift_1 && sw.nights === TERMS_1, 'SIZE_WORDS on: the sample card shows the one-night card with its gift line "' + PANEL.card_gift_1 + '"');
+    await both.ctx.close();
   }
 
   console.log('/gift/card: long names step down beside the photo');

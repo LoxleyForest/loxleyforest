@@ -205,13 +205,39 @@ read it. Proven: check_gift.js, 270 (40 new: shipped, the 3-night alone, three s
 through Stripe and the thank-you, the engine's own pair at the 3-night's cap with the fake's health
 computed as api.py computes it, health naming fewer than the list, the sales door off, the cap with
 the read failing, a size with no front, the read failing four ways).
-BEFORE THE SWITCH GOES ON (the Writer's flag): the page's own copy still says three nights in six
-places (the card subtitle, the description, the lead, "Three nights in the trees", the card's gift
-line, "Unused, ready for three nights"). The Chief (2026-11-08): the Writer is drafting those six
-to fit every size, with a verdict on "How many nights?" and "Please choose how many nights."; the
-words come here after Mick hears them, and the page is rebuilt from gift.py WORDS then. The Dawn
-Table is ruled, not a question: Mick, 2026-11-08, "Golden Arrow as written", the brunch given in
-every size. The switch flips only on the Chief's word, after Mick types the open line on the engine.
+THE CARD PAGE PER SIZE (the Chief's second route the same night, on the Writer's read, chief
+docs/briefs/2026-11-08-writer-gift-page-sizes.md): /gift/card accepts every Golden Arrow product
+(it refused all but golden-arrow, so a 1- or 2-night card's link would have read "We could not find
+a gift on this link"). TWO GATES, not one (the Critic's weakest claim: a hand-issued card of another
+size can exist the day Mick types the open line, before any site push, so the card page must never
+read "three nights" for it, and must not wait on SIZES). (a) At once, no switch: a card of one night
+or two shows its own subtitle and terms, the printed card's words ruled 2026-10-27, as the engine
+sends them on GET /v1/gift (the Forge, forge/gift-sizes-read 08d0eee, main commit to follow: nights,
+subtitle, terms, includes on every product, from one helper gifts.card_words that /v1/gift/sizes
+reads too), the site's copy of those words by product only when the fields are missing; and no gift
+line and no status line at all. (b) `var SIZE_WORDS = false;` in js/gift.js: the Writer's two lines
+for such a card, its gift line ("A night in the treehouse, and the Dawn Table: champagne brunch
+carried across the bridge to your door." / "Two nights in the treehouse, and the Dawn Table: ...")
+and its unused status ("Unused, ready for one night" / "Unused, ready for two nights"), for Mick's
+ear; on, they show. The 3-night card is as it was in every state. SIZES governs /gift alone: the
+panel, and (built into the page while js/gift.js has SIZES true, gift.py reading the switch at
+build) the description "A gift of nights in the treehouse at Loxley Forest, and the Dawn Table."
+(all four gift pages), the lead "Nights in the treehouse, and the Dawn Table: champagne brunch
+carried across the bridge to their door.", the heading "Nights in the trees"; on /gift, choosing a
+size swaps the sample card to that size's line and terms (its gift line too once SIZE_WORDS is on;
+the 3-night's own always). The "When" row keeps the card's ratified words as built; the script puts
+the Writer's one sentence for every size ("Any weeknight for one night, Monday to Thursday; any two
+or three nights, weekends included. Good within twelve months of purchase. After that it never
+expires; we ask only the difference if rates have risen.") in its place only while all three sizes
+sell, since it names a one-night card (the Critic). Proven: check_gift.js 289 (shipped, a two-night
+card with the engine's fields and a one-night from the product alone, no gift line or status; with
+SIZE_WORDS on, the Writer's lines; the three-night unchanged in every state; the sample swap, back,
+and with the Writer's line; the "When" row swapped only with all three on sale; the page as built
+with SIZES on rendered, not only its script). The Dawn Table is ruled, not a question: Mick,
+2026-11-08, "Golden Arrow as written", the brunch given in every size. ORDER (the Critic): Mick
+hears the Writer's six lines before he types the open line for any size; SIZE_WORDS flips on his
+yes (one line, the check, one commit); SIZES flips on the Chief's word once a size is open (the
+one line in js/gift.js, python3 scripts/site/build_v2.py, the checks, one commit).
 
 ---
 
