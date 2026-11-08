@@ -163,11 +163,16 @@ function giftRow(code, status, names, giver, more) {
 }
 // A card of another size (the Chief, 2026-11-08): the engine's new fields on GET /v1/gift (nights,
 // subtitle, terms, includes; the Forge adding them), and an older answer with the product alone.
-const CODE_TWO = 'LF-TEST-TWO2', CODE_ONE = 'LF-TEST-ONE1';
+const CODE_TWO = 'LF-TEST-TWO2', CODE_ONE = 'LF-TEST-ONE1', CODE_TWO_OWN = 'LF-TEST-TWOW', CODE_TWO_BARE = 'LF-TEST-TWOB';
 const GIFTS = {
   [CODE]: giftRow(CODE, 'issued', 'Ana & Luis', 'Aunt June', { message: NOTE }),
   [CODE_TWO]: giftRow(CODE_TWO, 'issued', 'Ana & Luis', 'Aunt June', { product: 'golden-arrow-2', nights: 2, subtitle: 'A gift of two nights in the trees', terms: TERMS_2 }),
   [CODE_ONE]: giftRow(CODE_ONE, 'issued', 'Ana & Luis', 'Aunt June', { product: 'golden-arrow-1' }),
+  // the engine at main ac3bb9a: a two-night gift with its own window carries terms "" (its dates line the
+  // window's, "" until Mick hears one); a size without its own words sends terms "" and no window
+  [CODE_TWO_OWN]: giftRow(CODE_TWO_OWN, 'issued', 'Ana & Luis', 'Aunt June', { product: 'golden-arrow-2', nights: 2, subtitle: 'A gift of two nights in the trees', terms: '',
+    covers: 'December 5, 2026 to December 5, 2027', window: { from: '2026-12-05', to: '2027-12-05', whole: true, line: OWN_LINE } }),
+  [CODE_TWO_BARE]: giftRow(CODE_TWO_BARE, 'issued', 'Ana & Luis', 'Aunt June', { product: 'golden-arrow-2', nights: 2, subtitle: 'A gift of two nights in the trees', terms: '' }),
   [CODE_USED]: giftRow(CODE_USED, 'redeemed', 'Ana & Luis', 'Aunt June', { state: 'used', month: 'March 2027' }),
   [CODE_BOOKED]: giftRow(CODE_BOOKED, 'redeemed', 'Ana & Luis', 'Aunt June', { state: 'booked', month: 'February 2027' }),
   [CODE_VOID]: giftRow(CODE_VOID, 'void', 'Ana & Luis', 'Aunt June'),
@@ -907,6 +912,17 @@ async function main() {
   }
 
   console.log('/gift in its sizes, the switch on: the sizes read fails');
+  {
+    // a listed size that sends terms "" (none of its own, main ac3bb9a) is still offered, without a terms line
+    const { ctx, page } = await open('gift-sizes-noterms', { sizesOn: true, sizes: ['golden-arrow', 'golden-arrow-2'], sizesList: [SIZE_3, Object.assign({}, SIZE_2, { terms: '' })] });
+    await page.goto(BASE + '/gift');
+    await page.waitForSelector('#ga-buy .ga-sizes', { timeout: 10000 });
+    const nt = await page.evaluate(() => { const l = document.querySelector('label[for="ga-size-golden-arrow-2"]'); return { there: !!l, terms: !!l.querySelector('.ga-size__terms'), price: (l.querySelector('.ga-size__price') || {}).textContent || '' }; });
+    check(nt.there && !nt.terms && /\$1,506\.40/.test(nt.price), 'a size the engine lists with terms "": offered with its price, no terms line, nothing borrowed');
+    await press(page, 'label[for="ga-size-golden-arrow-2"]');
+    check(await page.evaluate(() => document.querySelector('.ga-terms-line').hidden && document.querySelector('.ga-show .ga-nights').hidden), 'chosen: the terms line under the panel and the sample card\'s stay hidden, not the three-night\'s words');
+    await ctx.close();
+  }
   for (const [what, engine] of [['answers 404 (the route not there)', { sizesRoute: 'off' }], ['is unreachable', { sizesRoute: 'down' }],
     ['answers something that is not the shape', { sizesAnswer: { nope: 1 } }], ['lists a size with no price', { sizesList: [Object.assign({}, SIZE_2, { price_cents: null })] }]]) {
     const { ctx, page, rec } = await open('gift-sizes-fail', Object.assign({ sizesOn: true, sizes: ['golden-arrow', 'golden-arrow-2'] }, engine));
@@ -1090,6 +1106,21 @@ async function main() {
     check(c1.sub === CARD_W.card_subtitle_1 && c1.nights === CARD_W.card_nights_1 && c1.gift === null && c1.status === null, 'an answer with the product alone (golden-arrow-1): the card\'s own words for one night by product, no gift line, no status');
     check(await layoutOk(one.page), 'nothing on the one-night card runs into anything');
     await one.ctx.close();
+    // the engine sends terms "" (main ac3bb9a): a two-night gift with its own window shows the window's line, never the twelve-month words from the product
+    const own = await open('card-two-own', {});
+    await own.page.goto(BASE + '/gift/card#code=' + CODE_TWO_OWN);
+    await own.page.waitForSelector('[data-ga-card]:not([hidden])', { timeout: 10000 });
+    const co = await cardOf(own.page);
+    check(co.sub === 'A gift of two nights in the trees' && co.nights === OWN_LINE && !has(await own.page.evaluate(() => document.querySelector('.ga-card').innerText), 'twelve months'), 'a two-night gift with its own window: the window\'s dates line in the terms\' place, no twelve-month words');
+    await own.ctx.close();
+    // a size without its own words: terms "" and no window: no terms line at all, never filled from the product
+    const bare = await open('card-two-bare', {});
+    await bare.page.goto(BASE + '/gift/card#code=' + CODE_TWO_BARE);
+    await bare.page.waitForSelector('[data-ga-card]:not([hidden])', { timeout: 10000 });
+    const cb = await bare.page.evaluate(() => { const n = document.querySelector('.ga-nights'); return { sub: document.querySelector('.ga-subtitle').innerText, hidden: n.hidden, text: n.textContent, all: document.querySelector('.ga-card').innerText }; });
+    check(cb.sub === 'A gift of two nights in the trees' && cb.hidden && !has(cb.all, 'twelve months') && !has(cb.all, 'three nights'), 'terms sent empty, no window: no terms line, nothing borrowed from the product or the three-night card');
+    check(await layoutOk(bare.page), 'and nothing on that card runs into anything');
+    await bare.ctx.close();
     // SIZE_WORDS on (Mick has heard them): the Writer's gift line and status for each size
     const two = await open('card-two-words', { sizeWordsOn: true });
     await two.page.goto(BASE + '/gift/card#code=' + CODE_TWO);

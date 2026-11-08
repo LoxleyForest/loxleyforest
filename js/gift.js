@@ -218,19 +218,21 @@
         if (!s || typeof s.product !== 'string' || !s.product) return;
         var price = Number(s.price_cents), nights = Number(s.nights);
         if (!isFinite(price) || price <= 0 || !isFinite(nights) || nights <= 0) return;
-        if (typeof s.subtitle !== 'string' || !s.subtitle.trim() || typeof s.terms !== 'string' || !s.terms.trim()) return;
+        if (typeof s.subtitle !== 'string' || !s.subtitle.trim()) return;
+        // terms "" is a size without its own words (never the 3-night's borrowed): shown without a terms line
+        var terms = typeof s.terms === 'string' ? s.terms.trim() : '';
         var sentence = typeof s.sentence === 'string' ? s.sentence.trim() : '';
         var buyable = s.sold_out !== true && (!named || named.indexOf(s.product) >= 0);
         if (!buyable && !sentence) return;
         out.push({ product: s.product, nights: nights, price_cents: Math.round(price), subtitle: s.subtitle.trim(),
-          terms: s.terms.trim(), sentence: sentence, buyable: buyable });
+          terms: terms, sentence: sentence, buyable: buyable });
       });
       out.sort(function (a, b) { return a.nights - b.nights; });
       return out;
     }
     function choose(s) {
       size = s; product = s.product; opened = null;
-      if (termsLine) { termsLine.textContent = s.terms; termsLine.hidden = false; }
+      if (termsLine) { termsLine.textContent = s.terms; termsLine.hidden = !s.terms; }
       // The sample card above shows the size chosen: its line and its terms the engine's, its gift
       // line the site's by its nights (the Chief, 2026-11-08).
       var sample = document.querySelector('.ga-show .ga-card');
@@ -239,7 +241,7 @@
         if (st) st.textContent = s.subtitle;
         // the gift line: the 3-night card's own, or the Writer's for its size once heard (SIZE_WORDS), else none
         if (gl) { var t = s.nights === 3 ? w('card_gift_3') : (SIZE_WORDS ? w('card_gift_' + s.nights) : ''); gl.textContent = t; gl.hidden = !t; }
-        if (nt) nt.textContent = s.terms;
+        if (nt) { nt.textContent = s.terms; nt.hidden = !s.terms; }
         fit(sample);
       }
     }
@@ -269,7 +271,7 @@
           el('span', { 'class': 'ga-size__text' }, [
             el('span', { 'class': 'ga-size__name', text: s.subtitle }),
             s.buyable ? el('span', { 'class': 'ga-size__price' }, [G.money(s.price_cents), el('small', { text: ' ' + w('all_in') })]) : null,
-            el('span', { 'class': 'ga-size__terms', id: id + '-terms', text: s.terms }),
+            s.terms ? el('span', { 'class': 'ga-size__terms', id: id + '-terms', text: s.terms }) : null,
             s.buyable ? null : el('span', { 'class': 'ga-size__out', id: id + '-out', role: 'status', text: s.sentence })])]);
       });
       var btn = el('button', { type: 'submit', 'class': 'lf-btn gh-btn--dark gh-cta', text: w('continue') });
@@ -539,11 +541,15 @@
     // other size: its subtitle and terms as the engine sends them (the printed card's own words,
     // ruled 2026-10-27), else the site's copy of those words by nights; its gift line and unused
     // status the Writer's, only once SIZE_WORDS is on, else none (never the 3-night's).
+    // The site's copy by product fills in only when the engine sends no field at all (an older
+    // answer); a field it sends empty means none (the Forge, main ac3bb9a: a gift with its own
+    // window carries terms "", its dates line the window's; a size without its own words sends "",
+    // never the 3-night's), and the page shows none, never the twelve-month words from the product.
     function sizeWords(g) {
       var n = nightsOf(g);
       if (n === 3) return null;
-      var sub = typeof g.subtitle === 'string' && g.subtitle.trim() ? g.subtitle.trim() : w('card_subtitle_' + n);
-      var terms = typeof g.terms === 'string' && g.terms.trim() ? g.terms.trim() : w('card_nights_' + n);
+      var sub = typeof g.subtitle === 'string' ? g.subtitle.trim() : w('card_subtitle_' + n);
+      var terms = typeof g.terms === 'string' ? g.terms.trim() : w('card_nights_' + n);
       return { n: n, subtitle: sub, terms: terms, gift: SIZE_WORDS ? w('card_gift_' + n) : '', unused: SIZE_WORDS ? w('state_unused_' + n) : '' };
     }
     // The reveal plays once per card on this device: a short hash of the code, never the code.
@@ -574,7 +580,7 @@
       var sw = sizeWords(g);
       if (sw) {
         var subEl = card.querySelector('.ga-subtitle'), giftEl = card.querySelector('.ga-gift');
-        if (subEl && sw.subtitle) subEl.textContent = sw.subtitle;
+        if (subEl) { subEl.textContent = sw.subtitle; subEl.hidden = !sw.subtitle; }
         if (giftEl) { giftEl.textContent = sw.gift; giftEl.hidden = !sw.gift; }
       }
       // The giver's note, under the dedication, as they wrote it (text only, line breaks kept).
@@ -593,7 +599,7 @@
       if (nights && g.window) {
         var line = String(g.window.line || '').trim();
         if (line) nights.textContent = line; else nights.hidden = true;
-      } else if (nights && sw && sw.terms) nights.textContent = sw.terms;   // its size's terms, the engine's
+      } else if (nights && sw) { nights.textContent = sw.terms; nights.hidden = !sw.terms; }   // its size's terms, the engine's; none when it sends none
       wait.hidden = true; note.hidden = true;
       fig.hidden = false;
       fit(card);

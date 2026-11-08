@@ -178,7 +178,7 @@ to Thursday), the 2-night and the 3-night, each with its own card front (images/
 golden-arrow-card-front-1-night.jpg, -2-nights.jpg, golden-arrow-card-front.jpg), its price and its
 terms in the card's own words, every one from the engine, never typed. The engine's side: /v1/health
 gift_sizes names each open size that still sells (Loxley main c78de5b); GET /v1/gift/sizes (the
-Forge, 2026-11-08, forge/gift-sizes-read, main commit to follow) answers {sizes: [{product, nights,
+Forge, 2026-11-08, on Loxley main at ac3bb9a, deployed on the droplet's next timer pass) answers {sizes: [{product, nights,
 name, subtitle, price_cents (what the checkout charges), terms, includes, sold_out, sentence}]} in
 nights order, the sizes on sale alone, sentence "" while a size sells and the engine's FEWER_NIGHTS
 ("There are not enough nights left this season for this Golden Arrow. A shorter one is still open,
@@ -212,10 +212,13 @@ a gift on this link"). TWO GATES, not one (the Critic's weakest claim: a hand-is
 size can exist the day Mick types the open line, before any site push, so the card page must never
 read "three nights" for it, and must not wait on SIZES). (a) At once, no switch: a card of one night
 or two shows its own subtitle and terms, the printed card's words ruled 2026-10-27, as the engine
-sends them on GET /v1/gift (the Forge, forge/gift-sizes-read 08d0eee, main commit to follow: nights,
+sends them on GET /v1/gift (the Forge, Loxley main ac3bb9a: nights,
 subtitle, terms, includes on every product, from one helper gifts.card_words that /v1/gift/sizes
-reads too), the site's copy of those words by product only when the fields are missing; and no gift
-line and no status line at all. (b) `var SIZE_WORDS = false;` in js/gift.js: the Writer's two lines
+reads too), the site's copy of those words by product only when the fields are missing (an older
+answer; a field the engine sends empty means none: a gift with its own window carries terms "" and
+shows its window's line, a size without its own words sends "" and shows no terms line, never the
+twelve-month words from the product; a size priced above its $2,000 line is not listed by the sizes
+read at all); and no gift line and no status line at all. (b) `var SIZE_WORDS = false;` in js/gift.js: the Writer's two lines
 for such a card, its gift line ("A night in the treehouse, and the Dawn Table: champagne brunch
 carried across the bridge to your door." / "Two nights in the treehouse, and the Dawn Table: ...")
 and its unused status ("Unused, ready for one night" / "Unused, ready for two nights"), for Mick's
@@ -233,7 +236,7 @@ sell, since it names a one-night card (the Critic). Proven: check_gift.js 289 (s
 card with the engine's fields and a one-night from the product alone, no gift line or status; with
 SIZE_WORDS on, the Writer's lines; the three-night unchanged in every state; the sample swap, back,
 and with the Writer's line; the "When" row swapped only with all three on sale; the page as built
-with SIZES on rendered, not only its script). The Dawn Table is ruled, not a question: Mick,
+with SIZES on rendered, not only its script; terms sent empty on a card and on a listed size). The Dawn Table is ruled, not a question: Mick,
 2026-11-08, "Golden Arrow as written", the brunch given in every size. ORDER (the Critic's, confirmed by the Chief 2026-11-08: "a card always tells the truth about its own size, whatever the switches say"): Mick
 hears the Writer's six lines before he types the open line for any size; SIZE_WORDS flips on his
 yes (one line, the check, one commit); SIZES flips on the Chief's word once a size is open (the
