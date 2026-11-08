@@ -97,7 +97,7 @@
   // Stripe, so it waits for his yes): PRICE true, the price of the card on sale, read from
   // /v1/gift/sizes, stands above the names with "Taxes and fees included."; typed nowhere; nothing
   // shown if the engine is silent. false: as it was.
-  var PRICE = false;
+  var PRICE = true;
   var FRONTS = { 'golden-arrow-1': '/images/gift/golden-arrow-card-front-1-night.jpg',
                  'golden-arrow-2': '/images/gift/golden-arrow-card-front-2-nights.jpg',
                  'golden-arrow': '/images/gift/golden-arrow-card-front.jpg' };
