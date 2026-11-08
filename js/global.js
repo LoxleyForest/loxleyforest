@@ -448,9 +448,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // One gold Book button per screen: step aside while another one is in view, or the menu is open.
   let menuOpen = false;
   const inView = new Set();
-  // it waits until the first screen has been read, then stays out of the way of any other Book button
+  const textUnder = new Set();   // the text blocks running under the button's band right now
+  // it waits until the first screen has been read, then stays out of the way of any other Book button, and of the words
   const pastFirst = () => window.scrollY > window.innerHeight * 0.6;
-  const update = () => fab.classList.toggle('is-hidden', !pastFirst() || menuOpen || document.documentElement.classList.contains('lf-menu-open') || inView.size > 0);
+  const update = () => fab.classList.toggle('is-hidden', !pastFirst() || menuOpen || document.documentElement.classList.contains('lf-menu-open') || inView.size > 0 || textUnder.size > 0);
   window.addEventListener('scroll', update, { passive: true });
   update();
   if ('MutationObserver' in window) new MutationObserver(update).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
@@ -461,6 +462,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     document.querySelectorAll('main a.btn--primary[href="/book"], main a.lf-btn[href="#book"], main #book').forEach((el) => io.observe(el));
   }
+  // Clear of the words (the audit, 2026-11-08: it sat over package text on /elopements and over the
+  // bridge's lines on the home page): while any text block runs through the band at the foot of the
+  // screen where the button sits, the button steps aside, and returns over a photograph or a gap.
+  let textIO = null;
+  const watchText = () => {
+    if (!('IntersectionObserver' in window)) return;
+    if (textIO) { textIO.disconnect(); textIO = null; }
+    textUnder.clear();
+    if (getComputedStyle(fab).display === 'none') { update(); return; }   // a desk: the button is not shown
+    const band = fab.offsetHeight + 32;   // the button and a little air above it
+    textIO = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) textUnder.add(e.target); else textUnder.delete(e.target); });
+      update();
+    }, { rootMargin: '-' + Math.max(0, window.innerHeight - band) + 'px 0px 0px 0px' });
+    document.querySelectorAll('main :is(p, li, dd, dt, h1, h2, h3, h4, blockquote, figcaption, label, summary, td, th)').forEach((el) => textIO.observe(el));
+  };
+  watchText();
+  window.addEventListener('resize', watchText);
   if (overlay && 'MutationObserver' in window) {
     new MutationObserver(() => {
       menuOpen = overlay.classList.contains('open');

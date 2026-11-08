@@ -423,7 +423,7 @@
 .ga-chosen { margin: 0; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; font-size: 15px; line-height: 1.4; color: var(--stone); }
 .ga-chosen strong { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 1.25rem; color: var(--forest-deep); }
 .ga-confirm__size { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 1.2rem; color: var(--stone); }
-.ga-card .ga-gift[hidden] { display: none; }   /* a card of another size, its gift line not yet heard */
+.ga-card .ga-gift[hidden], .ga-card .ga-subtitle[hidden], .ga-card .ga-nights[hidden] { display: none; }   /* a card of another size: a line not yet heard, or words the engine sends none of */
 .ga-terms-line[hidden] { display: none; }
 
 .ga-mail-hint { margin: 6px 0 0 34px; font-size: 15px; line-height: 1.45; color: var(--stone); }

@@ -39,6 +39,7 @@ const TYPES = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascrip
   '.png': 'image/png', '.jpg': 'image/jpeg', '.json': 'application/json', '.woff2': 'font/woff2' };
 const SCRIPT = fs.readFileSync(path.join(ROOT, 'js', 'gatehouse.js'), 'utf8');
 const SWITCH = 'var OFFER_STAY = false;';
+const NEAREST_SWITCH = 'var OFFER_NEAREST = false;';   // the third case (the nearest stay for a night that can make none), off
 
 function serve() {
   const srv = http.createServer((req, res) => {
@@ -144,6 +145,7 @@ async function main() {
 
   console.log('the file');
   check((SCRIPT.match(/var OFFER_STAY = (true|false);/g) || []).length === 1 && SCRIPT.includes(SWITCH), 'the switch is one line, OFFER_STAY false as shipped');
+  check((SCRIPT.match(/var OFFER_NEAREST = (true|false);/g) || []).length === 1 && SCRIPT.includes(NEAREST_SWITCH), 'the third case has its own line, OFFER_NEAREST false as shipped (the first two cases alone until Mick\'s yes)');
 
   console.log('shipped (OFFER_STAY false)');
   {
@@ -240,16 +242,18 @@ async function main() {
     await ctx.close();
   }
 
-  // a Saturday walled by a taken stretch after it, with a taken Friday before: nothing includes it, so the nearest stay is offered
+  // a Saturday walled by a taken stretch after it, with a taken Friday before: nothing includes it. With the third
+  // case off (OFFER_NEAREST false, as shipped) the tap starts a stay there as it always did, and the taken nights
+  // after refuse every check-out; with it on, the nearest stay that works is offered.
   console.log('offered, the night that can make no stay');
-  {
+  for (const nearestOn of [false, true]) {
     const ctxN = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const W = day(SAT3 + 7);   // the Saturday three weeks after the first: wall it in
     const walledNights = () => { const n = nights(); n.nights = n.nights.filter(x => x.night !== day(SAT3 + 6) && x.night !== day(SAT3 + 8) && x.night !== day(SAT3 + 9)); return n; };
     await ctxN.route('**/*', async (route) => {
       const req = route.request(); const u = new URL(req.url());
       if (u.origin === base) {
-        if (u.pathname === '/js/gatehouse.js') return route.fulfill({ status: 200, contentType: 'text/javascript', body: SCRIPT.replace(SWITCH, 'var OFFER_STAY = true;') });
+        if (u.pathname === '/js/gatehouse.js') return route.fulfill({ status: 200, contentType: 'text/javascript', body: SCRIPT.replace(SWITCH, 'var OFFER_STAY = true;').replace(NEAREST_SWITCH, 'var OFFER_NEAREST = ' + nearestOn + ';') });
         return route.continue();
       }
       if (u.hostname === 'book.loxleyforest.com') {
@@ -263,10 +267,17 @@ async function main() {
     });
     const page = await ctxN.newPage();
     await page.goto(base + '/book', { waitUntil: 'load' }); await page.waitForSelector('.gh-calendar .gh-day', { timeout: 15000 });
-    await tap(page, W); await waitTotal(page);
-    const s = await state(page);
-    check(s.edges.length === 2 && s.edges[0] !== W && /^No stay works around .*: the nights beside it are taken\. The nearest that does is .*; the price is below\. Tap a later day to stay longer\.$/.test(s.note), 'a walled-in Saturday offers the nearest stay that works: ' + JSON.stringify(s.note));
-    check(/\$/.test(s.total), 'with its price: ' + s.total);
+    await tap(page, W);
+    if (!nearestOn) {
+      await page.waitForTimeout(600);
+      const s = await state(page);
+      check(s.edges.length === 1 && s.edges[0] === W && /^Arriving .*Now choose your check-out day\.$/.test(s.note) && !/\$/.test(s.total || ''), 'the third case off (as shipped): the walled-in Saturday starts a stay there as always, no other dates offered: ' + JSON.stringify(s.note));
+    } else {
+      await waitTotal(page);
+      const s = await state(page);
+      check(s.edges.length === 2 && s.edges[0] !== W && /^No stay works around .*: the nights beside it are taken\. The nearest that does is .*; the price is below\. Tap a later day to stay longer\.$/.test(s.note), 'OFFER_NEAREST on: a walled-in Saturday offers the nearest stay that works: ' + JSON.stringify(s.note));
+      check(/\$/.test(s.total), 'with its price: ' + s.total);
+    }
     await ctxN.close();
   }
 

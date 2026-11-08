@@ -297,6 +297,9 @@ html:not(.js) .lf-rv__nav { visibility: hidden; }
   width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(247, 243, 237, 0.45); background: rgba(20, 36, 24, 0.35);
   display: grid; place-items: center; color: var(--on-dark); cursor: pointer;
 }
+/* hidden until the film is playing (js/global.js unhides it on "playing"): display:grid above would otherwise override
+   the hidden attribute, and an iPhone, which never plays the film, showed a dead pause icon over the still (the audit, 2026-11-08) */
+.lf-hero__pause[hidden] { display: none; }
 .lf-hero__pause span { width: 10px; height: 12px; border-left: 3px solid currentColor; border-right: 3px solid currentColor; }
 .lf-hero__pause.is-paused span { width: 0; height: 0; border: 0; border-left: 11px solid currentColor; border-top: 7px solid transparent; border-bottom: 7px solid transparent; margin-left: 3px; }
 .lf-hero__pause:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }

@@ -171,6 +171,51 @@ they can reply to.
 
 ---
 
+# IN FLIGHT · 2026-11-08 · The site audit's eight (the Chief's route from chief docs/briefs/2026-11-08-site-walkthrough.md and 2026-11-08-critic-site-audit.md, "Thursday's eight", one commit each, before the Nov 12 freeze)
+
+The Chief's ship rules: truth fixes and the two bugs ship on green on its word; everything else behind
+a switch until Mick's yes. Too risky for the freeze, not started: the toast move, the /book price card
+and calendar layout, "Buying for someone else?", cancellation rewording.
+
+**The dead pause icon (bug, shipped).** On an iPhone the hero film never plays (only a phone reporting
+4g gets it), yet a pause icon showed over the still: css/v2.css `.lf-hero__pause { display: grid }`
+overrode the hidden attribute. `.lf-hero__pause[hidden] { display: none; }` added, as .lf-loop__pause
+has it; js/global.js unhides it on "playing". Proven in check_inquire_fab.js (a phone: hidden and not
+drawn; a desk: shown only once playing).
+
+**The floating button clear of the words (bug, shipped).** It sat over package text on /elopements
+and over the bridge's lines on the home page. js/global.js: a second observer whose root is the band
+at the foot of the screen where the button sits (its height plus 32 px); while any text block in main
+(p, li, dd, dt, h1 to h4, blockquote, figcaption, label, summary, td, th) runs through the band the
+button steps aside (is-hidden, as over the first screen or another Book button), and returns over a
+photograph or a gap; re-armed on resize; nothing on a desk. Proven in check_inquire_fab.js on
+/elopements and the home page, both states of INQUIRE_FAB.
+
+**Truth fixes (shipped on the Chief's word; cuts and one narrowing, no new words).** elopements.html's
+head no longer tells Google the place is an "EventVenue" (the agreement: "We are not a commercial or
+licensed wedding venue"; the head is kept from the file by the builder, so it was cut there). The
+rope bridge's tag "The aisle in every package." is now "The aisle in The Crossing." (false for
+Firelight, whose vows are at the Fire Circle; the Crossing is the one package whose vows are on the
+bridge). "Every guest is part of your private celebration: your closest people, sharing your night
+in the canopy." cut from the elopement FAQ's guest answer and from the inquiry form's help line
+(four pages share it): it read as eight overnight in a treehouse that holds six. "The canopy
+provides natural protection." cut from the elopement FAQ and "and the canopy gives the deck natural
+protection" from /faq: no source.
+
+**The bridge as a still on phones (shadow, `const PHONE_STILL = false;` in js/crossing.js).** Mick:
+"the animated bridge is too clunky"; the audit: pinned 5.6 screens, about 5 fps under a 4x CPU
+slowdown, long tasks to 770 ms. With the switch on a phone takes the existing still path (the one
+engraving, every line of the words, no pin, one screen, the calendar next); a desk stays animated;
+reduced motion is the still either way. Proven: scripts/site/check_crossing_still.js, both states.
+MEASURED on a throttled phone (390 px, 1.6 Mbps, 150 ms, 4x CPU, three runs each, the engine
+faked): the calendar live at 3.5 to 3.6 s animated and 3.3 to 3.5 s as the still (the walk builds
+only when scrolled near, so it never held the calendar back); the walk itself, a thumb's scroll
+through it: animated, 5.6 screens, 4.7 to 6 frames a second, 70 to 74 long tasks, the longest 0.9
+to 1.0 s, the script's own governor already down to its low-detail mode; the still, 1 screen, 37 to
+43 frames a second, no long task at all. Flips on the Chief's word.
+
+---
+
 # IN FLIGHT · 2026-11-08 · The Golden Arrow in its sizes on /gift (shadow, `var SIZES = false;` in js/gift.js)
 
 The Chief's route, the Golden Arrow's last site piece: the gift page per size, the 1-night (Monday
@@ -178,7 +223,7 @@ to Thursday), the 2-night and the 3-night, each with its own card front (images/
 golden-arrow-card-front-1-night.jpg, -2-nights.jpg, golden-arrow-card-front.jpg), its price and its
 terms in the card's own words, every one from the engine, never typed. The engine's side: /v1/health
 gift_sizes names each open size that still sells (Loxley main c78de5b); GET /v1/gift/sizes (the
-Forge, 2026-11-08, forge/gift-sizes-read, main commit to follow) answers {sizes: [{product, nights,
+Forge, 2026-11-08, on Loxley main at ac3bb9a, deployed on the droplet's next timer pass) answers {sizes: [{product, nights,
 name, subtitle, price_cents (what the checkout charges), terms, includes, sold_out, sentence}]} in
 nights order, the sizes on sale alone, sentence "" while a size sells and the engine's FEWER_NIGHTS
 ("There are not enough nights left this season for this Golden Arrow. A shorter one is still open,
@@ -208,30 +253,39 @@ the read failing, a size with no front, the read failing four ways).
 THE CARD PAGE PER SIZE (the Chief's second route the same night, on the Writer's read, chief
 docs/briefs/2026-11-08-writer-gift-page-sizes.md): /gift/card accepts every Golden Arrow product
 (it refused all but golden-arrow, so a 1- or 2-night card's link would have read "We could not find
-a gift on this link"); with SIZES on it shows the card's own size from GET /v1/gift's new fields
-(the Forge, forge/gift-sizes-read 08d0eee, main commit to follow: nights, subtitle, terms, includes
-on every product, from one helper gifts.card_words that /v1/gift/sizes reads too): the engine's
-subtitle and terms, the site's gift line and unused status by nights, keyed by product only when
-the fields are missing (the terms then the engine's words typed in gift.py as the fallback). With
-SIZES off the card is exactly as today, whatever its product. On /gift, choosing a size swaps the
-sample card to that size's line, gift line and terms. THE WORDS (the Writer's, 2026-11-08, for
-Mick's ear, typed in gift.py WORDS; shown only with the switch on): per size, "A gift of a night in
-the trees" / "A gift of two nights in the trees"; "A night in the treehouse, and the Dawn Table:
-champagne brunch carried across the bridge to your door." / "Two nights in the treehouse, and the
-Dawn Table: ..."; "Unused, ready for one night" / "Unused, ready for two nights". One version for
-every size, BUILT INTO THE PAGE ONLY WHILE js/gift.js HAS SIZES TRUE (gift.py reads the switch at
-build, so one line flips both and a rebuild carries the words): the description "A gift of nights in
-the treehouse at Loxley Forest, and the Dawn Table." (all four gift pages), the lead "Nights in the
-treehouse, and the Dawn Table: champagne brunch carried across the bridge to their door.", the
-heading "Nights in the trees", and the "When" row "Any weeknight for one night, Monday to Thursday;
-any two or three nights, weekends included. Good within twelve months of purchase. After that it
-never expires; we ask only the difference if rates have risen." Proven: check_gift.js 281 (11 more:
-a two-night card shipped and with the switch on, a one-night card from the product alone, the
-three-night unchanged, the sample swap and back, the built lines matching the switch). The Dawn
-Table is ruled, not a question: Mick, 2026-11-08, "Golden Arrow as written", the brunch given in
-every size. The switch flips only on the Chief's word, after Mick hears the words above and types
-the open line on the engine; flipping it is: the one line in js/gift.js, python3
-scripts/site/build_v2.py, the checks, one commit.
+a gift on this link"). TWO GATES, not one (the Critic's weakest claim: a hand-issued card of another
+size can exist the day Mick types the open line, before any site push, so the card page must never
+read "three nights" for it, and must not wait on SIZES). (a) At once, no switch: a card of one night
+or two shows its own subtitle and terms, the printed card's words ruled 2026-10-27, as the engine
+sends them on GET /v1/gift (the Forge, Loxley main ac3bb9a: nights,
+subtitle, terms, includes on every product, from one helper gifts.card_words that /v1/gift/sizes
+reads too), the site's copy of those words by product only when the fields are missing (an older
+answer; a field the engine sends empty means none: a gift with its own window carries terms "" and
+shows its window's line, a size without its own words sends "" and shows no terms line, never the
+twelve-month words from the product; a size priced above its $2,000 line is not listed by the sizes
+read at all); and no gift line and no status line at all. (b) `var SIZE_WORDS = false;` in js/gift.js: the Writer's two lines
+for such a card, its gift line ("A night in the treehouse, and the Dawn Table: champagne brunch
+carried across the bridge to your door." / "Two nights in the treehouse, and the Dawn Table: ...")
+and its unused status ("Unused, ready for one night" / "Unused, ready for two nights"), for Mick's
+ear; on, they show. The 3-night card is as it was in every state. SIZES governs /gift alone: the
+panel, and (built into the page while js/gift.js has SIZES true, gift.py reading the switch at
+build) the description "A gift of nights in the treehouse at Loxley Forest, and the Dawn Table."
+(all four gift pages), the lead "Nights in the treehouse, and the Dawn Table: champagne brunch
+carried across the bridge to their door.", the heading "Nights in the trees"; on /gift, choosing a
+size swaps the sample card to that size's line and terms (its gift line too once SIZE_WORDS is on;
+the 3-night's own always). The "When" row keeps the card's ratified words as built; the script puts
+the Writer's one sentence for every size ("Any weeknight for one night, Monday to Thursday; any two
+or three nights, weekends included. Good within twelve months of purchase. After that it never
+expires; we ask only the difference if rates have risen.") in its place only while all three sizes
+sell, since it names a one-night card (the Critic). Proven: check_gift.js 289 (shipped, a two-night
+card with the engine's fields and a one-night from the product alone, no gift line or status; with
+SIZE_WORDS on, the Writer's lines; the three-night unchanged in every state; the sample swap, back,
+and with the Writer's line; the "When" row swapped only with all three on sale; the page as built
+with SIZES on rendered, not only its script; terms sent empty on a card and on a listed size). The Dawn Table is ruled, not a question: Mick,
+2026-11-08, "Golden Arrow as written", the brunch given in every size. ORDER (the Critic's, confirmed by the Chief 2026-11-08: "a card always tells the truth about its own size, whatever the switches say"): Mick
+hears the Writer's six lines before he types the open line for any size; SIZE_WORDS flips on his
+yes (one line, the check, one commit); SIZES flips on the Chief's word once a size is open (the
+one line in js/gift.js, python3 scripts/site/build_v2.py, the checks, one commit).
 
 ---
 

@@ -46,6 +46,10 @@
   var OFFER_STAY = false;
   var SUGGEST_MAX = 4;     // the longest stay the calendar offers on its own
   var NEAREST_DAYS = 21;   // how far from a tapped night it looks for a stay that works
+  // The third case, a night that can make no stay offering the nearest that can: OFF (the Critic's
+  // site-audit sheet, 2026-11-08: the first two cases alone; it moves a guest to other dates from one
+  // tap, and needs Mick's own yes). false: such a tap refuses as it always did. true on his word.
+  var OFFER_NEAREST = false;
   var OFFLINE = "We couldn't reach our booking system just now. Nothing was charged. Please try again in a moment, or call or text " + PHONE + '.';
 
   // ---------------------------------------------------------------- helpers
@@ -344,8 +348,10 @@
         if (OFFER_STAY && night.min_stay > 1 && !(night.gap && night.min_stay <= 2)) {
           var s = c.suggest(day);
           if (s) { offer(s.ci, s.co, offered(day, s), s.shifted ? 'shifted' : 'direct'); return; }
-          var near = c.nearest(day);
-          if (near) { offer(near.ci, near.co, nearestWords(day, near), 'nearest'); return; }
+          if (OFFER_NEAREST) {
+            var near = c.nearest(day);
+            if (near) { offer(near.ci, near.co, nearestWords(day, near), 'nearest'); return; }
+          }
         }
         c.checkIn = day; c.checkOut = null;
         // Inside the engine's lead time, by request (loxley-rescue GATEHOUSE-SPEC 20): the quote card says how.
