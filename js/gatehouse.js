@@ -704,6 +704,7 @@
   function writeUrl(push) {
     var q = new URLSearchParams(location.search);
     ['checkIn', 'checkOut', 'check_in', 'check_out', 'checkin', 'checkout', 'step'].forEach(function (k) { q.delete(k); });
+    if (cal && cal.checkIn) q.delete('month');   // the month link has done its work once dates are chosen
     if (cal && cal.checkIn) q.set('checkIn', cal.checkIn);
     if (cal && cal.checkOut) q.set('checkOut', cal.checkOut);
     if (state.step === 'pay') q.set('step', 'pay');
@@ -716,13 +717,27 @@
     var q = new URLSearchParams(location.search);
     var ci = q.get('checkIn') || q.get('check_in') || q.get('checkin');
     var co = q.get('checkOut') || q.get('check_out') || q.get('checkout');
-    return { checkIn: isDay(ci) ? ci : null, checkOut: isDay(co) ? co : null, step: q.get('step') === 'pay' ? 'pay' : 'dates' };
+    // ?month=2026-12 opens the calendar on that month (the Chief's funnel route, item 3, 2026-11-08:
+    // the Christmas ad lands on December). Dates in the link still win.
+    var mo = q.get('month') || '';
+    return { checkIn: isDay(ci) ? ci : null, checkOut: isDay(co) ? co : null, step: q.get('step') === 'pay' ? 'pay' : 'dates',
+      month: /^\d{4}-(0[1-9]|1[0-2])$/.test(mo) ? mo : null };
+  }
+
+  // The month a link asked for, kept within the calendar's own range.
+  function applyMonth(mo) {
+    if (!mo || !cal) return;
+    var m = parse(mo + '-01');
+    if (isNaN(m)) return;
+    if (m < cal.first) m = cal.first;
+    if (m > cal.last) m = cal.last;
+    cal.month = m;
   }
 
   // Dates from a link: chosen for the guest when they are open, explained when not.
   function applyUrl() {
     var u = readUrl(), t = today();
-    if (!u.checkIn) { cal.set(null, null); state.quote = null; quoteFor = ''; return; }
+    if (!u.checkIn) { cal.set(null, null); state.quote = null; quoteFor = ''; applyMonth(u.month); return; }
     if (u.checkIn < t) {
       cal.set(null, null);
       cal.note = short(u.checkIn) + ' has already passed. Choose your nights on the calendar.';

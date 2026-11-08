@@ -478,6 +478,35 @@ document.addEventListener('DOMContentLoaded', () => {
    loading, and never on Save-Data or a slow connection.
    Dormant until the <video> carries data-ready.
    ============================================================ */
+/* ============================================================
+   The one fixed button on a phone (.book-fab, "Book your dates"):
+   on the elopement page it becomes "Inquire about your date" and
+   points at the form, which sits below fourteen reviews and the
+   questions (the Chief's funnel route, item 4, 2026-11-08), and it
+   steps aside while the form itself is on screen. The words are the
+   page's own (its hero button and the form's button say the same).
+   INQUIRE_FAB false: nothing changes anywhere. true on the Chief's
+   word. scripts/site/check_inquire_fab.js proves both states.
+   ============================================================ */
+(function () {
+  var INQUIRE_FAB = false;
+  var PAGES = { '/elopements': '#inquiry' };
+  var body = document.body;
+  if (!INQUIRE_FAB || !body) return;
+  var target = PAGES[body.getAttribute('data-lf-path') || ''];
+  var fab = document.querySelector('.book-fab');
+  var form = target && document.querySelector(target);
+  if (!target || !fab || !form) return;
+  fab.setAttribute('href', target);
+  fab.classList.add('book-fab--inquire');
+  var t = fab.lastChild; // the words after the acorn
+  if (t && t.nodeType === 3) t.nodeValue = 'Inquire about your date'; else fab.textContent = 'Inquire about your date';
+  if (!('IntersectionObserver' in window)) return;
+  new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { fab.classList.toggle('is-away', e.isIntersecting); });
+  }, { threshold: 0.15 }).observe(form);
+})();
+
 (function () {
   const v = document.querySelector('.hero__video');
   if (!v || !v.hasAttribute('data-ready')) return;
