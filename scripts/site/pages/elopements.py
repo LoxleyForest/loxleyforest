@@ -179,7 +179,7 @@ FAQ = [
 # The cards' order (the Critic's site-audit sheet and the Marketer, 2026-11-08: high to low, Crossing,
 # Vow, Firelight, the Falls after as the card that takes no date yet; Mick placed Firelight second on
 # 2026-11-02, so this waits for his ear). False: Vow, Firelight, Crossing, as he placed them. One line.
-PACKAGE_ORDER_V2 = False
+PACKAGE_ORDER_V2 = True
 ORDER_V2 = ('The Crossing', 'The Vow', FIRELIGHT_NAME)
 
 
