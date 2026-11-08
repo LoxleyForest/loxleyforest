@@ -6,10 +6,10 @@
    Needs playwright-core (scripts/logo/node_modules has it; or set PLAYWRIGHT_CORE) and the Chromium
    at ~/.cache/ms-playwright/chromium-1243 (never "playwright install").
 
-   Nothing leaves this machine; every outside request is refused. The shipped file has INQUIRE_FAB
-   false; the "on" checks serve js/global.js with it set to true, and say so.
+   Nothing leaves this machine; every outside request is refused. The check reads the shipped value
+   of INQUIRE_FAB, says which it is, and serves js/global.js in each state in turn.
 
-   It proves: shipped, /elopements keeps "Book your dates" to /book on a phone, as every page; on,
+   It proves: off, /elopements keeps "Book your dates" to /book on a phone, as every page; on,
    the one fixed button on /elopements reads "Inquire about your date" (the acorn kept), points at
    #inquiry, is on screen once the reader is past the first screen (as every page's button), a tap
    lands on the form, the button steps aside while the form is on screen and returns above it;
@@ -30,7 +30,8 @@ const ROOT = path.resolve(__dirname, '..', '..');
 const EXE = process.env.CHROME || path.join(process.env.HOME, '.cache/ms-playwright/chromium-1243/chrome-linux64/chrome');
 const TYPES = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.webp': 'image/webp', '.png': 'image/png', '.jpg': 'image/jpeg' };
 const SCRIPT = fs.readFileSync(path.join(ROOT, 'js', 'global.js'), 'utf8');
-const SWITCH = 'var INQUIRE_FAB = false;';
+const SHIPPED = (SCRIPT.match(/var INQUIRE_FAB = (true|false);/) || [])[1];
+const withSwitch = (on) => SCRIPT.replace(/var INQUIRE_FAB = (true|false);/, 'var INQUIRE_FAB = ' + on + ';');
 
 function serve() {
   const srv = http.createServer((req, res) => {
@@ -55,14 +56,14 @@ async function main() {
   const srv = await serve();
   const base = 'http://127.0.0.1:' + srv.address().port;
   const browser = await chromium.launch({ executablePath: EXE });
-  check((SCRIPT.match(/var INQUIRE_FAB = (true|false);/g) || []).length === 1 && SCRIPT.includes(SWITCH), 'the switch is one line, INQUIRE_FAB false as shipped');
+  check((SCRIPT.match(/var INQUIRE_FAB = (true|false);/g) || []).length === 1 && SHIPPED, 'the switch is one line; shipped INQUIRE_FAB = ' + SHIPPED);
 
   async function visitor(on, phone) {
     const ctx = await browser.newContext(phone ? { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true } : { viewport: { width: 1440, height: 900 } });
     await ctx.route('**/*', (route) => {
       const u = new URL(route.request().url());
       if (u.origin !== base) return route.abort();
-      if (u.pathname === '/js/global.js' && on) return route.fulfill({ status: 200, contentType: 'text/javascript', body: SCRIPT.replace(SWITCH, 'var INQUIRE_FAB = true;') });
+      if (u.pathname === '/js/global.js') return route.fulfill({ status: 200, contentType: 'text/javascript', body: withSwitch(on) });
       return route.continue();
     });
     return { ctx, page: await ctx.newPage() };
@@ -70,7 +71,7 @@ async function main() {
   const fab = (page) => page.evaluate(() => { const f = document.querySelector('.book-fab'); if (!f) return null; const r = f.getBoundingClientRect(); const cs = getComputedStyle(f);
     return { text: f.textContent.trim(), href: f.getAttribute('href'), icon: !!f.querySelector('svg'), shown: cs.display !== 'none' && cs.opacity !== '0', away: f.classList.contains('is-away'), onScreen: r.top >= 0 && r.bottom <= innerHeight }; });
 
-  console.log('shipped (INQUIRE_FAB false), a phone');
+  console.log('off (INQUIRE_FAB false), a phone');
   {
     const { ctx, page } = await visitor(false, true);
     await page.goto(base + '/elopements', { waitUntil: 'load' }); await page.waitForTimeout(400);

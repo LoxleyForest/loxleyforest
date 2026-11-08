@@ -485,11 +485,13 @@ document.addEventListener('DOMContentLoaded', () => {
    questions (the Chief's funnel route, item 4, 2026-11-08), and it
    steps aside while the form itself is on screen. The words are the
    page's own (its hero button and the form's button say the same).
-   INQUIRE_FAB false: nothing changes anywhere. true on the Chief's
-   word. scripts/site/check_inquire_fab.js proves both states.
+   INQUIRE_FAB false: nothing changes anywhere. On since 2026-11-08
+   on the Chief's word, /elopements only; the five landing pages wait
+   on the before/after read. scripts/site/check_inquire_fab.js proves
+   both states.
    ============================================================ */
 (function () {
-  var INQUIRE_FAB = false;
+  var INQUIRE_FAB = true;
   var PAGES = { '/elopements': '#inquiry' };
   var body = document.body;
   if (!INQUIRE_FAB || !body) return;

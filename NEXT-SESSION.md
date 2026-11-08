@@ -89,17 +89,19 @@ marks the visit). Nothing uses it until the Christmas ad's final URL in Google A
 or the Marketer's edit, not ours). Proven: check_offer_stay.js (now 36, five on the month link),
 check_checkout (124). The Critic: goes as is.
 
-**4. The sticky inquire button on /elopements (shadow, `var INQUIRE_FAB = false;` in js/global.js).**
-On a phone, every page's fixed gold button reads "Book your dates" to /book and shows once the
-reader is past the first screen. With the switch on, on /elopements alone it reads "Inquire about
-your date" (the page's own words), keeps its acorn, points at the form (#inquiry, which sits below
-the reviews and the questions; the site's anchor handler scrolls to it), and steps aside while the
-form is on screen (css .book-fab.is-away). The menu still carries "Book your dates". The swap is in
-the script, not the built page; PAGES in that block takes the five landing pages' #inquiry forms on
-the Chief's word, one line each. Proven: scripts/site/check_inquire_fab.js, 10 checks in both
-states. The Critic read it (its four test fixes and two code fixes are in: the acorn kept, a stray
-transition line cut); verdict: may ship dark. What would settle it once on: Netlify elopement
-submissions per /elopements phone visit, 14 days before against 14 days after.
+**4. The sticky inquire button on /elopements, LIVE since 2026-11-08 (`var INQUIRE_FAB = true;` in
+js/global.js, the Chief's word the same day, /elopements only).** On a phone, every page's fixed
+gold button reads "Book your dates" to /book and shows once the reader is past the first screen. On
+/elopements alone it now reads "Inquire about your date" (the page's own words), keeps its acorn,
+points at the form (#inquiry, which sits below the reviews and the questions; the site's anchor
+handler scrolls to it), and steps aside while the form is on screen (css .book-fab.is-away). The
+menu still carries "Book your dates". The swap is in the script, not the built page; the five
+landing pages' #inquiry forms wait on the read below, then one line each in PAGES. Proven:
+scripts/site/check_inquire_fab.js, 10 checks in both states, whichever is shipped. The Critic read
+it before it shipped dark (its four test fixes and two code fixes are in: the acorn kept, a stray
+transition line cut). THE READ, the Chief's: Netlify elopement form submissions per /elopements phone
+visit, Oct 25 to Nov 7 against Nov 8 to Nov 21, 2026 (the Analyst, after Nov 21; the visits from
+the engine's funnel counts or Analytics, never a guest's name).
 
 **5. /book's words for its searches (the Writer, 2026-11-08, Mick's ear, nothing on the page).** For
 the people arriving from "treehouse rental" and "romantic getaway" (Google rates the landing
