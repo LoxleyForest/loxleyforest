@@ -191,6 +191,10 @@
 .lf-reviews { overflow: hidden; }
 .lf-reviews__head { text-align: center; margin: 0 auto 28px; }
 /* the rating: the number beside five acorns shaded to it; gold here is the acorns' own */
+/* "Give a Stay", the home page's band through December 24 (build_v2.GIVE_A_STAY) */
+.lf-give .lf-h2 { max-width: 22ch; margin: 14px auto 0; }
+.lf-give .lf-actions { margin-top: 26px; }
+
 .lf-rating { display: inline-flex; align-items: center; gap: 14px; margin: 22px 0 0; flex-wrap: wrap; }
 /* the count line under the rating (build_v2.REVIEW_COUNT, read from the review list at build): its own row */
 .lf-rating__count { flex-basis: 100%; font-family: 'Montserrat', sans-serif; font-size: 0.8rem; letter-spacing: 0.06em; color: var(--stone); font-variant-numeric: lining-nums; }
