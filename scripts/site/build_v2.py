@@ -34,6 +34,51 @@ NAV = [('/treehouses', 'The Treehouse'), ('/experiences', 'Experiences'), ('/elo
 # footer only, never the desktop header row (its six links are measured to fit). The words are the
 # card's ratified title (scripts/site/pages/gift.py CARD); the link itself awaits Mick's yes.
 GIFT_LINK = '<a href="/gift">The Golden Arrow</a>'
+# "Give a Stay" (the Marketer's teardown and the Critic's site-audit sheet, 2026-11-08; the Chief's
+# route, behind a switch until Mick's yes): the gift as the second item of the header row and the
+# menu, a band on the home page after the reviews through December 24, and the words "gift card"
+# where /gift explains it (pages/gift.py reads this switch). The band's line is the Marketer's, for
+# Mick's ear. False: as it was, the one way to /gift beside "Questions". A build-time switch: one
+# line, a rebuild, the checks, one commit.
+GIVE_A_STAY = False
+# the build's day, Eastern, for the band's end (never a date in copy: those come from the date file)
+TODAY = __import__('datetime').datetime.now(__import__('zoneinfo').ZoneInfo('America/New_York')).date().isoformat()
+GIVE_LINK = '<a href="/gift">Give a Stay</a>'
+GIVE_BAND_UNTIL = '2026-12-24'
+GIVE_BAND_LINE = 'They don’t need another thing. Give them a night in the trees.'
+
+
+def nav_links(menu=False):
+    """The header row's links (NAV, six, measured to fit from 1280 px: a seventh pushes the Book
+    button off a 1280 screen, the Critic measured) and the menu's: NAV with "Give a Stay" second
+    while the switch is on, when the menu's trailing "The Golden Arrow" goes, so /gift has one name
+    there (the footer keeps it)."""
+    links = [f'<a href="{h}">{t}</a>' for h, t in NAV]
+    if GIVE_A_STAY and menu:
+        links.insert(1, GIVE_LINK)
+    return ''.join(links)
+
+
+def menu_gift_link():
+    return '' if GIVE_A_STAY else GIFT_LINK
+
+
+def give_band():
+    """The home page's band after the reviews, through December 24 (built only until then, and the
+    page itself drops it after that day, Eastern, so a build left standing cannot keep it up)."""
+    if not GIVE_A_STAY or TODAY > GIVE_BAND_UNTIL:
+        return ''
+    return f'''
+    <!-- ========== GIVE A STAY: through December 24 (build_v2.GIVE_A_STAY) ========== -->
+    <section class="lf-sec lf-dark lf-center lf-give" id="give-a-stay" aria-labelledby="gv-h" data-until="{GIVE_BAND_UNTIL}">
+      <div class="lf-wrap">
+        <p class="lf-eyebrow">Give a Stay</p>
+        <h2 class="lf-h2" id="gv-h">{GIVE_BAND_LINE}</h2>
+        <div class="lf-actions" style="justify-content:center"><a href="/gift" class="lf-btn">{ACORN}Give a Stay</a></div>
+      </div>
+    </section>
+    <script>(function(){{var s=document.getElementById('give-a-stay');if(!s)return;var d=new Intl.DateTimeFormat('en-CA',{{timeZone:'America/New_York'}}).format(new Date());if(d>s.getAttribute('data-until'))s.remove();}})();</script>
+'''
 FONTS = ('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500'
          '&family=Montserrat:wght@300;400;500;600;700&display=swap')
 
@@ -114,7 +159,8 @@ def head_from(page, preload=''):
 
 
 def header(book):
-    links = ''.join(f'<a href="{h}">{t}</a>' for h, t in NAV)
+    links = nav_links()
+    menu = nav_links(menu=True)
     return f'''  <a href="#main" class="skip-link">Skip to content</a>
 
   <header class="lf-hdr">
@@ -124,7 +170,7 @@ def header(book):
     <button class="lf-menu-btn" type="button" aria-expanded="false" aria-controls="lf-menu" aria-label="Open menu"><span></span></button>
   </header>
   <div class="lf-menu" id="lf-menu" aria-hidden="true">
-    <nav aria-label="Menu">{links}<a href="/faq">Questions</a>{GIFT_LINK}</nav>
+    <nav aria-label="Menu">{menu}<a href="/faq">Questions</a>{menu_gift_link()}</nav>
     <a href="{book}" class="lf-btn">{ACORN}Book your dates</a>
     <p class="lf-menu__foot">Dahlonega, Georgia<br>Just over an hour from Atlanta</p>
   </div>
@@ -621,7 +667,7 @@ def page_index():
 {WALK}
     <!-- ========== YOUR DATES: the Gatehouse, at the far end of the bridge ========== -->
 {BOOK}
-{REVIEWS}
+{REVIEWS}{give_band()}
     <!-- ========== WHAT'S INCLUDED ========== -->
     <section class="lf-sec lf-light" aria-labelledby="inc-h">
       <div class="lf-wrap lf-split">

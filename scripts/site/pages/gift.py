@@ -98,6 +98,9 @@ WORDS = {
     'card_h': 'The card',
     'card_how': 'Their names and yours on the card. Have it sent to you, to give by hand or print at home, or have us '   # LETTER
                 'email it to them on a day you choose, Christmas morning if you like. We can mail you the printed card as well.',
+    # The words "gift card" where the page explains the gift (the Critic's site-audit sheet, 2026-11-08:
+    # no page said them), built in only while build_v2.GIVE_A_STAY is on; for Mick's ear.
+    'gift_card': 'The Golden Arrow is our gift card: nights in the treehouse, given.',
     'give_h': 'Give The Golden Arrow',
     'give_lead': 'Their names, yours, and your email. You see the whole price, taxes and fees included, before you pay.',
 
@@ -413,6 +416,8 @@ def page_gift():
     what_h = W['what_h_sizes'] if SIZES_ON else W['what_h']
     h, gtm = head_for(W['title'], description(), URL)
     what = ''.join(f'\n            <p>{escape(p, quote=False)}</p>' for p in W['what'])
+    if getattr(B, 'GIVE_A_STAY', False):
+        what = f'\n            <p class="ga-what__gift">{escape(W["gift_card"], quote=False)}</p>' + what
     body = head_section(W['eyebrow'], CARD['title'], escape(lead, quote=False),
                         f'\n        <div class="lf-actions" style="justify-content:center"><a href="#give" class="lf-link">{W["to_give"]}</a></div>') + f'''
     <section class="lf-sec lf-parch ga-show" aria-label="The card">
@@ -585,6 +590,10 @@ CSS = '''
 
 .ga-what .lf-h2 { color: var(--forest-deep); }
 .ga-what__body { margin-top: 22px; }
+.ga-what__gift { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 1.3rem; color: var(--forest-deep); }
+/* the engine's price above the names (js/gift.js PRICE, in shadow): its figure, never typed here */
+.ga-price { margin: 0 0 4px; font: 600 17px/1.3 'Montserrat', Arial, sans-serif; color: var(--forest-deep); font-variant-numeric: lining-nums; }
+.ga-price small { font-weight: 400; font-size: 14px; color: var(--stone); }
 .ga-cols { display: grid; gap: 44px; }
 @media (min-width: 900px) { .ga-cols { grid-template-columns: 1.1fr 1fr; gap: 72px; align-items: start; } }
 .ga-terms { margin: 0; display: grid; gap: 0; }

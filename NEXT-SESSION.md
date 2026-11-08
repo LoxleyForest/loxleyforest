@@ -187,21 +187,15 @@ overrode the hidden attribute. `.lf-hero__pause[hidden] { display: none; }` adde
 has it; js/global.js unhides it on "playing". Proven in check_inquire_fab.js (a phone: hidden and not
 drawn; a desk: shown only once playing).
 
-**The floating button clear of the words (bug, shipped).** It sat over package text on /elopements
-and over the bridge's lines on the home page. js/global.js: a second observer whose root is the band
-at the foot of the screen where the button sits (its height plus 32 px); while any words in main (p,
-li, dd, dt, h1 to h4, blockquote, figcaption, label, summary, td, th, and after the Critic's read a,
-span, b, button, so it never covers the links it stands for) run through the band the button steps
-aside (is-hidden, as over the first screen or another Book button), and returns over a photograph or
-a gap. The Critic's first read measured it blinking (29 flips across /elopements, gaps of 16 px) and
-unhiding for a frame on an address bar's resize; so now it hides at once and shows only after the
-way has been clear 250 ms, the observer is re-armed only when the width changes or the height moves
-more than 120 px, and the set of words under the band is rebuilt from the new observer's first
-report, never emptied first. Proven in check_inquire_fab.js on /elopements and the home page, both
-states of INQUIRE_FAB: a flick through the shortest gap never blinks it on, a long clear stretch
-shows it only after a moment, an address bar's resize over words never unhides it; the check prints
-the share of the scroll where the band is clear, for the Chief to judge whether a button that shows
-that little earns its place there.
+**The floating button clear of the words (bug, shipped twice).** It sat over package text on
+/elopements and over the bridge's lines on the home page. The first fix (c79e23c) stepped it aside
+whenever words ran under its band; the Critic measured it blinking, the rework fixed that, and the
+number it left (shown on 21% of /elopements' scroll) made the Chief strike the approach: "a button
+that shows a fifth of the time doesn't earn its place." Now the pattern guests know: hidden over the
+first screen, hidden while the thumb scrolls down, back on a scroll up (6 px of movement, so a tremor
+is not a scroll) and at the page's end, out of the way of the open menu and any other Book button,
+and on /elopements with INQUIRE_FAB still stepping aside while the form itself is on screen. Proven
+in check_inquire_fab.js on /elopements and the home page, both states of INQUIRE_FAB.
 
 **Truth fixes (shipped on the Chief's word; cuts and one narrowing, no new words).** elopements.html's
 head no longer tells Google the place is an "EventVenue" (the agreement: "We are not a commercial or
@@ -238,6 +232,34 @@ cannot be read. The 4.9 stays (Mick gave it 2026-10-21); the Marketer's "replace
 for his ear. Proven: check_reviews.py (the built line equals the list's counts, or no page carries
 one while the switch is off). Flipping it: the line, a rebuild the same day, the checks, one commit.
 
+**/giveaway and /giveaway-entered, the reel's door (item 5, behind the giveaway's own gate).** One
+bridge photograph (aerial-bridge, as the reel shows it) over the rules and on the entered page in
+the dusk photograph's place, and three doors on under each page: Stay (/book), Elope (/elopements),
+Give a stay (/gift), each with ?src=giveaway-site. The door words are new, in giveaway.py WORDS
+(eyebrow "While you're here"; "Stay" / "The open nights, and what each costs."; "Elope" / "Your vows
+on the bridge, or by the fire."; "Give a stay" / "The Golden Arrow: nights in the trees, as a gift."),
+so the words hash moved and they reach Mick's ear with the rest; the form stays closed as before
+(APPROVED_SHA256 None, OPENS None). The bio link's tag is Mick's to set in Instagram: ?src=giveaway-bio
+on the link; the page already keeps any ?src= for the entry. check_giveaway.py green.
+
+**"Give a Stay" (item 6, shadow, `GIVE_A_STAY = False` in scripts/site/build_v2.py, a build-time
+switch).** On: "Give a Stay" (/gift) is the second link of the header row and the menu on every page
+(the one way beside "Questions" stays); the home page carries a band after the reviews through
+December 24 with the Marketer's line "They don't need another thing. Give them a night in the trees."
+and a Give a Stay button (built only until that day, Eastern, and the page drops it itself after it);
+/gift's "What it is" opens with "The Golden Arrow is our gift card: nights in the treehouse, given."
+(my draft, since no page said "gift card"; the Chief said the band's line comes by Mick's ear, so all
+three are for his ear). Proven: scripts/site/check_give_a_stay.py (both states, the built pages in the
+shipped one); check_gift.js's statics follow the state the built pages are in. Flipping it: the line,
+a rebuild, the checks, one commit.
+
+**The engine's price on /gift (item 7, shadow, `var PRICE = false;` in js/gift.js).** On: the price of
+the card the form sells, read from /v1/gift/sizes (one read a page load, shared with SIZES), stands
+above the names as "$2,000.00 Taxes and fees included." (the engine's figure and the page's existing
+words); typed nowhere; nothing shown if the read fails, answers 404, or lists the 3-night at its cap;
+with SIZES on too the cards carry the prices and no line doubles them. It reverses Mick's rule of
+2026-10-19 (the amount only right before Stripe), so it waits on his yes. Proven: check_gift.js.
+
 **The bridge as a still on phones (shadow, `const PHONE_STILL = false;` in js/crossing.js).** Mick:
 "the animated bridge is too clunky"; the audit: pinned 5.6 screens, about 5 fps under a 4x CPU
 slowdown, long tasks to 770 ms. With the switch on a phone takes the existing still path (the one
@@ -247,8 +269,13 @@ MEASURED on a throttled phone (390 px, 1.6 Mbps, 150 ms, 4x CPU, three runs each
 faked): the calendar live at 3.5 to 3.6 s animated and 3.3 to 3.5 s as the still (the walk builds
 only when scrolled near, so it never held the calendar back); the walk itself, a thumb's scroll
 through it: animated, 5.6 screens, 4.7 to 6 frames a second, 70 to 74 long tasks, the longest 0.9
-to 1.0 s, the script's own governor already down to its low-detail mode; the still, 1 screen, 37 to
-43 frames a second, no long task at all. Flips on the Chief's word.
+to 1.0 s, the script's own governor already down to its low-detail mode; the still engraving, 1
+screen, 37 to 43 frames a second on the scroll, but its scene still built when the walk came near,
+2 long tasks, the longest 0.9 s (the Critic's test: at that, the poster wins); so the switch takes
+the POSTER already drawn for no-script browsers (images/crossing/crossing-still-phone.webp, 129 KB)
+in place of the engraving: no scene, no canvas, the words shown, no skip link, one screen: no long
+task at all when the walk comes near, 43 to 56 frames a second on the scroll, the calendar live at
+3.2 to 3.4 s (from 3.5 to 3.7). Flips on the Chief's word.
 
 ---
 
