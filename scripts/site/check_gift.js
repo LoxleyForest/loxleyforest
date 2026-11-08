@@ -128,7 +128,8 @@ const DELIVERY_OFF = 'Emailing the card on a day you pick is not open yet.';
 const NO_DELIVERY = 'We could not find that gift\'s delivery.';
 const SENT_ALREADY = 'Their card has already been emailed, so it can no longer change.';
 const DTOKEN = 'tok-deliver-1x9';
-const COVERS = 'January 4 to May 31, 2027, weekends included, Valentine\'s weekend aside';
+// GET /v1/gift's covers: the gift's own twelve months since 2026-10-27 (the engine's dates; the card shows the site's words, never these)
+const COVERS = 'October 27, 2026 to October 27, 2027';
 function giftRow(code, status, names, giver, more) {
   return Object.assign({ code, product: 'golden-arrow', name: 'The Golden Arrow', status, recipient_names: names, giver_name: giver,
     covers: COVERS, never_expires: true, includes: 'the Dawn Table', state: status === 'issued' ? 'unused' : 'used' }, more || {});
@@ -167,14 +168,18 @@ const SECRETS = [DTOKEN, CODE, CODE_USED, CODE_VOID, CODE_LONG, CODE_BOOKED, SES
 
 // The engine's quote (gatehouse/api.py _quote_payload): `quote` and `total` stay the stay's own
 // all-in; with a gift, gift_card says what it covers and plans, summary and extend are on what is left.
-function quote(ci, co, gift) {
+// Past the card's twelve months the engine says so in its own sentence, with the card's last night
+// (gatehouse/gifts.py AFTER_WINDOW; "" inside the twelve months). win: 'past' sends it; 'past-noline'
+// sends after_window alone, as an older engine would.
+const AFTER_LINE = 'These nights fall after October 27, 2027, so we ask only the difference.';
+function quote(ci, co, gift, win) {
   const n = Math.round((new Date(co) - new Date(ci)) / 86400000);
   const total = n * NIGHT_ALL_IN;
   let card = null;
   if (gift) {
     const k = Math.min(3, n), off = k * NIGHT_ALL_IN;
     card = { code: gift, name: 'The Golden Arrow', nights: k, gift_cents: off, due_cents: total - off,
-      due: '$' + ((total - off) / 100).toFixed(2), after_window: false, includes: 'the Dawn Table' };
+      due: '$' + ((total - off) / 100).toFixed(2), after_window: !!win, after_window_line: win === 'past' ? AFTER_LINE : '', includes: 'the Dawn Table' };
   }
   const left = card ? card.due_cents : total, dep = Math.round(left * 0.25);
   return { unit: 'u', check_in: ci, check_out: co, total: '$' + (total / 100).toFixed(2),
@@ -328,12 +333,12 @@ async function main() {
           if (gift && !GIFTS[gift]) return json({ error: NOT_FOUND }, 404);
           if (gift && GIFTS[gift].status !== 'issued') return json({ error: 'This gift has already been used.' }, 422);
           if (gift && ci === CI_NO) return json({ error: BLACKOUT }, 422);
-          return json(quote(ci, co, gift));
+          return json(quote(ci, co, gift, engine.window));
         }
         if (u.pathname === '/v1/checkout') {
           rec.checkouts.push(b);
           const gift = engine.redeem === 'on' ? b.gift : null;
-          const q = quote(b.check_in, b.check_out, gift);
+          const q = quote(b.check_in, b.check_out, gift, engine.window);
           const left = q.gift_card ? q.gift_card.due_cents : q.quote.total_cents;
           if (!left) return json({ confirmed: true, client_secret: null, due_now_cents: 0, manage_token: 'mt-test-1', total_cents: 0, gift_cents: q.gift_card.gift_cents });
           return json({ client_secret: 'cs_test_secret_1', total_cents: left, gift_cents: q.gift_card ? q.gift_card.gift_cents : 0, summary: q.summary[b.mode] });
@@ -1094,6 +1099,19 @@ async function main() {
     await shot(page, 'booked-gift.png');
     leaks(rec, await dataLayer(page), 'covered');
     await ctx.close();
+  }
+
+  console.log('/book#gift=: nights after the card\'s twelve months (the Chief, 2026-11-08: no fixed date on the page)');
+  {
+    const { ctx, page } = await open('book-after-window', { window: 'past' });
+    await toSummary(page, CI, CO4, '#gift=' + CODE);
+    check(await text(page, '#gatehouse .gh-gift') === 'The Golden Arrow covers three of these nights. The Dawn Table comes with it. ' + AFTER_LINE, 'the engine\'s own sentence, naming the card\'s last night, in the notice');
+    await ctx.close();
+    const f = await open('book-after-window-noline', { window: 'past-noline' });
+    await toSummary(f.page, CI, CO4, '#gift=' + CODE);
+    check(await text(f.page, '#gatehouse .gh-gift') === 'The Golden Arrow covers three of these nights. The Dawn Table comes with it.', 'without the engine\'s sentence the notice ends there: the site has no after-window words of its own');
+    check(!('book_after_window' in BOOK_W) && !has(fs.readFileSync(path.join(ROOT, 'book.html'), 'utf8'), 'May 31'), 'no book_after_window in the page\'s words; "May 31" is gone from /book');
+    await f.ctx.close();
   }
 
   console.log('/book#gift=: four nights, covered in part');

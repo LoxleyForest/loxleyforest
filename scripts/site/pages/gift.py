@@ -224,7 +224,8 @@ WORDS = {
     'book_covers': 'The Golden Arrow covers these nights.',             # the CEO's words
     'book_covers_some': 'The Golden Arrow covers {n} of these nights.',
     'book_includes': '{x} comes with it.',
-    'book_after_window': 'These nights fall after May 31, 2027, so we ask only the difference.',
+    # Nights past the card's twelve months: the engine's own sentence rides the quote
+    # (gift_card.after_window_line, with the card's last night); the site keeps no words of its own.
     'book_left': 'Left to pay',
     'book_nothing_left': 'Nothing left to pay, today or later.',
     'book_extend_free': 'covered by The Golden Arrow',

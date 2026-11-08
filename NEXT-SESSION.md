@@ -123,6 +123,25 @@ Mick's ear; nothing changes on the page until his yes on the exact words.
 
 ---
 
+# DONE · 2026-11-08 · /book's Golden Arrow line past the card's twelve months names the engine's date, never a fixed one
+
+The Chief's factual fix, on its word: /book said "These nights fall after May 31, 2027, so we ask only
+the difference" (gift.py WORDS book_after_window, shown when the quote's gift_card.after_window is
+true). The May 31 rule went 2026-10-26 (Mick: twelve months from purchase for everyone, then never
+expires, the difference only). The engine already sends the sentence with the card's own last night,
+gift_card.after_window_line ("These nights fall after November 8, 2027, so we ask only the
+difference."; "" when after_window is false; the Forge confirmed the field 2026-11-08: twelve months
+from the day it was bought, or a window Mick held or extended). js/gatehouse.js giftNotice() now
+shows that line exactly as sent, and only it: book_after_window is deleted from gift.py WORDS (the
+Critic: a dateless fallback of our own would be new words nobody heard, and the engine never sends
+the flag without its line), book.html rebuilt. Proven: check_gift.js (230; the new section proves
+the engine's line in the notice, the notice ending without it, no book_after_window in the page's
+words, no "May 31" in book.html), check_checkout 124, check_offer_stay 36. No other page named May
+31 (the card's and letters' words were already "within twelve months of purchase"). What would settle
+it: a live quote with a night past a card's last night, which no guest can reach before late 2027.
+
+---
+
 # DONE · 2026-11-07 · The home page's phone weight, for the reel's burst (the Chief's bandwidth route)
 
 Why: Netlify bandwidth costs credits (about 150 GB a month on the plan; at zero the site pauses;

@@ -544,7 +544,7 @@
   // address bar by the head script like every key and kept for the session like a credit. Looked
   // up once (GET /v1/gift), then it rides the quote and the checkout, and the engine decides
   // (loxley-rescue ceo/golden-arrow, cdb68bc): the quote's gift_card {code, name, nights,
-  // gift_cents, due_cents, due, after_window, includes} says what it covers on these dates, with
+  // gift_cents, due_cents, due, after_window, after_window_line, includes} says what it covers on these dates, with
   // `quote` and `total` still the stay's own all-in and `plans`, `summary` and `extend` on what is
   // left; a refusal is a sentence (404 a code it cannot find, 422 one these dates cannot use, or
   // used, void or held). Never a beacon, never the tag manager. Its words are
@@ -807,8 +807,9 @@
   }
 
   // A quote asked with the gift and refused for the gift's sake. 404: a code the engine cannot
-  // find, set aside for the visit. 422: a gift these dates cannot use (Valentine's nights, before
-  // January 4), or one used, void or held: set aside for these dates. The engine's bare "not
+  // find, set aside for the visit. 422: a gift these dates cannot use, or one used, void or held:
+  // set aside for these dates (since 2026-10-26 no date is refused for the card's sake; nights past
+  // its twelve months are covered up to its rent and the difference asked). The engine's bare "not
   // found" is a door that is off, never a refusal of the gift.
   function giftRefusal(e, key) {
     var t = e && e.body && typeof e.body.error === 'string' ? e.body.error.trim() : '';
@@ -908,7 +909,9 @@
     var n = Number(c.nights) || 0;
     var say = [n && q.quote.nights > n ? gw('book_covers_some').replace('{n}', COUNT[n] || String(n)) : gw('book_covers')];
     if (c.includes) say.push(gw('book_includes').replace('{x}', String(c.includes).charAt(0).toUpperCase() + String(c.includes).slice(1)));
-    if (c.after_window) say.push(gw('book_after_window'));
+    // Past the card's twelve months: the engine's own sentence, naming the card's last night
+    // (gift_card.after_window_line, since 2026-10-27; "" inside the twelve months). Its words, as sent.
+    if (c.after_window && c.after_window_line) say.push(c.after_window_line);
     if (!leftToPay(q)) say.push(gw('book_nothing_left'));
     return el('p', { 'class': 'gh-credit gh-gift', role: 'status', text: say.join(' ') });
   }
