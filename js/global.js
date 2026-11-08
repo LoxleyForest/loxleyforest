@@ -483,8 +483,14 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!v || !v.hasAttribute('data-ready')) return;
   if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-  if (c && (c.saveData || /(^|-)2g$/.test(c.effectiveType || ''))) return;
   const phone = window.matchMedia('(max-width: 767px)').matches;
+  // Never on Save-Data or 2g. On a phone, the poster alone until the connection is known to be
+  // fast (DIRECTION.md, Video; the Forge's tier rule, docs/log/2026-09.md): only a phone that reports
+  // 4g gets the film, so an iPhone, which reports nothing, keeps the poster. Applied 2026-11-07 for
+  // the reel's burst (the Chief's bandwidth route, the Critic's read); a still on an iPhone is the
+  // direction, not a fault.
+  if (c && (c.saveData || /(^|-)2g$/.test(c.effectiveType || ''))) return;
+  if (phone && !(c && c.effectiveType === '4g')) return;
   const btn = document.querySelector('.lf-hero__pause');
   const tryPlay = () => { const p = v.play(); if (p && p.catch) p.catch(() => {}); };
   const start = () => {

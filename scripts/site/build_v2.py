@@ -38,11 +38,14 @@ FONTS = ('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@
          '&family=Montserrat:wght@300;400;500;600;700&display=swap')
 
 
-def pic(name, alt, sizes, eager=False, cls=''):
+def pic(name, alt, sizes, eager=False, cls='', frame=None):
     """A responsive <img> from images/v2/<name>-800.webp (and -1600 when it exists). On a phone
     (under 768 px) the 800 is the only source: a 3x phone would otherwise ask for the 1600 at
     100vw (the Chief's bandwidth route, 2026-11-07; a full scroll of the home page moved 4.2 MB on
-    a phone, most of it 1600s), and 800 across 390 px is still two device pixels to one."""
+    a phone, most of it 1600s). Where the page crops the photo into a tall frame (frame=(4, 5):
+    .lf-photo--tall and .lf-chapter), an 800 across 390 px is only 1.25 photo pixels to a screen
+    point, so the phone source is a centred 4:5 crop of the 1600 at 684x855 instead (the Critic,
+    2026-11-07), made here once and kept beside the others."""
     big = f'images/v2/{name}-1600.webp'
     has_big = os.path.exists(os.path.join(ROOT, big))
     srcset = f'images/v2/{name}-800.webp 800w' + (f', {big} 1600w' if has_big else '')
@@ -52,7 +55,30 @@ def pic(name, alt, sizes, eager=False, cls=''):
     img = f'<img src="images/v2/{name}-800.webp" srcset="{srcset}" sizes="{sizes}" width="{w}" height="{h}" alt="{alt}"{load}{c}>'
     if not has_big:
         return img
-    return f'<picture><source media="(max-width: 767px)" srcset="images/v2/{name}-800.webp" type="image/webp">{img}</picture>'
+    phone = framed(name, frame) if frame else f'images/v2/{name}-800.webp'
+    return f'<picture><source media="(max-width: 767px)" srcset="{phone}" type="image/webp">{img}</picture>'
+
+
+FRAMED = {(4, 5): (684, 855)}
+
+
+def framed(name, frame):
+    """images/v2/<name>-p<w>x<h>.webp: the 1600 cropped to the frame about its centre and sized for
+    a phone, written when missing or older than the 1600. Quality 74, as scripts/site/v2img.py."""
+    fw, fh = FRAMED[tuple(frame)]
+    out = f'images/v2/{name}-p{fw}x{fh}.webp'
+    src = os.path.join(ROOT, f'images/v2/{name}-1600.webp')
+    dst = os.path.join(ROOT, out)
+    if not os.path.exists(dst) or os.path.getmtime(dst) < os.path.getmtime(src):
+        im = Image.open(src)
+        W, H = im.size
+        want = fw / fh
+        if W / H > want:
+            cw = int(round(H * want)); box = ((W - cw) // 2, 0, (W - cw) // 2 + cw, H)
+        else:
+            ch = int(round(W / want)); box = (0, (H - ch) // 2, W, (H - ch) // 2 + ch)
+        im.crop(box).resize((fw, fh), Image.LANCZOS).save(dst, quality=74, method=6)
+    return out
 
 
 # Rating and count claims a page's own <head> still carried (the home page's meta description),
@@ -378,7 +404,7 @@ def treehouse_two():
             <p class="lf-signup__done" role="status" hidden>You're on the list. We'll write when the first nights open.</p>
           </form>
         </div>
-        <figure class="lf-photo lf-photo--tall lf-rise">{pic('img_2546', 'A treehouse deck with chairs above the forest', '(min-width: 900px) 50vw, 100vw')}</figure>
+        <figure class="lf-photo lf-photo--tall lf-rise">{pic('img_2546', 'A treehouse deck with chairs above the forest', '(min-width: 900px) 50vw, 100vw', frame=(4, 5))}</figure>
       </div>
     </section>
 '''
@@ -513,7 +539,7 @@ def page_index():
           <img src="images/hero/hero-poster-desk.webp" alt="The rope bridge strung with lights, leading through the forest to the treehouse at dusk" width="1920" height="1080" fetchpriority="high">
         </picture>
         <video class="hero__video" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" data-ready
-          data-desk="images/hero/hero-desk.mp4" data-desk-webm="images/hero/hero-desk.webm" data-phone="images/hero/hero-phone.mp4"></video>
+          data-desk="images/hero/hero-desk.mp4" data-phone="images/hero/hero-phone.mp4"></video>
       </div>
       <div class="lf-hero__shade"></div>
       <button class="lf-hero__pause" type="button" aria-label="Pause the video" hidden><span></span></button>
@@ -547,7 +573,7 @@ def page_index():
     <!-- ========== WHAT'S INCLUDED ========== -->
     <section class="lf-sec lf-light" aria-labelledby="inc-h">
       <div class="lf-wrap lf-split">
-        <figure class="lf-photo lf-photo--tall lf-rise">{pic('img_0831', 'The bed beneath the treehouse windows', '(min-width: 900px) 50vw, 100vw')}</figure>
+        <figure class="lf-photo lf-photo--tall lf-rise">{pic('img_0831', 'The bed beneath the treehouse windows', '(min-width: 900px) 50vw, 100vw', frame=(4, 5))}</figure>
         <div>
           <p class="lf-eyebrow lf-rise">The treehouse</p>
           <h2 class="lf-h2 lf-rise" id="inc-h">Everything you need. <em>Nothing you don't.</em></h2>
@@ -576,10 +602,10 @@ def page_index():
         <p class="lf-eyebrow lf-rise">The Loxley experience</p>
         <h2 class="lf-h2 lf-rise" id="ch-h">Your stay is a story, <em>not a checklist</em></h2>
         <div class="lf-chapters">
-          <figure class="lf-chapter lf-rise">{pic('eq3a0943', 'The rope bridge at night, strung with warm lights', '(min-width: 900px) 25vw, 78vw')}<figcaption><span class="lf-chapter__n">Chapter one</span><h3 class="lf-h3">The Crossing</h3><p>Your first steps across the rope bridge.</p></figcaption></figure>
-          <figure class="lf-chapter lf-rise">{pic('img_0828', 'The bed beneath the treehouse windows in warm light', '(min-width: 900px) 25vw, 78vw')}<figcaption><span class="lf-chapter__n">Chapter two</span><h3 class="lf-h3">First Light</h3><p>Dawn breaking through the canopy, from your pillow.</p></figcaption></figure>
-          <figure class="lf-chapter lf-rise">{pic('eq3a0222', 'The pizza oven on the sky deck', '(min-width: 900px) 25vw, 78vw')}<figcaption><span class="lf-chapter__n">Chapter three</span><h3 class="lf-h3">Fire &amp; Flour</h3><p>Pizza you made yourself on the sky deck.</p></figcaption></figure>
-          <figure class="lf-chapter lf-rise">{pic('eq3a0907', 'The treehouse canvas glowing at dusk with string lights', '(min-width: 900px) 25vw, 78vw')}<figcaption><span class="lf-chapter__n">Chapter four</span><h3 class="lf-h3">After Dark</h3><p>The stars you forgot existed, framed by the canopy.</p></figcaption></figure>
+          <figure class="lf-chapter lf-rise">{pic('eq3a0943', 'The rope bridge at night, strung with warm lights', '(min-width: 900px) 25vw, 78vw', frame=(4, 5))}<figcaption><span class="lf-chapter__n">Chapter one</span><h3 class="lf-h3">The Crossing</h3><p>Your first steps across the rope bridge.</p></figcaption></figure>
+          <figure class="lf-chapter lf-rise">{pic('img_0828', 'The bed beneath the treehouse windows in warm light', '(min-width: 900px) 25vw, 78vw', frame=(4, 5))}<figcaption><span class="lf-chapter__n">Chapter two</span><h3 class="lf-h3">First Light</h3><p>Dawn breaking through the canopy, from your pillow.</p></figcaption></figure>
+          <figure class="lf-chapter lf-rise">{pic('eq3a0222', 'The pizza oven on the sky deck', '(min-width: 900px) 25vw, 78vw', frame=(4, 5))}<figcaption><span class="lf-chapter__n">Chapter three</span><h3 class="lf-h3">Fire &amp; Flour</h3><p>Pizza you made yourself on the sky deck.</p></figcaption></figure>
+          <figure class="lf-chapter lf-rise">{pic('eq3a0907', 'The treehouse canvas glowing at dusk with string lights', '(min-width: 900px) 25vw, 78vw', frame=(4, 5))}<figcaption><span class="lf-chapter__n">Chapter four</span><h3 class="lf-h3">After Dark</h3><p>The stars you forgot existed, framed by the canopy.</p></figcaption></figure>
         </div>
         <div class="lf-actions lf-rise"><a href="/experiences" class="lf-link">See every experience</a></div>
       </div>
@@ -602,7 +628,7 @@ def page_index():
     <!-- ========== ELOPEMENTS ========== -->
     <section class="lf-sec lf-light" aria-labelledby="el-h">
       <div class="lf-wrap lf-split lf-split--flip">
-        <figure class="lf-photo lf-photo--tall lf-rise">{pic('eq3a0160', 'The rope bridge to the treehouse in fall colour', '(min-width: 900px) 50vw, 100vw')}</figure>
+        <figure class="lf-photo lf-photo--tall lf-rise">{pic('eq3a0160', 'The rope bridge to the treehouse in fall colour', '(min-width: 900px) 50vw, 100vw', frame=(4, 5))}</figure>
         <div>
           <p class="lf-eyebrow lf-rise">Elopements</p>
           <h2 class="lf-h2 lf-rise" id="el-h">The most dramatic aisle <em>in the Southeast</em></h2>
@@ -721,7 +747,7 @@ def page_treehouses():
     <!-- ========== WHAT'S INCLUDED ========== -->
     <section class="lf-sec lf-light" aria-labelledby="inc-h">
       <div class="lf-wrap lf-split">
-        <figure class="lf-photo lf-photo--tall lf-rise">{pic('img_0828', 'The bed beneath the treehouse windows in warm light', '(min-width: 900px) 50vw, 100vw')}</figure>
+        <figure class="lf-photo lf-photo--tall lf-rise">{pic('img_0828', 'The bed beneath the treehouse windows in warm light', '(min-width: 900px) 50vw, 100vw', frame=(4, 5))}</figure>
         <div>
           <p class="lf-eyebrow lf-rise">Your stay</p>
           <h2 class="lf-h2 lf-rise" id="inc-h">Everything you need. <em>Nothing you don't.</em></h2>

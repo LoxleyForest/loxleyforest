@@ -93,9 +93,12 @@ WORDS = {
                 'close do not count, nor does an entry without the eligibility box ticked.'),
     'enter_3': 'Entries open {{opens}} and close on Sunday, December 13, 2026, at 11:59 PM Eastern Time.',
     # The numbering the draw's rule rests on, as the engine does it (the Forge, 2026-11-07).
-    'enter_4': ('Entries are numbered 1, 2, 3 and so on in the order we count them, with no gaps. If an entry '
-                'lands in our spam filter, it waits without a number until we check it by hand; a real one then '
-                'takes the next number. Entries that do not count are never numbered.'),
+    # The spam rule as the engine codes it (the Forge, by the Chief, 2026-11-07 evening): a held entry
+    # counts unless struck as not a person before the freeze, and takes the next number when counted.
+    'enter_4': ('Entries are numbered 1, 2, 3 and so on in the order we count them, with no gaps. Entries our '
+                'spam filter holds are counted unless we strike them as not a person before the count is fixed; '
+                'a held entry takes the next number when it is counted. Entries that do not count are never '
+                'numbered.'),
     'who_h': 'Who can enter',
     'who_1': ('Anyone 18 or older who lives in the United States. Not our own household, nor anyone who works '
               'with us at Loxley Forest or lives with them.'),

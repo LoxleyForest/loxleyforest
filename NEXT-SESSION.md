@@ -30,6 +30,43 @@ The Janitor (chief docs/v2/janitor.md) runs here weekly: this file keeps this bl
 
 ---
 
+# DONE · 2026-11-07 · The home page's phone weight, for the reel's burst (the Chief's bandwidth route)
+
+Why: Netlify bandwidth costs credits (about 150 GB a month on the plan; at zero the site pauses;
+chief docs/v2/scout-netlify-limits-2026-11-07.md), and the reel could send 25,000 to 50,000 phone
+visits in a week while Mick is away. Measured on the live site, a 3x phone, our origin's bytes as
+Netlify serves them: the home page 2,511 KB on load and 4,161 KB after a full scroll, of which
+hero-phone.mp4 2,213 KB and the below-the-fold photos at 1600 (a 3x phone at 100vw asks for the
+1600); /giveaway about 60 KB cold; /giveaway-entered 92 KB. Outside hosts (Tag Manager 309 KB,
+Facebook 220 KB, Google Fonts 110 KB) are not Netlify's bytes. Done, nothing new on any page: (1)
+the hero films re-encoded in place with ffmpeg (~/bin, 7.0.2 static), same names, same loop:
+hero-phone.mp4 720x1280 30 fps 2,264 KB to 540x960 24 fps crf 31, 659 KB; hero-desk.mp4 1080p
+3,994 KB to 720p crf 28, 1,300 KB; hero-desk.webm dropped (a vp9 re-encode came out larger than
+the new mp4), so every desktop takes the one mp4. (2) build_v2.pic(): where a 1600 exists the image
+is wrapped in <picture> with a phone source of the 800, so a 3x phone takes 800 across 390 px; and
+where the page crops the photo into a 4:5 frame (.lf-photo--tall, .lf-chapter on the home and
+treehouse pages) the phone source is a centred 684x855 crop of the 1600 (images/v2/<name>-p684x855,
+made by the builder), since an 800 in that frame is only 1.25 photo pixels to a screen point and
+went soft (the Critic). The home page's nine photos below the fold on a 3x phone: about 850 KB
+where they were 1,858. (3) js/global.js, THE DIRECTION APPLIED, not a new ruling: DIRECTION.md
+(Video) and the Forge's tier rule say a phone gets the poster alone until the connection is known
+to be fast; the code had treated an unknown connection as fast, so every iPhone got the film. Now
+only a phone that reports 4g gets the film; an iPhone reports nothing and keeps the poster. Mick
+once took a still on his iPhone for a fault (docs/log/2026-10.md:363): it is the direction, and it
+is what keeps the reel's week inside the plan's credits. The Critic's arithmetic, at 50,000 visits
+credits roughly equal the KB a visit: before, about 2,500 credits on landings alone, 4,100 on full
+scrolls, against the plan's 3,000; after, about 300 on a landing and about 940 on a full scroll. The
+Critic read before merge; its fixes are in. Measured live after the push (d1821d5), our origin's bytes on a 3x phone: the home page 299 KB on
+a landing and 1,105 KB on a full scroll for an iPhone (no film), 958 and 1,764 KB for an Android that
+reports 4g (the 659 KB film); /giveaway about 60 KB cold; /giveaway-entered 37 KB plus the shared
+CSS and scripts; /experiences 123 KB on a landing, 607 on a full scroll. At 50,000 visits, credits
+roughly equal the KB a visit: about 285 to 915 on landings and 1,055 to 1,680 on full scrolls, against
+2,400 and 3,970 before, on a plan of 3,000. The next shave if the counts run hot: img_2546-800 (257
+KB, the home page's tall deck photo, no 1600 to crop from) and img_1717-800 (301 KB, experiences),
+both re-encoded from their sources at a lower quality.
+
+---
+
 # IN FLIGHT · 2026-11-07 · The giveaway's invitation in shadow: js/giveaway-popup.js behind LIVE=false
 
 The Chief's route (09:30 ET) from the table (chief docs/briefs/2026-11-07-table-giveaway-popup.md,
@@ -102,7 +139,7 @@ Then the Forge's own rule and numbering, on the page in plain words (5515ea1): t
 hexadecimal number; alternates the next entry number up, wrapping to 1, up to three; entries
 numbered in the order counted with no gaps, spam-held ones unnumbered until checked by hand,
 entries that do not count never numbered. The words' hash for his yes, the card's and /book's line now among the words:
-2c2997ac4f118b2b5d305dcf44cf001f40c88fa1e68d2ef0231594c4f41740bc, sent to the Chief with every word. On his yes: APPROVED_SHA256 set, OPENS set to the day and hour he
+4b364f292f7fd1610924f5dc1fbb425dd07a21ca079454a512c894bc623f0f02, sent to the Chief with every word. On his yes: APPROVED_SHA256 set, OPENS set to the day and hour he
 says live and only after the engine's giveaway_open is on, rebuild, push, then link it where the
 Marketer's list says. Counsel's read of 2026-11-07 (chief docs/briefs/2026-11-07-counsel-giveaway-champagne.md):
 it can launch Nov 12 without a lawyer; one required change, the sponsor's mailing address (O.C.G.A.
