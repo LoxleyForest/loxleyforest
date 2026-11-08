@@ -64,7 +64,8 @@ function firstSaturdayFrom(n) { for (let i = n; i < n + 8; i++) if (dow(day(i)) 
 const SAT1 = firstSaturdayFrom(14), SAT2 = SAT1 + 7, SAT3 = SAT1 + 14;
 const TAKEN_SUNDAY = day(SAT2 + 1);                         // the Sunday after the second Saturday
 const WALLED = day(SAT3 + 3);                               // a Tuesday walled in: Monday and Wednesday taken
-const TAKEN = new Set([TAKEN_SUNDAY, day(SAT3 + 2), day(SAT3 + 4)]);
+const SAT4 = SAT3 + 14;                                     // a Saturday that is taken: its Friday has nowhere to go but back
+const TAKEN = new Set([TAKEN_SUNDAY, day(SAT3 + 2), day(SAT3 + 4), day(SAT4)]);
 const HOLIDAY = day(SAT1 + 30);                             // a three-night holiday; no arrival on its eve
 const EVE = day(SAT1 + 29);
 function nights() {
@@ -80,10 +81,12 @@ function nights() {
   }
   return { nights: out };
 }
-function quote(ci, co) {
-  const n = Math.round((new Date(co) - new Date(ci)) / 86400000);
-  return { quote: { nights: n, check_in: ci, check_out: co, total_cents: n * 39900 + 18965, currency: 'USD',
-    lines: [{ label: n + ' nights', cents: n * 39900 }, { label: 'Cleaning and taxes', cents: 18965 }] } };
+function quote(ci, co) {   // the shape scripts/site/check_checkout.js serves
+  const n = Math.round((new Date(co) - new Date(ci)) / 86400000), total = n * 39900 + 18965;
+  return { quote: { nights: n, total_cents: total, lines: [{ label: n + ' nights', cents: n * 39900 }, { label: 'Cleaning and taxes', cents: 18965 }] },
+    modes: ['deposit', 'full'], promise: { retainer_pct: 25, balance_days: 30 },
+    plans: { deposit: [{ amount_cents: Math.round(total / 4) }, { amount_cents: total - Math.round(total / 4), due_on: day(60) }], full: [{ amount_cents: total }] },
+    summary: {} };
 }
 let passes = 0, failures = 0;
 function check(ok, what) { if (ok) { passes++; console.log('  ok   ' + what); } else { failures++; console.log('  FAIL ' + what); } }
@@ -117,7 +120,13 @@ async function main() {
     return { ctx, page };
   }
   async function goTo(page, dayIso) {   // turn the calendar until the day is on screen (a phone shows one month)
-    for (let i = 0; i < 8; i++) {
+    if (await page.isVisible(`.gh-day[data-day="${dayIso}"]`)) return;
+    for (let i = 0; i < 14; i++) {   // back to the first month, then forward
+      const earlier = await page.$('.gh-arrow[aria-label="Earlier months"]:not(:disabled)');
+      if (!earlier) break;
+      await earlier.click(); await page.waitForTimeout(150);
+    }
+    for (let i = 0; i < 14; i++) {
       if (await page.isVisible(`.gh-day[data-day="${dayIso}"]`)) return;
       await page.click('.gh-arrow[aria-label="Later months"]'); await page.waitForTimeout(200);
     }
@@ -126,11 +135,11 @@ async function main() {
   async function state(page) {
     return page.evaluate(() => {
       const edges = [...document.querySelectorAll('.gh-day--edge')].map(b => b.getAttribute('data-day'));
-      const total = document.querySelector('.gh-booking dd.gh-total');
+      const total = document.querySelector('.gh-summary dd.gh-total');   // the price card under the calendar (the checkout step's section is .gh-booking)
       return { edges, note: (document.querySelector('.gh-note') || {}).textContent || '', total: total ? total.textContent : '', url: location.search };
     });
   }
-  async function waitTotal(page) { try { await page.waitForSelector('.gh-booking dd.gh-total', { timeout: 6000 }); } catch (e) {} await page.waitForTimeout(200); }
+  async function waitTotal(page) { try { await page.waitForSelector('.gh-summary dd.gh-total', { timeout: 6000 }); } catch (e) {} await page.waitForTimeout(200); }
   const refusals = (ctx) => ctx.beacons.filter(b => b.step === 'quote_refused');
 
   console.log('the file');
@@ -166,17 +175,33 @@ async function main() {
     await tap(page, day(SAT1)); await waitTotal(page);
     let s = await state(page);
     check(s.edges.join(',') === day(SAT1) + ',' + day(SAT1 + 2), 'a tap on the Saturday selects Saturday to Monday');
-    check(/^Arriving .* takes 2 nights\. Here's .*; the price is below\.$/.test(s.note), 'with the offered words: ' + JSON.stringify(s.note));
+    check(/^Arriving .* takes 2 nights\. Here's .*; the price is below\. Tap a later day to stay longer\.$/.test(s.note), 'with the offered words: ' + JSON.stringify(s.note));
     check(/\$/.test(s.total), 'and its price is on the card: ' + s.total);
     check(/checkIn=/.test(s.url) && /checkOut=/.test(s.url), 'and the link holds both dates');
     if (SHOTS) await page.screenshot({ path: path.join(SHOTS, 'offer-stay-saturday.png'), fullPage: false });
     check(refusals(ctx).length === 0, 'no quote_refused');
+    const offeredSteps = () => ctx.beacons.filter(b => b.step === 'stay_offered').map(b => b.reason);
+    check(offeredSteps().join(',') === 'direct', 'stay_offered reached the beacon with reason direct');
+
+    // the offer holds the arrival: a later tap lengthens the stay (the Critic, 2026-11-08)
+    await tap(page, day(SAT1 + 3)); await waitTotal(page);
+    s = await state(page);
+    check(s.edges.join(',') === day(SAT1) + ',' + day(SAT1 + 3), 'a later tap makes it Saturday to Tuesday, not a new arrival');
+    check(/\$/.test(s.total) && s.note === '', 'priced, with no note');
 
     await page.click('.gh-clear'); await page.waitForTimeout(300);
     await tap(page, day(SAT2)); await waitTotal(page);
     s = await state(page);
     check(s.edges.join(',') === day(SAT2 - 1) + ',' + day(SAT2 + 1), 'a Saturday whose Sunday is taken selects Friday to Sunday instead');
-    check(/The nights after it are taken, so here's .* instead; the price is below\.$/.test(s.note), 'with the shifted words: ' + JSON.stringify(s.note));
+    check(/takes 2 nights\. The nights after it are taken, so here's .* instead; the price is below\. Tap a later day to stay longer\.$/.test(s.note), 'with the shifted words: ' + JSON.stringify(s.note));
+    check(offeredSteps().slice(-1)[0] === 'shifted', 'stay_offered reason shifted');
+
+    // a Friday whose Saturday is taken: the stay shifts back to Thursday, and the words still say the Friday's own two nights
+    await page.click('.gh-clear'); await page.waitForTimeout(300);
+    await tap(page, day(SAT4 - 1)); await waitTotal(page);
+    s = await state(page);
+    check(s.edges.join(',') === day(SAT4 - 2) + ',' + day(SAT4), 'a Friday whose Saturday is taken selects Thursday to Saturday');
+    check(/^Arriving .* takes 2 nights\./.test(s.note), 'and says the Friday takes 2 nights, not the Thursday\'s one: ' + JSON.stringify(s.note));
 
     await page.click('.gh-clear'); await page.waitForTimeout(300);
     await tap(page, day(SAT1 + 3));
@@ -239,7 +264,7 @@ async function main() {
     await page.goto(base + '/book', { waitUntil: 'load' }); await page.waitForSelector('.gh-calendar .gh-day', { timeout: 15000 });
     await tap(page, W); await waitTotal(page);
     const s = await state(page);
-    check(s.edges.length === 2 && s.edges[0] !== W && /^No stay works around .*: the nights beside it are taken\. The nearest that does is .*; the price is below\.$/.test(s.note), 'a walled-in Saturday offers the nearest stay that works: ' + JSON.stringify(s.note));
+    check(s.edges.length === 2 && s.edges[0] !== W && /^No stay works around .*: the nights beside it are taken\. The nearest that does is .*; the price is below\. Tap a later day to stay longer\.$/.test(s.note), 'a walled-in Saturday offers the nearest stay that works: ' + JSON.stringify(s.note));
     check(/\$/.test(s.total), 'with its price: ' + s.total);
     await ctxN.close();
   }

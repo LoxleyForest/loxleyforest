@@ -208,6 +208,26 @@ STRIPE_KEY = 'pk_live_51RH1eh1A4HPU5uCq4EyPTq3QCk4GI5skATfj7Vy9R1irx769gSJDEuVKY
 assert STRIPE_KEY == '' or STRIPE_KEY.startswith('pk_'), 'only a publishable key (pk_...) goes on a page'
 PRECONNECT = f'<link rel="preconnect" href="{API}" crossorigin>'
 
+
+def early_script(agreement):
+    """The nights (and on /book the agreement) asked for from the head, before the stylesheets and
+    scripts, so the answers are waiting when js/gatehouse.js boots (2026-11-08: on a throttled phone
+    the calendar was live at 3.0 to 4.0 s, the fetch starting only after 1.3 s of scripts). The URLs
+    are built exactly as gatehouse.js builds them (today in Eastern time, twelve months ahead), and
+    gatehouse.api() takes each answer once by its URL; a failed early fetch is simply fetched again."""
+    # A hold in the link (/book?hold=, window.__ghKeys from the keys script above) changes the
+    # availability URL, so that call is left to gatehouse.js; the early fetch gives up after 8 s so a
+    # stalled engine still reaches gatehouse.js's own timeout and its fallback form (the Critic).
+    calls = ("if(!(window.__ghKeys||{}).hold)g('/v1/availability?unit='+encodeURIComponent(u)+'&from='+f+'&to='+t);"
+             + ("g('/v1/agreement');" if agreement else ''))
+    return ('  <script>(function(){try{var a=' + repr(API) + ',u=' + repr(UNIT) + ';'
+            "var f=new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());"
+            "var p=f.split('-'),d=new Date(+p[0],+p[1]-1,+p[2]);d.setMonth(d.getMonth()+12);"
+            "var m=d.getMonth()+1,y=d.getDate(),t=d.getFullYear()+'-'+(m<10?'0':'')+m+'-'+(y<10?'0':'')+y;"
+            "var e=window.__ghEarly={};function g(path){var o={cache:'no-store'};if(window.AbortController){var c=new AbortController();o.signal=c.signal;setTimeout(function(){c.abort()},8000)}"
+            "var p=fetch(a+path,o).then(function(r){return r.text().then(function(x){var j=null;try{j=JSON.parse(x)}catch(q){}if(!r.ok||!j||typeof j!=='object')throw new Error('early');return j})});p.catch(function(){});e[a+path]=p}"
+            + calls + '}catch(q){}})();</script>')
+
 # What the booking calendar shows until the open nights arrive: the shape of a month and a
 # sentence, never a blank box (js/gatehouse.js replaces it). Without script, a way to book.
 GH_WAIT = ('<div class="gh-wait" role="status"><div class="gh-wait__cal" aria-hidden="true">' + '<i></i>' * 35 + '</div>'
@@ -812,6 +832,13 @@ def render(page):
     if gatehouse and PRECONNECT not in head:
         head = head.replace('<link rel="preconnect" href="https://fonts.googleapis.com">',
                             PRECONNECT + '\n  <link rel="preconnect" href="https://fonts.googleapis.com">', 1)
+    # The early fetch, right after the preconnect and before the stylesheets, on the pages that mount
+    # the calendar and read the nights on load (never the gift, booked, manage or offer pages, which
+    # do not); written fresh on every build (the head comes from the file on disk, so an older copy
+    # is taken out first).
+    head = re.sub(r'\n  <script>\(function\(\)\{try\{var a=[^\n]*window\.__ghEarly[^\n]*</script>', '', head, count=1)
+    if gatehouse and 'id="gatehouse"' in body:
+        head = head.replace(PRECONNECT, PRECONNECT + '\n' + early_script(name == 'book.html'), 1)
     html = (head + f'<body class="v2" data-lf-path="{page_path(name)}" data-lf-api="{API}">\n' + gtm + '\n' + header(book) + '\n  <main id="main">\n' + body + '\n  </main>\n\n'
             + footer(book, gatehouse) + ('  <script src="js/crossing.js" defer></script>\n' if 'data-crossing' in body else '')
             + ('  <script src="js/talk.js" defer></script>\n' if name in TALK_PAGES else '')

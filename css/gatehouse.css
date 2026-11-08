@@ -71,7 +71,7 @@
 .gh-num { font-size: 14px; font-weight: 500; }
 .gh-rate { font-size: 10px; color: var(--stone); margin-top: 2px; }
 /* The minimum on an arrival night, before the tap (js/gatehouse.js OFFER_STAY): "2+" in the corner. */
-.gh-min { position: absolute; top: 2px; right: 3px; font-size: 8px; line-height: 1; letter-spacing: 0.02em; color: var(--stone); }
+.gh-min { position: absolute; top: 2px; right: 3px; font-size: 10px; line-height: 1; letter-spacing: 0.02em; color: var(--stone); }
 .gh-day--edge .gh-min { color: var(--gold-light); }
 .gh-day--taken { background: transparent; color: var(--driftwood); }
 .gh-day--taken .gh-num { text-decoration: line-through; }
