@@ -77,15 +77,31 @@ async function main() {
   // a scroll as the page scrolls (the smooth-scroll library has the wheel once it is up)
   const go = (page, y) => page.evaluate((y) => { if (window.lfLenis) window.lfLenis.scrollTo(y, { immediate: true }); else window.scrollTo(0, y); }, y).then(() => page.waitForTimeout(350));
   const pageEnd = (page) => page.evaluate(() => document.documentElement.scrollHeight - innerHeight);
+  // a spot past the first screen where no other Book button is on screen for 300 px of scroll (the
+  // button rightly hides while one is; on the home page the calendar sits one screen down once the
+  // bridge is the poster), found by geometry
+  const clearSpot = (page) => page.evaluate(async () => {
+    const other = () => [...document.querySelectorAll('main a.btn--primary[href="/book"], main a.lf-btn[href="#book"], main #book')].some((el) => { const r = el.getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight; });
+    const go = (y) => { if (window.lfLenis) window.lfLenis.scrollTo(y, { immediate: true }); else window.scrollTo(0, y); };
+    const tick = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+    const max = document.documentElement.scrollHeight - innerHeight;
+    for (let y = Math.round(innerHeight * 1.2); y < max - 400; y += 24) {
+      go(y); await tick(); if (other()) continue;
+      go(y + 300); await tick(); if (other()) continue;
+      go(0); await tick(); return y;
+    }
+    go(0); await tick(); return Math.round(innerHeight * 1.6);
+  });
   // the pattern: down hides, up shows, the end shows, the first screen hides
   async function pattern(page, where) {
-    await go(page, 0); await go(page, Math.round(844 * 1.6)); await go(page, Math.round(844 * 2.2));
+    const y0 = await clearSpot(page);
+    await go(page, 0); await go(page, y0); await go(page, y0 + 180);
     let f = await fab(page);
-    check(f && f.hidden && !f.shown, where + ': scrolling down past the first screen, the button is hidden');
-    await go(page, Math.round(844 * 2.2) - 90);
+    check(f && f.hidden && !f.shown, where + ': scrolling down past the first screen, the button is hidden (at ' + (y0 + 180) + ')');
+    await go(page, y0 + 90);
     f = await fab(page);
     check(f && !f.hidden && f.shown && f.onScreen, where + ': a scroll up brings it back');
-    await go(page, Math.round(844 * 2.2) + 240);
+    await go(page, y0 + 300);
     f = await fab(page);
     check(f && f.hidden, where + ': down again, hidden again');
     await go(page, await pageEnd(page));
@@ -95,8 +111,8 @@ async function main() {
     f = await fab(page);
     check(f && f.hidden, where + ': over the first screen it stays hidden');
   }
-  // bring the button into view: a little down, then a little up
-  async function reveal(page) { await go(page, Math.round(844 * 1.7)); await go(page, Math.round(844 * 1.7) - 80); }
+  // bring the button into view: a little down at a clear spot, then a little up
+  async function reveal(page) { const y0 = await clearSpot(page); await go(page, y0 + 160); await go(page, y0 + 80); }
   // The hero's pause button (the audit, 2026-11-08): hidden until the film is playing; an iPhone never plays it.
   const pauseState = (page) => page.evaluate(() => { const b = document.querySelector('.lf-hero__pause'); if (!b) return null; return { hidden: b.hidden, display: getComputedStyle(b).display, playing: !!document.querySelector('.hero__video.is-playing') }; });
 

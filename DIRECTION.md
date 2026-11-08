@@ -64,8 +64,13 @@ The tokens in `css/global.css` stay. The rule changes: **three per screen.**
   preload="metadata"` with a `poster`. The poster is a `.webp` under 120 KB,
   preloaded in the head, and stays the largest-contentful-paint element so
   the ad landing page score does not pay for the video.
-- On phones under 600 px wide, the poster alone until the connection is
-  known to be fast. iOS Low Power Mode refuses autoplay anyway.
+- Every phone gets the 540p film unless the browser asks for less: Save-Data,
+  or a connection it reports as slow-2g, 2g or 3g; no report counts as fast
+  (Mick, 2026-11-08, "I want the video we made for the hero", reversing the
+  rule of 2026-11-07 that kept the poster alone until the connection was
+  known to be fast). The poster first, so nothing jumps; iOS Low Power Mode
+  refuses autoplay and the first tap starts it. The cost at the reel's scale
+  needs Netlify's auto recharge or a bought pack (js/global.js, the hero).
 - **Treehouse pages**: short still-to-motion clips, 4 to 6 seconds, same
   rules, under 1.5 MB each, one per unit above the price.
 - Nothing longer lives in the repo. A brand film, if one is cut, sits on a
