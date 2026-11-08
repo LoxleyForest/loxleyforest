@@ -178,7 +178,14 @@ they can reply to.
 # IN FLIGHT · 2026-11-08 · The site audit's eight (the Chief's route from chief docs/briefs/2026-11-08-site-walkthrough.md and 2026-11-08-critic-site-audit.md, "Thursday's eight", one commit each, before the Nov 12 freeze)
 
 The Chief's ship rules: truth fixes and the two bugs ship on green on its word; everything else behind
-a switch until Mick's yes. Too risky for the freeze, not started: the toast move, the /book price card
+a switch until Mick's yes. MICK'S YES, 2026-11-08 about 18:40 ET, by the Chief, to his sheet's five
+site lines ("Brother just run it I trust you! If it's legendary and best in class and prints money I
+approve."): FLIPPED ON, one commit each, checks green, read back live: PACKAGE_ORDER_V2 (b774af7),
+PRICE (5de9860), GIVE_A_STAY (7231db2), REVIEW_COUNT with the rating computed from the list, 5.0
+(f2247c6 the code, the flip after it), PHONE_STILL (the flip after). Still off, separate yeses:
+OFFER_STAY and OFFER_NEAREST, SIZES, SIZE_WORDS, the giveaway's hash, the /book hero words. The
+paragraphs below describe each piece as built; where one says "shadow" or "flips on", read it against
+this line. Too risky for the freeze, not started: the toast move, the /book price card
 and calendar layout, "Buying for someone else?", cancellation rewording.
 
 **The dead pause icon (bug, shipped).** On an iPhone the hero film never plays (only a phone reporting
