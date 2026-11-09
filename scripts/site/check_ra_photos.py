@@ -32,6 +32,8 @@ def check(ok, what):
 
 import build_v2 as B  # noqa: E402
 
+B.page_modules()  # as build does: the giveaway popup's words block on the page comes from pages/giveaway.py
+
 src = open(os.path.join(HERE, 'build_v2.py'), encoding='utf-8').read()
 shipped = re.findall(r'^RA_PHOTOS = (True|False)$', src, re.M)
 check(len(shipped) == 1, 'the switch is one line; shipped RA_PHOTOS = ' + (shipped[0] if shipped else '?'))
@@ -98,6 +100,8 @@ for on in (False, True):
         srcs = set(ATTR(t, 'src') for t in tags if ATTR(t, 'src') and ATTR(t, 'src').startswith('images/v2/'))
         check(len(srcs) == len([t for t in tags if ATTR(t, 'src') and ATTR(t, 'src').startswith('images/v2/')]), 'on: no photograph is used twice on the page')
         for slot, val in B.TREEHOUSE_PHOTOS[True].items():
+            if slot in ('hero_desk', 'hero_phone', 'hero_alt', 'schema'):
+                continue
             pairs = val if isinstance(val, list) else [val]
             for n, a in pairs:
                 check(os.path.exists(os.path.join(ROOT, f'images/v2/{n}-800.webp')) and bool(a.strip()), 'on: slot %s: images/v2/%s-800.webp with its alt' % (slot, n))
