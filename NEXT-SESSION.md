@@ -362,11 +362,14 @@ picked_dates rate from /treehouses a week on against a week off. Found on the wa
 scripts/publish.py let docs/'s non-markdown files through (the never-list went by pattern), so
 "docs" is on it now; the line above that says nothing in docs/ is published is true again.
 
-**2. The crossing as a film on the home page, LIVE (`CROSSING_FILM = True` in
+**2. The crossing as a film on the home page, LIVE as 5f95fc5 (`CROSSING_FILM = True` in
 scripts/site/build_v2.py, a build-time switch; Mick's "I agree" to loop B, walking the crossing at
-blue hour, at about 20:45 ET by the Chief).** The Chief cut three loops from the July 8 footage (A:
-drone at canopy height; B: walking the crossing at blue hour; C: drone glide along the bridge) and
-Mick picked B from an unlisted preview (private/loops-4ad685/, deleted once B was wired). As built:
+blue hour, at about 20:45 ET by the Chief; read back live on a phone and a desk: the film section
+served, the right poster and film each, playing muted inline in a loop about 0.2 s after the section
+arrives, the words, the pause button, crossing_start pushed, the calendar next, no error).** The Chief
+cut three loops from the July 8 footage (A: drone at canopy height; B: walking the crossing at blue
+hour; C: drone glide along the bridge) and Mick picked B from an unlisted preview
+(private/loops-4ad685/, deleted in the commit after 5f95fc5 once B was live). As built:
 the bridge section is one screen on every shape, the loop's own first frame as the poster painted
 first (images/crossing/crossing-poster-phone.webp 41 KB, -desk.webp 70 KB, a <picture>, the video
 carrying no poster attribute so a phone never fetches the desk frame), the loop over it once the page
@@ -375,21 +378,37 @@ interior loop; its connection rule is now the hero's, slow-2g, 2g, 3g or Save-Da
 and its first-tap kick listens for touchend and click), muted, inline, looping, paused off screen, a
 pause button top right on a phone where the skip link sat and bottom right on a desk; the walk's four
 lines shown at once as the still path showed them; no "Skip to your dates" (one screen needs none);
-the calendar next; the words top left on a desk, clear of the glowing canvas mid-frame. The films:
-crossing-phone.mp4 (720x1280, 8.5 s, 753 KB) and crossing-desk.mp4 (1920x1080, 1,555 KB), H.264,
-silent, the tail crossfaded into the head, force-added past .gitignore's *.mp4 rule; no WebM (the
-hero's vp9 came out larger; the Chief's masters are the cutter's). The scroll-drawn walk (WALK,
-js/crossing.js, PHONE_STILL, css .lf-walk) stays in the repo behind the switch for later use as art;
-check_crossing_still.js renders the home page with the switch off to keep proving it. Proven:
-scripts/site/check_crossing_film.js, 51 in both states; check_crossing_still 17, check_inquire_fab
-29, check_hero_film 12, check_popup 70, the file checks green. MEASURED on the local build, the
-engine faked, three runs, medians, before/after: a throttled phone (390 px, 1.6 Mbps, 150 ms, 4x
-CPU) first paint 2.46/2.44 s, largest paint 4.00/3.72 s, load 3.44/3.10 s, the calendar live
-3.30/3.06 s, a landing 618/472 KB (crossing.js's 61 KB and its scene gone), a fast full scroll
-2,083/1,680 KB, and a phone that stops at the bridge pays the film's 753 KB and sees it playing
-about 1 s after the section arrives; a desk (1440 px, 10 Mbps) first paint 0.68/0.62 s, load
-1.04/0.80 s, the calendar 0.89/0.69 s, a landing 1,964/1,823 KB, a full scroll 3,264/4,678 KB with
-the 1,555 KB film in it. The Critic read it before it shipped.
+the calendar next; the words top right on a desk, over the dark trees (the lit canvas walks up the
+left half of the frame). The films, re-cut from the Chief's masters with the house's x264 settings
+on the Critic's read: crossing-phone.mp4 (540x960 at 24 fps, the direction's phone file, 8.5 s, 395
+KB; the Chief's 720x1280 web cut was 753 KB) and crossing-desk.mp4 (1920x1080, 1,385 KB, under the
+direction's 1.5 MB line), H.264, silent, the tail crossfaded into the head, force-added past
+.gitignore's *.mp4 rule; no WebM (the hero's vp9 came out larger; the Chief's masters are the
+cutter's). The film tells the Tag Manager crossing_start once it plays and crossing_end once
+through, as the walk did (js/v2.js data-track), so walkers can still be counted beside the calendar's
+steps. The scroll-drawn walk (WALK, js/crossing.js, PHONE_STILL, css .lf-walk) stays in the repo
+behind the switch for later use as art; check_crossing_still.js renders the home page with the switch
+off to keep proving it. Proven: scripts/site/check_crossing_film.js, 60 in both states (the film's
+pixels under the words read as dark at 1, 4 and 7.5 s on 1024, 1280, 1440, 390 and 375 px);
+check_crossing_still 17, check_inquire_fab 29, check_hero_film 12, check_popup 70, the file checks
+green. THE CRITIC'S READ, taken: the first measurement counted only finished downloads, so neither
+the hero film nor the crossing film was in its numbers and "lighter" was false; the phone file was
+720x1280 against the direction's 540p; the desk file was over 1.5 MB; the desk words sat on the lit
+canvas at 1024 and 1280 wide; the walk's Tag Manager events were being dropped. MEASURED HONESTLY
+(every byte on the wire from our origin, Chrome's own count, the engine faked, three runs, medians,
+before/after; a landing is load plus 3 s, then an 8 s stop at the bridge, then the rest of the page a
+screen per 0.25 s): a throttled phone (390 px, 1.6 Mbps, 150 ms, 4x CPU): first paint 2.49/2.53 s,
+largest paint 4.06/3.93 s, load 3.45/3.34 s, the calendar live 3.39/3.31 s; a landing 1,151/1,018 KB
+(crossing.js's 61 KB and the engraving's 126 KB gone; the hero film's 659 KB in both); after the stop
+at the bridge 1,232/1,483 KB (the film's 396 KB arrives and plays about 1 s after the section does);
+a full scroll 2,036/2,287 KB, UP 251 KB (12%). A desk (1440 px, 10 Mbps): first paint 0.72/0.62 s,
+load 0.97/0.89 s, the calendar 0.84/0.78 s; a landing 1,919/1,778 KB; a full scroll 3,216/4,461 KB
+with the 1,385 KB film. The Critic's line was to ship only if the phone full scroll did not rise; it
+rose by the film less what left, so it is logged here and in the Chief's report with its cost: at the
+reel's 100,000 phone visits, about 25 GB (500 credits at 20 a GB) if every visit scrolled the whole
+page, against about 13 GB saved on landings; shipped on the Chief's word to ship after the Critic,
+one line to turn off. What would settle it: Netlify's bandwidth for the week after against the week
+before (readable by Nov 15), and crossing_start beside picked_dates in the funnel.
 
 ---
 
