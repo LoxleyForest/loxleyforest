@@ -327,6 +327,48 @@ task at all when the walk comes near, 43 to 56 frames a second on the scroll, th
 
 ---
 
+# IN FLIGHT · 2026-11-08 · Romantic Atlanta's shoot on the site (Mick by the Chief, about 19:20 ET: "we own the rights ... Make it legendary. Even the photos for the treehouse page pull from theirs")
+
+The shoot is on the workshop: /home/mick/footage-in/drive/Pictures / (the trailing space is in the
+name; 47 stills, no face in any) and Videos / beside it. Two pieces from the Chief.
+
+**1. /treehouses on the stills (shadow, `RA_PHOTOS = False` in scripts/site/build_v2.py, a build-time
+switch; committed 2026-11-08 night).** A per-state photo table (TREEHOUSE_PHOTOS) feeds every slot of
+page_treehouses(); treehouse_two(photo) takes its photo so the home page never changes. On: the hero
+is the bridge at dusk straight on (4W6A8086, ra-bridge-dusk-1600) and on a phone an upright crop of
+the same frame about the glowing canvas (ra-bridge-dusk-phone-900), the gallery the room, the deck,
+the sun through the canopy and the bridge by day, the three "Built, not bought" splits where the
+bridge meets the deck, the drone at dusk and the bridge at dusk from the deck, the two 4:5 frames the
+room upright and the deck at dusk; the share card (og:image) and the schema images follow the switch
+(written from the table in both states, since the head is read back from the file on disk). Off:
+the page as it was, byte for byte. 21 files in images/v2/ra-* through scripts/site/v2img.py, none
+over 500 KB; a phone's full scroll of the photographs 988 KB (the check's line 1,024), measured in a
+browser 764 KB after against 981 before, a desk 1,245 against 1,429; the hero's first-paint file
+grows, desk 89 to 214 KB and phone 78 to 158 KB. THE CRITIC'S READ, taken: the first phone hero was
+the upright sibling frame with no treehouse in it ("A home in the sky" over no home, the shared alt
+false on phones; the fix is the crop of the desk frame); the three splits were one drone shape three
+times; the weight line now says it counts images/v2 and logs that the interior film (2,157 KB, Mick's
+own, both states) puts the whole page over DIRECTION.md's 1 MB line; og:image in the table. Proven:
+scripts/site/check_ra_photos.py, both states. FOR MICK'S EYE: the before/after sheets and the memo in
+docs/briefs/2026-11-08-treehouses-ra-photos/ (first screens at 390 and 1440, the whole page side by
+side, the gallery and the splits at full size), sent to the Chief. Flipping it: the one line,
+build_v2.py, the check, one commit, on his yes. What would settle "legendary": the funnel's phone
+picked_dates rate from /treehouses a week on against a week off. Found on the way and fixed:
+scripts/publish.py let docs/'s non-markdown files through (the never-list went by pattern), so
+"docs" is on it now; the line above that says nothing in docs/ is published is true again.
+
+**2. The crossing loops for the home page's bridge section (the Chief cuts, the seat wires).** The
+Chief's three loops (A: drone at canopy height, the lit bridge to the tent; B: walking the crossing
+at blue hour; C: drone glide along the bridge; H.264, silent, 8 to 8.5 s, phone 720x1280 at 700 to
+770 KB, desk 1080p at 1.5 MB, posters) are on an unlisted preview for Mick's pick:
+private/loops-4ad685/ (noindex, no Tag Manager, linked from nowhere; the six films force-added past
+.gitignore's *.mp4 rule, as the hero films were; about 7 MB of video). DELETE THE FOLDER once the
+pick is wired. On his letter: the chosen loop behind a switch in the bridge section, desktop too (it
+is the poster on phones today, PHONE_STILL), muted, autoplay, poster first, the hero's save-data
+rule (js/global.js); the cutter adds a WebM for the chosen one; the Critic reads it before it ships.
+
+---
+
 # DONE · 2026-11-08 · The Golden Arrow in its sizes on /gift (`var SIZES = true;` and `var SIZE_WORDS = true;` in js/gift.js)
 
 LIVE, 2026-11-08 about 19:05 ET, on Mick's yes by the Chief (about 18:55 ET) to the lines read to
