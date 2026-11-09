@@ -83,14 +83,16 @@ FONTS = ('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@
          '&family=Montserrat:wght@300;400;500;600;700&display=swap')
 
 
-def pic(name, alt, sizes, eager=False, cls='', frame=None):
+def pic(name, alt, sizes, eager=False, cls='', frame=None, phone=None):
     """A responsive <img> from images/v2/<name>-800.webp (and -1600 when it exists). On a phone
     (under 768 px) the 800 is the only source: a 3x phone would otherwise ask for the 1600 at
     100vw (the Chief's bandwidth route, 2026-11-07; a full scroll of the home page moved 4.2 MB on
     a phone, most of it 1600s). Where the page crops the photo into a tall frame (frame=(4, 5):
     .lf-photo--tall and .lf-chapter), an 800 across 390 px is only 1.25 photo pixels to a screen
     point, so the phone source is a centred 4:5 crop of the 1600 at 684x855 instead (the Critic,
-    2026-11-07), made here once and kept beside the others."""
+    2026-11-07), made here once and kept beside the others. phone='<other>' names another
+    photograph whose 800 a phone takes instead (the giveaway's upright aerial, 2026-11-08): the
+    same alt serves both, so the words say what both pictures show."""
     big = f'images/v2/{name}-1600.webp'
     has_big = os.path.exists(os.path.join(ROOT, big))
     srcset = f'images/v2/{name}-800.webp 800w' + (f', {big} 1600w' if has_big else '')
@@ -98,10 +100,10 @@ def pic(name, alt, sizes, eager=False, cls='', frame=None):
     load = ' fetchpriority="high"' if eager else ' loading="lazy" decoding="async"'
     c = f' class="{cls}"' if cls else ''
     img = f'<img src="images/v2/{name}-800.webp" srcset="{srcset}" sizes="{sizes}" width="{w}" height="{h}" alt="{alt}"{load}{c}>'
-    if not has_big:
+    if not has_big and not phone:
         return img
-    phone = framed(name, frame) if frame else f'images/v2/{name}-800.webp'
-    return f'<picture><source media="(max-width: 767px)" srcset="{phone}" type="image/webp">{img}</picture>'
+    small = framed(name, frame) if frame else (f'images/v2/{phone}-800.webp' if phone else f'images/v2/{name}-800.webp')
+    return f'<picture><source media="(max-width: 767px)" srcset="{small}" type="image/webp">{img}</picture>'
 
 
 FRAMED = {(4, 5): (684, 855)}

@@ -510,6 +510,8 @@ body:has(#ga-buy, #ga-card-page, #ga-manage, #ga-thanks) .book-fab { display: no
 .gw-top .lf-wrap { max-width: 60rem; }
 .gw-bridge { margin: clamp(28px, 5vw, 44px) auto 0; max-width: 56rem; }
 .gw-bridge img { display: block; width: 100%; height: auto; border-radius: 4px; box-shadow: 0 18px 50px rgba(10, 20, 10, 0.35); }
+/* a phone takes the upright frame (800 x 1422) while the tag's width and height are the wide one's: the box is reserved upright so nothing jumps when it lands */
+@media (max-width: 767px) { .gw-bridge img { aspect-ratio: 800 / 1422; } }
 .gw-doors .lf-eyebrow { text-align: center; }
 .gw-doors__row { display: grid; gap: 14px; margin-top: 18px; }
 @media (min-width: 720px) { .gw-doors__row { grid-template-columns: repeat(3, 1fr); } }
