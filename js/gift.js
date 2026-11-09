@@ -84,7 +84,7 @@
   // here), buyable only while /v1/health's gift_sizes names it, else with the engine's own
   // sentence for a size at the season's cap. Only sizes the engine lists ever show; a read that
   // fails leaves the page as it was. scripts/site/check_gift.js proves both states.
-  var SIZES = false;
+  var SIZES = true;
   // The Writer's two lines for a card of one night or two (its gift line and its "Unused, ready
   // for ..." status, gift.py card_gift_N and state_unused_N), for Mick's ear: SIZE_WORDS false, a
   // card of another size shows its own subtitle and terms (the printed card's words, the engine's)
