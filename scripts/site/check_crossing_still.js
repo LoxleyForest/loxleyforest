@@ -33,13 +33,29 @@ const EXE = process.env.CHROME || path.join(process.env.HOME, '.cache/ms-playwri
 const TYPES = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.webp': 'image/webp', '.png': 'image/png', '.jpg': 'image/jpeg', '.mp4': 'video/mp4', '.woff2': 'font/woff2' };
 const SCRIPT = fs.readFileSync(path.join(ROOT, 'js', 'crossing.js'), 'utf8');
 const SHIPPED = (SCRIPT.match(/const PHONE_STILL = (true|false);/) || [])[1];
+// The walk left the home page on 2026-11-08 (build_v2.CROSSING_FILM: the crossing as a film), kept in
+// the repo behind that switch for later use as art. When index.html on disk carries no walk, this
+// check serves the home page built with CROSSING_FILM off (build_v2.render, in memory) so the walk
+// is still proven in both states of PHONE_STILL.
+let HOME = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+if (!/data-crossing/.test(HOME)) {
+  const { execFileSync } = require('child_process');
+  const out = path.join(require('os').tmpdir(), 'lf-home-walk-' + process.pid + '.html');
+  const code = "import sys, os; sys.path.insert(0, sys.argv[1]); os.chdir(sys.argv[2])\n" +
+    "import build_v2 as B; B.page_modules(); B.CROSSING_FILM = False\n" +
+    "open(sys.argv[3], 'w', encoding='utf-8').write(B.render(B.page_index)[1])\n";
+  execFileSync('python3', ['-c', code, path.join(ROOT, 'scripts', 'site'), ROOT, out], { stdio: ['ignore', 'ignore', 'inherit'] });
+  HOME = fs.readFileSync(out, 'utf8');
+  fs.unlinkSync(out);
+  console.log('the walk is off the home page (build_v2.CROSSING_FILM on); its checks run on the page built with that switch off');
+}
 const withSwitch = (on) => SCRIPT.replace(/const PHONE_STILL = (true|false);/, 'const PHONE_STILL = ' + on + ';');
 const NIGHTS = { nights: Array.from({ length: 120 }, (_, i) => { const d = new Date(); d.setDate(d.getDate() + i + 1); return { night: d.toISOString().slice(0, 10), rate_cents: 55000, min_stay: 2 }; }) };
 
 function serve() {
   const srv = http.createServer((req, res) => {
     let p = decodeURIComponent(req.url.split(/[?#]/)[0]);
-    if (p === '/') p = '/index.html';
+    if (p === '/' || p === '/index.html') { res.writeHead(200, { 'Content-Type': 'text/html' }); return res.end(HOME); }
     let f = path.join(ROOT, p);
     if (!f.startsWith(ROOT)) { res.writeHead(403); return res.end(); }
     if (!path.extname(f) && fs.existsSync(f + '.html')) f += '.html';
