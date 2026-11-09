@@ -182,8 +182,10 @@ a switch until Mick's yes. MICK'S YES, 2026-11-08 about 18:40 ET, by the Chief, 
 site lines ("Brother just run it I trust you! If it's legendary and best in class and prints money I
 approve."): FLIPPED ON, one commit each, checks green, read back live: PACKAGE_ORDER_V2 (b774af7),
 PRICE (5de9860), GIVE_A_STAY (7231db2), REVIEW_COUNT with the rating computed from the list, 5.0
-(f2247c6 the code, 9433988 the flip), PHONE_STILL (4a49ce8). Still off, separate yeses:
-OFFER_STAY and OFFER_NEAREST, SIZES, SIZE_WORDS, the giveaway's hash, the /book hero words. The
+(f2247c6 the code, 9433988 the flip), PHONE_STILL (4a49ce8). Then, his yes by the Chief at about
+18:55 ET to the gift page's new lines read to him: SIZES (5372947) and SIZE_WORDS (78604b1), the
+block below. Still off, separate yeses:
+OFFER_STAY and OFFER_NEAREST, the giveaway's hash, the /book hero words. The
 paragraphs below describe each piece as built; where one says "shadow" or "flips on", read it against
 this line. Too risky for the freeze, not started: the toast move, the /book price card
 and calendar layout, "Buying for someone else?", cancellation rewording.
@@ -325,7 +327,23 @@ task at all when the walk comes near, 43 to 56 frames a second on the scroll, th
 
 ---
 
-# IN FLIGHT · 2026-11-08 · The Golden Arrow in its sizes on /gift (shadow, `var SIZES = false;` in js/gift.js)
+# DONE · 2026-11-08 · The Golden Arrow in its sizes on /gift (`var SIZES = true;` and `var SIZE_WORDS = true;` in js/gift.js)
+
+LIVE, 2026-11-08 about 19:05 ET, on Mick's yes by the Chief (about 18:55 ET) to the lines read to
+him: "How many nights?", "Please choose how many nights.", the lead, the heading "Nights in the
+trees", the card lines from the engine, and "Unused, ready for one night" / "two nights". SIZES
+5372947 (the one line, the rebuild: only the four gift pages moved, the description on all four,
+the lead and the heading on /gift), SIZE_WORDS 78604b1 (the one line; the builder reads only
+SIZES, so no page moved). check_gift.js 306 in each state, check_checkout 124, ensure_gtm and
+check_forms green; the three-sizes run in check_gift.js now pins SIZE_WORDS off, whatever is
+shipped, since the words-on sample card has its own run. READ BACK LIVE at 390 px: both switches
+true in the served script; the new description, lead and heading on the page; the engine's health
+names golden-arrow alone and /v1/gift/sizes lists the 3-night alone, so the panel is the 3-night
+form as it was, no chooser, the price line "$2,000.00 Taxes and fees included." (PRICE), the
+"When" row and the sample card in the card's ratified words, one health read and one sizes read,
+no sideways scroll, no script error. The Forge told the site line is clear: the chooser appears
+by itself the moment /v1/health gift_sizes names a second size and /v1/gift/sizes lists it; no
+site push is needed for that. The record of how it was built follows.
 
 The Chief's route, the Golden Arrow's last site piece: the gift page per size, the 1-night (Monday
 to Thursday), the 2-night and the 3-night, each with its own card front (images/gift/
