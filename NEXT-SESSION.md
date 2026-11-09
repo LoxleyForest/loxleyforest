@@ -362,11 +362,14 @@ picked_dates rate from /treehouses a week on against a week off. Found on the wa
 scripts/publish.py let docs/'s non-markdown files through (the never-list went by pattern), so
 "docs" is on it now; the line above that says nothing in docs/ is published is true again.
 
-**2. The crossing as a film on the home page, LIVE (`CROSSING_FILM = True` in
+**2. The crossing as a film on the home page, LIVE as 5f95fc5 (`CROSSING_FILM = True` in
 scripts/site/build_v2.py, a build-time switch; Mick's "I agree" to loop B, walking the crossing at
-blue hour, at about 20:45 ET by the Chief).** The Chief cut three loops from the July 8 footage (A:
-drone at canopy height; B: walking the crossing at blue hour; C: drone glide along the bridge) and
-Mick picked B from an unlisted preview (private/loops-4ad685/, deleted once B was wired). As built:
+blue hour, at about 20:45 ET by the Chief; read back live on a phone and a desk: the film section
+served, the right poster and film each, playing muted inline in a loop about 0.2 s after the section
+arrives, the words, the pause button, crossing_start pushed, the calendar next, no error).** The Chief
+cut three loops from the July 8 footage (A: drone at canopy height; B: walking the crossing at blue
+hour; C: drone glide along the bridge) and Mick picked B from an unlisted preview
+(private/loops-4ad685/, deleted in the commit after 5f95fc5 once B was live). As built:
 the bridge section is one screen on every shape, the loop's own first frame as the poster painted
 first (images/crossing/crossing-poster-phone.webp 41 KB, -desk.webp 70 KB, a <picture>, the video
 carrying no poster attribute so a phone never fetches the desk frame), the loop over it once the page
