@@ -362,15 +362,34 @@ picked_dates rate from /treehouses a week on against a week off. Found on the wa
 scripts/publish.py let docs/'s non-markdown files through (the never-list went by pattern), so
 "docs" is on it now; the line above that says nothing in docs/ is published is true again.
 
-**2. The crossing loops for the home page's bridge section (the Chief cuts, the seat wires).** The
-Chief's three loops (A: drone at canopy height, the lit bridge to the tent; B: walking the crossing
-at blue hour; C: drone glide along the bridge; H.264, silent, 8 to 8.5 s, phone 720x1280 at 700 to
-770 KB, desk 1080p at 1.5 MB, posters) are on an unlisted preview for Mick's pick:
-private/loops-4ad685/ (noindex, no Tag Manager, linked from nowhere; the six films force-added past
-.gitignore's *.mp4 rule, as the hero films were; about 7 MB of video). DELETE THE FOLDER once the
-pick is wired. On his letter: the chosen loop behind a switch in the bridge section, desktop too (it
-is the poster on phones today, PHONE_STILL), muted, autoplay, poster first, the hero's save-data
-rule (js/global.js); the cutter adds a WebM for the chosen one; the Critic reads it before it ships.
+**2. The crossing as a film on the home page, LIVE (`CROSSING_FILM = True` in
+scripts/site/build_v2.py, a build-time switch; Mick's "I agree" to loop B, walking the crossing at
+blue hour, at about 20:45 ET by the Chief).** The Chief cut three loops from the July 8 footage (A:
+drone at canopy height; B: walking the crossing at blue hour; C: drone glide along the bridge) and
+Mick picked B from an unlisted preview (private/loops-4ad685/, deleted once B was wired). As built:
+the bridge section is one screen on every shape, the loop's own first frame as the poster painted
+first (images/crossing/crossing-poster-phone.webp 41 KB, -desk.webp 70 KB, a <picture>, the video
+carrying no poster attribute so a phone never fetches the desk frame), the loop over it once the page
+has loaded and the section is on screen (js/v2.js, the in-page film player that already served the
+interior loop; its connection rule is now the hero's, slow-2g, 2g, 3g or Save-Data keep the poster,
+and its first-tap kick listens for touchend and click), muted, inline, looping, paused off screen, a
+pause button top right on a phone where the skip link sat and bottom right on a desk; the walk's four
+lines shown at once as the still path showed them; no "Skip to your dates" (one screen needs none);
+the calendar next; the words top left on a desk, clear of the glowing canvas mid-frame. The films:
+crossing-phone.mp4 (720x1280, 8.5 s, 753 KB) and crossing-desk.mp4 (1920x1080, 1,555 KB), H.264,
+silent, the tail crossfaded into the head, force-added past .gitignore's *.mp4 rule; no WebM (the
+hero's vp9 came out larger; the Chief's masters are the cutter's). The scroll-drawn walk (WALK,
+js/crossing.js, PHONE_STILL, css .lf-walk) stays in the repo behind the switch for later use as art;
+check_crossing_still.js renders the home page with the switch off to keep proving it. Proven:
+scripts/site/check_crossing_film.js, 51 in both states; check_crossing_still 17, check_inquire_fab
+29, check_hero_film 12, check_popup 70, the file checks green. MEASURED on the local build, the
+engine faked, three runs, medians, before/after: a throttled phone (390 px, 1.6 Mbps, 150 ms, 4x
+CPU) first paint 2.46/2.44 s, largest paint 4.00/3.72 s, load 3.44/3.10 s, the calendar live
+3.30/3.06 s, a landing 618/472 KB (crossing.js's 61 KB and its scene gone), a fast full scroll
+2,083/1,680 KB, and a phone that stops at the bridge pays the film's 753 KB and sees it playing
+about 1 s after the section arrives; a desk (1440 px, 10 Mbps) first paint 0.68/0.62 s, load
+1.04/0.80 s, the calendar 0.89/0.69 s, a landing 1,964/1,823 KB, a full scroll 3,264/4,678 KB with
+the 1,555 KB film in it. The Critic read it before it shipped.
 
 ---
 
