@@ -815,7 +815,7 @@ INTERIOR = '''          <figure class="lf-loop lf-rise">
 # home page does not change (treehouse_two() keeps its own photograph there). Flipping it: this
 # line, python3 scripts/site/build_v2.py, scripts/site/check_ra_photos.py, one commit, on Mick's
 # yes to the before/after sheet (docs/briefs/2026-11-08-treehouses-ra-photos/).
-RA_PHOTOS = False
+RA_PHOTOS = True
 
 TREEHOUSE_PHOTOS = {
     False: {
