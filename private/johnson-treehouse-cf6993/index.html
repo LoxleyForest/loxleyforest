@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>The Johnson Treehouse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+
+/* Layout: one framed 3D view of the build, camera buttons, a numbered key matching the pins, then the shopping lists as tables. */
+:root {
+  --bg: #eef0ea;
+  --panel: #f8f9f5;
+  --fg: #23271f;
+  --muted: #5d6556;
+  --line: #d3d8cb;
+  --accent: #b5652b;
+  --pin: #b5652b;
+  --pin-fg: #ffffff;
+  --warn: #9a3412;
+  --sky-top: #9fb6c8;
+  --sky-bot: #e9e3d3;
+  --font-display: "Zilla Slab", Rockwell, "Roboto Slab", Georgia, serif;
+  --font-body: "Work Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #161a17; --panel: #1e2320; --fg: #e8ebe3; --muted: #a2ab9c; --line: #333a34;
+    --accent: #e0915a; --pin: #e0915a; --pin-fg: #1a1410; --warn: #fdba74;
+    --sky-top: #1d2b3a; --sky-bot: #4a4237; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #161a17; --panel: #1e2320; --fg: #e8ebe3; --muted: #a2ab9c; --line: #333a34;
+  --accent: #e0915a; --pin: #e0915a; --pin-fg: #1a1410; --warn: #fdba74;
+  --sky-top: #1d2b3a; --sky-bot: #4a4237; color-scheme: dark;
+}
+html, body { background: var(--bg); color: var(--fg); }
+body { font-family: var(--font-body); font-size: 15px; line-height: 1.55; padding-inline: 16px; padding-block: 20px 40px; }
+.wrap { max-width: 1040px; margin: 0 auto; display: grid; gap: 18px; }
+.wrap > * { min-width: 0; }
+table { min-width: 560px; }
+header { display: grid; gap: 4px; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(26px, 5vw, 38px); line-height: 1.1; margin: 0; text-wrap: balance; }
+h2 { font-family: var(--font-display); font-weight: 500; font-size: 21px; margin: 10px 0 0; text-wrap: balance; }
+.lede { margin: 0; color: var(--muted); max-width: 64ch; }
+.stage { position: relative; width: 100%; height: min(70vh, 640px); min-height: 380px; border-radius: 10px; overflow: hidden; border: 1px solid var(--line);
+  background: linear-gradient(var(--sky-top), var(--sky-bot)); touch-action: none; }
+.stage canvas { display: block; width: 100%; height: 100%; }
+.pin { position: absolute; left: 0; top: 0; width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 50%; background: var(--pin); color: var(--pin-fg);
+  font: 600 13px/26px var(--font-body); text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,.35); pointer-events: none; transition: opacity .15s; }
+.dim { position: absolute; left: 0; top: 0; font: 500 12px/1 var(--font-mono); padding: 4px 6px; border-radius: 4px;
+  background: rgba(20,22,18,.78); color: #f3efe6; white-space: nowrap; pointer-events: none; }
+.dim.side { background: rgba(160,82,40,.92); font-weight: 600; letter-spacing: .1em; font-size: 13px; padding: 5px 8px; }
+.hint { position: absolute; right: 10px; bottom: 10px; font-size: 12px; color: #f3efe6; background: rgba(20,22,18,.6); padding: 4px 8px; border-radius: 4px; pointer-events: none; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; }
+.controls button { font: 500 14px var(--font-body); color: var(--fg); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 8px 14px; cursor: pointer; }
+.controls button:hover { border-color: var(--accent); }
+.controls button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.controls button[aria-pressed="true"] { background: var(--accent); color: var(--pin-fg); border-color: var(--accent); }
+.key { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 12px 24px; margin: 0; padding: 0; list-style: none; }
+.key li { display: grid; grid-template-columns: 26px 1fr; gap: 10px; align-items: start; min-width: 0; }
+.key .n { width: 26px; height: 26px; border-radius: 50%; background: var(--pin); color: var(--pin-fg); font: 600 13px/26px var(--font-body); text-align: center; }
+.key b { font-weight: 600; }
+.key p { margin: 0; }
+.specs { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.spec { border-top: 2px solid var(--accent); padding-top: 6px; }
+.spec .v { font: 500 18px var(--font-mono); font-variant-numeric: tabular-nums; }
+.spec .l { font-size: 13px; color: var(--muted); }
+.note { font-size: 13px; color: var(--muted); border-left: 2px solid var(--line); padding-left: 12px; max-width: 72ch; margin: 0; }
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 600; background: var(--panel); font-size: 13px; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+.safety { display: grid; gap: 8px; margin: 0; padding-left: 20px; max-width: 80ch; }
+.pending { color: var(--muted); font-style: italic; }
+@media (prefers-reduced-motion: reduce) { .pin { transition: none; } }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Treehouse design · one oak, two posts</div>
+    <h1>The Johnson Treehouse</h1>
+    <p class="lede">A 10 by 10 foot deck 6 feet up at the oak, hung on the tree with Nelson Treehouse hardware and carried on two posts where the yard falls away behind it, under an open gable roof with skylights. Climb in on the right by the cargo net or the steps, up the rock wall on the left, and slide down off the front. Drag to spin it, pinch or scroll to zoom.</p>
+  </header>
+
+  <div class="stage" id="stage">
+    <div class="hint" id="hint">Drag to spin</div>
+  </div>
+
+  <div class="controls" role="group" aria-label="Camera views">
+    <button type="button" id="v-back">Right and back</button>
+    <button type="button" id="v-yard">From the house</button>
+    <button type="button" id="v-left">Left, the rock wall</button>
+    <button type="button" id="v-below">Under the deck</button>
+    <button type="button" id="v-dims" aria-pressed="true">Show sizes</button>
+  </div>
+
+  <div class="specs">
+    <div class="spec"><div class="v">10 × 10 ft</div><div class="l">Deck, 100 sq ft</div></div>
+    <div class="spec"><div class="v">6 ft</div><div class="l">Deck height at the oak</div></div>
+    <div class="spec"><div class="v">3 ways up</div><div class="l">Net, steps, rock wall</div></div>
+    <div class="spec"><div class="v">1 way down</div><div class="l">The slide, off the front</div></div>
+  </div>
+
+  <h2>What you're looking at</h2>
+  <ol class="key">
+    <li><span class="n">1</span><p><b>Nelson Dynamic Yoke on two Tree Fort TABs.</b> A laminated 2x6 triangle hangs on two bolts in the oak, one above the other. Each main beam rests on a nylon plate at a top corner, so the tree can sway and grow while the posts stay put.</p></li>
+    <li><span class="n">2</span><p><b>Two main beams, front to back.</b> 3-ply 2x12s, 5 ft 8 in apart, run from the yoke to the back posts. The 2x8 joists sit on top and run side to side.</p></li>
+    <li><span class="n">3</span><p><b>Two 6x6 back posts on 24 in footings, on the downhill side.</b> Knee braces run toward the oak and to a doubled 2x8 girt across both posts. There's room for a bench and puck lights underneath.</p></li>
+    <li><span class="n">4</span><p><b>Cargo net, right side.</b> 4 ft wide at 50°, with 8 in mesh, a captain's wheel and a bell at the top.</p></li>
+    <li><span class="n">5</span><p><b>Rock wall, left side.</b> One 4 by 8 sheet of plywood at 65° with bolt-on holds and a knotted rope fixed at both ends.</p></li>
+    <li><span class="n">6</span><p><b>Slide, off the front.</b> It goes out beside the oak and lands toward the house, with a bar over the opening so kids sit first.</p></li>
+    <li><span class="n">7</span><p><b>Gable roof with skylights.</b> Metal roofing, open at both ends, with one clear panel in each slope. The front 3 ft of deck stays open under the oak, and the roof stops 3 ft 8 in from the bark.</p></li>
+    <li><span class="n">8</span><p><b>Hog-panel rails built like Loxley's.</b> Stained 4x4 posts, a bottom rail 2 in off the deck, a 4 in wire grid, ½ in hardware cloth on the inside so it can't be climbed, and a flat 2x6 cap at 36 in.</p></li>
+    <li><span class="n">9</span><p><b>Steps, right side near the front.</b> The easy way up and down for little ones and grown-ups, with handrails on both sides.</p></li>
+  </ol>
+
+  <section aria-labelledby="nelson-h">
+    <h2 id="nelson-h">Nelson Treehouse hardware</h2>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Piece</th><th class="num">Qty</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td>Tree Fort Dynamic Yoke</td><td class="num">1</td><td>Carries both main beams off the one oak. The nylon plates let the beams slide as the tree moves.</td></tr>
+        <tr><td>Tree Fort TAB</td><td class="num">2</td><td>The yoke's two bolts into the oak. Both come in the yoke bundle.</td></tr>
+        <tr><td>TAB install drill bit</td><td class="num">1</td><td>A ¾ in auger and a 2 in Forstner in one bit, run with a ½ in right-angle drill like a Milwaukee Hole Hawg.</td></tr>
+        <tr><td>Cable Back Up or Strut Back Up</td><td class="num">2</td><td>One under each TAB, to keep it level under load.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section aria-labelledby="lumber-h">
+    <h2 id="lumber-h">Material list</h2>
+    <p class="note">Pressure-treated lumber throughout. Use ground-contact posts, and hot-dip galvanized or stainless hardware.</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Item</th><th>Size</th><th class="num">Qty</th><th>Use</th></tr></thead>
+      <tbody>
+        <tr><th colspan="4">Frame</th></tr>
+        <tr><td>Yoke stock</td><td>2x6 x 8 ft, plus one 10 ft</td><td class="num">5 + 1</td><td>The yoke's layers, with 2 tubes of exterior construction adhesive</td></tr>
+        <tr><td>Main beams</td><td>2x12 x 12 ft</td><td class="num">6</td><td>Two 3-ply beams cut to 10 ft 6 in</td></tr>
+        <tr><td>Back posts</td><td>6x6 x 8 ft, ground contact</td><td class="num">2</td><td>About 6½ ft tall on the downhill side</td></tr>
+        <tr><td>Girt</td><td>2x8 x 8 ft</td><td class="num">2</td><td>Bolted across both posts, 8 in under the beams</td></tr>
+        <tr><td>Knee braces</td><td>4x6 x 8 ft</td><td class="num">2</td><td>Four braces with 24 in legs, with plywood gussets</td></tr>
+        <tr><td>Joists</td><td>2x8 x 10 ft</td><td class="num">11</td><td>Side to side at 16 in, doubled at 4 ft and at the back</td></tr>
+        <tr><td>End rims</td><td>2x8 x 10 ft</td><td class="num">4</td><td>Doubled left and right, where the rail and roof posts bolt on</td></tr>
+        <tr><td>Decking</td><td>5/4x6 x 10 ft</td><td class="num">24</td><td>Boards run front to back</td></tr>
+        <tr><td>Concrete</td><td>80 lb bags</td><td class="num">22</td><td>Two footings, 24 in round and 24 in deep</td></tr>
+        <tr><th colspan="4">Rails</th></tr>
+        <tr><td>Rail posts</td><td>4x4 x 8 ft</td><td class="num">8</td><td>About 15 posts, 4 ft long, bolted to the rims</td></tr>
+        <tr><td>Bottom and top rails</td><td>2x4 x 8 ft</td><td class="num">10</td><td>The bottom rail sits 2 in off the deck</td></tr>
+        <tr><td>Cap</td><td>2x6 x 12 ft</td><td class="num">4</td><td>Flat, top at 36 in</td></tr>
+        <tr><td>Hog panel, even 4 x 4 in grid</td><td>34 in x 16 ft</td><td class="num">3</td><td>Set inside each bay frame</td></tr>
+        <tr><td>Hardware cloth, ½ in galvanized</td><td>36 in x 50 ft</td><td class="num">1</td><td>On the deck side of every bay</td></tr>
+        <tr><td>Fence staples, galvanized</td><td>1½ in, 5 lb</td><td class="num">1</td><td>Panel and cloth</td></tr>
+        <tr><td>Bolts, ½ x 8 in, washers, lock nuts</td><td></td><td class="num">38</td><td>Two per rail post</td></tr>
+        <tr><th colspan="4">Roof</th></tr>
+        <tr><td>Roof posts</td><td>4x4 x 8 ft</td><td class="num">4</td><td>They're also rail posts</td></tr>
+        <tr><td>Plates and ties</td><td>2x6 x 8 ft and 10 ft</td><td class="num">4 + 4</td><td>Doubled plates. Ties at 4, 6, 8 and 10 ft</td></tr>
+        <tr><td>Rafters</td><td>2x6 x 8 ft</td><td class="num">12</td><td>Six pairs at 24 in, 8:12 pitch, 12 in overhangs</td></tr>
+        <tr><td>Ridge board</td><td>2x8 x 10 ft</td><td class="num">1</td><td>Cut to 8 ft</td></tr>
+        <tr><td>Purlins</td><td>2x4 x 8 ft</td><td class="num">10</td><td>Flat, five rows per slope</td></tr>
+        <tr><td>Roof knee braces</td><td>4x4 x 8 ft</td><td class="num">4</td><td>Eight braces with 24 in legs</td></tr>
+        <tr><td>Corrugated metal roofing</td><td>26 in x 8 ft</td><td class="num">8</td><td>Seven plus a spare, with ridge cap, rake trim, drip edge and closures</td></tr>
+        <tr><td>Clear corrugated polycarbonate</td><td>26 in x 8 ft</td><td class="num">1</td><td>Cut into the two skylights, with matching closures, butyl tape and their own screws</td></tr>
+        <tr><td>Roofing screws</td><td>#10 x 1½ in with washers</td><td class="num">250</td><td>Metal roofing</td></tr>
+        <tr><th colspan="4">Connectors</th></tr>
+        <tr><td>Post bases and post caps</td><td>Simpson ABU66Z and BCS2-3/6</td><td class="num">2 + 2</td><td>Posts to footings, beams to posts</td></tr>
+        <tr><td>Hurricane ties</td><td>Simpson H2.5A</td><td class="num">34</td><td>Every joist on a beam, and every rafter</td></tr>
+        <tr><td>Structural screws</td><td></td><td class="num">≈ 115</td><td>To laminate the beams and fix the joists to the rims</td></tr>
+        <tr><td>Brace bolts, ½ in, lock nuts and caps</td><td>6 to 10 in</td><td class="num">52</td><td>Two per brace end, four at the girt</td></tr>
+        <tr><td>Deck screws</td><td>2½ in, 5 lb</td><td class="num">2</td><td>Coated for treated wood</td></tr>
+        <tr><th colspan="4">Play pieces</th></tr>
+        <tr><td>Cargo net, 8 in mesh</td><td>4 x 8 ft</td><td class="num">1</td><td>Right side</td></tr>
+        <tr><td>Net header and ground bar</td><td>4x6 x 12 ft, plus 4 earth anchors</td><td class="num">1</td><td>Header under the rim, bar at the foot</td></tr>
+        <tr><td>Rock wall</td><td>¾ in exterior plywood 4x8, 2x6 stringers, 4x6 sill</td><td class="num">1</td><td>Grit paint, 15 to 20 kids' holds with T-nuts</td></tr>
+        <tr><td>Knotted climbing rope, 1 in</td><td>8 ft, 2 forged eye bolts</td><td class="num">1</td><td>Fixed at both ends</td></tr>
+        <tr><td>Steps</td><td>2x6 x 8 ft, 1¼ in round handrails</td><td class="num">4 + 2</td><td>18 in wide, eight treads</td></tr>
+        <tr><td>Grab handles</td><td>Playset handles</td><td class="num">8</td><td>Two at each opening</td></tr>
+        <tr><td>Slide</td><td>Made for a 6 ft deck</td><td class="num">1</td><td>Off the front, with its sit-down bar</td></tr>
+        <tr><td>Playground wood chips</td><td>12 in deep</td><td class="num">≈ 23 cu yd</td><td>Under everything and 6 ft out, with edging</td></tr>
+        <tr><th colspan="4">Fun extras</th></tr>
+        <tr><td>Captain's wheel and a bell</td><td></td><td class="num">1 + 1</td><td>By the net</td></tr>
+        <tr><td>Flag with a fixed pole</td><td></td><td class="num">1</td><td>On the front of the ridge</td></tr>
+        <tr><td>String lights and solar puck lights</td><td></td><td class="num">2 + 6</td><td>Under the eaves and under the deck</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section aria-labelledby="safe-h">
+    <h2 id="safe-h">Built in for the kids</h2>
+    <ul class="safety">
+      <li><b>No gaps that trap.</b> The bottom rail sits 2 in off the deck, the wire grid stays under 4 in, and the net mesh is 8 in or more.</li>
+      <li><b>Rails that can't be climbed.</b> Hardware cloth lines the inside, and the cap is at 36 in.</li>
+      <li><b>An easy way down.</b> The net and the wall are the fun ways up, and the steps are always there.</li>
+      <li><b>Soft landings.</b> 12 in of playground chips under everything and 6 ft out, including the slide's landing.</li>
+      <li><b>No loose ropes.</b> The wall rope is fixed at both ends and the flag pole has no rope. Cap every bolt end, including the lower tree bolt.</li>
+    </ul>
+  </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function () {
+  const stage = document.getElementById('stage');
+  if (!window.THREE) { stage.insertAdjacentHTML('beforeend', '<p style="padding:16px">The 3D view could not load. Reload the page to try again.</p>'); return; }
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---- renderer, scene, camera (1 unit = 1 foot; the oak at the origin; the deck runs toward +z; standing at the tree facing the deck, right is -x) ----
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  stage.prepend(renderer.domElement);
+
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.Fog(0xd8d2c2, 55, 130);
+  const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 400);
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.maxPolarAngle = Math.PI * 0.62;
+  controls.minDistance = 8; controls.maxDistance = 80;
+  function syncFog() {
+    const c = getComputedStyle(document.documentElement).getPropertyValue('--sky-bot').trim() || '#e9e3d3';
+    scene.fog.color.set(c);
+  }
+  syncFog();
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', syncFog);
+
+  scene.add(new THREE.HemisphereLight(0xdfe8f0, 0x5a4632, 0.8));
+  const sun = new THREE.DirectionalLight(0xfff1dc, 0.85);
+  sun.position.set(-20, 34, 26);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(1536, 1536);
+  Object.assign(sun.shadow.camera, { left: -24, right: 24, top: 24, bottom: -24, near: 1, far: 100 });
+  scene.add(sun);
+
+  const std = (color, extra) => new THREE.MeshStandardMaterial(Object.assign({ color, roughness: 0.85 }, extra || {}));
+  const M = {
+    wood: std(0xc89f6a), stain: std(0x7a3e2b, { roughness: 0.7 }), woodDark: std(0xa8804f), deck: std(0xbf9461), trim: std(0xf1ede4, { roughness: 0.6 }),
+    siding: std(0x7a8a6a), batten: std(0x6c7b5d),
+    roof: std(0x3b3f42, { roughness: 0.45, metalness: 0.55 }),
+    steel: std(0x2a2c2e, { roughness: 0.45, metalness: 0.6 }), rust: std(0x6b3d24, { roughness: 0.7, metalness: 0.3 }),
+    nelson: std(0x9c3b2a, { roughness: 0.55, metalness: 0.25 }),
+    concrete: std(0x9b9a95, { roughness: 1 }), bark: std(0x5a4434, { roughness: 1 }),
+    rope: std(0xd8c7a0, { roughness: 1 }), slide: std(0x3f8f4e, { roughness: 0.4, side: THREE.DoubleSide }),
+    wall: std(0x8d6e4c), sky: new THREE.MeshStandardMaterial({ color: 0xdbeef5, roughness: 0.15, metalness: 0.0, transparent: true, opacity: 0.38, side: THREE.DoubleSide }), glass: new THREE.MeshStandardMaterial({ color: 0x9cc3d8, roughness: 0.1, metalness: 0.2, transparent: true, opacity: 0.55 }),
+    bulb: new THREE.MeshBasicMaterial({ color: 0xffd98a }), flag: std(0xd9a441, { side: THREE.DoubleSide }),
+    wire: new THREE.LineBasicMaterial({ color: 0x222222 })
+  };
+
+  // ---- ground: flat at the oak, falling away toward the back (downhill); leaf litter, and a wood-chip pad under the play area ----
+  const SLOPE_START = 2.34, SLOPE = 0.25;   // starts 1 ft behind the deck's front edge, drops 1 ft in every 4
+  const groundY = (x, z) => z <= SLOPE_START ? 0 : -Math.min((z - SLOPE_START) * SLOPE, 6);
+  function canvasTex(draw, size) { const cv = document.createElement('canvas'); cv.width = cv.height = size || 256; draw(cv.getContext('2d'), cv.width); const t = new THREE.CanvasTexture(cv); t.wrapS = t.wrapT = THREE.RepeatWrapping; return t; }
+  function terrain(w, d, cx, cz, segs, mat, lift) {
+    const g = new THREE.PlaneGeometry(w, d, segs, segs); g.rotateX(-Math.PI / 2); g.translate(cx, 0, cz);
+    const p = g.attributes.position;
+    for (let i = 0; i < p.count; i++) p.setY(i, groundY(p.getX(i), p.getZ(i)) + lift);
+    g.computeVertexNormals();
+    const m = new THREE.Mesh(g, mat); m.receiveShadow = true; scene.add(m); return m;
+  }
+  const leafTex = canvasTex((g, s) => { g.fillStyle = '#5e4630'; g.fillRect(0, 0, s, s); const tones = ['#6f5238', '#7a5b3c', '#4f3a27', '#8a6a45', '#5a4a2e']; for (let i = 0; i < 900; i++) { g.fillStyle = tones[i % 5]; g.beginPath(); g.ellipse(Math.random()*s, Math.random()*s, 2 + Math.random()*5, 1 + Math.random()*3, Math.random()*3.14, 0, 6.28); g.fill(); } });
+  leafTex.repeat.set(18, 18);
+  terrain(160, 160, 0, 0, 80, new THREE.MeshStandardMaterial({ map: leafTex, roughness: 1 }), 0);
+  const chipTex = canvasTex((g, s) => { g.fillStyle = '#a7804f'; g.fillRect(0, 0, s, s); const tones = ['#b98f5a', '#94703f', '#c9a26b', '#8a6638']; for (let i = 0; i < 1400; i++) { g.fillStyle = tones[i % 4]; g.fillRect(Math.random()*s, Math.random()*s, 2 + Math.random()*4, 1 + Math.random()*2); } });
+  chipTex.repeat.set(7, 7);
+  terrain(30, 32, -1, 3.5, 40, new THREE.MeshStandardMaterial({ map: chipTex, roughness: 1, polygonOffset: true, polygonOffsetFactor: -2 }), 0.06);
+
+  // ---- helpers ----
+  function add(m) { m.castShadow = true; m.receiveShadow = true; scene.add(m); return m; }
+  function box(w, h, d, mat, x, y, z) { const m = add(new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat)); m.position.set(x, y, z); return m; }
+  function between(a, b, w, h, mat) { const m = add(new THREE.Mesh(new THREE.BoxGeometry(w, h, a.distanceTo(b)), mat)); m.position.copy(a).add(b).multiplyScalar(0.5); m.lookAt(b); return m; }
+  function rod(a, b, r, mat) { const m = add(new THREE.Mesh(new THREE.CylinderGeometry(r, r, a.distanceTo(b), 8), mat)); m.position.copy(a).add(b).multiplyScalar(0.5); m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), b.clone().sub(a).normalize()); return m; }
+  function cyl(r1, r2, h, mat, seg) { return add(new THREE.Mesh(new THREE.CylinderGeometry(r1, r2, h, seg || 20), mat)); }
+  const V = (x, y, z) => new THREE.Vector3(x, y, z);
+
+  // ---- the numbers (feet); Y = distance back from the deck's front edge ----
+  const TR = 0.67;                         // oak about 16 in across
+  const z0 = TR + 0.67;                    // deck front edge, about 8 in off the bark
+  const Z = y => z0 + y;
+  const DECK = 6.0;                        // top of the decking (was 8 ft)
+  const BEAM_BOT = 4.375, BEAM_H = 0.94, BEAM_W = 0.375, BEAM_TOP = BEAM_BOT + BEAM_H;   // 3-ply 2x12
+  const BX = 2.83;                         // beam centres at x = +/- 2'-10"
+  const J_H = 0.6, J_W = 0.125;
+  const xR = 5.15, xL = -5.15, zFr = Z(-0.15), zBk = Z(10.15);   // rail post lines (right is +x, standing at the downhill back facing the oak)
+  const CAP = DECK + 3.0;                  // 36 in cap
+  const PLATE = DECK + 6.0, PITCH = 8 / 12, ang = Math.atan(PITCH);
+  const RIDGE_S = PLATE + 5.15 * PITCH + 0.5;          // roof surface at the ridge
+  const yR = h => RIDGE_S - h * PITCH;                 // roof surface at h feet out from the ridge
+  const EAVE = 6.15;
+
+  // ---- trees ----
+  function tree(x, z, r, h, canopyColor) {
+    cyl(r * 0.78, r * 1.08, h, M.bark, 24).position.set(x, h / 2, z);
+    cyl(r * 1.08, r * 1.5, 1.2, M.bark, 24).position.set(x, 0.6, z);
+    const leaf = new THREE.MeshStandardMaterial({ color: canopyColor, roughness: 1, flatShading: true });
+    [[0, 0, 0, 7], [4, -1, 2, 5], [-4, -0.5, -1, 5.5], [1, 2.5, -3, 5], [-2, 1.5, 3.5, 4.5]].forEach(([dx, dy, dz, s]) => {
+      const b = new THREE.Mesh(new THREE.IcosahedronGeometry(s, 1), leaf); b.position.set(x + dx, h + dy, z + dz); b.castShadow = true; scene.add(b);
+    });
+  }
+  tree(0, 0, TR, 24, 0x7d7a3a);
+  tree(-26, -4, 0.55, 23, 0x8c6b2f);       // the second oak: not used
+
+  // ---- 1. Nelson Dynamic Yoke on two Tree Fort TABs ----
+  const yokeZ = Z(-0.33), YT = 0.375;      // laminated 2x6, about 4-1/2 in thick
+  const topY = BEAM_BOT - 0.23, apexY = BEAM_BOT - 2.33;
+  box(6.0, 0.46, YT, M.wood, 0, topY, yokeZ);
+  [-1, 1].forEach(s => between(V(s * 2.9, topY - 0.1, yokeZ), V(0, apexY + 0.1, yokeZ), 0.46, YT, M.wood));
+  [-1, 1].forEach(s => { box(0.55, 0.62, YT + 0.12, M.nelson, s * BX, topY + 0.02, yokeZ); box(0.45, 0.05, 0.75, M.steel, s * BX, BEAM_BOT - 0.02, Z(-0.2)); });   // end brackets, nylon slide plates
+  [[BEAM_BOT - 0.29, 0.8], [apexY, 0.7]].forEach(([y, w]) => {
+    box(w, 0.5, 0.06, M.nelson, 0, y, yokeZ + YT / 2 + 0.03);   // TAB plate
+    const b = cyl(0.083, 0.083, yokeZ + 0.45, M.steel, 16); b.rotation.x = Math.PI / 2; b.position.set(0, y, (yokeZ + 0.45) / 2);
+    const boss = cyl(0.083 * 2, 0.083 * 2, 0.3, M.steel, 20); boss.rotation.x = Math.PI / 2; boss.position.set(0, y, TR + 0.1);
+    const cap = cyl(0.13, 0.13, 0.14, M.nelson, 16); cap.rotation.x = Math.PI / 2; cap.position.set(0, y, yokeZ + 0.45);   // capped end
+  });
+
+  // ---- 2. two main beams, front to back ----
+  [-1, 1].forEach(s => box(BEAM_W, BEAM_H, 10.5, M.woodDark, s * BX, BEAM_BOT + BEAM_H / 2, Z(-0.5 + 5.25)));
+
+  // ---- 3. back posts, footings, knee braces, girt (the ground falls away here) ----
+  const zP = Z(9.5), gP = groundY(0, zP);
+  [-1, 1].forEach(s => {
+    cyl(1.0, 1.0, 0.3, M.concrete, 28).position.set(s * BX, gP + 0.15, zP);
+    box(0.46, BEAM_BOT - gP, 0.46, M.wood, s * BX, (BEAM_BOT + gP) / 2, zP);
+    between(V(s * BX, BEAM_BOT - 2.0, zP - 0.23), V(s * BX, BEAM_BOT, zP - 2.0), 0.29, 0.46, M.wood);
+  });
+  const girtTop = BEAM_BOT - 0.67, zG = zP + 0.3;
+  box(2 * BX + 0.9, 0.6, 0.25, M.wood, 0, girtTop - 0.3, zG);
+  [-1, 1].forEach(s => between(V(s * BX, girtTop - 2.6, zG), V(s * (BX - 2.0), girtTop - 0.6, zG), 0.29, 0.46, M.wood));
+  // a bench and puck lights in the den under the deck
+  const gB = groundY(0, Z(4.5));
+  box(3.6, 0.15, 1.1, M.stain, 0, gB + 1.45, Z(4.5)); [-1.5, 1.5].forEach(x => box(0.29, 1.4, 0.9, M.stain, x, gB + 0.7, Z(4.5)));
+  for (let k = 0; k < 6; k++) { const d = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.04, 12), M.bulb); d.position.set(k % 2 ? 1.4 : -1.4, BEAM_TOP - 0.05, Z(2 + Math.floor(k / 2) * 2.7)); scene.add(d); }
+
+  // ---- joists side to side, doubled rims, decking front to back ----
+  [0, 1.33, 2.67, 4.0, 4.13, 5.33, 6.67, 8.0, 9.33, 9.87, 10 - J_W / 2].forEach(y => box(10, J_H, J_W, M.wood, 0, BEAM_TOP + J_H / 2, Z(Math.max(J_W / 2, y))));
+  [-1, 1].forEach(s => box(0.25, J_H, 10, M.wood, s * (5 - 0.125), BEAM_TOP + J_H / 2, Z(5)));
+  for (let x = -5; x < 5 - 0.01; x += 0.49) { const w = Math.min(0.46, 5 - x); box(w, 0.085, 10, M.deck, x + w / 2, DECK - 0.0425, Z(5)); }
+
+  // ---- 8. rail bays like Loxley's: stained frame, bottom rail 2 in off the deck, wire panel, hardware cloth inside, 2x6 cap at 36 in ----
+  const hogTex = canvasTex((g, s) => { g.clearRect(0, 0, s, s); g.strokeStyle = '#3d4042'; g.lineWidth = 3; for (let i = 0; i <= 12; i++) { const x = i * s / 12; g.beginPath(); g.moveTo(x, 0); g.lineTo(x, s); g.stroke(); } for (let i = 0; i <= 8; i++) { const y = i * s / 8; g.beginPath(); g.moveTo(0, y); g.lineTo(s, y); g.stroke(); } });
+  const clothTex = canvasTex((g, s) => { g.clearRect(0, 0, s, s); g.strokeStyle = 'rgba(120,124,126,0.55)'; g.lineWidth = 1; for (let i = 0; i <= 64; i++) { const p = i * s / 64; g.beginPath(); g.moveTo(p, 0); g.lineTo(p, s); g.stroke(); g.beginPath(); g.moveTo(0, p); g.lineTo(s, p); g.stroke(); } });
+  function bay(a, b) {
+    const len = Math.hypot(b[0] - a[0], b[1] - a[1]); if (len < 0.4) return;
+    const rot = -Math.atan2(b[1] - a[1], b[0] - a[0]), mx = (a[0] + b[0]) / 2, mz = (a[1] + b[1]) / 2;
+    const nx = Math.sin(-rot) * 0, inX = mx - Math.sign(mx) * (Math.abs(mx) > 5 ? 0.09 : 0), inZ = mz + (Math.abs(mx) > 5 ? 0 : (mz > Z(5) ? -0.09 : 0.09));
+    const yBot = DECK + 0.17, yTop = CAP - 0.125, hP = yTop - 0.29 - (yBot + 0.29);
+    const piece = (w, h, d, y, mat, px, pz) => { const m = box(w, h, d, mat, px ?? mx, y, pz ?? mz); m.rotation.y = rot; return m; };
+    piece(len - 0.29, 0.29, 0.125, yBot + 0.145, M.stain);
+    piece(len - 0.29, 0.29, 0.125, yTop - 0.145, M.stain);
+    piece(len + 0.29, 0.125, 0.46, CAP - 0.0625, M.stain);
+    [[hogTex, 4, 0, mx, mz, 0.5], [clothTex, 4, 0, inX, inZ, 0.2]].forEach(([tx, per, , px, pz, metal]) => {
+      const t = tx.clone(); t.needsUpdate = true; t.repeat.set((len - 0.29) / per, 1);
+      const m = new THREE.Mesh(new THREE.PlaneGeometry(len - 0.29, hP), new THREE.MeshStandardMaterial({ map: t, transparent: true, alphaTest: 0.15, side: THREE.DoubleSide, roughness: 0.5, metalness: metal }));
+      m.position.set(px, yBot + 0.29 + hP / 2, pz); m.rotation.y = rot; scene.add(m);
+    });
+  }
+  const post = (x, z, top) => box(0.29, (top || CAP) - (DECK - 0.6), 0.29, M.stain, x, ((top || CAP) + DECK - 0.6) / 2, z);
+  // roof posts double as rail posts
+  [[xR, Z(4)], [xL, Z(4)], [xR, zBk], [xL, zBk]].forEach(([x, z]) => post(x, z, PLATE - 0.25));
+  [[xR, zFr], [xL, zFr]].forEach(([x, z]) => post(x, z));
+  // openings, 22 in clear: slide (front, beside the oak), steps and cargo net (right), rock wall (left); the downhill back is solid
+  const slX0 = -4.5, slX1 = -2.67, stZ0 = Z(1.45), stZ1 = Z(3.28), nZ0 = Z(5.7), nZ1 = Z(7.53), wZ0 = Z(4.08), wZ1 = Z(5.92);
+  [[slX0, zFr], [slX1, zFr], [1.6, zFr], [xR, stZ0], [xR, stZ1], [xR, nZ0], [xR, nZ1], [xL, wZ0], [xL, wZ1], [xL, Z(1.9)], [xR, Z(9)], [xL, Z(8)], [-1.7, zBk], [1.7, zBk]].forEach(([x, z]) => post(x, z));
+  // front
+  bay([xR, zFr], [slX0, zFr]); bay([slX1, zFr], [1.6, zFr]); bay([1.6, zFr], [xL, zFr]);
+  // right side (-x)
+  bay([xR, zFr], [xR, stZ0]); bay([xR, stZ1], [xR, Z(4)]); bay([xR, Z(4)], [xR, nZ0]); bay([xR, nZ1], [xR, Z(9)]); bay([xR, Z(9)], [xR, zBk]);
+  // left side (+x)
+  bay([xL, zFr], [xL, Z(1.9)]); bay([xL, Z(1.9)], [xL, Z(4)]); bay([xL, Z(4)], [xL, wZ0]); bay([xL, wZ1], [xL, Z(8)]); bay([xL, Z(8)], [xL, zBk]);
+  // back, downhill: solid
+  bay([xR, zBk], [-1.7, zBk]); bay([-1.7, zBk], [1.7, zBk]); bay([1.7, zBk], [xL, zBk]);
+  // grab handles, two at each opening
+  function handle(x, z, alongX) { const d = alongX ? V(0.0, 0, 0.18) : V(0.18, 0, 0); const s = Math.abs(x) > 5 ? -Math.sign(x) : (z > Z(5) ? -1 : 1); const off = d.clone().multiplyScalar(s); rod(V(x, CAP + 0.3, z).add(off), V(x, CAP + 1.3, z).add(off), 0.05, M.steel); }
+  [[xR, stZ0], [xR, stZ1], [xR, nZ0], [xR, nZ1], [xL, wZ0], [xL, wZ1]].forEach(([x, z]) => handle(x, z, false));
+  [[slX0, zFr], [slX1, zFr]].forEach(([x, z]) => handle(x, z, true));
+  rod(V(slX0, DECK + 2.0, zFr), V(slX1, DECK + 2.0, zFr), 0.06, M.steel);   // sit-down bar over the slide
+
+  // ---- 7. roof: plates, ties, rafters, ridge, metal, one skylight per slope; the first 3 ft of deck stays open under the oak ----
+  [xR, xL].forEach(x => box(0.25, 0.46, 8, M.wood, x, PLATE - 0.23, Z(7)));
+  [4, 6, 8, 10].forEach(y => box(10.3, 0.46, 0.125, M.wood, 0, PLATE - 0.23, Z(y)));
+  const rafterAt = [3.08, 4.66, 6.24, 7.82, 9.4, 10.92];
+  rafterAt.forEach(y => [-1, 1].forEach(s => between(V(0, RIDGE_S - 0.3, Z(y)), V(s * EAVE, yR(EAVE) - 0.3, Z(y)), 0.125, 0.46, M.wood)));
+  box(0.125, 0.6, 8, M.wood, 0, RIDGE_S - 0.35, Z(7));
+  const SL = EAVE / Math.cos(ang);
+  function roofPiece(s, y0, y1, s0, s1, mat) {   // s: side, y0..y1 along the deck, s0..s1 up the slope from the eave
+    const sm = (s0 + s1) / 2, h = EAVE - sm * Math.cos(ang);
+    const p = box(s1 - s0, 0.06, y1 - y0, mat, s * h, yR(h), Z((y0 + y1) / 2)); p.rotation.z = -s * ang;
+    if (mat === M.sky) { p.castShadow = false; return; }
+    for (let y = y0 + 0.36; y < y1 - 0.05; y += 0.72) { const r = box(s1 - s0, 0.07, 0.06, mat, s * h, yR(h) + 0.05, Z(y)); r.rotation.z = -s * ang; }
+  }
+  const sk0 = 7 - 1.08, sk1 = 7 + 1.08;
+  [-1, 1].forEach(s => {
+    roofPiece(s, 3, sk0, 0, SL, M.roof); roofPiece(s, sk1, 11, 0, SL, M.roof);
+    roofPiece(s, sk0, sk1, 0, 2, M.roof); roofPiece(s, sk0, sk1, 2, 6, M.sky); roofPiece(s, sk0, sk1, 6, SL, M.roof);
+  });
+  box(0.45, 0.12, 8.1, M.roof, 0, RIDGE_S + 0.08, Z(7));
+  // fixed flag, no halyard
+  rod(V(0, RIDGE_S, Z(3.2)), V(0, RIDGE_S + 3.2, Z(3.2)), 0.04, M.steel);
+  const flag = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 1.0, 8, 1), M.flag); flag.position.set(-0.8, RIDGE_S + 2.6, Z(3.2)); scene.add(flag);
+  // string lights under both eaves
+  const bulbGeo = new THREE.SphereGeometry(0.07, 8, 6);
+  [-1, 1].forEach(s => {
+    const x = s * 5.35, y = PLATE - 0.5, pts = [];
+    for (let k = 0; k <= 60; k++) { const t = k / 60, z = Z(4 + t * 6.15), sag = Math.abs(Math.sin(t * Math.PI * 3)) * 0.3; const p = V(x, y - sag, z); pts.push(p); if (k % 3 === 1) { const b = new THREE.Mesh(bulbGeo, M.bulb); b.position.copy(p).add(V(0, -0.1, 0)); scene.add(b); } }
+    scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), M.wire));
+  });
+
+  // ---- 4. cargo net, right side: 4 ft wide, 50 degrees, out 5 ft; header under the rim, ground bar at the foot ----
+  const nzA = Z(4.6), nzB = Z(8.6), nxTop = 5.1, nxBot = 10.1, netTopY = DECK - 0.4, gN = groundY(0, (nzA + nzB) / 2);
+  box(0.29, 0.46, nzB - nzA + 0.6, M.wood, nxTop, netTopY - 0.1, (nzA + nzB) / 2);
+  box(0.46, 0.3, nzB - nzA + 1.6, M.wood, nxBot, gN + 0.1, (nzA + nzB) / 2);
+  for (let i = 0; i <= 7; i++) { const t = i / 7, x = nxTop + t * (nxBot - nxTop), y = netTopY + t * (gN + 0.15 - netTopY); rod(V(x, y, nzA), V(x, y, nzB), 0.04, M.rope); }
+  for (let j = 0; j <= 6; j++) { const z = nzA + j * (nzB - nzA) / 6; rod(V(nxTop, netTopY, z), V(nxBot, groundY(0, z) + 0.2, z), 0.04, M.rope); }
+  (function wheel() {   // captain's wheel and a bell by the net
+    const g = new THREE.Group();
+    g.add(new THREE.Mesh(new THREE.TorusGeometry(0.75, 0.07, 8, 32), M.woodDark));
+    for (let k = 0; k < 8; k++) { const sp = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 2.0, 6), M.woodDark); sp.rotation.z = k * Math.PI / 4; g.add(sp); }
+    g.add(new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.2, 12).rotateX(Math.PI / 2), M.steel));
+    g.rotation.y = Math.PI / 2; g.position.set(xR - 0.25, CAP + 0.9, Z(8.4)); g.traverse(o => { o.castShadow = true; }); scene.add(g);
+    const bell = add(new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.3, 0.45, 16, 1, true), std(0xc9a14a, { metalness: 0.8, roughness: 0.3, side: THREE.DoubleSide })));
+    bell.position.set(xR, CAP + 1.1, nZ0 - 0.35);
+  })();
+
+  // ---- 9. steps, right side near the front (+x): 18 in wide, 65 degrees, handrails both sides ----
+  const sz0 = Z(1.62), sz1 = Z(3.12), sxTop = 5.2, sxBot = 8.0;
+  [sz0, sz1].forEach(z => { between(V(sxBot, 0, z), V(sxTop, DECK, z), 0.46, 0.125, M.wood); rod(V(sxBot, 2.6, z + (z < Z(2.4) ? -0.15 : 0.15)), V(sxTop, DECK + 3.0, z + (z < Z(2.4) ? -0.15 : 0.15)), 0.05, M.steel); });
+  for (let k = 1; k <= 7; k++) { const t = k / 8; box(0.46, 0.125, sz1 - sz0, M.wood, sxBot + t * (sxTop - sxBot), t * DECK, (sz0 + sz1) / 2); }
+
+  // ---- 5. rock wall, left: 4 ft wide, 65 degrees, holds, a knotted rope fixed at both ends ----
+  const wzA = Z(3.0), wzB = Z(7.0), wallBaseX = -7.83, gW = groundY(0, (wzA + wzB) / 2), wallH = DECK - gW, wallRun = 2.83;
+  [wzA + 0.1, wzB - 0.1].forEach(z => between(V(wallBaseX, gW, z), V(-5.05, DECK, z), 0.46, 0.125, M.wood));
+  box(0.46, 0.3, wzB - wzA + 0.6, M.wood, wallBaseX, gW + 0.1, (wzA + wzB) / 2);
+  const wallLen = Math.hypot(wallRun, wallH), wallAng = Math.atan2(wallRun, wallH);
+  const panel = box(0.06, wallLen, wzB - wzA, M.wall, (-5.05 + wallBaseX) / 2 - 0.12, gW + wallH / 2, (wzA + wzB) / 2); panel.rotation.z = -wallAng;
+  const holdColors = [0xe25a3a, 0x3a7be2, 0xf2c230, 0x5bbf6a, 0xb44fd6];
+  for (let k = 0; k < 20; k++) {
+    const t = 0.08 + (k / 20) * 0.86, z = wzA + 0.45 + ((k * 0.41) % 1) * (wzB - wzA - 0.9);
+    const h = new THREE.Mesh(new THREE.IcosahedronGeometry(0.16 + (k % 3) * 0.03, 0), std(holdColors[k % 5], { roughness: 0.6 }));
+    h.position.set(wallBaseX + t * wallRun - 0.22, gW + t * wallH, z); h.castShadow = true; scene.add(h);
+  }
+  const rTop = V(-5.2, DECK + 0.1, Z(5)), rBot = V(wallBaseX - 0.1, gW + 0.35, Z(5));
+  rod(rTop, rBot, 0.05, M.rope);
+  for (let k = 1; k < 7; k++) { const kn = new THREE.Mesh(new THREE.SphereGeometry(0.12, 8, 6), M.rope); kn.position.copy(rTop.clone().lerp(rBot, k / 7)).add(V(-0.25, 0, 0)); scene.add(kn); }
+
+  // ---- 6. the slide, off the front beside the oak, landing toward the house ----
+  (function slide() {
+    const run = 9.6, n = 60, pts = [], cx = (slX0 + slX1) / 2, w = 1.6;
+    for (let i = 0; i <= n; i++) {
+      const t = i / n, e = t < 0.06 ? 0 : t > 0.88 ? 1 : (u => u * u * (3 - 2 * u))((t - 0.06) / 0.82);
+      pts.push({ y: DECK + 0.02 - e * (DECK - 0.95), z: zFr - t * run });
+    }
+    const prof = [[-1.0, 0.5], [-0.85, 0.0], [0.85, 0.0], [1.0, 0.5]];
+    const pos = [], idx = [];
+    pts.forEach(p => prof.forEach(([dx, dy]) => pos.push(cx + dx * w / 2, p.y + dy, p.z)));
+    for (let i = 0; i < n; i++) for (let j = 0; j < 3; j++) { const a = i * 4 + j, b = a + 4; idx.push(a, b, a + 1, a + 1, b, b + 1); }
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setIndex(idx); g.computeVertexNormals();
+    add(new THREE.Mesh(g, M.slide));
+    [0.35, 0.6, 0.85].forEach(t => { const p = pts[Math.round(t * n)]; [-1, 1].forEach(s => box(0.15, p.y, 0.15, M.steel, cx + s * 0.7, p.y / 2, p.z)); });
+  })();
+
+  // ---- pins, sizes, and the four sides named on the ground ----
+  const pins = [
+    [1, V(0, apexY + 0.9, yokeZ - 0.3)], [2, V(BX + 0.4, BEAM_BOT + 0.4, Z(6))], [3, V(-BX, gP + 1.0, zP + 0.7)],
+    [4, V(7.6, 3.0, Z(8.8))], [5, V(-6.6, 2.4, wzB + 0.3)], [6, V((slX0 + slX1) / 2, 2.6, zFr - 6.5)],
+    [7, V(-2.6, yR(2.6) + 0.4, Z(7))], [8, V(xL - 0.25, DECK + 1.6, Z(9))], [9, V(6.7, 2.6, Z(1.2))]
+  ].map(([n, v]) => { const el = document.createElement('div'); el.className = 'pin'; el.textContent = n; el.setAttribute('aria-hidden', 'true'); stage.appendChild(el); return { el, v }; });
+
+  const dimGroup = new THREE.Group(); scene.add(dimGroup);
+  const dimMat = new THREE.LineBasicMaterial({ color: 0x1b1d1a }), dims = [], sides = [];
+  function dimLine(a, b, text, at) {
+    dimGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([a, b]), dimMat));
+    [a, b].forEach(p => { const t = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 6), new THREE.MeshBasicMaterial({ color: 0x1b1d1a })); t.position.copy(p); dimGroup.add(t); });
+    const el = document.createElement('div'); el.className = 'dim'; el.textContent = text; stage.appendChild(el);
+    dims.push({ el, v: at || a.clone().add(b).multiplyScalar(0.5) });
+  }
+  dimLine(V(-5, CAP + 0.5, z0 - 0.7), V(5, CAP + 0.5, z0 - 0.7), '10 ft', V(2.5, CAP + 0.5, z0 - 0.7));
+  dimLine(V(5.9, CAP + 0.5, z0), V(5.9, CAP + 0.5, z0 + 10), '10 ft', V(5.9, CAP + 0.5, z0 + 2));
+  dimLine(V(-6.2, 0, z0 - 0.4), V(-6.2, DECK, z0 - 0.4), 'about 6 ft at the oak');
+  dimLine(V(6.9, gP, Z(10.6)), V(6.9, RIDGE_S + 0.1, Z(10.6)), 'about 17½ ft to the peak, downhill side', V(6.9, RIDGE_S - 1.5, Z(10.6)));
+  dimLine(V(0, PLATE + 0.3, Z(3)), V(0, PLATE + 0.3, TR), 'roof stops 3 ft 8 in from the bark', V(0, PLATE + 0.8, (Z(3) + TR) / 2));
+  [['FRONT', V(4.5, 0.3, -4)], ['BACK · downhill', V(0, groundY(0, Z(15)) + 0.3, Z(15))], ['LEFT', V(-12.5, groundY(0, Z(5)) + 0.3, Z(5))], ['RIGHT', V(13, groundY(0, Z(5)) + 0.3, Z(5))]].forEach(([t, v]) => {
+    const el = document.createElement('div'); el.className = 'dim side'; el.textContent = t; stage.appendChild(el); sides.push({ el, v });
+  });
+
+  const tmp = new THREE.Vector3();
+  function place(list) {
+    const w = stage.clientWidth, h = stage.clientHeight;
+    list.forEach(({ el, v }) => {
+      tmp.copy(v).project(camera);
+      const vis = tmp.z < 1 && Math.abs(tmp.x) < 1.05 && Math.abs(tmp.y) < 1.05;
+      el.style.opacity = vis ? '1' : '0';
+      const x = (tmp.x * 0.5 + 0.5) * w, y = (-tmp.y * 0.5 + 0.5) * h;
+      el.style.transform = el.classList.contains('dim') ? `translate(${x}px, ${y}px) translate(-50%, -50%)` : `translate(${x}px, ${y}px)`;
+    });
+  }
+
+  // ---- views ----
+  const target = V(-1, 5.5, Z(5));
+  const views = {
+    back: [V(28, 15, 32), target], yard: [V(-14, 9, -19), V(-2, 5, Z(2))],
+    left: [V(-27, 9, 7), V(-2, 4.5, Z(5))], below: [V(-5, 1.3, -4.5), V(0, 3.8, Z(3))]
+  };
+  let tween = null, spinning = !reduceMotion;
+  function go(name) {
+    spinning = false;
+    const [to, tTo] = views[name];
+    if (reduceMotion) { camera.position.copy(to); controls.target.copy(tTo); return; }
+    tween = { from: camera.position.clone(), to, tFrom: controls.target.clone(), tTo, t: 0 };
+  }
+  camera.position.copy(views.back[0]); controls.target.copy(target);
+  ['back', 'yard', 'left', 'below'].forEach(n => document.getElementById('v-' + n).onclick = () => go(n));
+  const dimBtn = document.getElementById('v-dims');
+  dimBtn.onclick = () => { const on = dimBtn.getAttribute('aria-pressed') !== 'true'; dimBtn.setAttribute('aria-pressed', String(on)); dimGroup.visible = on; dims.forEach(d => d.el.hidden = !on); };
+  controls.addEventListener('start', () => { spinning = false; tween = null; document.getElementById('hint').hidden = true; });
+
+  function resize() { const w = stage.clientWidth, h = stage.clientHeight; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); }
+  new ResizeObserver(resize).observe(stage); resize();
+
+  const flagPos = flag.geometry.attributes.position, flagBase = flagPos.array.slice();
+  let clock = 0;
+  function frame() {
+    clock += 0.016;
+    if (!reduceMotion) { for (let i = 0; i < flagPos.count; i++) { const x = flagBase[i * 3]; flagPos.array[i * 3 + 2] = Math.sin(clock * 3 + x * 3) * 0.12 * ((0.8 - x) / 1.6); } flagPos.needsUpdate = true; }
+    if (tween) {
+      tween.t = Math.min(1, tween.t + 0.03); const e = 1 - Math.pow(1 - tween.t, 3);
+      camera.position.lerpVectors(tween.from, tween.to, e); controls.target.lerpVectors(tween.tFrom, tween.tTo, e);
+      if (tween.t >= 1) tween = null;
+    } else if (spinning) {
+      const p = camera.position.clone().sub(controls.target); p.applyAxisAngle(V(0, 1, 0), 0.0016); camera.position.copy(controls.target).add(p);
+    }
+    controls.update(); renderer.render(scene, camera);
+    place(pins); place(sides); if (dimGroup.visible) place(dims);
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+</script>
+
+</body>
+</html>
