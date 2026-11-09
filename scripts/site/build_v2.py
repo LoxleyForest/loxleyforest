@@ -316,6 +316,40 @@ WALK = f'''    <section class="lf-walk" data-crossing aria-label="The crossing: 
     </section>
 '''
 
+# The crossing as a film (Mick, 2026-11-08 about 20:45 ET, by the Chief: "I agree" to loop B, walking
+# the crossing at blue hour, from Romantic Atlanta's July 8 footage, cut by the Chief). CROSSING_FILM
+# True: the bridge section is one screen on every shape: the loop's own first frame as the poster,
+# painted first; the loop over it once the page has loaded and the section is on screen (js/v2.js, the
+# in-page film player: muted, inline, looping, paused off screen, never on reduced motion, Save-Data
+# or a connection reported as slow-2g, 2g or 3g, so the poster stays; the hero's rule); the walk's
+# four lines shown at once as the still path showed them; no skip link, since one screen needs none;
+# the calendar next. False: the scroll-drawn walk (WALK, js/crossing.js, PHONE_STILL), kept in the
+# repo behind this switch for later use as art. The files: images/crossing/crossing-phone.mp4 (720 x
+# 1280, 8.5 s, 753 KB) and crossing-desk.mp4 (1920 x 1080, 1,554 KB), H.264, silent, the tail
+# crossfaded into the head; crossing-poster-phone.webp and -desk.webp, the first frame. The video
+# carries no poster attribute of its own: the <picture> is the poster, so a phone never fetches the
+# desk frame. scripts/site/check_crossing_film.js proves both states.
+CROSSING_FILM = True
+
+FILM = f'''    <section class="lf-walk lf-walk--film is-still" aria-label="The crossing: a hundred feet of rope bridge to the treehouse">
+      <div class="lf-walk__stage">
+        <picture>
+          <source media="(max-width: 767px)" srcset="images/crossing/crossing-poster-phone.webp" type="image/webp">
+          <img src="images/crossing/crossing-poster-desk.webp" alt="Walking the rope bridge toward the treehouse at blue hour, the lights on" width="1920" height="1080" loading="lazy" decoding="async">
+        </picture>
+        <video class="lf-loop__video lf-walk__video" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" data-ready
+          data-desk="images/crossing/crossing-desk.mp4" data-phone="images/crossing/crossing-phone.mp4"></video>
+        <div class="lf-walk__words">
+          <p class="lf-walk__line">Then the hundred-foot bridge appears,</p>
+          <p class="lf-walk__line">the one that makes your heart beat faster</p>
+          <p class="lf-walk__line">before the forest slows it back down.</p>
+          <p class="lf-walk__line">That one takes you to your front door.</p>
+        </div>
+        <button class="lf-loop__pause lf-walk__pause" type="button" aria-label="Pause the video" hidden><span></span></button>
+      </div>
+    </section>
+'''
+
 # ------------------------------------------------- the reviews
 # The reviews themselves, the number beside the acorns, and nothing said about them: no count,
 # no stars, no platform, no "reviews" (Mick, 2026-10-20: "I don't like that we say anything about
@@ -697,8 +731,8 @@ def page_index():
       </div>
     </section>
 
-    <!-- ========== THE CROSSING, WALKED (js/crossing.js): the far end opens onto the calendar ========== -->
-{WALK}
+    <!-- ========== THE CROSSING: the film (build_v2.CROSSING_FILM) or the walk (js/crossing.js); the far end opens onto the calendar ========== -->
+{FILM if CROSSING_FILM else WALK}
     <!-- ========== YOUR DATES: the Gatehouse, at the far end of the bridge ========== -->
 {BOOK}
 {REVIEWS}{give_band()}
@@ -815,7 +849,7 @@ INTERIOR = '''          <figure class="lf-loop lf-rise">
 # home page does not change (treehouse_two() keeps its own photograph there). Flipping it: this
 # line, python3 scripts/site/build_v2.py, scripts/site/check_ra_photos.py, one commit, on Mick's
 # yes to the before/after sheet (docs/briefs/2026-11-08-treehouses-ra-photos/).
-RA_PHOTOS = False
+RA_PHOTOS = True
 
 TREEHOUSE_PHOTOS = {
     False: {
@@ -831,24 +865,29 @@ TREEHOUSE_PHOTOS = {
         'stay': ('img_0828', 'The bed beneath the treehouse windows in warm light'),
         'two': ('img_2546', 'A treehouse deck with chairs above the forest'),
         'schema': ['eq3a0907-1600', 'img_0831-800', 'aerial-bridge-1600'],
+        'share': 'images/EQ3A0906.webp',  # the share card (og:image) as the page has had it
     },
     True: {
-        # the hero: the bridge at dusk, straight on (4W6A8086); on a phone its upright sibling (4W6A8074)
-        'hero_desk': 'ra-bridge-dusk-1600', 'hero_phone': 'ra-bridge-dusk-phone-800',
+        # the hero: the bridge at dusk, straight on, the canvas glowing at its end (4W6A8086); the phone
+        # file is an upright 2:3 crop of the same frame about that glow, so one alt is true on both
+        # (the Critic, 2026-11-08: the upright sibling 4W6A8074 had no treehouse in it)
+        'hero_desk': 'ra-bridge-dusk-1600', 'hero_phone': 'ra-bridge-dusk-phone-900',
         'hero_alt': 'The rope bridge at dusk, strung with lights, the treehouse canvas glowing at its end',
-        # the room (4W6A7946-HDR), the deck (4W6A7888), the canopy (5P3A1483), the bridge's end (4W6A8004-HDR)
+        # the room (4W6A7946-HDR), the deck (4W6A7888), the canopy (5P3A1483), the bridge by day (4W6A8022-HDR, cut 3:4)
         'gallery': [('ra-room-wide', 'The queen bed under the ring chandelier, triangle windows onto the forest'),
                     ('ra-deck', 'Two chairs on the sky deck, the canvas sweeping up beside them'),
                     ('ra-canopy-sun', 'Sun through the summer canopy, the deck below'),
-                    ('ra-bridge-end', 'Where the rope bridge meets the deck, the canvas peak above')],
-        # the drone by day (dji 0015), the drone at dusk (dji 0029), the whole span at dusk (dji 0045)
-        'built': ('ra-aerial', 'The treehouse hung in the oaks, the rope bridge leading in, seen from above the canopy'),
+                    ('ra-bridge-green', 'The rope bridge by day, straight on through the green')],
+        # the structure where the bridge meets the deck (4W6A8004-HDR); the drone at dusk (dji 0029);
+        # the bridge at dusk from the deck's side (4W6A8101): three different views, not one drone shape
+        'built': ('ra-bridge-end', 'Where the rope bridge meets the deck: the oak through the floor, the beam, the canvas peak'),
         'sixty': ('ra-aerial-dusk', 'The canvas glowing at dusk, level with the treetops'),
-        'crossing': ('ra-bridge-span', 'The whole span of the rope bridge at dusk, lit all the way to the treehouse'),
+        'crossing': ('ra-bridge-dusk-side', 'The rope bridge at dusk from the deck, its lights running out to the treehouse'),
         # the room upright (4W6A7968-HDR); the deck at dusk, upright (4W6A8084)
         'stay': ('ra-room', 'The queen bed under the canvas peak, the ring chandelier above'),
         'two': ('ra-deck-dusk', 'The canvas glowing at dusk, a chair on the sky deck'),
-        'schema': ['ra-bridge-dusk-1600', 'ra-room-wide-800', 'ra-aerial-1600'],
+        'schema': ['ra-bridge-dusk-1600', 'ra-room-wide-800', 'ra-aerial-dusk-1600'],
+        'share': 'images/v2/ra-bridge-dusk-1600.webp',  # the share card follows the hero (og:image, its width and height)
     },
 }
 
@@ -858,6 +897,12 @@ def page_treehouses():
     hero_desk, hero_phone = f'images/v2/{P["hero_desk"]}.webp', f'images/v2/{P["hero_phone"]}.webp'
     hw, hh = Image.open(os.path.join(ROOT, hero_desk)).size
     head, gtm = head_from('treehouses.html', f'<link rel="preload" as="image" type="image/webp" href="{hero_desk}" media="(min-width: 768px)" fetchpriority="high">\n  <link rel="preload" as="image" type="image/webp" href="{hero_phone}" media="(max-width: 767px)" fetchpriority="high">')
+    # The share card is written from the table in both states (the head comes from the file on disk,
+    # so a build in one state must not leave its picture for the other).
+    sw, sh = Image.open(os.path.join(ROOT, P['share'])).size
+    head = re.sub(r'<meta property="og:image" content="[^"]*">', f'<meta property="og:image" content="{SITE}/{P["share"]}">', head, count=1)
+    head = re.sub(r'<meta property="og:image:width" content="\d+">', f'<meta property="og:image:width" content="{sw}">', head, count=1)
+    head = re.sub(r'<meta property="og:image:height" content="\d+">', f'<meta property="og:image:height" content="{sh}">', head, count=1)
     shots = ''.join(f'<figure class="lf-chapter">{pic(n, a, "(min-width: 900px) 25vw, 78vw")}</figure>' for n, a in P['gallery'])
     body = f'''
     <!-- ========== HERO ========== -->

@@ -61,17 +61,19 @@
   });
 })();
 
-/* A film in the page (the interior on /treehouses, 2026-10-29): the hero's loop (js/global.js),
-   for a clip below the fold. Its still is what paints first. The clip gets a source only once the
-   page has loaded and the film is on screen, so the first load carries the still and nothing more;
-   it plays only while on screen, and never loads on reduced motion, Save-Data, a slow connection
-   or an old browser. */
+/* A film in the page (the interior on /treehouses, 2026-10-29; the crossing on the home page,
+   2026-11-08): the hero's loop (js/global.js), for a clip below the fold. Its still is what paints
+   first. The clip gets a source only once the page has loaded and the film is on screen, so the
+   first load carries the still and nothing more; it plays only while on screen, and never loads on
+   reduced motion, an old browser, or when the browser asks for less: Save-Data, or a connection it
+   reports as slow-2g, 2g or 3g (the hero's rule, DIRECTION.md's Video section; no report counts as
+   fast, so an iPhone gets it). */
 (function () {
   var vids = document.querySelectorAll('.lf-loop__video[data-ready]');
   if (!vids.length || !('IntersectionObserver' in window)) return;
   if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   var c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-  if (c && (c.saveData || /(^|-)2g$/.test(c.effectiveType || ''))) return;
+  if (c && (c.saveData || /^(slow-2g|2g|3g)$/.test(c.effectiveType || ''))) return;
   var phone = window.matchMedia('(max-width: 767px)').matches;
   var loaded = document.readyState === 'complete';
   if (!loaded) window.addEventListener('load', function () { loaded = true; vids.forEach(function (v) { if (v._lfOn) v._lfShow(); }); }, { once: true });
@@ -90,8 +92,10 @@
         v.src = small ? v.dataset.phone : (webm ? v.dataset.deskWebm : v.dataset.desk);
         v.load();
         v.addEventListener('playing', function () { v.classList.add('is-playing'); if (btn) btn.hidden = false; }, { once: true });
-        // An iPhone in Low Power Mode refuses autoplay; the first touch starts the loop instead.
-        ['touchstart', 'pointerdown', 'keydown'].forEach(function (ev) {
+        // An iPhone in Low Power Mode refuses autoplay; the first touch starts the loop instead. WebKit
+        // counts touchend and click as the tap that may start a video, not touchstart (the Critic,
+        // 2026-11-08, on the hero), so those are listened for too; each fires once.
+        ['touchend', 'click', 'touchstart', 'pointerdown', 'keydown'].forEach(function (ev) {
           window.addEventListener(ev, function () { if (v._lfOn && v.paused && !v.dataset.userPaused) tryPlay(); }, { once: true, passive: true });
         });
       }

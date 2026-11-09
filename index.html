@@ -219,18 +219,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
     </section>
 
-    <!-- ========== THE CROSSING, WALKED (js/crossing.js): the far end opens onto the calendar ========== -->
-    <section class="lf-walk" data-crossing aria-label="The crossing: a hundred feet of rope bridge to the treehouse">
+    <!-- ========== THE CROSSING: the film (build_v2.CROSSING_FILM) or the walk (js/crossing.js); the far end opens onto the calendar ========== -->
+    <section class="lf-walk lf-walk--film is-still" aria-label="The crossing: a hundred feet of rope bridge to the treehouse">
       <div class="lf-walk__stage">
-        <canvas aria-hidden="true"></canvas>
+        <picture>
+          <source media="(max-width: 767px)" srcset="images/crossing/crossing-poster-phone.webp" type="image/webp">
+          <img src="images/crossing/crossing-poster-desk.webp" alt="Walking the rope bridge toward the treehouse at blue hour, the lights on" width="1920" height="1080" loading="lazy" decoding="async">
+        </picture>
+        <video class="lf-loop__video lf-walk__video" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" data-ready
+          data-desk="images/crossing/crossing-desk.mp4" data-phone="images/crossing/crossing-phone.mp4"></video>
         <div class="lf-walk__words">
-          <p class="lf-walk__line" data-from="-20" data-to="12">Then the hundred-foot bridge appears,</p>
-          <p class="lf-walk__line" data-from="20" data-to="50">the one that makes your heart beat faster</p>
-          <p class="lf-walk__line" data-from="56" data-to="80">before the forest slows it back down.</p>
-          <p class="lf-walk__line" data-from="88" data-to="999">That one takes you to your front door.</p>
+          <p class="lf-walk__line">Then the hundred-foot bridge appears,</p>
+          <p class="lf-walk__line">the one that makes your heart beat faster</p>
+          <p class="lf-walk__line">before the forest slows it back down.</p>
+          <p class="lf-walk__line">That one takes you to your front door.</p>
         </div>
-        <div class="lf-walk__count" aria-hidden="true"><p><b data-walk-count>0</b><span>feet across</span></p><i class="lf-walk__bar"><i class="lf-walk__mark" data-walk-mark><svg viewBox="0 0 16 20" aria-hidden="true"><path fill="currentColor" d="M8 2.2C4.6 2.2 1.9 4.6 1.9 8H14.1C14.1 4.6 11.4 2.2 8 2.2ZM2.8 8.9H13.2C13.2 13.4 10.8 17.2 8 19.2C5.2 17.2 2.8 13.4 2.8 8.9ZM7.6 2.4C7.7 1.2 8.4 .4 9.6 .1L9.9 .7C9 1 8.5 1.6 8.5 2.4Z"/></svg></i></i></div>
-        <a class="lf-walk__skip" href="#book">Skip to your dates</a>
+        <button class="lf-loop__pause lf-walk__pause" type="button" aria-label="Pause the video" hidden><span></span></button>
       </div>
     </section>
 
@@ -450,7 +454,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script src="js/v2.js"></script>
   <script src="js/reviews.js" defer></script>
   <script src="js/gatehouse.js" defer></script>
-  <script src="js/crossing.js" defer></script>
   <script type="application/json" id="lf-gw-words">{"button": "See the giveaway", "close": "Close", "closes": [2026, 11, 14, 4, 59, 59], "fold": "A January weekend, on us. Free to enter.", "foldLink": "See the giveaway", "h": "Two nights in the trees. Free to enter.", "open": false, "p": "A January weekend at the treehouse, with the Dawn Table, on us. Worth about $1,565. Odds depend on the number of entries.", "photo": "images/v2/eq3a0907-800.webp", "photoAlt": "The treehouse at dusk, its canvas glowing, the rope bridge strung with lights"}</script>
   <script src="js/giveaway-popup.js" defer></script>
 </body>

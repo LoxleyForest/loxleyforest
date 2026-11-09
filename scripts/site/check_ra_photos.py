@@ -56,7 +56,7 @@ def phone_set(main):
         rest = rest.replace(m.group(0), '')
     for tag in IMG.findall(rest):
         s = ATTR(tag, 'src')
-        if s and s.startswith('images/v2/'):
+        if s and s.startswith('images/') and not s.endswith('.svg'):
             files.append(s)
     return files
 
@@ -74,6 +74,7 @@ for on in (False, True):
         check(html == open(os.path.join(ROOT, 'treehouses.html'), encoding='utf-8').read(), state + ' (shipped): the built page is treehouses.html on disk')
     if not on:
         check(not ra, 'off: no image from the shoot on the page')
+        check('<meta property="og:image" content="https://loxleyforest.com/images/EQ3A0906.webp">' in html, 'off: the share card is the file\'s own (images/EQ3A0906.webp)')
     else:
         check(len(ra) >= 10, 'on: the hero and the photographs are the shoot\'s (%d files from images/v2/ra-*)' % len(ra))
         check(all(os.path.exists(os.path.join(ROOT, p)) for p in named), 'on: every image the page names exists')
@@ -92,15 +93,23 @@ for on in (False, True):
         w, h = Image.open(os.path.join(ROOT, ATTR(hero_img, 'src'))).size
         check(ATTR(hero_img, 'width') == str(w) and ATTR(hero_img, 'height') == str(h), 'on: the hero\'s width and height are the file\'s (%dx%d)' % (w, h))
         check('fetchpriority="high"' in hero_img and 'loading="lazy"' not in hero_img, 'on: the hero is fetched first, never lazy')
+        P = B.TREEHOUSE_PHOTOS[True]
+        check(P['hero_phone'].startswith(P['hero_desk'].replace('-1600', '') + '-phone'), 'on: the phone hero is a crop of the desk hero\'s own frame (%s, %s), so the one alt is true on both' % (P['hero_desk'], P['hero_phone']))
+        og = re.search(r'<meta property="og:image" content="([^"]*)">\s*<meta property="og:image:width" content="(\d+)">\s*<meta property="og:image:height" content="(\d+)">', html)
+        check(og and og.group(1) == 'https://loxleyforest.com/' + P['share'] and P['share'].endswith(P['hero_desk'] + '.webp') and (og.group(2), og.group(3)) == tuple(str(v) for v in Image.open(os.path.join(ROOT, P['share'])).size), 'on: the share card (og:image) is the hero with its own width and height (%s)' % (og and og.groups(),))
         phone = phone_set(main)
-        total = sum(KB(p) for p in phone if os.path.exists(os.path.join(ROOT, p)))
-        check(total <= 1024, 'on: a phone\'s full scroll takes %d KB in %d images (the budget: under 1,024 KB)' % (total, len(phone)))
+        v2 = [p for p in phone if p.startswith('images/v2/')]
+        total = sum(KB(p) for p in v2 if os.path.exists(os.path.join(ROOT, p)))
+        check(total <= 1024, 'on: the photographs (images/v2) a phone takes on a full scroll: %d KB in %d files (the line: 1,024 KB)' % (total, len(v2)))
         for p in phone:
             print('         ' + p + ' ' + str(KB(p)) + ' KB')
+        others = [p for p in phone if not p.startswith('images/v2/')]
+        film = 'images/interior/interior-phone.mp4'
+        print('         plus, in both states: ' + ', '.join('%s %d KB' % (p, KB(p)) for p in others) + '; and the interior film %s, %d KB, on a phone that scrolls to it (js/v2.js), so the whole page is over DIRECTION.md\'s 1 MB line in both states' % (film, KB(film)))
         srcs = set(ATTR(t, 'src') for t in tags if ATTR(t, 'src') and ATTR(t, 'src').startswith('images/v2/'))
         check(len(srcs) == len([t for t in tags if ATTR(t, 'src') and ATTR(t, 'src').startswith('images/v2/')]), 'on: no photograph is used twice on the page')
         for slot, val in B.TREEHOUSE_PHOTOS[True].items():
-            if slot in ('hero_desk', 'hero_phone', 'hero_alt', 'schema'):
+            if slot in ('hero_desk', 'hero_phone', 'hero_alt', 'schema', 'share'):
                 continue
             pairs = val if isinstance(val, list) else [val]
             for n, a in pairs:
