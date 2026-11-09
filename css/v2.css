@@ -449,8 +449,9 @@ html:not(.js) .lf-walk--film .lf-walk__stage, .lf-walk--film .lf-walk__stage { b
 .lf-walk--film .lf-loop__pause { right: calc(var(--pad-x) - 8px); bottom: calc(40px + env(safe-area-inset-bottom, 0px)); z-index: 3; }
 /* the phone Book button sits bottom right; the pause button sits where the skip link sat */
 @media (max-width: 767px) { .lf-walk--film .lf-loop__pause { bottom: auto; top: calc(var(--hdr-h) + 12px); } }
-/* on a desk the words sit top left over the dark forest edge, clear of the glowing canvas mid-frame */
-@media (min-width: 768px) { .lf-walk--film .lf-walk__words { left: var(--pad-x); right: auto; margin: 0; text-align: left; max-width: 22ch; top: calc(var(--hdr-h) + 10svh); } }
+/* on a desk the words sit top right over the dark trees: the lit canvas walks up the left half of the frame (the Critic
+   measured it at 15 to 50 per cent across at 1024 and 1280 wide), so the left would put the last lines on it */
+@media (min-width: 768px) { .lf-walk--film .lf-walk__words { left: auto; right: var(--pad-x); margin: 0; text-align: right; max-width: 22ch; top: calc(var(--hdr-h) + 10svh); } }
 
 /* A phone number never breaks across lines (2026-10-22). */
 a[href^="tel:"] { white-space: nowrap; }

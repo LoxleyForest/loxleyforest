@@ -65,7 +65,15 @@ function serve(getHome) {
     if (!path.extname(f) && fs.existsSync(f + '.html')) f += '.html';
     fs.readFile(f, (err, data) => {
       if (err) { res.writeHead(404); return res.end(); }
-      res.writeHead(200, { 'Content-Type': TYPES[path.extname(f)] || 'application/octet-stream' });
+      const type = TYPES[path.extname(f)] || 'application/octet-stream';
+      // byte ranges, as Netlify serves them: a seek in the film asks for one
+      const range = req.headers.range && /^bytes=(\d+)-(\d*)$/.exec(req.headers.range);
+      if (range) {
+        const a = +range[1], b = range[2] ? +range[2] : data.length - 1;
+        res.writeHead(206, { 'Content-Type': type, 'Content-Range': `bytes ${a}-${b}/${data.length}`, 'Accept-Ranges': 'bytes', 'Content-Length': b - a + 1 });
+        return res.end(data.subarray(a, b + 1));
+      }
+      res.writeHead(200, { 'Content-Type': type, 'Content-Length': data.length, 'Accept-Ranges': 'bytes' });
       res.end(data);
     });
   });
@@ -165,12 +173,59 @@ async function main() {
     await p.page.waitForTimeout(300);
     s = await section(p.page);
     check(!s.paused, 'and starts it again');
+    // what the film tells the Tag Manager, as the walk did: crossing_start once it plays, crossing_end once through
+    const dl = await p.page.evaluate(() => (window.dataLayer || []).filter((e) => /^crossing_/.test(e.event)).map((e) => e.event));
+    check(dl.filter((e) => e === 'crossing_start').length === 1, 'crossing_start pushed to the Tag Manager once it plays (' + dl.join(', ') + ')');
+    await p.page.evaluate(() => { const v = document.querySelector('.lf-walk video'); v.currentTime = Math.max(0, v.duration - 1); });
+    await p.page.waitForFunction(() => (window.dataLayer || []).some((e) => e.event === 'crossing_end'), null, { timeout: 6000 }).catch(() => {});
+    const dl2 = await p.page.evaluate(() => (window.dataLayer || []).filter((e) => /^crossing_/.test(e.event)).map((e) => e.event));
+    check(dl2.filter((e) => e === 'crossing_end').length === 1 && dl2.filter((e) => e === 'crossing_start').length === 1, 'crossing_end once it has played through, each once (' + dl2.join(', ') + ')');
     await p.page.evaluate(() => { if (window.lfLenis) window.lfLenis.scrollTo(0, { immediate: true }); else window.scrollTo(0, 0); });
     await p.page.waitForTimeout(500);
     s = await section(p.page);
     check(s.paused, 'off screen it pauses');
     check(p.errors.length === 0, 'no script errors' + (p.errors.length ? ': ' + p.errors.join('; ') : ''));
     await p.ctx.close();
+  }
+  // the words sit on a dark part of the film at every desk width, through the loop (the Critic, 2026-11-08:
+  // the lit canvas walks up the left half of the frame; the words were on it at 1024 and 1280)
+  console.log('on, the words over the film');
+  for (const [w, h] of [[1024, 768], [1280, 720], [1440, 900], [390, 844], [375, 667]]) {
+    const ctx = await browser.newContext(w < 768 ? { viewport: { width: w, height: h }, isMobile: true, hasTouch: true } : { viewport: { width: w, height: h } });
+    await ctx.route('**/*', (route) => {
+      const u = new URL(route.request().url());
+      if (u.hostname === 'book.loxleyforest.com') return route.fulfill({ status: 200, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify(u.pathname === '/v1/availability' ? NIGHTS : {}) });
+      if (u.origin !== base) return route.abort();
+      return route.continue();
+    });
+    const page = await ctx.newPage();
+    await page.goto(base + '/', { waitUntil: 'load' });
+    await toSection(page);
+    await page.waitForFunction(() => { const v = document.querySelector('.lf-walk video'); return v && v.readyState >= 2 && v.videoWidth > 0; }, null, { timeout: 15000 }).catch(() => {});
+    const lum = await page.evaluate(async () => {
+      const s = document.querySelector('.lf-walk'), v = s.querySelector('video'), wd = s.querySelector('.lf-walk__words');
+      const st = s.querySelector('.lf-walk__stage').getBoundingClientRect(), r = wd.getBoundingClientRect();
+      const out = [];
+      const lumOf = (g, x, y, ww, hh) => { const px = g.getImageData(x, y, ww, hh).data; let sum = 0, n = 0, bright = 0; for (let i = 0; i < px.length; i += 16) { const l = 0.2126 * px[i] + 0.7152 * px[i + 1] + 0.0722 * px[i + 2]; sum += l; n++; if (l > 140) bright++; } return { mean: Math.round(sum / n), bright: +(bright / n).toFixed(3) }; };
+      for (const t of [1, 4, 7.5]) {
+        v.pause();
+        await new Promise((ok) => { const hnd = () => { v.removeEventListener('seeked', hnd); ok(); }; v.addEventListener('seeked', hnd); v.currentTime = t; setTimeout(ok, 5000); });
+        await new Promise((ok) => requestAnimationFrame(() => requestAnimationFrame(ok)));
+        const c = document.createElement('canvas'); c.width = Math.round(st.width); c.height = Math.round(st.height);
+        const g = c.getContext('2d');
+        const vw = v.videoWidth, vh = v.videoHeight, sc = Math.max(c.width / vw, c.height / vh), dw = vw * sc, dh = vh * sc;
+        g.drawImage(v, (c.width - dw) / 2, (c.height - dh) / 2, dw, dh);
+        const x = Math.max(0, Math.round(r.left - st.left)), y = Math.max(0, Math.round(r.top - st.top));
+        const ww = Math.max(1, Math.min(c.width - x, Math.round(r.width))), hh = Math.max(1, Math.min(c.height - y, Math.round(r.height)));
+        const under = lumOf(g, x, y, ww, hh), whole = lumOf(g, 0, 0, c.width, c.height);
+        out.push({ t, at: +v.currentTime.toFixed(2), mean: under.mean, bright: under.bright, frame: whole.mean });
+      }
+      return out;
+    });
+    const seeked = lum.length === 3 && lum.every((m) => Math.abs(m.at - m.t) < 0.5);
+    const ok = seeked && lum.every((m) => m.mean < 100 && m.bright < 0.1);
+    check(ok, w + 'x' + h + ': the words sit on a dark part of the frame at 1, 4 and 7.5 s (' + lum.map((m) => 'at ' + m.at + 's under the words mean ' + m.mean + ', lit ' + Math.round(m.bright * 100) + '%, the frame ' + m.frame).join('; ') + ')');
+    await ctx.close();
   }
   console.log('on, a phone that asks for less');
   for (const [what, conn] of [['3g', { effectiveType: '3g', saveData: false }], ['2g', { effectiveType: '2g', saveData: false }], ['slow-2g', { effectiveType: 'slow-2g', saveData: false }], ['Save-Data on 4g', { effectiveType: '4g', saveData: true }]]) {

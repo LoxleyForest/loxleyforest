@@ -324,11 +324,14 @@ WALK = f'''    <section class="lf-walk" data-crossing aria-label="The crossing: 
 # or a connection reported as slow-2g, 2g or 3g, so the poster stays; the hero's rule); the walk's
 # four lines shown at once as the still path showed them; no skip link, since one screen needs none;
 # the calendar next. False: the scroll-drawn walk (WALK, js/crossing.js, PHONE_STILL), kept in the
-# repo behind this switch for later use as art. The files: images/crossing/crossing-phone.mp4 (720 x
-# 1280, 8.5 s, 753 KB) and crossing-desk.mp4 (1920 x 1080, 1,554 KB), H.264, silent, the tail
-# crossfaded into the head; crossing-poster-phone.webp and -desk.webp, the first frame. The video
+# repo behind this switch for later use as art. The files, from the Chief's masters with the house's
+# x264 settings: images/crossing/crossing-phone.mp4 (540 x 960 at 24 fps, the direction's phone file,
+# 8.5 s, 395 KB; the Critic: the 720 x 1280 cut was 753 KB and put a phone's full scroll up 17%) and
+# crossing-desk.mp4 (1920 x 1080, 1,385 KB, under the direction's 1.5 MB line), H.264, silent, the
+# tail crossfaded into the head; crossing-poster-phone.webp and -desk.webp, the first frame. The video
 # carries no poster attribute of its own: the <picture> is the poster, so a phone never fetches the
-# desk frame. scripts/site/check_crossing_film.js proves both states.
+# desk frame. The film tells the Tag Manager crossing_start and crossing_end as the walk did
+# (js/v2.js, data-track). scripts/site/check_crossing_film.js proves both states.
 CROSSING_FILM = True
 
 FILM = f'''    <section class="lf-walk lf-walk--film is-still" aria-label="The crossing: a hundred feet of rope bridge to the treehouse">
@@ -337,7 +340,7 @@ FILM = f'''    <section class="lf-walk lf-walk--film is-still" aria-label="The c
           <source media="(max-width: 767px)" srcset="images/crossing/crossing-poster-phone.webp" type="image/webp">
           <img src="images/crossing/crossing-poster-desk.webp" alt="Walking the rope bridge toward the treehouse at blue hour, the lights on" width="1920" height="1080" loading="lazy" decoding="async">
         </picture>
-        <video class="lf-loop__video lf-walk__video" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" data-ready
+        <video class="lf-loop__video lf-walk__video" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" data-ready data-track="crossing"
           data-desk="images/crossing/crossing-desk.mp4" data-phone="images/crossing/crossing-phone.mp4"></video>
         <div class="lf-walk__words">
           <p class="lf-walk__line">Then the hundred-foot bridge appears,</p>

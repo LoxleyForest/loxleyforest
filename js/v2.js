@@ -92,6 +92,21 @@
         v.src = small ? v.dataset.phone : (webm ? v.dataset.deskWebm : v.dataset.desk);
         v.load();
         v.addEventListener('playing', function () { v.classList.add('is-playing'); if (btn) btn.hidden = false; }, { once: true });
+        // A film that stands for the bridge walk (data-track="crossing") tells the Tag Manager what the walk
+        // told it (js/crossing.js): crossing_start once it plays, crossing_end once it has played through,
+        // each once a visit, so the walkers can still be counted beside the calendar's steps.
+        if (v.dataset.track) {
+          var seen = {};
+          var mark = function (name) { if (seen[name]) return; seen[name] = 1; (window.dataLayer = window.dataLayer || []).push({ event: name, crossing_film: v.dataset.track }); };
+          v.addEventListener('playing', function () { mark(v.dataset.track + '_start'); });
+          // through once: the last half second, or the loop wrapping to its head between two time updates
+          var last = 0;
+          v.addEventListener('timeupdate', function () {
+            var t = v.currentTime;
+            if ((v.duration && t >= v.duration - 0.5) || (last > 1 && t < last - 1)) mark(v.dataset.track + '_end');
+            last = t;
+          });
+        }
         // An iPhone in Low Power Mode refuses autoplay; the first touch starts the loop instead. WebKit
         // counts touchend and click as the tap that may start a video, not touchstart (the Critic,
         // 2026-11-08, on the hero), so those are listened for too; each fires once.
