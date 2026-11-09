@@ -18,7 +18,7 @@
 
 - The December 15 to 17 couple's Before the Bridge page says "ready from 3:00 pm" (his standing ruling) while their signed agreement says 4:00 p.m.; his word if he wants the page changed. Their recap went 2026-11-05 at about 17:40 ET from his Gmail (the blocks below); their answers come back to him by reply or as a photo of the pages, and nothing of them belongs in this repo. Their page is live at /private/before-the-bridge-2026-12-15-to-17-7df87e/; it says "ready from 3:00 pm" while their signed agreement says 4:00 p.m., for his word.
 
-- The January giveaway's words (scripts/site/pages/giveaway.py WORDS, the card's and /book's line among them): his yes by hash, the sponsor's mailing address into ADDRESS, then the day and hour he says "live" into OPENS, only after the engine's giveaway_open is on; then LIVE in js/giveaway-popup.js flips to true in the same push and the seat links the page. Open with the yes: the holds (the engine holds nothing until he rules; the page says the winner chooses from the weekends still open), the value ($1,565 by the Marketer's Nov 7 quote; the accountant confirms), champagne 21 or older on the page or 21 to enter (the table's lean, since the card meets paid traffic), which address he writes to the winner from, the pull switch's standing term in chief docs/terms.md by Nov 11 (the two 2026-11-07 blocks below).
+- The January giveaway's words (scripts/site/pages/giveaway.py WORDS, the card's and /book's line among them): his yes by hash, the sponsor's mailing address into ADDRESS, then the day and hour he says "live" into OPENS, only after the engine's giveaway_open is on; then LIVE in js/giveaway-popup.js flips to true in the same push and the seat links the page. Open with the yes: the holds (the engine holds nothing until he rules; the page says the winner chooses from the weekends still open), the value ($1,565 by the Marketer's Nov 7 quote; the accountant confirms), champagne 21 or older on the page or 21 to enter (the table's lean, since the card meets paid traffic), which address he writes to the winner from, the pull switch's standing term in chief docs/terms.md by Nov 11 (the two 2026-11-07 blocks below). RULED 2026-11-08 about 21:20 ET (Mick by the Chief: "as written, 21, and (a)"): entry at 21 or older (the rules line and the eligibility box; the champagne line as written), the sponsor line with the LLC's registered office (ADDRESS = '154 Hilburn Rd, Dahlonega, Georgia 30533', public), the winner hears from mic@loxleyforest.com (both pages), OPENS = 'Thursday, November 12, 2026, at 9 AM Eastern Time'; rebuilt and pushed; the words' hash is now 4de06ad37e1a5fb1a723e5ce507344506999fbc92278cd0ee28037ebdd215766, sent to the Chief with the live URL for his read on his phone. STILL CLOSED: the form opens only when APPROVED_SHA256 names that hash, and that flip waits on the engine's giveaway_open being on (the Critic, 2026-11-07); then js/giveaway-popup.js LIVE flips in the same push and the seat links the page.
 
 **For the seat to rule, next session (the Chief's flags of 2026-11-04; nothing new goes live Nov 13 to about Nov 27 while Mick is away)**
 - CLAUDE.md still says "no build system" though scripts/site/build_v2.py builds the pages; README.md is GitHub boilerplate. Fix both, and point CLAUDE.md's session-open line at this block and docs/log/.
@@ -62,7 +62,12 @@ alone; a night that can make no stay now starts a stay there as it always did; t
 flips on Mick's own yes. No fixed minimum sentence is added above the calendar (false inside 7
 days, where a weekend sells one night; the calendar prints each night's real minimum). Proven: scripts/site/check_offer_stay.js,
 31 checks in both states (shipped: the old refusal and its quote_refused step; offered: every rule
-above, the words, the step reasons); check_checkout (124) with the switch off.
+above, the words, the step reasons); check_checkout (124) with the switch off. LIVE 2026-11-08 as
+7832b21 (Mick's yes at about 21:00 ET by the Chief to the two sentences and the "2+" / "3+" corner
+labels; OFFER_NEAREST stays off): read back on a phone, Nov 28 carries "3+", the tap gives the
+sentence with Sat, Nov 28 to Tue, Dec 1, 2026 and the stay card $1,357.74 for 3 nights; the Forge
+told the stay_offered step is live; check_offer_stay.js reads the switch as shipped and proves both
+states (38).
 
 **2. /book on a phone, the calendar first.** PageSpeed Insights' API refused us on its shared daily
 quota (retry Nov 9). Measured live on a throttled phone (1.6 Mbps, 150 ms RTT, 4x CPU): /book first

@@ -42,7 +42,7 @@ CLOSE_UTC = (2026, 11, 14, 4, 59, 59)  # JavaScript's month is 0-based: 11 is De
 # The day and hour the form opens, in words ("Thursday, November 12, 2026, at 9 AM Eastern Time"), set
 # when Mick says "live" and only after the engine's giveaway_open is on (the Critic, 2026-11-07:
 # until then the engine refuses every entry while the page would say "You're in"). None: not yet.
-OPENS = None
+OPENS = 'Thursday, November 12, 2026, at 9 AM Eastern Time'  # Mick, 2026-11-08 by the Chief (the sheet's line 2); the form still waits on APPROVED_SHA256
 # Dec 14, two lines from the engine through Mick and the Chief, numbers only (the Forge, 2026-11-07):
 # FROZEN, the count fixed before the pulse ("N entries, at <time UTC>"), published here before noon
 # ET; RESULT, after the draw ("pulse <outputValue> index <i>; N entries; winning entry W; alternates
@@ -54,7 +54,7 @@ RESULT = None
 # Secretary of State, or a PO box rented before Nov 11; Mick's choice, brought by the Chief, never
 # taken from a guest-facing file. A merge value, not a word in the hash, so his yes on the words
 # survives it. The form does not open without it. None: not yet.
-ADDRESS = None
+ADDRESS = '154 Hilburn Rd, Dahlonega, Georgia 30533'  # the LLC's registered office, public; Mick's choice (a), 2026-11-08 by the Chief
 ADDRESS_PLACEHOLDER = '[mailing address], Dahlonega, Georgia [ZIP]'
 
 # =============================================================================================
@@ -100,7 +100,7 @@ WORDS = {
                 'a held entry takes the next number when it is counted. Entries that do not count are never '
                 'numbered.'),
     'who_h': 'Who can enter',
-    'who_1': ('Anyone 18 or older who lives in the United States. Not our own household, nor anyone who works '
+    'who_1': ('Anyone 21 or older who lives in the United States. Not our own household, nor anyone who works '
               'with us at Loxley Forest or lives with them.'),
     'draw_h': 'The draw',
     # The seed source named before entries open, so it cannot be chosen once the entries are known
@@ -118,7 +118,7 @@ WORDS = {
     'draw_1b': ('The winning entry number is that outputValue, read as a hexadecimal number, divided by the '
                 'number of entries, remainder plus one. We publish the pulse\'s value and index, the number of '
                 'entries and the winning number on this page, so anyone can check the draw.'),
-    'draw_2': ('The winner hears from us by email, from an @loxleyforest.com address and from nowhere else, and '
+    'draw_2': ('The winner hears from us by email, from mic@loxleyforest.com and from nowhere else, and '
                'we never ask for money. They have 72 hours to claim the weekend. If they do not, the next entry '
                'number up wins, wrapping around to 1 after the last, and so on for up to three alternates.'),
     'frozen': 'The number of entries, fixed before the pulse: {{frozen}}.',
@@ -134,7 +134,7 @@ WORDS = {
     'form_h': 'Enter',
     'first_name': 'First name',
     'email': 'Email',
-    'eligible': 'I am 18 or older and live in the United States.',
+    'eligible': 'I am 21 or older and live in the United States.',
     'letters': ('Yes, send me Loxley Forest\'s letters: a few a year, about the forest and what is new. Not '
                 'needed to enter. Stop them any time.'),
     'submit': 'Enter the giveaway',
@@ -157,7 +157,7 @@ WORDS = {
     'entered_eyebrow': 'Entered',
     'entered_h': 'You\'re in.',
     'entered_lead': 'We have your entry. One counts per email address.',
-    'entered_1': ('We draw on Monday, December 14. If it\'s you, you\'ll hear from an @loxleyforest.com address, '
+    'entered_1': ('We draw on Monday, December 14. If it\'s you, you\'ll hear from mic@loxleyforest.com, '
                   'and from nowhere else. Until then, there\'s nothing to do.'),
     # The reel's door (the Marketer's teardown and the Critic's site-audit sheet, 2026-11-08, the Chief's
     # route): the bridge they just watched, and three doors on, on /giveaway and on /giveaway-entered.
