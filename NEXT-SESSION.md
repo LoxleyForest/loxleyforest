@@ -332,8 +332,13 @@ task at all when the walk comes near, 43 to 56 frames a second on the scroll, th
 The shoot is on the workshop: /home/mick/footage-in/drive/Pictures / (the trailing space is in the
 name; 47 stills, no face in any) and Videos / beside it. Two pieces from the Chief.
 
-**1. /treehouses on the stills (shadow, `RA_PHOTOS = False` in scripts/site/build_v2.py, a build-time
-switch; committed 2026-11-08 night).** A per-state photo table (TREEHOUSE_PHOTOS) feeds every slot of
+**1. /treehouses on the stills, LIVE (`RA_PHOTOS = True` in scripts/site/build_v2.py, a build-time
+switch; built in shadow as 96caa1e, flipped as 8d156a1 on the Chief's word the same night, Mick's
+"Even the photos for the treehouse page pull from theirs ... Make me proud", the Critic's read
+taken; read back live: the hero preloads, the og:image and every ra- file answering, the first
+screen on a phone shot from the live page). The sheets also sit at the bottom of the loops preview
+(private/loops-4ad685/, "The treehouse page: before and after") so he sees them beside the loops.
+As built:** A per-state photo table (TREEHOUSE_PHOTOS) feeds every slot of
 page_treehouses(); treehouse_two(photo) takes its photo so the home page never changes. On: the hero
 is the bridge at dusk straight on (4W6A8086, ra-bridge-dusk-1600) and on a phone an upright crop of
 the same frame about the glowing canvas (ra-bridge-dusk-phone-900), the gallery the room, the deck,
