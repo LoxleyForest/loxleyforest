@@ -91,7 +91,7 @@
   // and no gift line or unused status at all; true on the Chief's word once Mick has heard them.
   // Apart from SIZES: a hand-issued card of another size can exist before /gift offers the sizes
   // (the Critic, 2026-11-08), and the card page must never read "three nights" for it.
-  var SIZE_WORDS = false;
+  var SIZE_WORDS = true;
   // The engine's price on /gift before the names are typed (the Critic's site-audit sheet, 2026-11-08,
   // the Chief's route; it reverses Mick's rule of 2026-10-19 that the amount shows only right before
   // Stripe, so it waits for his yes): PRICE true, the price of the card on sale, read from
