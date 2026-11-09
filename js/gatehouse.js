@@ -43,7 +43,7 @@
   // the stay instead of refusing; a night that can make no stay offers the nearest that can; and
   // each arrival night shows its minimum before the tap. The minimum rules themselves are the
   // engine's and do not change here. scripts/site/check_offer_stay.js proves both states.
-  var OFFER_STAY = false;
+  var OFFER_STAY = true;
   var SUGGEST_MAX = 4;     // the longest stay the calendar offers on its own
   var NEAREST_DAYS = 21;   // how far from a tapped night it looks for a stay that works
   // The third case, a night that can make no stay offering the nearest that can: OFF (the Critic's

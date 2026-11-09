@@ -9,8 +9,8 @@
    Nothing leaves this machine: the booking server is answered here with made-up nights (weeknights
    at one night, Fridays and Saturdays at two, one three-night holiday with no arrival on its eve,
    one taken Sunday, one taken stretch) and a made-up quote; the beacon is recorded and answered 204;
-   every other outside request is refused. The shipped file has OFFER_STAY false; the "offered"
-   checks serve the same file with OFFER_STAY set to true, and say so.
+   every other outside request is refused. The check reads OFFER_STAY as shipped (true since
+   2026-11-08, Mick's yes) and serves js/gatehouse.js in each state in turn, saying which.
 
    It proves: shipped, a tap on a two-night Saturday waits for the check-out as before, a one-night
    check-out is refused with the old words and quote_refused reaches the beacon, and no night carries
@@ -38,7 +38,11 @@ const SHOTS = process.env.SHOTS || '';
 const TYPES = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.webp': 'image/webp',
   '.png': 'image/png', '.jpg': 'image/jpeg', '.json': 'application/json', '.woff2': 'font/woff2' };
 const SCRIPT = fs.readFileSync(path.join(ROOT, 'js', 'gatehouse.js'), 'utf8');
-const SWITCH = 'var OFFER_STAY = false;';
+// The switch is read as shipped and served in each state in turn (true since 2026-11-08, Mick's yes), so
+// both states are proven whatever is shipped.
+const SWITCH_RE = /var OFFER_STAY = (true|false);/;
+const SHIPPED_OFFER = (SCRIPT.match(SWITCH_RE) || [])[1];
+const withOffer = (on) => SCRIPT.replace(SWITCH_RE, 'var OFFER_STAY = ' + on + ';');
 const NEAREST_SWITCH = 'var OFFER_NEAREST = false;';   // the third case (the nearest stay for a night that can make none), off
 
 function serve() {
@@ -103,7 +107,7 @@ async function main() {
     await ctx.route('**/*', async (route) => {
       const req = route.request(); const u = new URL(req.url());
       if (u.origin === base) {
-        if (u.pathname === '/js/gatehouse.js' && offered) return route.fulfill({ status: 200, contentType: 'text/javascript', body: SCRIPT.replace(SWITCH, 'var OFFER_STAY = true;') });
+        if (u.pathname === '/js/gatehouse.js') return route.fulfill({ status: 200, contentType: 'text/javascript', body: withOffer(!!offered) });
         return route.continue();
       }
       if (u.hostname === 'book.loxleyforest.com') {
@@ -144,10 +148,10 @@ async function main() {
   const refusals = (ctx) => ctx.beacons.filter(b => b.step === 'quote_refused');
 
   console.log('the file');
-  check((SCRIPT.match(/var OFFER_STAY = (true|false);/g) || []).length === 1 && SCRIPT.includes(SWITCH), 'the switch is one line, OFFER_STAY false as shipped');
+  check((SCRIPT.match(/var OFFER_STAY = (true|false);/g) || []).length === 1 && !!SHIPPED_OFFER, 'the switch is one line; shipped OFFER_STAY = ' + SHIPPED_OFFER + ' (Mick\'s yes, 2026-11-08, to the two offer sentences and the corner labels)');
   check((SCRIPT.match(/var OFFER_NEAREST = (true|false);/g) || []).length === 1 && SCRIPT.includes(NEAREST_SWITCH), 'the third case has its own line, OFFER_NEAREST false as shipped (the first two cases alone until Mick\'s yes)');
 
-  console.log('shipped (OFFER_STAY false)');
+  console.log('off (OFFER_STAY false)');
   {
     const { ctx, page } = await visitor(false);
     await goTo(page, day(SAT1));
@@ -253,7 +257,7 @@ async function main() {
     await ctxN.route('**/*', async (route) => {
       const req = route.request(); const u = new URL(req.url());
       if (u.origin === base) {
-        if (u.pathname === '/js/gatehouse.js') return route.fulfill({ status: 200, contentType: 'text/javascript', body: SCRIPT.replace(SWITCH, 'var OFFER_STAY = true;').replace(NEAREST_SWITCH, 'var OFFER_NEAREST = ' + nearestOn + ';') });
+        if (u.pathname === '/js/gatehouse.js') return route.fulfill({ status: 200, contentType: 'text/javascript', body: withOffer(true).replace(NEAREST_SWITCH, 'var OFFER_NEAREST = ' + nearestOn + ';') });
         return route.continue();
       }
       if (u.hostname === 'book.loxleyforest.com') {

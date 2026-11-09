@@ -184,8 +184,9 @@ approve."): FLIPPED ON, one commit each, checks green, read back live: PACKAGE_O
 PRICE (5de9860), GIVE_A_STAY (7231db2), REVIEW_COUNT with the rating computed from the list, 5.0
 (f2247c6 the code, 9433988 the flip), PHONE_STILL (4a49ce8). Then, his yes by the Chief at about
 18:55 ET to the gift page's new lines read to him: SIZES (5372947) and SIZE_WORDS (78604b1), the
-block below. Still off, separate yeses:
-OFFER_STAY and OFFER_NEAREST, the giveaway's hash, the /book hero words. The
+block below. Then OFFER_STAY, his yes at about 21:00 ET to the two offer sentences and the "2+" /
+"3+" corner labels (the five-fixes block above, item 1; OFFER_NEAREST stays off on his separate
+word). Still off, separate yeses: OFFER_NEAREST, the giveaway's hash, the /book hero words. The
 paragraphs below describe each piece as built; where one says "shadow" or "flips on", read it against
 this line. Too risky for the freeze, not started: the toast move, the /book price card
 and calendar layout, "Buying for someone else?", cancellation rewording.
