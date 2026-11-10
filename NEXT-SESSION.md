@@ -67,7 +67,15 @@ above, the words, the step reasons); check_checkout (124) with the switch off. L
 labels; OFFER_NEAREST stays off): read back on a phone, Nov 28 carries "3+", the tap gives the
 sentence with Sat, Nov 28 to Tue, Dec 1, 2026 and the stay card $1,357.74 for 3 nights; the Forge
 told the stay_offered step is live; check_offer_stay.js reads the switch as shipped and proves both
-states (38).
+states (38). THE CHRISTMAS GUARD (the Chief's route of 2026-11-09, chief
+docs/routes/loxleyforest/2026-11-09-christmas-tail.md; Mick ruled Dec 23 to 26 one fixed stay, the
+Forge's engine side on loxley-rescue forge/christmas-guard): the "Tap a later day to stay longer."
+tail is left off whenever the engine caps the arrival night (max_stay) at what is offered, so Dec 23
+reads "Arriving Wed, Dec 23 takes 3 nights. Here's Wed, Dec 23 to Sat, Dec 26, 2026; the price is
+below." and stops; no new words, no switch; proven in check_offer_stay.js (41: a capped night
+offers its nights with no tail, an uncapped holiday keeps it; the made-up calendar holds the capped
+night's eve at one night, as the engine holds Dec 22). Live, the tail goes the moment the engine
+serves Dec 23's cap.
 
 **2. /book on a phone, the calendar first.** PageSpeed Insights' API refused us on its shared daily
 quota (retry Nov 9). Measured live on a throttled phone (1.6 Mbps, 150 ms RTT, 4x CPU): /book first
