@@ -33,7 +33,9 @@ OK = {"/success", "/success.html"}
 # A form with a door of its own: the paths it must post to, and no other.
 OWN = {"elopement-inquiry": {"/success-elopement", "/success-elopement.html"}}
 # Forms that are not inquiries, by name or the start of one: never on a path holding /success.
-NOT_INQUIRY = ("giveaway",)
+# anniversary-letter (2026-11-10): a guest's letter to their future selves, on a private page, posted
+# in place and never to any path; named here for the record (this check reads the root pages only).
+NOT_INQUIRY = ("giveaway", "anniversary-letter")
 # Forms that are not inquiries and have their own page by design: none today.
 EXEMPT = set()
 
