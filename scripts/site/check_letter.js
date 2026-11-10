@@ -76,8 +76,10 @@ async function main() {
   for (const n of ['letter', 'names', 'arrive', 'line1', 'line2', 'city', 'state', 'zip']) check(new RegExp('name="' + n + '"').test(HTML), 'the field ' + n);
   // the page's words alone: the head's comment and the style block (the embedded fonts' data) are not words
   const WORDS = HTML.replace(/<!--[\s\S]*?-->/g, '').replace(/<style>[\s\S]*?<\/style>/, '').replace(/<script>[\s\S]*?<\/script>/, '');
-  check(/mail it to you on your anniversary/.test(WORDS) && !/calligraph|wax|\bseal/i.test(WORDS), 'the promise is "mail it to you on your anniversary"; nothing about a hand or a seal');
-  check(/Write to yourself, to your partner, to who you want to be a year from now\./.test(HTML), 'the experiences page\'s own words for The Letter');
+  // Mick's approved lead, 2026-11-10 ("Love it! Sold"), by the Chief: exactly these words
+  const LEAD = 'Write to each other. What you felt here, what you promised, what you hope is still true a year from now. Leave it with us, and on your anniversary it arrives at your door.';
+  check(WORDS.includes('<p class="lead">' + LEAD + '</p>'), 'the lead is Mick\'s approved line, word for word');
+  check(/on your anniversary it arrives at your door/.test(WORDS) && !/calligraph|wax|\bseal/i.test(WORDS), 'the promise is the arrival on their anniversary; nothing about a hand or a seal');
 
   const state = { posts: [], fail: false };
   const srv = await serve(state);
