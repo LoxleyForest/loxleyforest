@@ -42,7 +42,11 @@ CLOSE_UTC = (2026, 11, 14, 4, 59, 59)  # JavaScript's month is 0-based: 11 is De
 # The day and hour the form opens, in words ("Thursday, November 12, 2026, at 9 AM Eastern Time"), set
 # when Mick says "live" and only after the engine's giveaway_open is on (the Critic, 2026-11-07:
 # until then the engine refuses every entry while the page would say "You're in"). None: not yet.
-OPENS = None
+OPENS = 'Thursday, November 12, 2026, at 9 AM Eastern Time'  # Mick, 2026-11-08 by the Chief (the sheet's line 2)
+# The Thursday flip (the Chief, 2026-11-08): Mick runs the engine's open line on Thu Nov 12 at 9 AM
+# ET, then this and js/giveaway-popup.js LIVE go true in one push and the form opens. False: the
+# form stays closed though the words are approved, the address set and the open day named.
+OPEN = False
 # Dec 14, two lines from the engine through Mick and the Chief, numbers only (the Forge, 2026-11-07):
 # FROZEN, the count fixed before the pulse ("N entries, at <time UTC>"), published here before noon
 # ET; RESULT, after the draw ("pulse <outputValue> index <i>; N entries; winning entry W; alternates
@@ -54,7 +58,7 @@ RESULT = None
 # Secretary of State, or a PO box rented before Nov 11; Mick's choice, brought by the Chief, never
 # taken from a guest-facing file. A merge value, not a word in the hash, so his yes on the words
 # survives it. The form does not open without it. None: not yet.
-ADDRESS = None
+ADDRESS = '154 Hilburn Rd, Dahlonega, Georgia 30533'  # the LLC's registered office, public; Mick's choice (a), 2026-11-08 by the Chief
 ADDRESS_PLACEHOLDER = '[mailing address], Dahlonega, Georgia [ZIP]'
 
 # =============================================================================================
@@ -100,7 +104,7 @@ WORDS = {
                 'a held entry takes the next number when it is counted. Entries that do not count are never '
                 'numbered.'),
     'who_h': 'Who can enter',
-    'who_1': ('Anyone 18 or older who lives in the United States. Not our own household, nor anyone who works '
+    'who_1': ('Anyone 21 or older who lives in the United States. Not our own household, nor anyone who works '
               'with us at Loxley Forest or lives with them.'),
     'draw_h': 'The draw',
     # The seed source named before entries open, so it cannot be chosen once the entries are known
@@ -118,7 +122,7 @@ WORDS = {
     'draw_1b': ('The winning entry number is that outputValue, read as a hexadecimal number, divided by the '
                 'number of entries, remainder plus one. We publish the pulse\'s value and index, the number of '
                 'entries and the winning number on this page, so anyone can check the draw.'),
-    'draw_2': ('The winner hears from us by email, from an @loxleyforest.com address and from nowhere else, and '
+    'draw_2': ('The winner hears from us by email, from mic@loxleyforest.com and from nowhere else, and '
                'we never ask for money. They have 72 hours to claim the weekend. If they do not, the next entry '
                'number up wins, wrapping around to 1 after the last, and so on for up to three alternates.'),
     'frozen': 'The number of entries, fixed before the pulse: {{frozen}}.',
@@ -134,7 +138,7 @@ WORDS = {
     'form_h': 'Enter',
     'first_name': 'First name',
     'email': 'Email',
-    'eligible': 'I am 18 or older and live in the United States.',
+    'eligible': 'I am 21 or older and live in the United States.',
     'letters': ('Yes, send me Loxley Forest\'s letters: a few a year, about the forest and what is new. Not '
                 'needed to enter. Stop them any time.'),
     'submit': 'Enter the giveaway',
@@ -157,7 +161,7 @@ WORDS = {
     'entered_eyebrow': 'Entered',
     'entered_h': 'You\'re in.',
     'entered_lead': 'We have your entry. One counts per email address.',
-    'entered_1': ('We draw on Monday, December 14. If it\'s you, you\'ll hear from an @loxleyforest.com address, '
+    'entered_1': ('We draw on Monday, December 14. If it\'s you, you\'ll hear from mic@loxleyforest.com, '
                   'and from nowhere else. Until then, there\'s nothing to do.'),
     # The reel's door (the Marketer's teardown and the Critic's site-audit sheet, 2026-11-08, the Chief's
     # route): the bridge they just watched, and three doors on, on /giveaway and on /giveaway-entered.
@@ -172,7 +176,13 @@ WORDS = {
     'door_give_p': 'The Golden Arrow: nights in the trees, as a gift.',
 }
 # The bridge, as the reel shows it, over the rules and on the entered page (the one photograph).
-BRIDGE_PHOTO = ('aerial-bridge', 'From above: the hundred-foot rope bridge through the canopy to the treehouse')
+# The photograph over the rules and on the entered page: Mick's daylight aerial (2026-11-08, about
+# 22:35 ET, "consider one of these photos instead"), the rope bridge running into the deck and the
+# canvas peak through the green canopy in late sun; the wide frame on a desk, the upright one on a
+# phone (images/v2/giveaway-bridge*, through scripts/site/v2img.py). The alt is true of both and is
+# not in WORDS, so his yes by hash stands. Before it: aerial-bridge, the reel's golden-hour frame.
+BRIDGE_PHOTO = ('giveaway-bridge', 'From above: the hundred-foot rope bridge through the canopy to the treehouse')
+BRIDGE_PHONE = 'giveaway-bridge-tall'
 DOORS = (('/book?src=giveaway-site', 'door_stay', 'door_stay_p'),
          ('/elopements?src=giveaway-site', 'door_elope', 'door_elope_p'),
          ('/gift?src=giveaway-site', 'door_give', 'door_give_p'))
@@ -188,7 +198,8 @@ def doors_html():
       </div>
     </nav>'''
 # The SHA-256 of WORDS (words_sha256) once Mick has approved every word. None: not yet.
-APPROVED_SHA256 = None
+# Mick's yes, 2026-11-08 about 22:35 ET by the Chief, to the page as he read it on his phone.
+APPROVED_SHA256 = '4de06ad37e1a5fb1a723e5ce507344506999fbc92278cd0ee28037ebdd215766'
 
 
 def words_sha256(words=None):
@@ -198,7 +209,7 @@ def words_sha256(words=None):
 
 
 def ready():
-    return APPROVED_SHA256 is not None and words_sha256() == APPROVED_SHA256 and bool(OPENS) and bool(ADDRESS)
+    return APPROVED_SHA256 is not None and words_sha256() == APPROVED_SHA256 and bool(OPENS) and bool(ADDRESS) and OPEN
 
 
 # The invitation's photograph: the treehouse at dusk (the thank-you pages' own), with its alt text.
@@ -286,7 +297,7 @@ def page_giveaway():
     if not open_now:
         print(f'giveaway: the form is closed; words sha256 {words_sha256()} (APPROVED_SHA256 '
               f'{"matches" if APPROVED_SHA256 == words_sha256() else "unset or stale"}; OPENS {OPENS!r}; '
-              f'ADDRESS {"set" if ADDRESS else "unset"})')
+              f'ADDRESS {"set" if ADDRESS else "unset"}; OPEN {OPEN})')
     opens = f'on {OPENS}' if OPENS else 'soon'
     e = lambda k, **m: escape(w(k, **m), quote=False)
     result = (f'\n      <p class="gw-result">{e("frozen", frozen=FROZEN)}</p>' if FROZEN else '') + (
@@ -298,7 +309,7 @@ def page_giveaway():
         <p class="lf-eyebrow">{e('eyebrow')}</p>
         <h1 class="lf-h1" id="gw-h">{e('h1')}</h1>
         <p class="lf-lead">{e('lead')}</p>
-        <figure class="gw-bridge">{B.pic(BRIDGE_PHOTO[0], BRIDGE_PHOTO[1], '(min-width: 900px) 60vw, 100vw', eager=True)}</figure>
+        <figure class="gw-bridge">{B.pic(BRIDGE_PHOTO[0], BRIDGE_PHOTO[1], '(min-width: 900px) 60vw, 100vw', eager=True, phone=BRIDGE_PHONE)}</figure>
       </div>
     </section>
 
@@ -343,7 +354,7 @@ def page_giveaway_entered():
     head, gtm = sys.modules['lfpage_gift'].head_for('Entered | Loxley Forest', WORDS['entered_lead'], ENTERED_URL, noindex=True)
     e = lambda k: escape(WORDS[k], quote=False)
     body = c.note(e('entered_eyebrow'), e('entered_h'), e('entered_lead'), [e('entered_1')],
-                  B.pic(BRIDGE_PHOTO[0], BRIDGE_PHOTO[1], '(min-width: 900px) 50vw, 100vw', eager=True))
+                  B.pic(BRIDGE_PHOTO[0], BRIDGE_PHOTO[1], '(min-width: 900px) 50vw, 100vw', eager=True, phone=BRIDGE_PHONE))
     # The Marketer's move (the table of 2026-11-07): the open nights, in place of the treehouse link.
     old = '<a href="/treehouses" class="lf-link">See the treehouse</a>'
     assert body.count(old) == 1, 'the thank-you note lost its second link; the entered page replaces it'
@@ -365,6 +376,8 @@ CSS = '''
 .gw-top .lf-wrap { max-width: 60rem; }
 .gw-bridge { margin: clamp(28px, 5vw, 44px) auto 0; max-width: 56rem; }
 .gw-bridge img { display: block; width: 100%; height: auto; border-radius: 4px; box-shadow: 0 18px 50px rgba(10, 20, 10, 0.35); }
+/* a phone takes the upright frame (800 x 1422) while the tag's width and height are the wide one's: the box is reserved upright so nothing jumps when it lands */
+@media (max-width: 767px) { .gw-bridge img { aspect-ratio: 800 / 1422; } }
 .gw-doors .lf-eyebrow { text-align: center; }
 .gw-doors__row { display: grid; gap: 14px; margin-top: 18px; }
 @media (min-width: 720px) { .gw-doors__row { grid-template-columns: repeat(3, 1fr); } }

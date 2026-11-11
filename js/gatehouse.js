@@ -318,8 +318,13 @@
     function offered(day, s) {
       var min = (c.nights[day] && c.nights[day].min_stay) || daysBetween(s.ci, s.co);
       var head = 'Arriving ' + short(day) + ' takes ' + nightsWord(min) + '.';
-      if (s.shifted) return head + ' The nights after it are taken, so here\'s ' + span(s.ci, s.co) + ' instead; the price is below.' + LONGER;
-      return head + ' Here\'s ' + span(s.ci, s.co) + '; the price is below.' + LONGER;
+      // The Christmas guard (the Chief, 2026-11-09; Mick ruled Dec 23 to 26 one fixed stay): when the
+      // engine caps the arrival night (max_stay) at what is offered, no later day can lengthen it,
+      // so the tail is left off. No new words: a guard on the line.
+      var cap = c.nights[s.ci] && c.nights[s.ci].max_stay;
+      var longer = cap && cap <= daysBetween(s.ci, s.co) ? '' : LONGER;
+      if (s.shifted) return head + ' The nights after it are taken, so here\'s ' + span(s.ci, s.co) + ' instead; the price is below.' + longer;
+      return head + ' Here\'s ' + span(s.ci, s.co) + '; the price is below.' + longer;
     }
     function nearestWords(day, s) {
       return 'No stay works around ' + short(day) + ': the nights beside it are taken. The nearest that does is ' +

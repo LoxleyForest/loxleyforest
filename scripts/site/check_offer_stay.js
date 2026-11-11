@@ -73,6 +73,7 @@ const SAT4 = SAT3 + 14;                                     // a Saturday that i
 const TAKEN = new Set([TAKEN_SUNDAY, day(SAT3 + 2), day(SAT3 + 4), day(SAT4)]);
 const HOLIDAY = day(SAT1 + 30);                             // a three-night holiday; no arrival on its eve
 const EVE = day(SAT1 + 29);
+const CAPPED = day(SAT1 + 44);                              // a Monday the engine caps at its own minimum: three nights, at most three (Christmas, 2026-11-09)
 function nights() {
   const out = [];
   for (let i = 1; i <= 120; i++) {
@@ -81,6 +82,8 @@ function nights() {
     const w = dow(n);
     const night = { night: n, rate_cents: 39900, min_stay: (w === 5 || w === 6) ? 2 : 1 };
     if (n === HOLIDAY) { night.min_stay = 3; night.rate_cents = 64900; }
+    if (n === CAPPED) { night.min_stay = 3; night.max_stay = 3; night.rate_cents = 64900; }
+    if (n === day(SAT1 + 43)) night.max_stay = 1;   // the capped night's eve: a stay starting there is at most one night, so nothing runs through the fixed stay (as the engine holds Dec 22)
     if (n === EVE) night.no_arrival = true;
     out.push(night);
   }
@@ -242,6 +245,14 @@ async function main() {
     await tap(page, HOLIDAY); await waitTotal(page);
     s = await state(page);
     check(s.edges.join(',') === HOLIDAY + ',' + day(SAT1 + 33) && /takes 3 nights/.test(s.note), 'the three-night holiday offers its three nights: ' + JSON.stringify(s.note));
+    check(/Tap a later day to stay longer\.$/.test(s.note), 'and, with no cap from the engine, still says to tap a later day');
+
+    // the Christmas guard (the Chief, 2026-11-09): a night the engine caps at its own minimum offers its stay with no "later day" tail
+    await page.click('.gh-clear'); await page.waitForTimeout(300);
+    await tap(page, CAPPED); await waitTotal(page);
+    s = await state(page);
+    check(s.edges.join(',') === CAPPED + ',' + day(SAT1 + 47) && /takes 3 nights\. Here's .*; the price is below\.$/.test(s.note) && !/later day/.test(s.note), 'a night capped at its minimum (max_stay 3 of 3) offers its three nights and leaves off "Tap a later day": ' + JSON.stringify(s.note));
+    check(/\$/.test(s.total), 'and its price is on the card');
     check(refusals(ctx).filter(r => r.reason === 'min_stay').length === 0, 'no minimum-stay refusal reached the beacon in the offered state');
     await ctx.close();
   }

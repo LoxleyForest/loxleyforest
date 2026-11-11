@@ -7,7 +7,7 @@
 <meta name="robots" content="noindex, nofollow, noarchive">
 <meta name="theme-color" content="#121D16">
 <title>{{A Field Guide for Two}} · Loxley Forest</title>
-<meta name="description" content="Four days in the North Georgia mountains, October 9 to 12, 2026: one dry day, one proper storm, an anniversary in the middle, and a sunny morning to send you home.">
+<meta name="description" content="{{DESCRIPTION}}">
 <meta property="og:title" content="{{A Field Guide for Two}}">
 <meta property="og:description" content="{{DESCRIPTION}}">
 <meta property="og:site_name" content="Loxley Forest">
@@ -70,6 +70,7 @@ h2{font-family:"Instrument Serif",Georgia,serif;font-weight:400;font-size:36px;l
 
 /* WEATHER */
 .wx{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.wxd:last-child:nth-child(odd){grid-column:1/-1} /* a three-day stay: the last day takes the row */
 .wxd{background-color:#FFFDF8 !important;border:1px solid var(--line);border-radius:14px;padding:14px}
 .wxd .d{font-family:"Instrument Serif",serif;font-size:22px;color:var(--forest);line-height:1}
 .wxd .dt{font-size:11.5px;color:var(--faint);margin:3px 0 10px;letter-spacing:.04em}
