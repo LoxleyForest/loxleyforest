@@ -45,7 +45,17 @@ Jethro's Sunday), the two template ledes, the pills, badges and buttons. The her
 at dusk with bare trees (EQ3A0906), not the golden-leaf frame, which is false by Nov 21. The
 [MICK RATIFIES] lines (who answers the number, carries TreeMail and lights the fire while Mick is
 away; the birthday paragraph; Raven Cliff's trail in late November) stayed off the page and went to
-the Chief in the reply, with the sentences they govern, each a one-line cut on his no. Proven:
+the Chief in the reply, with the sentences they govern, each a one-line cut on his no. RULED
+2026-11-11 just after midnight (Mick by voice, by the Chief), four of the six, edited and pushed the
+same night: the weekend's contact is Mary Catherine, the forest concierge, by call or text at
+770-301-8355, in Mick's number's place in both spots (the repo's rules name booking numbers, door
+codes and addresses as what stays off a private page, not a helper's working number; the repo is
+public on GitHub, so the number sits in its history as Mick's own does, said to the Chief); the
+dough ready and waiting in the treehouse on arrival, kept in a proofer so it stays fresh for hours,
+theirs whenever they're ready, no maker named and no "made fresh"; pastries Sunday morning only,
+nothing promised after (the page already said no more); the wood chopped and ready for them to
+build a fire, the offer to light it cut. Still unruled, left as drafted: the birthday callout and
+Raven Cliff. Proven:
 scripts/stay-guide/check.py (new, 17 checks), a phone and desk render (no sideways scroll, no
 outside host but Google Fonts, every image answering, no script error, 1,132 KB on a phone),
 ensure_gtm --check and publish --check green. template.html: the stale October description is now
