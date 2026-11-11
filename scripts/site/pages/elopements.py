@@ -240,8 +240,68 @@ def waterfall():
 '''
 
 
+# ---------------------------------------------------- readable by machines
+# schema.org for this page (the Chief's route of 2026-11-11, from the table on where elopement
+# inquiries come from: Google's own guidance is an indexed page whose structured data matches its
+# visible text). The block states only what the visible page states: the place (the home page's
+# LodgingBusiness, by its @id, with the town and the number the footer prints), the four packages as
+# Offers at the prices the cards print, each "plus tax" (tax not included), the line under the cards
+# for who each is for, and the Falls' and Firelight's dates as their cards print them. The words are
+# the cards' own, read from PACKAGES, WATERFALL, GIFTS and UNDER_CARDS, so they cannot drift from the
+# page, and scripts/site/check_elopements_schema.py reads the built page and fails if any name,
+# price or sentence differs from the visible text.
+# The type: schema.org has no elopement type. Service, serviceType "Elopement stay", is the honest
+# one. Event would claim scheduled occurrences; EventVenue a venue (the agreement: "We are not a
+# commercial or licensed wedding venue", and the word is never written here); Product a good. No
+# availability, stock, rating or review is claimed: the page makes none.
+PACKAGES_LEAD = "Every Loxley elopement is personally coordinated. Share your vision and we'll design something extraordinary. No two ceremonies are the same."
+
+
+def _offer(name, price, lines, **more):
+    amount = int(price.replace('$', '').replace(',', ''))
+    offer = {
+        '@type': 'Offer', 'name': name, 'url': B.SITE + '/elopements#packages',
+        'price': amount, 'priceCurrency': 'USD',
+        'priceSpecification': {'@type': 'UnitPriceSpecification', 'price': amount, 'priceCurrency': 'USD',
+                               'valueAddedTaxIncluded': False},
+        'description': ' '.join(lines),
+        'itemOffered': {'@type': 'Service', 'name': name, 'serviceType': 'Elopement stay',
+                        'provider': {'@id': B.SITE + '/#lodging'}},
+        'seller': {'@id': B.SITE + '/#lodging'},
+    }
+    offer.update(more)
+    return offer
+
+
+def schema_elopements():
+    offers = []
+    for name, price, when, lead, items, close, *_ in ordered_packages():
+        lines = ([when] if when else []) + ([lead + ':'] if lead else []) + list(items) + [GIFTS]
+        lines += [close] if isinstance(close, str) else list(close or [])
+        more = {'availabilityEnds': '2027-06-30'} if name == FIRELIGHT_NAME else {}
+        offers.append(_offer(name, price, lines, **more))
+    w = WATERFALL
+    # The card's tag, "From October 2027", is no sentence; availabilityStarts and the card's closing
+    # line carry the date.
+    offers.append(_offer(WATERFALL_NAME, w['price'],
+                         [w['about'], w['lead'] + ':'] + list(w['items']) + [GIFTS, w['close']],
+                         availabilityStarts='2027-10'))
+    return {
+        '@context': 'https://schema.org', '@type': 'Service', '@id': B.SITE + '/elopements#elopement-stay',
+        'name': 'Elopements at Loxley Forest', 'serviceType': 'Elopement stay', 'url': B.SITE + '/elopements',
+        'description': PACKAGES_LEAD + ' ' + UNDER_CARDS,
+        'image': [B.SITE + '/images/v2/aerial-bridge-1600.webp'],
+        'provider': {'@type': 'LodgingBusiness', '@id': B.SITE + '/#lodging', 'name': 'Loxley Forest', 'url': B.SITE,
+                     'address': B.ADDRESS, 'telephone': '+1-706-502-4823', 'sameAs': B.SAME_AS},
+        'areaServed': {'@type': 'City', 'name': 'Dahlonega', 'containedInPlace': {'@type': 'State', 'name': 'Georgia'}},
+        'audience': {'@type': 'PeopleAudience', 'audienceType': 'The two of you and up to six guests'},
+        'offers': offers,
+    }
+
+
 def page_elopements():
     head, gtm = B.head_from('elopements.html', '<link rel="preload" as="image" type="image/webp" href="images/v2/aerial-bridge-1600.webp" media="(min-width: 768px)" fetchpriority="high">\n  <link rel="preload" as="image" type="image/webp" href="images/v2/aerial-bridge-800.webp" media="(max-width: 767px)" fetchpriority="high">')
+    head = B.set_schema(head, schema_elopements())
     spaces = ''.join(
         f'<figure class="lf-space lf-rise">{B.pic(img, alt, "(min-width: 900px) 33vw, 100vw")}<figcaption>'
         f'<span class="lf-chapter__n">{kicker}</span><h3 class="lf-h3">{title}</h3><p>{words}</p><p class="lf-space__note">{note}</p></figcaption></figure>'
@@ -289,7 +349,7 @@ def page_elopements():
         <div class="lf-center">
           <p class="lf-eyebrow lf-rise">Elopement packages</p>
           <h2 class="lf-h2 lf-rise" id="pk-h">Four tiers. <em>One unforgettable beginning.</em></h2>
-          <p class="lf-lead lf-rise">Every Loxley elopement is personally coordinated. Share your vision and we'll design something extraordinary. No two ceremonies are the same.</p>
+          <p class="lf-lead lf-rise">{PACKAGES_LEAD}</p>
         </div>
         <div class="lf-pkgs">
 {packages}        </div>
