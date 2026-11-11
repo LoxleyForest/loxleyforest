@@ -47,7 +47,7 @@ at dusk with bare trees (EQ3A0906), not the golden-leaf frame, which is false by
 away; the birthday paragraph; Raven Cliff's trail in late November) stayed off the page and went to
 the Chief in the reply, with the sentences they govern, each a one-line cut on his no. RULED
 2026-11-11 just after midnight (Mick by voice, by the Chief), four of the six, edited and pushed the
-same night: the weekend's contact is Mary Catherine, the forest concierge, by call or text at
+same night: the weekend's contact is Mary Katherine, the forest concierge, by call or text at
 770-301-8355, in Mick's number's place in both spots (the repo's rules name booking numbers, door
 codes and addresses as what stays off a private page, not a helper's working number; the repo is
 public on GitHub, so the number sits in its history as Mick's own does, said to the Chief); the
