@@ -12,8 +12,18 @@ python3 scripts/stay-guide/new.py 2026-11-14 "November 14 to 16, 2026"
 
 That makes `private/stay-guide-2026-11-14-<random>/index.html` with the dates
 stamped. Then write every `{{...}}` block and follow each `<!-- EDIT -->`
-comment. Delete the comments when done. Push to `main`; Netlify serves it in
-seconds.
+comment. Delete the comments when done. Before the push:
+
+```
+python3 scripts/stay-guide/check.py private/stay-guide-2026-11-14-<random>
+```
+
+It fails on anything left of the writing (a block, an EDIT comment, a
+`[MICK RATIFIES]` or `[SCOUT]` marker), on a missing noindex or a Tag Manager
+tag, a nav pill without its section, an image the site does not have, anything
+fetched from a host but Google Fonts, a late checkout, an em dash, or a name in
+the "Prepared for" line; it warns on every dollar sign. Push to `main`; Netlify
+serves it in seconds.
 
 ## The rules
 

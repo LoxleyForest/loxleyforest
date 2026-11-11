@@ -6,7 +6,7 @@
 - A push to main is the live site. Netlify runs ensure_gtm.py, scripts/site/check_forms.py, then scripts/publish.py: only the site reaches _site/, never *.md, scripts/ or netlify.toml. Before a push: `python3 scripts/ensure_gtm.py --check` and the check_*.js and check_*.py in scripts/site/.
 - Every Netlify form carries the ad click's hidden fields and check_forms.py fails a deploy without them; the privacy page says so in Mick's words (the 2026-11-02 block below).
 - Words a guest sees go to Mick's ear first. The elopement offer page is approved by hash (APPROVED_SHA256 in scripts/site/pages/offer.py); a changed word closes the page until he approves again (docs/log/2026-10.md, 2026-10-27).
-- Private pages: private/<slug>-<random>/, noindex, no GTM, the guest's name only after the # in the link (docs/log/2026-09.md, "Private guest pages"). private/letter-62a1b3/ (2026-11-10, the Chief's route on Mick's word) is The Letter: any guest writes to their future selves on their phone, the draft kept on the phone as they write and cleared once sent, and sends it through the Netlify form anniversary-letter, posted in place to its own path (never /success; check_forms NOT_INQUIRY names it); the letter and the address reach the mailbox the site's form notifications go to and land nowhere on the site, in a log or in analytics; the page names no outside host (fonts embedded) and serves any guest. The words are the experiences page's own ritual, "The Letter", and the promise is only "mail it to you on your anniversary" (the calligraphy and the wax seal are not arranged); Mick approves the words before the link goes to a guest. Proven by scripts/site/check_letter.js (30). To confirm once, in Netlify's Forms settings (the usher or the Chief, read only): the notification for the new form reaches Mick's Loxley mailbox; and the Forge: the clicks puller keeps counts only for this form too. private/always-tea-time-4f9c21 is a guest's invitation: never link it, never delete it without asking. private/johnson-treehouse-cf6993 (2026-11-07, the Chief's route on Mick's ask) is a treehouse design for a family friend, not a guest page: never link it; its slug carries the family's surname, flagged to the Chief. private/the-bridge-21b368 is the house's bridge, for any couple.
+- Private pages: private/<slug>-<random>/, noindex, no GTM, the guest's name only after the # in the link (docs/log/2026-09.md, "Private guest pages"). private/letter-62a1b3/ (2026-11-10, the Chief's route on Mick's word) is The Letter: any guest writes to their future selves on their phone, the draft kept on the phone as they write and cleared once sent, and sends it through the Netlify form anniversary-letter, posted in place to its own path (never /success; check_forms NOT_INQUIRY names it); the letter and the address reach the mailbox the site's form notifications go to and land nowhere on the site, in a log or in analytics; the page names no outside host (fonts embedded) and serves any guest. The words are the experiences page's own ritual, "The Letter", and the promise is only "mail it to you on your anniversary" (the calligraphy and the wax seal are not arranged); Mick approves the words before the link goes to a guest. Proven by scripts/site/check_letter.js (30). To confirm once, in Netlify's Forms settings (the usher or the Chief, read only): the notification for the new form reaches Mick's Loxley mailbox; and the Forge: the clicks puller keeps counts only for this form too. private/stay-guide-2026-11-21-e67855/ (2026-11-10, the Chief's route on Mick's word) is the field guide for the stay of Nov 21 to 23, built from the Forge's draft (loxley-rescue docs/guides/2026-11-21-to-23-field-guide.md, b882e06) on scripts/stay-guide/template.html; the [MICK RATIFIES] lines went to the Chief, not onto the page; the forecast is not on it (NWS reached only Nov 17 on Nov 10): the Scout rechecks Nov 20 and the page is edited then (the three days' forecast, Public House's weekend hours, Jethro's Sunday hours, the trail after rain). scripts/stay-guide/check.py checks a finished guide. Mick sends the link himself, the names after the #. private/always-tea-time-4f9c21 is a guest's invitation: never link it, never delete it without asking. private/johnson-treehouse-cf6993 (2026-11-07, the Chief's route on Mick's ask) is a treehouse design for a family friend, not a guest page: never link it; its slug carries the family's surname, flagged to the Chief. private/the-bridge-21b368 is the house's bridge, for any couple.
 - The Golden Arrow (gift cards): /gift, /gift/card, /gift/thanks, /gift/manage; gift_purchase counts only on the engine's paid answer (docs/log/2026-10.md, 2026-10-29).
 - Search landing pages from scripts/site/pseo: five live from heard words, seven held until Mick hears their lines (merge 681a1ad).
 
@@ -27,6 +27,32 @@
 - Ideas logged, not started: the animated guidebook with the pizza guide as a chapter, seasonal reels and profile pictures, the interior clips still on Mick's laptop (docs/log/2026-10.md, 2026-10-13 and 2026-10-19).
 
 The Janitor (chief docs/v2/janitor.md) runs here weekly: this file keeps this block and the current month's entries; older blocks move word for word to docs/log/<YYYY-MM>.md.
+
+---
+
+# DONE · 2026-11-10 · The field guide for the stay of November 21 to 23 (the Chief's route, on Mick's word by voice: "get that field guide made now")
+
+The Forge drafted it in loxley-rescue docs/guides/2026-11-21-to-23-field-guide.md (b882e06; three
+waterfalls, a late-night pizza, a birthday thought in words only, the USNO sun and the nearly full
+moon, the town's quiet weekend before Old Fashioned Christmas, every claim sourced). Built here as
+private/stay-guide-2026-11-21-e67855/ on scripts/stay-guide/template.html, the shape of the Oct 17
+guide (the Nov 7 to 9 draft was never built as a page): noindex, no Tag Manager, nothing of the
+guests in the file, the names read from the link after the #. The words are the Forge's between its
+two rules; mine on the page are the weather lede and the three day cards (sunrise, sunset and
+moonrise from the draft's USNO rows, since the NWS forecast reached only Nov 17), the two "call
+ahead" lines that stand where the Scout's Nov 20 rechecks go (Public House's weekend hours,
+Jethro's Sunday), the two template ledes, the pills, badges and buttons. The hero is the treehouse
+at dusk with bare trees (EQ3A0906), not the golden-leaf frame, which is false by Nov 21. The
+[MICK RATIFIES] lines (who answers the number, carries TreeMail and lights the fire while Mick is
+away; the birthday paragraph; Raven Cliff's trail in late November) stayed off the page and went to
+the Chief in the reply, with the sentences they govern, each a one-line cut on his no. Proven:
+scripts/stay-guide/check.py (new, 17 checks), a phone and desk render (no sideways scroll, no
+outside host but Google Fonts, every image answering, no script error, 1,132 KB on a phone),
+ensure_gtm --check and publish --check green. template.html: the stale October description is now
+{{DESCRIPTION}}, and a three-day stay's last weather card takes the whole row. TO DO NOV 20: the
+Scout's recheck, then edit the page (the forecast into the cards and the lede, the two hours lines)
+and push. Mick is away Nov 13 to about Nov 27 and nothing new goes live then; this is a fact
+update to a guest's private page, so the Chief rules whether it goes.
 
 ---
 
