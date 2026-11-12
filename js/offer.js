@@ -16,14 +16,10 @@
           check_out, nights, and, while open: greeting, extras[],
           party, lines[], total_cents, modes [deposit?, full],
           plans, retainer_cents, balance_cents, balance_due,
-          check_in_time, expires_at, clearing, agreement {text,
-          version, choices[{id, question, options[], default}]}};
-          and, the Invitation grown (2026-11-11; each shown only
-          when sent): note (Mick's one line for them), days
-          [{date, sunrise, sunset, stops [{time, title, words}]}],
-          open_dates [{check_in, check_out}], hold {hours, until}.
-          An offer whose bank payment is clearing reads {status:
-          open, clearing: true} and no more. 404 {error: "not found"}.
+          check_in_time, clearing, agreement {text, version,
+          choices[{id, question, options[], default}]}}; an offer
+          whose bank payment is clearing reads {status: open,
+          clearing: true} and no more. 404 {error: "not found"}.
      POST /v1/offer/checkout {token, mode, typed_name, accepted:
           true, agreement_version, choices {id: answer}} ->
           {client_secret, due_now_cents, total_cents, later}; 409
@@ -41,12 +37,6 @@
    already lifted them out into window.__ghKeys before Tag Manager
    loads. They go to our own booking server, the token in a POST
    body, and nowhere else: never a beacon, never the tag manager.
-
-   The demo (pages/offer.py DEMO, a private page for Mick's read):
-   the words block carries "demo", an invented offer, and the page
-   renders it in the engine's place, asks the engine nothing, and
-   sends nothing; the names ride after the # (#for=...), as the
-   guides' do. The live page's block never carries "demo".
    ============================================================ */
 (function () {
   'use strict';
@@ -57,11 +47,9 @@
   var el = G.el;
   var API = (root.getAttribute('data-api') || '').replace(/\/$/, '');
   var KEY = root.getAttribute('data-stripe-key') || '';
-  var PHONE = (root.getAttribute('data-phone') || '').replace(/\D/g, '');
   var W = (function () {
     try { var n = document.getElementById('lf-offer-words'); return (n && JSON.parse(n.textContent)) || {}; } catch (e) { return {}; }
   })();
-  var DEMO = W.demo && typeof W.demo === 'object' ? W.demo : null;
   var keys = window.__ghKeys || {};
   var wait = root.querySelector('[data-eo-wait]');
   var body = root.querySelector('[data-eo-body]');
@@ -70,9 +58,8 @@
 
   // The merge values the words may use; filled as the offer is read.
   var vars = {};
-  function w(k, extra) {
-    var v = extra ? Object.assign({}, vars, extra) : vars;
-    return String(W[k] || '').replace(/\{\{(\w+)\}\}/g, function (m, n) { return v[n] != null ? v[n] : ''; });
+  function w(k) {
+    return String(W[k] || '').replace(/\{\{(\w+)\}\}/g, function (m, n) { return vars[n] != null ? vars[n] : ''; });
   }
   function say(lines) {
     body.hidden = true;
@@ -162,71 +149,6 @@
     return box;
   }
 
-  // ---------------------------------------- the Invitation grown (2026-11-11)
-  // The day whose stops hold the vows is the ceremony day; else the second day, else the first.
-  function ceremonyDay(days) {
-    var hit = days.filter(function (d) { return (d.stops || []).some(function (s) { return /\bvows?\b/i.test((s.title || '') + ' ' + (s.words || '')); }); })[0];
-    return hit || days[1] || days[0] || null;
-  }
-  function part(id, heading, kids) {
-    return el('section', { 'class': 'eo-part', 'aria-labelledby': id }, [el('h2', { id: id, text: heading })].concat(kids));
-  }
-  function noteBlock(o) {
-    if (!o.note) return null;
-    return part('eo-note-h', w('note_h'), [el('div', { 'class': 'eo-note' }, [el('p', { text: o.note })])]);
-  }
-  function daysBlock(o) {
-    var days = o.days || [];
-    if (!days.length) return null;
-    return part('eo-days-h', w('day_h'), [el('div', { 'class': 'eo-days' }, days.map(function (d) {
-      var sun = [d.sunrise ? w('sunrise_label') + ' ' + d.sunrise : '', d.sunset ? w('sunset_label') + ' ' + d.sunset : ''].filter(Boolean).join(' · ');
-      return el('div', { 'class': 'eo-day' }, [
-        el('h3', { 'class': 'eo-day__h', text: d.date ? G.long(d.date) : '' }),
-        sun ? el('p', { 'class': 'eo-day__sun', text: sun }) : null,
-        el('ol', { 'class': 'eo-stops' }, (d.stops || []).map(function (s) {
-          return el('li', { 'class': 'eo-stop' }, [
-            el('span', { 'class': 'eo-stop__time', text: s.time || '' }),
-            el('span', { 'class': 'eo-stop__title', text: s.title || '' }),
-            s.words ? el('p', { 'class': 'eo-stop__words', text: s.words }) : null]);
-        }))]);
-    }))]);
-  }
-  function photosBlock(o) {
-    var key = o.package && o.package.key || '';
-    var t = key && document.querySelector('template[data-eo-photos="' + key + '"]');
-    if (!t || !t.content) return null;
-    var grid = el('div', { 'class': 'eo-photos' });
-    grid.appendChild(t.content.cloneNode(true));
-    return part('eo-photos-h', w('photos_h'), [grid]);
-  }
-  function priceBlock(o) {
-    var lines = (o.lines || []).filter(function (l) { return l && l.label; });
-    var list = lines.length ? el('ul', { 'class': 'eo-price' }, lines.map(function (l) {
-      return el('li', {}, [el('span', { text: l.label }), el('span', { text: G.money(l.cents || 0) })]);
-    })) : null;
-    var total = el('div', { 'class': 'eo-total' }, [el('span', { 'class': 'eo-total__label', id: 'eo-total-h', text: w('total_label') }),
-      el('span', { 'class': 'eo-total__sum', text: vars.total })]);
-    var kids = [list, total, el('p', { 'class': 'eo-sub', text: w('total_sub') })];
-    if (vars.expires) kids.push(el('p', { 'class': 'eo-until', text: w('stands_until') }));
-    return lines.length ? part('eo-price-h', w('price_h'), kids)
-      : el('section', { 'class': 'eo-part', 'aria-labelledby': 'eo-total-h' }, kids.slice(1));
-  }
-  function openDatesBlock(o) {
-    var list = o.open_dates || [];
-    if (!list.length) return null;
-    return part('eo-dates-h', w('dates_h'), [el('p', { 'class': 'eo-sub', text: w('dates_line') }),
-      el('ul', { 'class': 'eo-dates-list' }, list.map(function (d) {
-        if (!d || !d.check_in || !d.check_out) return null;
-        var label = dates(d.check_in, d.check_out);
-        var ask = w('dates_ask', { dates: label, our_dates: vars.dates });
-        return el('li', {}, [el('a', { 'class': 'eo-date', href: 'sms:' + PHONE + '?&body=' + encodeURIComponent(ask), text: label })]);
-      }))]);
-  }
-  function holdBlock(o) {
-    if (!(o.hold && o.hold.hours)) return null;
-    return part('eo-hold-h', w('hold_h'), [el('p', { 'class': 'eo-hold', text: w('hold_line') })]);
-  }
-
   function render(token, o) {
     vars.first_names = o.greeting || '';
     vars.arrival = G.longNoYear(o.check_in);
@@ -235,32 +157,30 @@
     vars.retainer = G.money(o.retainer_cents || 0);
     vars.balance = G.money(o.balance_cents || 0);
     vars.balance_date = o.balance_due ? G.long(o.balance_due) : '';
-    vars.expires = o.expires_at ? G.long(String(o.expires_at).slice(0, 10)) : '';
-    vars.hold_hours = o.hold && o.hold.hours ? String(o.hold.hours) : '';
-    var cday = ceremonyDay(o.days || []);
-    vars.sunset = cday && cday.sunset || '';
     var modes = o.modes || [];
     var mode = modes.indexOf('deposit') >= 0 ? 'deposit' : 'full';
     function today() { return G.money(mode === 'deposit' ? o.retainer_cents : o.total_cents); }
     vars.today_amount = today();
-    var holding = !!(o.hold && o.hold.hours);
 
-    top.eyebrow.textContent = [vars.package, vars.dates].filter(Boolean).join(' · ');
+    top.eyebrow.textContent = vars.package;
     top.h1.textContent = w('headline');
     top.lead.textContent = w('opening');
     top.lead.hidden = !top.lead.textContent;
 
-    var provided = el('section', { 'class': 'eo-part', 'aria-labelledby': 'eo-day-h' }, [
+    var day = el('section', { 'class': 'eo-part', 'aria-labelledby': 'eo-day-h' }, [
       el('h2', { id: 'eo-day-h', text: w('package_h') }),
       el('p', { 'class': 'eo-dates', text: vars.dates }),
-      vars.sunset ? el('p', { 'class': 'eo-sun', text: w('sunset_line') }) : null,
       el('ul', { 'class': 'eo-list' }, (o.package.includes || []).map(function (x) { return el('li', { text: x }); }))]);
     var gifts = (o.extras || []).length ? el('section', { 'class': 'eo-part', 'aria-labelledby': 'eo-gifts-h' }, [
       el('h2', { id: 'eo-gifts-h', text: w('extras_h') }),
       el('ul', { 'class': 'eo-list' }, o.extras.map(function (x) { return el('li', { text: x }); }))]) : null;
+    var total = el('section', { 'class': 'eo-part', 'aria-labelledby': 'eo-total-h' }, [
+      el('div', { 'class': 'eo-total' }, [el('span', { 'class': 'eo-total__label', id: 'eo-total-h', text: w('total_label') }),
+        el('span', { 'class': 'eo-total__sum', text: vars.total })]),
+      el('p', { 'class': 'eo-sub', text: w('total_sub') })]);
 
     var payBtn = el('button', { type: 'button', 'class': 'lf-btn gh-btn--dark', id: 'eo-paybtn' });
-    function label() { vars.today_amount = today(); payBtn.textContent = w(holding ? 'hold_pay' : 'pay'); }
+    function label() { vars.today_amount = today(); payBtn.textContent = w('pay'); }
     var wayLines = [];
     var ways = el('fieldset', { 'class': 'eo-ways', 'aria-labelledby': 'eo-total-h' }, modes.map(function (m) {
       var input = el('input', { type: 'radio', name: 'eo-way', value: m, id: 'eo-way-' + m,
@@ -293,8 +213,7 @@
       error, payBtn]);
     var pay = el('div', { 'class': 'eo-pay', id: 'eo-pay', tabindex: '-1' });
     var call = el('p', { 'class': 'eo-call', text: w('questions') });
-    show([noteBlock(o), daysBlock(o), provided, gifts, photosBlock(o), priceBlock(o), openDatesBlock(o), holdBlock(o),
-      ways, agreement, sign, pay, call]);
+    show([day, gifts, total, ways, agreement, sign, pay, call]);
 
     payBtn.addEventListener('click', function () {
       var typed = name.value.trim();
@@ -303,8 +222,6 @@
         : (o.agreement.choices || []).some(function (c) { return !answers[c.id]; }) ? box : null;
       if (missing) { error.textContent = w((o.agreement.choices || []).length ? 'need_sign' : 'need_sign_plain'); missing.focus(); return; }
       error.textContent = '';
-      // The demo sends nothing, holds nothing and charges nothing.
-      if (DEMO) { error.textContent = String(o.demo_line || ''); return; }
       payBtn.disabled = true;
       G.api(API, '/v1/offer/checkout', { token: token, mode: mode, typed_name: typed, accepted: true,
         agreement_version: o.agreement.version, choices: answers }, 30000).then(function (r) {
@@ -323,18 +240,6 @@
         error.textContent = [w('failure'), w('questions')].join(' ');
       });
     });
-  }
-
-  // The demo: the invented offer in the engine's place, its names from the link after the #.
-  if (DEMO) {
-    var m = /(?:^|&)for=([^&]*)/.exec(location.hash.replace(/^#/, ''));
-    var who = '';
-    try { who = m ? decodeURIComponent(m[1].replace(/\+/g, ' ')).trim().slice(0, 80) : ''; } catch (e) {}
-    DEMO.greeting = who || 'The two of you';
-    vars.package = DEMO.package && DEMO.package.name || '';
-    if (DEMO.check_in && DEMO.check_out) vars.dates = dates(DEMO.check_in, DEMO.check_out);
-    render('demo', DEMO);
-    return;
   }
 
   // No offer and no payment in the address: there is nothing to try again, so the page stands
