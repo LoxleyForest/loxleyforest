@@ -46,7 +46,10 @@ OPENS = 'Thursday, November 12, 2026, at 9 AM Eastern Time'  # Mick, 2026-11-08 
 # The Thursday flip (the Chief, 2026-11-08): Mick runs the engine's open line on Thu Nov 12 at 9 AM
 # ET, then this and js/giveaway-popup.js LIVE go true in one push and the form opens. False: the
 # form stays closed though the words are approved, the address set and the open day named.
-OPEN = False
+# FLIPPED 2026-11-12 about 10:15 ET: Mick ran the open line himself at about 10:12 (the droplet:
+# "giveaway open: entries are kept from now to the start of 2026-12-14"; "giveaway OPEN; 0 entries"),
+# the Chief routed the push. The words' "9 AM" stays as approved: entries were not open before it.
+OPEN = True
 # Dec 14, two lines from the engine through Mick and the Chief, numbers only (the Forge, 2026-11-07):
 # FROZEN, the count fixed before the pulse ("N entries, at <time UTC>"), published here before noon
 # ET; RESULT, after the draw ("pulse <outputValue> index <i>; N entries; winning entry W; alternates

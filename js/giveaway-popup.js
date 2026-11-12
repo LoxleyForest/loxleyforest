@@ -40,7 +40,9 @@
   // THE PULL SWITCH. false: no card, no folded line, no /book line, anywhere; the rules page and
   // the form at /giveaway never move either way. true on Mick's "live"; false again on the trigger
   // he pre-rules (chief docs/terms.md), one push. scripts/site/check_popup.js proves both states.
-  var LIVE = false;
+  // true since 2026-11-12 about 10:15 ET, the same push that opened the form (pages/giveaway.py
+  // OPEN), after Mick ran the engine's open line himself at about 10:12.
+  var LIVE = true;
 
   var body = document.body;
   if (!body || !document.querySelector) return;
