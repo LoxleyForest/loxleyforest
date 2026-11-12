@@ -98,7 +98,7 @@ function invitation(over) {
     extras: ['The Morning After, champagne brunch carried across the bridge', 'A small cake'],
     note: 'A made-up line from Mick.',
     days: [{ date: '2027-04-16', sunrise: '7:06 a.m.', sunset: '8:13 p.m.', stops: [{ time: '3:00 p.m.', title: 'Your treehouse is ready', words: 'Made-up words.' }, { time: 'After dark', title: 'The bridge', words: '' }] },
-      { date: '2027-04-17', sunrise: '7:05 a.m.', sunset: '8:14 p.m.', stops: [{ time: null, title: 'Your vows, out on the rope bridge', words: 'Golden hour.' }, { time: null, title: 'A private dinner', words: '' }] },
+      { date: '2027-04-17', sunrise: '7:05 a.m.', sunset: '8:14 p.m.', stops: [{ time: null, title: 'The ceremony', ceremony: true, words: 'Golden hour.' }, { time: null, title: 'A private dinner', words: '' }] },
       { date: '2027-04-18', sunrise: '7:04 a.m.', sunset: '8:15 p.m.', stops: [{ time: '10:00 a.m.', title: 'The Morning After', words: '' }, { time: '12:00 p.m.', title: 'Checkout', words: '' }] }],
     lines: [{ label: 'The Crossing', cents: 650000 }, { label: 'Sales tax', cents: 52000 }, { label: 'Lumpkin County hotel-motel tax', cents: 52000 }, { label: 'Georgia hotel-motel fee', cents: 1000 }],
     total_cents: 755000, modes: ['deposit', 'full'],

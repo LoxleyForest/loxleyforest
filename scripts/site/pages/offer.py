@@ -196,7 +196,7 @@ DEMO = {
         {'date': '2027-04-17', 'sunrise': '7:05 a.m.', 'sunset': '8:14 p.m.', 'stops': [
             {'time': '11:00 a.m.', 'title': "The Builder's Tour",
              'words': 'Mick walks you through what he built, from the anchors in the oaks to the oven on the Sky Deck.'},
-            {'time': '7:15 p.m.', 'title': 'Your vows, out on the rope bridge',
+            {'time': '7:15 p.m.', 'title': 'Your vows, out on the rope bridge', 'ceremony': True,
              'words': ('Golden hour. Your officiant and your photographer are there; the two of you walk out to the middle '
                        'of the span and say it.')},
             {'time': '8:30 p.m.', 'title': 'A private dinner, carried across the bridge',
@@ -279,6 +279,13 @@ def demo_page():
     assert n == 1, 'one words block on the offer page'
     html = re.sub(r'\s*<!-- Google Tag Manager -->.*?<!-- End Google Tag Manager -->', '', html, count=1, flags=re.S)
     html = re.sub(r'\s*<!-- Google Tag Manager \(noscript\) -->.*?<!-- End Google Tag Manager \(noscript\) -->', '', html, count=1, flags=re.S)
+    # No page beacon either (the Forge, 2026-11-12: /v1/funnel keys a visit to its path, and the
+    # demo's readers are not guests): js/funnel.js, which sends the visit and the steps, is left off
+    # the demo, and js/v2.js with it (the in-page film player and its own step calls; the demo plays
+    # no film).
+    for name in ('funnel', 'v2'):
+        html, n = re.subn(r'\s*<script src="/js/' + name + r'\.js"[^>]*></script>', '', html)
+        assert n == 1, f'the offer page loads /js/{name}.js once'
     tag = '<script src="/js/offer.js" defer></script>'
     assert tag in html, 'the offer page loads /js/offer.js'
     js = open(os.path.join(B.ROOT, 'js', 'offer.js')).read().replace('</script', '<\\/script')

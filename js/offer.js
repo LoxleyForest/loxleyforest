@@ -220,9 +220,9 @@
   function part(id, heading, kids) {
     return el('section', { 'class': 'eo-part', 'aria-labelledby': id }, [el('h2', { id: id, text: heading })].concat(kids));
   }
-  // The stop that holds the vows is the ceremony; its day is the ceremony day, else the second day,
-  // else the first.
-  function isCeremony(s) { return /\bvows?\b/i.test((s.title || '') + ' ' + (s.words || '')); }
+  // The ceremony is the stop the engine flags ceremony: true (the Forge, 2026-11-12: a flag, never
+  // the words, which change by hash); its day is the ceremony day, else the second day, else the first.
+  function isCeremony(s) { return !!(s && s.ceremony === true); }
   function ceremonyDay(days) {
     var hit = days.filter(function (d) { return (d.stops || []).some(isCeremony); })[0];
     return hit || days[1] || days[0] || null;
