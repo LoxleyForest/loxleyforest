@@ -8,10 +8,11 @@
 
    Nothing leaves this machine: the beacon (POST /v1/funnel at the booking server) is recorded and
    answered 204, and every other outside request is refused. Time runs on Playwright's clock. The
-   shipped file has LIVE false; the "live" checks serve the same file with LIVE set to true, and say
-   so. Math.random is pinned per check (0.9: not a holdout; 0.1: the holdout).
+   switch's shipped value is read (LIVE true since the flip of 2026-11-12), and both states are served
+   from the same file: the "switch off" checks with LIVE false, the "live" checks with LIVE true, and
+   say so. Math.random is pinned per check (0.9: not a holdout; 0.1: the holdout).
 
-   It proves: shipped, nothing shows anywhere and /book's line stays hidden; live, the card comes on
+   It proves: the switch off, nothing shows anywhere and /book's line stays hidden; live, the card comes on
    a desktop only when the pointer leaves the top after 5 s, on a phone only on the second page as a
    bottom sheet, never full screen; once per visitor; never after an entry; never on /book, /elopements
    or /giveaway; the holdout never sees it and sends popup_held_out; the button's route is giveaway-ads
@@ -36,7 +37,10 @@ const SHOTS = process.env.SHOTS || '';
 const TYPES = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.webp': 'image/webp',
   '.png': 'image/png', '.jpg': 'image/jpeg', '.json': 'application/json', '.woff2': 'font/woff2' };
 const SCRIPT = fs.readFileSync(path.join(ROOT, 'js', 'giveaway-popup.js'), 'utf8');
-const SWITCH = 'var LIVE = false;';
+// The pull switch, one line in either state; the shipped value is read, and both states are served
+// below (LIVE true since the flip of 2026-11-12).
+const SWITCH_RE = /var LIVE = (true|false);/g;
+const SHIPPED_LIVE = /var LIVE = true;/.test(SCRIPT);
 const POPUP_PAGES = ['index.html', 'treehouses.html', 'experiences.html', 'gallery.html', 'our-story.html', 'local-guide.html', 'faq.html'];
 const SCRIPT_PAGES = POPUP_PAGES.concat(['book.html', 'giveaway-entered.html']);
 const NO_SCRIPT = ['elopements.html', 'giveaway.html', 'gift.html', 'gift-card.html', 'booked.html', 'manage.html', 'success.html',
@@ -69,10 +73,11 @@ async function main() {
 
   // One browsing context is one visitor; its beacons are recorded on it.
   // live: the script served with LIVE true, and the pages' words block with "open": true (as the
-  // builder writes it once Mick's yes, the address and the day are set), unless asBuilt keeps the
-  // block as it is on disk. time: the visitor's clock.
+  // builder writes it once Mick's yes, the address and the day are set, and as it is on disk since
+  // the flip of 2026-11-12); notOpen: the block with "open": false, the form not yet open, whatever
+  // the disk says. time: the visitor's clock.
   async function visitor(opts) {
-    const o = Object.assign({ live: false, phone: false, random: 0.9, asBuilt: false, time: null }, opts || {});
+    const o = Object.assign({ live: false, phone: false, random: 0.9, notOpen: false, time: null }, opts || {});
     const ctx = await browser.newContext(o.phone
       ? { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 }
       : { viewport: { width: 1440, height: 900 } });
@@ -84,13 +89,13 @@ async function main() {
       const req = route.request();
       const u = new URL(req.url());
       if (u.origin === base) {
-        if (u.pathname === '/js/giveaway-popup.js' && o.live) {
-          return route.fulfill({ status: 200, contentType: 'text/javascript', body: SCRIPT.replace(SWITCH, 'var LIVE = true;') });
+        if (u.pathname === '/js/giveaway-popup.js') {
+          return route.fulfill({ status: 200, contentType: 'text/javascript', body: SCRIPT.replace(SWITCH_RE, o.live ? 'var LIVE = true;' : 'var LIVE = false;') });
         }
-        if (o.live && !o.asBuilt && req.resourceType() === 'document') {
+        if (o.live && req.resourceType() === 'document') {
           const resp = await route.fetch();
           const text = await resp.text();
-          return route.fulfill({ response: resp, body: text.replace(/"open":\s*false/, '"open": true') });
+          return route.fulfill({ response: resp, body: o.notOpen ? text.replace(/"open":\s*true/, '"open": false') : text.replace(/"open":\s*false/, '"open": true') });
         }
         return route.continue();
       }
@@ -119,7 +124,7 @@ async function main() {
 
   // ---- the files
   console.log('the files');
-  check((SCRIPT.match(new RegExp(SWITCH.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length === 1, 'the pull switch is one line, LIVE false as shipped');
+  check((SCRIPT.match(SWITCH_RE) || []).length === 1, 'the pull switch is one line, LIVE ' + (SHIPPED_LIVE ? 'true' : 'false') + ' as shipped');
   for (const n of SCRIPT_PAGES) {
     const h = fs.readFileSync(path.join(ROOT, n), 'utf8');
     check(h.includes('<script src="js/giveaway-popup.js" defer>') && h.includes('id="lf-gw-words"'), n + ' loads the script and carries its words');
@@ -136,8 +141,8 @@ async function main() {
     check(fs.readFileSync(path.join(ROOT, 'book.html'), 'utf8').includes('<p class="lf-gw-line" id="lf-gw-line" hidden>'), '/book carries its quiet line, hidden');
   }
 
-  // ---- shipped: LIVE false
-  console.log('shipped (LIVE false)');
+  // ---- the switch off: LIVE false, served so whatever is shipped
+  console.log('the switch off (LIVE false)');
   {
     const { ctx, page } = await visitor({ live: false });
     await go(page, '/experiences'); await runFor(page, 6000); await exit(page);
@@ -260,9 +265,9 @@ async function main() {
   // ---- live: the switch alone opens nothing
   console.log('live, but the form not open, or closed by the clock');
   {
-    const { ctx, page } = await visitor({ live: true, asBuilt: true });
+    const { ctx, page } = await visitor({ live: true, notOpen: true });
     await go(page, '/experiences'); await runFor(page, 6000); await exit(page);
-    check(!(await card(page)) && steps(ctx).length === 0, 'with the words block as built today (the form not yet open): no card, no step');
+    check(!(await card(page)) && steps(ctx).length === 0, 'with the words block saying the form is not open: no card, no step');
     await go(page, '/book');
     check(await page.evaluate(() => document.getElementById('lf-gw-line').hidden === true), 'and /book\'s line stays hidden');
     await ctx.close();
