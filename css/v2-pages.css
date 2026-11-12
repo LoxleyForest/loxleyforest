@@ -633,7 +633,7 @@ body:has(#ga-buy, #ga-card-page, #ga-manage, #ga-thanks) .book-fab { display: no
 .eo-top .lf-lead { white-space: pre-line; }
 .eo { padding-top: 40px; }
 .eo__in { width: min(640px, 100%); margin: 0 auto; padding: 0 16px; }
-.eo-wait, .eo-note { margin: 0; font-size: 18px; line-height: 1.55; color: var(--bark); text-align: center; }
+.eo-wait, .eo-noscript { margin: 0; font-size: 18px; line-height: 1.55; color: var(--bark); text-align: center; }
 .eo-body { display: grid; gap: 34px; }
 .eo-part { display: grid; gap: 12px; }
 .eo-part > h2 { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: clamp(1.7rem, 6vw, 2.2rem); line-height: 1.15; color: var(--forest-deep); }
@@ -669,7 +669,38 @@ body:has(#ga-buy, #ga-card-page, #ga-manage, #ga-thanks) .book-fab { display: no
 .eo-call { margin: 0; font-size: 16px; color: var(--stone); text-align: center; }
 .eo-call a { color: var(--forest-deep); }
 /* The invitation has one action, Sign and pay: the site's floating "Book your dates" steps aside. */
-.v2[data-lf-path="/elopement/offer"] .book-fab { display: none; }
+.v2[data-lf-path="/elopement/offer"] .book-fab, .v2[data-lf-path^="/private/invitation-demo"] .book-fab { display: none; }
+
+/* ---- The Invitation grown (2026-11-11): the demo ribbon, Mick's word, the day hour by hour, the
+   photographs, the price to the dollar, the open dates, the hold. Shown only when the engine sends
+   each field. ---- */
+.eo-demo { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; margin: 0; padding: 9px 16px calc(9px + env(safe-area-inset-bottom)); background: var(--gold, #c4a265); color: var(--ink); font-family: 'Montserrat', Arial, sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; text-align: center; line-height: 1.45; box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.18); }
+.eo-sun { margin: 0; font-size: 15px; color: var(--stone); }
+.eo-note { position: relative; padding: 26px 24px 22px; background: var(--white); border: 1px solid var(--parchment); }
+.eo-note::before { content: '\201C'; position: absolute; left: 14px; top: -4px; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 64px; line-height: 1; color: var(--gold, #c4a265); }
+.eo-note p { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: clamp(1.25rem, 4.6vw, 1.5rem); line-height: 1.4; color: var(--forest-deep); }
+.eo-days { display: grid; gap: 26px; }
+.eo-day { display: grid; gap: 10px; }
+.eo-day__h { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 1.5rem; line-height: 1.15; color: var(--forest-deep); }
+.eo-day__sun { margin: 0; font-family: 'Montserrat', Arial, sans-serif; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--stone); }
+.eo-stops { margin: 4px 0 0; padding: 0; list-style: none; display: grid; border-left: 1px solid var(--driftwood); }
+.eo-stop { position: relative; padding: 10px 0 14px 22px; }
+.eo-stop::before { content: ''; position: absolute; left: -5px; top: 19px; width: 9px; height: 9px; border-radius: 50%; background: var(--gold, #c4a265); box-shadow: 0 0 0 3px var(--parchment); }
+.eo-stop__time { display: block; font-family: 'Montserrat', Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 1.4px; text-transform: uppercase; color: var(--forest); }
+.eo-stop__title { display: block; margin-top: 2px; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 1.35rem; line-height: 1.15; color: var(--forest-deep); }
+.eo-stop__words { margin: 4px 0 0; font-size: 16px; line-height: 1.5; color: var(--bark); }
+.eo-photos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0; }
+.eo-photo { margin: 0; overflow: hidden; aspect-ratio: 4 / 3; background: var(--parchment); }
+.eo-photo:first-child, .eo-photo:nth-child(4) { grid-column: 1 / -1; aspect-ratio: 16 / 10; }
+.eo-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.eo-price { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--driftwood); }
+.eo-price li { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--parchment); font-size: 16px; color: var(--bark); }
+.eo-price li span:last-child { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.eo-dates-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.eo-date { display: inline-flex; align-items: center; min-height: 44px; padding: 8px 14px; border: 1px solid var(--driftwood); background: var(--cream); font: inherit; font-size: 15px; color: var(--forest-deep); text-decoration: none; cursor: pointer; }
+.eo-date:hover, .eo-date:focus-visible { border-color: var(--forest-deep); background: var(--white); }
+.eo-until { margin: 0; font-size: 14px; color: var(--stone); }
+.eo-hold { margin: 0; padding: 14px 16px; border-left: 3px solid var(--gold, #c4a265); background: var(--cream); font-size: 16px; line-height: 1.5; color: var(--bark); }
 
 /* ---- our_story ---- */
 /* the fog photograph is pale at the top: shade it under the header so the menu reads on desktop */
