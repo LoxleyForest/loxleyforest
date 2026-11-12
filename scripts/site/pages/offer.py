@@ -194,8 +194,9 @@ DEMO = {
             {'time': 'After dark', 'title': 'The bridge with its lights on',
              'words': 'Cross it again once the string lights are on. It is a different walk at night, and the forest is yours.'}]},
         {'date': '2027-04-17', 'sunrise': '7:05 a.m.', 'sunset': '8:14 p.m.', 'stops': [
+            # Mick's one change on his read of the demo (2026-11-12, by the Chief): "what he and the family built".
             {'time': '11:00 a.m.', 'title': "The Builder's Tour",
-             'words': 'Mick walks you through what he built, from the anchors in the oaks to the oven on the Sky Deck.'},
+             'words': 'Mick walks you through what he and the family built, from the anchors in the oaks to the oven on the Sky Deck.'},
             {'time': '7:15 p.m.', 'title': 'Your vows, out on the rope bridge', 'ceremony': True,
              'words': ('Golden hour. Your officiant and your photographer are there; the two of you walk out to the middle '
                        'of the span and say it.')},
