@@ -1,5 +1,7 @@
 # CURRENT STATE · 2026-11-06 (at most 40 lines here, kept by the Janitor; the history by month is in docs/log/)
 
+**Where the seat stopped, 2026-11-12 3:28 PM ET (the workshop's restart, the Chief's heads-up):** nothing in flight. Main clean and pushed (0794417: the Nov 13 to 15 anniversary guide finished, Mick sends the link). Branch invitation clean and pushed (9bcc12a: the Invitation and the public "Your day" page, dark; the two demos on main; next there: the Critic's round, then the Forge's real responses for the demo dates). Branch elopements-schema clean and pushed (c4707f0). Open on Mick's word: the Nov 21 guide's birthday callout and Raven Cliff line; the reply-time lines on faq.py 137, book.py 51 and 120, pseo.py 754; the Invitation's words by hash after Nov 24; the Netlify ignore rule proposed to the Chief, not added. Nothing merges to main while he is away (Nov 13 to about Nov 27). Pick up from this file and chief docs/routes/loxleyforest/.
+
 **In force**
 - Live since 2026-10-19 (merge a246479): the V2 design on every page, /book our own checkout on book.loxleyforest.com, no Hostfully anywhere (Mick's ruling). The look is DIRECTION.md (docs/log/2026-10.md, the 2026-10-19 night block and 2026-10-13).
 - Every page is a module in scripts/site/pages/, built by `python3 scripts/site/build_v2.py`: edit the builder, run it, commit the HTML, never hand-edit a built page (docs/log/2026-10.md, 2026-10-13, "Where things are").
