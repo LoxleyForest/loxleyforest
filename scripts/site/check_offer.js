@@ -141,12 +141,36 @@ function statics() {
   if (demos.length === 1) {
     const d = read(path.join('private', demos[0], 'index.html'));
     const dw = JSON.parse(BLOCK.exec(d)[1]);
-    check(!has(d, 'GTM-') && has(d, 'noindex') && dw.ready === true && dw.demo && dw.demo.package && dw.demo.package.key === 'the-crossing',
-      'the demo: a private page, no Tag Manager, noindex, ready on the invented Invitation');
+    check(!has(d, 'GTM-') && !has(d, 'js/funnel.js') && has(d, 'noindex') && dw.ready === true && dw.demo && dw.demo.package && dw.demo.package.key === 'the-crossing',
+      'the demo: a private page, no Tag Manager, no page beacon, noindex, ready on the invented Invitation');
     check(!/Avery|\bSam\b/.test(d) && dw.demo.greeting === '', 'the demo file names no one: the names ride after the #');
     check(has(d, 'DOMContentLoaded') && !has(d, 'src="/js/offer.js"') && has(d, '.eo-days {'), 'the demo carries the script and the styles inline, so it stands on its own wherever main is');
     check(!dw.demo.agreement && !dw.demo.expires_at && dw.demo.hold && dw.demo.hold.mode === 'ask', 'the demo is an Invitation in ask mode: no agreement, no expiry, nothing held');
+    const y = read(path.join('private', demos[0], 'your-day.html'));
+    const yw = JSON.parse(BLOCK.exec(y)[1]);
+    check(!has(y, 'GTM-') && !has(y, 'js/funnel.js') && has(y, 'noindex') && yw.ready === true && yw.demo_public && yw.demo_public.days && yw.demo_public.open,
+      'the public demo: a private page, no Tag Manager, no page beacon, noindex, ready on the invented days');
+    check(!has(y, 'data-netlify') && has(y, 'data-demo-form') && !has(y, 'action="/success-elopement.html"'), 'the public demo\'s form posts nowhere');
+    check(!/Avery|\bSam\b/.test(y), 'the public demo file names no one');
   }
+  // The public door, /your-day (2026-11-12): the same words, the same photographs, /elopements' own form.
+  const yd = read('your-day.html');
+  check(has(yd, 'GTM-5N4BX66K') && has(yd, 'noindex') && /data-mode="public"/.test(yd) && /src="\/js\/offer\.js"/.test(yd), '/your-day: Tag Manager, noindex, the public mode, the shared script by its root path');
+  check(!/your-day/.test(read('sitemap.xml')), '/your-day is not in sitemap.xml');
+  const linkingYd = fs.readdirSync(ROOT).filter((n) => n.endsWith('.html') && n !== 'your-day.html').filter((n) => /href="\/?your-day"/.test(read(n)));
+  check(linkingYd.length === 0, '/your-day is linked from no page' + (linkingYd.length ? ': ' + linkingYd.join(', ') : ''));
+  const ydForm = /<form class="lf-form lf-form--light" name="elopement-inquiry"[^>]*action="\/success-elopement\.html">[\s\S]*?<\/form>/.exec(yd);
+  check(!!ydForm && has(ydForm[0], 'name="page" value="/your-day"') && has(ydForm[0], 'name="gclid"') && has(ydForm[0], 'name="preferred_date"')
+    && has(ydForm[0], 'name="package"') && has(ydForm[0], 'name="guest_count"'),
+    '/your-day carries /elopements\' own form: its door, its page field, the ad click, the fields the button fills');
+  const elForm = /<form class="lf-form lf-form--light" name="elopement-inquiry"[\s\S]*?<\/form>/.exec(read('elopements.html'));
+  check(!!elForm && !!ydForm && elForm[0].replace('value="/elopements"', 'value="/your-day"') === ydForm[0], 'the form is /elopements\' word for word, but for the page field');
+  const pks = /<script type="application\/json" id="lf-yd-packages">([\s\S]*?)<\/script>/.exec(yd);
+  const pkRows = pks ? JSON.parse(pks[1]) : [];
+  check(pkRows.map((p) => p.key).join() === 'the-crossing,the-vow,firelight' && pkRows.every((p) => /^\$[\d,]+ plus tax$/.test(p.price)),
+    'the three packages in the cards\' order with the cards\' prices');
+  check(['the-crossing', 'the-vow', 'firelight', 'the-falls'].every((k) => has(yd, 'data-eo-photos="' + k + '"')), '/your-day carries the photograph sets');
+  check(JSON.parse(BLOCK.exec(yd)[1]).demo_public === undefined && BUILT.demo_public === undefined, 'neither live page carries the public demo');
   check(BUILT.not_ready === NOT_READY && has(read('book.html'), 'Questions? Call or text <a href="tel:+17065024823">706-502-4823</a>, or write to'),
     'while they wait, /book\'s own live line');
   check(has(h, 'book-hero-phone-828') && has(h, 'lf-bk-top'), 'the dusk photograph from /book');
@@ -182,10 +206,10 @@ async function main() {
     engine = Object.assign({ ready: true, read: offer(), checkout: 'ok', width: 390 }, engine || {});
     const height = engine.width === 430 ? 932 : 844;
     const ctx = await browser.newContext({ viewport: { width: engine.width, height }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
-    const rec = { reads: [], invites: [], asks: [], holds: [], checkouts: [], booked: [], outside: [], beacons: [], addresses: [] };
+    const rec = { reads: [], invites: [], asks: [], holds: [], dateReads: [], dayReads: [], checkouts: [], booked: [], outside: [], beacons: [], addresses: [] };
     await ctx.route('**/*', async (route) => {
       const req = route.request(), u = new URL(req.url());
-      if (u.hostname === '127.0.0.1' && u.pathname === '/elopement/offer') {
+      if (u.hostname === '127.0.0.1' && (u.pathname === '/elopement/offer' || u.pathname === '/your-day')) {
         // The words as the run needs them: ready (as Mick's yes makes them) or not (the page as it
         // must then stand).
         const res = await route.fetch();
@@ -215,6 +239,15 @@ async function main() {
         }
         if (u.pathname === '/v1/invitation/ask') { rec.asks.push(b); return json({ asked: true }); }
         if (u.pathname === '/v1/invitation/hold') { rec.holds.push(b); return json({ token: TOKEN }); }
+        if (u.pathname === '/v1/your-day/dates' && req.method() === 'GET') {
+          rec.dateReads.push(u.searchParams.get('package'));
+          return json({ dates: (engine.openDays || {})[u.searchParams.get('package')] || [] });
+        }
+        if (u.pathname === '/v1/your-day') {
+          rec.dayReads.push(b);
+          const r = typeof engine.yourDay === 'function' ? engine.yourDay(b) : engine.yourDay;
+          return r ? json(r) : json({ error: 'not found' }, 404);
+        }
         if (u.pathname === '/v1/offer/checkout') {
           rec.checkouts.push(b);
           if (engine.checkout !== 'ok') return json({ error: engine.checkout.error }, engine.checkout.status);
@@ -399,6 +432,78 @@ async function main() {
     const href = await page.$eval('.eo-dates-list .eo-date', (a) => a.getAttribute('href'));
     check(/^sms:\d+\?&body=/.test(href) && has(decodeURIComponent(href), 'instead of'), 'on a made offer an open date composes a text to the house');
     check(await visible(page, '.gh-agreement') && (await text(page, '#eo-paybtn')) === 'Sign and pay $2,615.00', 'and keeps its agreement and its button');
+    await ctx.close();
+  }
+
+  // ---- the public door, /your-day (2026-11-12): a picker, the day, one button that fills the form
+  console.log('the public door');
+  {
+    const OPEN = { 'the-crossing': ['2027-04-16', '2027-04-23', '2027-05-07'], 'the-vow': ['2027-04-16', '2027-04-30'], firelight: ['2027-04-19', '2027-04-20'] };
+    const answers = [];
+    const yourDay = (b) => {
+      answers.push(b);
+      if (b.check_in === '2027-04-23') return { available: false, reason: 'too_soon', open_dates: INVITATION.open_dates };
+      return Object.assign(invitation(), { available: true, package: { key: b.package, name: b.package === 'the-vow' ? 'The Vow' : 'The Crossing', includes: ['A made-up line'] },
+        check_in: b.check_in, check_out: '2027-04-18', note: '' });
+    };
+    const { ctx, page, rec } = await open('your day', { openDays: OPEN, yourDay });
+    await page.goto(BASE + '/your-day');
+    await until(() => visible(page, '.yd-pkg'));
+    check((await text(page, '[data-eo-h1]')) === WORDS.yd_h1 && (await text(page, '[data-eo-lead]')) === WORDS.yd_lead, 'the page\'s own words over the photograph');
+    check((await page.$$eval('.yd-pkg', (l) => l.length)) === 3 && (await page.isChecked('#yd-pkg-the-crossing')), 'three packages, the first chosen');
+    check(has(await text(page, '.yd-pkg__price'), 'plus tax'), 'each package with its card\'s price');
+    await until(() => visible(page, '.yd-cal .gh-day'));
+    check(rec.dateReads.join() === 'the-crossing' && rec.dayReads.length === 0, 'the open days read for the chosen package, nothing else asked');
+    const days = await page.$$eval('.yd-cal .gh-day', (l) => l.map((b) => [b.getAttribute('data-day'), !b.disabled]));
+    check(days.filter((d) => d[1]).map((d) => d[0]).join() === '2027-04-16,2027-04-23' && days.filter((d) => !d[1]).length > 20, 'April: the open days tappable, every other day not');
+    check(has(await text(page, '.yd-cal .gh-hint'), 'April 2027') && !(await page.isDisabled('.yd-cal .gh-arrow[aria-label="Later months"]')), 'one month at a time, May a turn away');
+    check(!(await visible(page, '[data-eo-body]')) && rec.reads.length === 0 && rec.invites.length === 0, 'nothing of a day before a tap; no offer, no Invitation read');
+    await page.click('.yd-cal [data-day="2027-04-16"]');
+    await until(() => visible(page, '#eo-askbtn'));
+    check(rec.dayReads.length === 1 && rec.dayReads[0].package === 'the-crossing' && rec.dayReads[0].check_in === '2027-04-16' && Object.keys(rec.dayReads[0]).sort().join() === 'check_in,package',
+      'a tap posts the package and the day, nothing else');
+    check((await page.$$eval('.eo-stop', (l) => l.length)) === 6 && !(await visible(page, '#eo-note-h')) && (await page.$$eval('.eo-photos img', (l) => l.length)) === 4
+      && has(await text(page, '.eo-total'), '$7,550.00'), 'the day hour by hour, no note, the photographs, the price');
+    check(!(await visible(page, '.gh-agreement')) && !(await visible(page, '#eo-paybtn')) && !(await visible(page, '.eo-way')), 'no agreement, no payment, no ways to pay');
+    check((await text(page, '#eo-askbtn')) === WORDS.yd_ask_button && has(await text(page, '.eo-hold'), WORDS.yd_ask_line), 'the one button asks');
+    check(await page.evaluate(() => { const b = document.querySelector('.yd-cal [data-day="2027-04-16"]'); return b && b.getAttribute('aria-pressed') === 'true'; }), 'the tapped day lit');
+    await page.click('#eo-askbtn');
+    await page.waitForTimeout(700);
+    const filled = await page.evaluate(() => { const f = document.querySelector('form[name="elopement-inquiry"]'); const v = (n) => f.querySelector('[name="' + n + '"]').value;
+      return { date: v('preferred_date'), pkg: v('package'), guests: v('guest_count'), list: v('list'), page: v('page'), near: f.getBoundingClientRect().top < window.innerHeight }; });
+    check(filled.date === 'Friday, April 16 to Sunday, April 18, 2027' && filled.pkg === 'the-crossing' && filled.guests === 'just-us' && filled.list === '' && filled.page === '/your-day',
+      'the form filled in: the dates, the package, just us, this page');
+    check(filled.near, 'and the page at the form');
+    check(rec.checkouts.length === 0 && rec.asks.length === 0 && rec.holds.length === 0, 'nothing posted to the engine by the button: the form is the ask');
+    // a day the engine refuses, from the open dates
+    await page.click('.yd-cal [data-day="2027-04-23"]');
+    await until(async () => has(await page.evaluate(() => document.getElementById('eo').innerText), WORDS.yd_too_soon));
+    check(rec.dayReads.length === 2 && !(await visible(page, '#eo-askbtn')) && (await page.$$eval('.eo-dates-list .eo-date', (l) => l.length)) === 3,
+      'a day the engine refuses: its own line, no button, the open days near it');
+    // another package reloads the days
+    await page.click('label[for="yd-pkg-firelight"]');
+    await until(() => rec.dateReads.length === 2);
+    await until(() => visible(page, '.yd-cal .gh-day'));
+    const fdays = await page.$$eval('.yd-cal .gh-day', (l) => l.filter((b) => !b.disabled).map((b) => b.getAttribute('data-day')));
+    check(rec.dateReads[1] === 'firelight' && fdays.join() === '2027-04-19,2027-04-20' && !(await visible(page, '[data-eo-body]')), 'another package: its own open days, the day cleared');
+    check(!/\{\{|\[WRITER|\[MICK/.test(await page.evaluate(() => document.body.innerText)), 'no merge field or placeholder left on the page');
+    check(await noSideways(page), 'no sideways scroll at 390');
+    clean(rec, 'your day');
+    await shot(page, 'your-day-390.png');
+    await ctx.close();
+  }
+  {
+    const { ctx, page, rec } = await open('your day, no days', { openDays: {} });
+    await page.goto(BASE + '/your-day');
+    await until(async () => has(await text(page, '[data-eo-wait]'), WORDS.yd_no_dates));
+    check(rec.dateReads.length === 1 && !(await visible(page, '.yd-cal .gh-day')), 'no open days: the page says so and draws no calendar');
+    await ctx.close();
+  }
+  {
+    const { ctx, page, rec } = await open('your day, not ready', { ready: false, openDays: {} });
+    await page.goto(BASE + '/your-day');
+    await until(() => text(page, '[data-eo-wait]'));
+    check((await text(page, '[data-eo-wait]')) === NOT_READY && rec.dateReads.length === 0 && !(await visible(page, '.yd-pkg')), 'words not approved: /book\'s line, no picker, the engine never asked');
     await ctx.close();
   }
 

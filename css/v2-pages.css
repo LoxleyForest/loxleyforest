@@ -702,6 +702,26 @@ body:has(#ga-buy, #ga-card-page, #ga-manage, #ga-thanks) .book-fab { display: no
 .eo-until { margin: 0; font-size: 14px; color: var(--stone); }
 .eo-hold { margin: 0; padding: 14px 16px; border-left: 3px solid var(--gold, #c4a265); background: var(--cream); font-size: 16px; line-height: 1.5; color: var(--bark); }
 
+/* ---- The public "Your day" page: the picker (the package, then one month of open arrival days in
+   the booking calendar's own clothes), the ask. ---- */
+.yd-pick { display: grid; gap: 26px; margin-bottom: 30px; }
+.yd-pick:empty { display: none; }
+.yd-pick__h { margin: 0 0 10px; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: clamp(1.7rem, 6vw, 2.2rem); line-height: 1.15; color: var(--forest-deep); }
+.yd-pkgs { border: 0; margin: 0; padding: 0; display: grid; gap: 10px; min-width: 0; }
+.yd-pkgs legend { padding: 0; float: left; width: 100%; }
+.yd-pkg { display: grid; grid-template-columns: 26px 1fr auto; gap: 4px 14px; align-items: center; padding: 14px 16px; min-height: 56px; cursor: pointer; background: var(--cream); border: 1px solid var(--driftwood); }
+.yd-pkg input { margin: 0; width: 22px; height: 22px; accent-color: var(--forest-deep); }
+.yd-pkg:has(input:checked) { border-color: var(--forest-deep); background: var(--white); }
+.yd-pkg:has(input:focus-visible) { outline: 2px solid var(--gold); outline-offset: 2px; }
+.yd-pkg__name { font-size: 18px; font-weight: 600; color: var(--forest-deep); }
+.yd-pkg__price { font-family: 'Montserrat', Arial, sans-serif; font-size: 12px; letter-spacing: .6px; text-transform: uppercase; color: var(--stone); white-space: nowrap; }
+.yd-note { margin: 10px 0 0; font-size: 14px; line-height: 1.5; color: var(--stone); }
+.yd-cal .gh-months .gh-month:nth-child(2) { display: none; }
+.yd-cal .gh-hint { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.3rem; letter-spacing: 0; text-transform: none; color: var(--forest-deep); }
+.yd-cal .gh-day { min-height: 46px; }
+.yd-ask .lf-inq { max-width: 640px; margin: 0 auto; }
+.yd-ask .lf-eyebrow:empty, .yd-ask .lf-lead:empty { display: none; }
+
 /* ---- our_story ---- */
 /* the fog photograph is pale at the top: shade it under the header so the menu reads on desktop */
 @media (min-width: 900px) { .st-hero .hero__media::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 180px; z-index: 1; background: linear-gradient(180deg, rgba(20, 36, 24, 0.8), rgba(20, 36, 24, 0)); } }

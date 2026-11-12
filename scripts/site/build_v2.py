@@ -1012,7 +1012,7 @@ TALK_PAGES = ('book.html', 'elopements.html', 'proposals.html')
 GIFT_PAGES = ('gift.html', 'gift-card.html', 'gift-thanks.html', 'gift-manage.html')
 
 # An elopement package offer's private page (scripts/site/pages/offer.py, 2026-10-27).
-OFFER_PAGES = ('elopement-offer.html',)
+OFFER_PAGES = ('elopement-offer.html', 'your-day.html')
 
 # The January giveaway's invitation (js/giveaway-popup.js, the table of 2026-11-07): the pages the
 # card may show on, never a talk.js page, a form page or /giveaway itself; plus /book, where the
@@ -1070,7 +1070,7 @@ def build(page):
 # lose the logo and every script. These pages get root paths throughout.
 # The gift's card, thank-you and change page are served at /gift/card, /gift/thanks and
 # /gift/manage (netlify.toml), one folder deep, so they are rooted too.
-ROOTED_PAGES = ('404.html', 'gift-card.html', 'gift-thanks.html', 'gift-manage.html', 'elopement-offer.html')
+ROOTED_PAGES = ('404.html', 'gift-card.html', 'gift-thanks.html', 'gift-manage.html', 'elopement-offer.html', 'your-day.html')
 
 
 def rooted(html):

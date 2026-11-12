@@ -111,6 +111,30 @@ WORDS = {
     'hold_h': 'Hold your date',
     'hold_line': 'Nothing is held until you press. Then the date is yours for {{hold_hours}} hours while you sign and pay.',
     'hold_button': 'Hold our date',
+    # The public "Your day" page, /your-day (the table of 2026-11-11, the Critic's version: it asks, it
+    # never holds): a visitor picks a package and an arrival day and sees the Invitation without a name;
+    # the one button fills the elopement form and asks Mick. For his ear with the rest.
+    'yd_title': 'Your day at Loxley Forest | Elopements',
+    'yd_description': ('Pick a package and an arrival day, and see your elopement day hour by hour: the sunset, what is '
+                       'provided, the price to the dollar, and the open days near it.'),
+    'yd_eyebrow': 'Elopements at Loxley Forest',
+    'yd_h1': 'Pick a day. See your day.',
+    'yd_lead': ('Choose a package and an arrival day, and your day comes up hour by hour: the sunset, what is provided, the '
+                'price to the dollar, the open days near it. One button asks Mick for it. Nothing is held and nothing is charged.'),
+    'yd_package_h': 'Which package?',
+    'yd_falls_note': 'The Falls opens in October 2027 and takes no date yet; ask for it on the elopements page.',
+    'yd_date_h': 'Your arrival day',
+    'yd_date_hint': 'Tap an open day.',
+    'yd_dates_loading': 'Reading the open days…',
+    'yd_no_dates': 'No open arrival days for this package just now. Call or text Mick at 706-502-4823.',
+    'yd_not_open': 'That day isn\'t open for this package. The open days near it are below.',
+    'yd_too_soon': 'That day is inside two weeks. Call or text Mick for it: 706-502-4823.',
+    'yd_ask_h': 'Ask for this date',
+    'yd_ask_line': ('Mick reads every ask himself and writes back with your day. Nothing is held and nothing is charged until '
+                    'you have his agreement and sign it.'),
+    'yd_ask_button': 'Ask for this date',
+    'yd_form_h': 'Your names and an email',
+    'yd_form_lead': 'The day and the package are filled in below. Add your names and an email, and Mick writes back.',
 }
 # The SHA-256 of WORDS (words_sha256) once Mick has approved every word. None: not yet.
 # Mick, 2026-10-27, on the review page by sight and ear: "yes to all" (relayed by the CEO seat;
@@ -194,7 +218,9 @@ DEMO = {
             {'time': 'After dark', 'title': 'The bridge with its lights on',
              'words': 'Cross it again once the string lights are on. It is a different walk at night, and the forest is yours.'}]},
         {'date': '2027-04-17', 'sunrise': '7:05 a.m.', 'sunset': '8:14 p.m.', 'stops': [
-            # Mick's one change on his read of the demo (2026-11-12, by the Chief): "what he and the family built".
+            # Mick's words, whole (2026-11-12, by the Chief): his one change on his read of the demo was
+            # "he and the family", and the tail was his too by his word the same morning ("yes absolutely,
+            # that's true"); the canon takes the fact, the engine's standing stop carries the sentence.
             {'time': '11:00 a.m.', 'title': "The Builder's Tour",
              'words': 'Mick walks you through what he and the family built, from the anchors in the oaks to the oven on the Sky Deck.'},
             {'time': '7:15 p.m.', 'title': 'Your vows, out on the rope bridge', 'ceremony': True,
@@ -225,6 +251,93 @@ DEMO = {
 # the page prints the day's sunset beside it.
 DEMO['days'][1]['stops'][1]['time'] = None
 DEMO['days'][1]['stops'][2]['time'] = None
+
+
+def _tax_lines(name, cents, nights):
+    """The engine's price lines as the demo invents them: the package, 8% and 8%, $5 a night."""
+    tax = round(cents * 0.08)
+    return [{'label': name, 'cents': cents}, {'label': 'Sales tax', 'cents': tax},
+            {'label': 'Lumpkin County hotel-motel tax', 'cents': tax}, {'label': 'Georgia hotel-motel fee', 'cents': 500 * nights}]
+
+
+def _demo_day(key, name, cents, nights, includes, days, check_in, check_out):
+    lines = _tax_lines(name, cents, nights)
+    total = sum(x['cents'] for x in lines)
+    half = total // 2
+    return {'available': True, 'package': {'key': key, 'name': name, 'includes': includes},
+            'check_in': check_in, 'check_out': check_out, 'nights': nights, 'party': 2,
+            'extras': DEMO['extras'], 'note': '', 'days': days, 'lines': lines, 'total_cents': total,
+            'modes': ['deposit', 'full'],
+            'plans': {'deposit': [{'kind': 'deposit', 'label': 'Retainer', 'amount_cents': half, 'due_on': None},
+                                  {'kind': 'balance', 'label': 'Balance', 'amount_cents': total - half, 'due_on': '2027-03-17'}],
+                      'full': [{'kind': 'full', 'label': '', 'amount_cents': total, 'due_on': None}]},
+            'retainer_cents': half, 'balance_cents': total - half, 'balance_due': '2027-03-17',
+            'check_in_time': '3:00 p.m.', 'open_dates': [], 'hold': {'mode': 'ask', 'hours': None, 'until': None}}
+
+
+# The public page's demo: the open arrival days per package (invented, April to May 2027: Fridays and a
+# Saturday for the two-night packages, Mondays to Thursdays for Firelight) and one day's answer per
+# package, moved to the day the reader taps by the script. Every number and every word a draft.
+DEMO_PUBLIC = {
+    'open': {
+        'the-crossing': ['2027-04-16', '2027-04-23', '2027-04-24', '2027-04-30', '2027-05-07', '2027-05-14', '2027-05-21', '2027-05-28'],
+        'the-vow': ['2027-04-16', '2027-04-23', '2027-04-24', '2027-04-30', '2027-05-07', '2027-05-14', '2027-05-21', '2027-05-28'],
+        'firelight': ['2027-04-19', '2027-04-20', '2027-04-21', '2027-04-22', '2027-04-26', '2027-04-27', '2027-04-28', '2027-04-29',
+                      '2027-05-03', '2027-05-04', '2027-05-05', '2027-05-06'],
+    },
+    'days': {
+        'the-crossing': _demo_day('the-crossing', 'The Crossing', 650000, 2, DEMO['package']['includes'], DEMO['days'],
+                                  '2027-04-16', '2027-04-18'),
+        'the-vow': _demo_day('the-vow', 'The Vow', 450000, 2, [
+            'Two nights in the treehouse', 'Your vows at the Fire Circle, or on the Sky Deck with the rope bridge as your aisle',
+            'An officiant', 'Photographs of your ceremony', 'A bouquet and a boutonniere', 'A champagne toast'], [
+            {'date': '2027-04-16', 'sunrise': '7:06 a.m.', 'sunset': '8:13 p.m.', 'stops': [
+                DEMO['days'][0]['stops'][0], DEMO['days'][0]['stops'][1]]},
+            {'date': '2027-04-17', 'sunrise': '7:05 a.m.', 'sunset': '8:14 p.m.', 'stops': [
+                {'time': None, 'title': 'Your vows, where you choose', 'ceremony': True,
+                 'words': ('Golden hour, at the Fire Circle in the trees or on the Sky Deck with the rope bridge as your aisle. '
+                           'Your officiant and your photographer are there.')},
+                {'time': None, 'title': 'The evening is yours',
+                 'words': 'The champagne toast on the deck, the fire table lit, and the forest going quiet around you.'}]},
+            DEMO['days'][2]], '2027-04-16', '2027-04-18'),
+        'firelight': _demo_day('firelight', 'Firelight', 250000, 1, [
+            'One night in the treehouse', 'Your vows at the Fire Circle, its fire lit for your ceremony',
+            'An officiant', 'Photographs of your ceremony', 'A bouquet and a boutonniere', 'A champagne toast'], [
+            {'date': '2027-04-19', 'sunrise': '7:02 a.m.', 'sunset': '8:16 p.m.', 'stops': [
+                DEMO['days'][0]['stops'][0],
+                {'time': None, 'title': 'Your vows at the Fire Circle', 'ceremony': True,
+                 'words': 'Golden hour. The Fire Circle lit for your ceremony; your officiant and your photographer are there.'},
+                DEMO['days'][0]['stops'][1]]},
+            {'date': '2027-04-20', 'sunrise': '7:01 a.m.', 'sunset': '8:17 p.m.', 'stops': DEMO['days'][2]['stops']}],
+            '2027-04-19', '2027-04-20'),
+    },
+    'demo_line': DEMO['demo_line'],
+}
+
+YD_URL = 'https://loxleyforest.com/your-day'
+
+
+def packages_block():
+    """The three packages the public page offers, with the prices their cards print on /elopements
+    (read from that page's own data, so the two never differ), as JSON for js/offer.js."""
+    el = sys.modules.get('lfpage_elopements')
+    assert el is not None, 'pages/elopements.py loads before pages/offer.py'
+    rows = [{'key': el.slug(p[0]), 'name': p[0], 'price': p[1] + ' plus tax'} for p in el.ordered_packages()]
+    body = json.dumps(rows, ensure_ascii=False).replace('</', '<\\/')
+    return f'<script type="application/json" id="lf-yd-packages">{body}</script>'
+
+
+def inquiry_form():
+    """/elopements' own inquiry form, word for word (pages/pseo.py lifts it the same way for the landing
+    pages), its hidden page field naming this page. Netlify reads forms sharing a name as one definition,
+    and check_forms.py holds it to /success-elopement with the ad click's fields."""
+    el = sys.modules.get('lfpage_elopements')
+    m = re.search(r'<form class="lf-form lf-form--light" name="elopement-inquiry".*?</form>', el.page_elopements()[3], re.S)
+    assert m, 'the elopement form on /elopements'
+    form = m.group(0)
+    tag = '<input type="hidden" name="page" value="/elopements">'
+    assert tag in form, 'the form names its page'
+    return form.replace(tag, '<input type="hidden" name="page" value="/your-day">', 1)
 
 
 def _book():
@@ -268,12 +381,69 @@ def page_offer():
     return 'elopement-offer.html', h, gtm, body, '/book', True
 
 
+def page_your_day():
+    """/your-day, the public door: the same page without a name. Noindex, in no nav, sitemap or link
+    until after the Nov 27 read. Its words show only when they are the approved ones (js/offer.js, as
+    the offer page); without script, /book's line."""
+    book = _book()
+    ready = APPROVED_SHA256 is not None and words_sha256() == APPROVED_SHA256
+    h, gtm = sys.modules['lfpage_gift'].head_for(WORDS['yd_title'] if ready else 'Loxley Forest',
+                                                 WORDS['yd_description'] if ready else 'Loxley Forest, Dahlonega, Georgia.',
+                                                 YD_URL, noindex=True)
+    h = h.replace('</head>', '  ' + book.HERO_PRELOAD + '\n</head>', 1)
+    body = f'''
+    <!-- ========== YOUR DAY: the dusk photograph; the words come with the script, once approved ========== -->
+    <section class="lf-sec lf-dark lf-center lf-bk-top eo-top" aria-labelledby="eo-h">
+      {book.HERO_PHOTO}
+      <div class="lf-wrap">
+        <p class="lf-eyebrow" data-eo-eyebrow>Dahlonega, Georgia</p>
+        <h1 class="lf-h1" id="eo-h" data-eo-h1>Loxley Forest</h1>
+        <p class="lf-lead" data-eo-lead hidden></p>
+      </div>
+    </section>
+
+    <!-- ========== THE PICKER AND THE DAY (js/offer.js, public mode): GET /v1/your-day/dates, then
+         POST /v1/your-day. A read; nothing is held and nothing is charged. ========== -->
+    <section class="lf-sec lf-parch eo" id="eo" data-api="{B.API}" data-phone="{PHONE}" data-mode="public" aria-live="polite">
+      <div class="eo__in">
+        <div class="yd-pick" data-yd-pick></div>
+        <p class="eo-wait" role="status" data-eo-wait></p>
+        <noscript><p class="eo-noscript">{escape(NOT_READY, quote=False)}</p></noscript>
+        <div class="eo-body" data-eo-body hidden></div>
+      </div>
+    </section>
+
+    <!-- ========== THE ASK: /elopements' own form, filled in by the button ========== -->
+    <section class="lf-sec lf-light yd-ask" id="inquiry" aria-labelledby="yd-form-h">
+      <div class="lf-wrap lf-inq">
+        <div class="lf-center">
+          <p class="lf-eyebrow" data-yd-form-eyebrow></p>
+          <h2 class="lf-h2" id="yd-form-h" data-yd-form-h>Ask Mick</h2>
+          <p class="lf-lead" data-yd-form-lead hidden></p>
+        </div>
+        <div class="lf-inq__wrap">
+          {inquiry_form()}
+        </div>
+      </div>
+    </section>
+    {packages_block()}
+    {photo_templates()}
+    {words_block()}
+'''
+    return 'your-day.html', h, gtm, body, '/book', True
+
+
 def demo_page():
-    """The demo page for the read, written from the built elopement-offer.html (see DEMO): the
-    fixture in the words block, ready, in the engine's place; this module's styles and js/offer.js
-    inline; no Tag Manager; its own title and canonical; the ribbon at the top."""
-    html = open(os.path.join(B.ROOT, 'elopement-offer.html')).read()
-    words = dict(WORDS, ready=True, not_ready=NOT_READY, demo=DEMO)
+    """The two demo pages for the read, written from the built pages: the fixture in the words block,
+    ready, in the engine's place; this module's styles and js/offer.js inline; no Tag Manager and no
+    page beacon; their own titles and canonicals; the ribbon. The public demo's form posts nowhere."""
+    _demo_file('elopement-offer.html', 'index.html', URL, 'A demo of the Invitation | Loxley Forest', {'demo': DEMO})
+    _demo_file('your-day.html', 'your-day.html', YD_URL, 'A demo of Your day | Loxley Forest', {'demo_public': DEMO_PUBLIC})
+
+
+def _demo_file(src, out, page_url, title, fixture):
+    html = open(os.path.join(B.ROOT, src)).read()
+    words = dict(WORDS, ready=True, not_ready=NOT_READY, **fixture)
     block = json.dumps(words, ensure_ascii=False, sort_keys=True).replace('</', '<\\/')
     html, n = re.subn(r'<script type="application/json" id="lf-offer-words">.*?</script>',
                       lambda m: f'<script type="application/json" id="lf-offer-words">{block}</script>', html, flags=re.S)
@@ -288,24 +458,30 @@ def demo_page():
         html, n = re.subn(r'\s*<script src="/js/' + name + r'\.js"[^>]*></script>', '', html)
         assert n == 1, f'the offer page loads /js/{name}.js once'
     tag = '<script src="/js/offer.js" defer></script>'
-    assert tag in html, 'the offer page loads /js/offer.js'
+    assert tag in html, f'{src} loads /js/offer.js'
     js = open(os.path.join(B.ROOT, 'js', 'offer.js')).read().replace('</script', '<\\/script')
     # gatehouse.js is deferred, so the inline copy waits for it.
     html = html.replace(tag, '<script>document.addEventListener("DOMContentLoaded", function () {\n' + js + '\n});</script>')
     html = html.replace('</head>', '<style>\n' + CSS.strip() + '\n</style>\n</head>', 1)
-    demo_url = f'https://loxleyforest.com/private/{DEMO_FOLDER}/'
-    html = re.sub(r'<title>[^<]*</title>', '<title>A demo of the Invitation | Loxley Forest</title>', html, count=1)
-    html = html.replace(f'<link rel="canonical" href="{URL}">', f'<link rel="canonical" href="{demo_url}">', 1)
-    html = html.replace(f'<meta property="og:url" content="{URL}">', f'<meta property="og:url" content="{demo_url}">', 1)
-    html = html.replace('data-lf-path="/elopement/offer"', f'data-lf-path="/private/{DEMO_FOLDER}"', 1)
+    demo_url = f'https://loxleyforest.com/private/{DEMO_FOLDER}/' + ('' if out == 'index.html' else out)
+    html = re.sub(r'<title>[^<]*</title>', f'<title>{escape(title, quote=False)}</title>', html, count=1)
+    html = html.replace(f'<link rel="canonical" href="{page_url}">', f'<link rel="canonical" href="{demo_url}">', 1)
+    html = html.replace(f'<meta property="og:url" content="{page_url}">', f'<meta property="og:url" content="{demo_url}">', 1)
+    html = re.sub(r'data-lf-path="[^"]*"', f'data-lf-path="/private/{DEMO_FOLDER}"', html, count=1)
     html = html.replace('<main id="main">', '<main id="main">\n  <p class="eo-demo">' + escape(DEMO['demo_line'], quote=False) + '</p>', 1)
+    # The public demo's form posts nowhere: Netlify's attributes and its door come off, and the script
+    # answers a submit with the ribbon's words.
+    if 'demo_public' in fixture:
+        html, n = re.subn(r' method="POST" data-netlify="true" data-netlify-honeypot="bot-field" action="/success-elopement\.html"',
+                          ' action="#" data-demo-form', html)
+        assert n == 1, 'one elopement form on the public demo'
     folder = os.path.join(B.ROOT, 'private', DEMO_FOLDER)
     os.makedirs(folder, exist_ok=True)
-    open(os.path.join(folder, 'index.html'), 'w').write(html)
-    print('wrote', f'private/{DEMO_FOLDER}/index.html', len(html))
+    open(os.path.join(folder, out), 'w').write(html)
+    print('wrote', f'private/{DEMO_FOLDER}/{out}', len(html))
 
 
-PAGES = [page_offer]
+PAGES = [page_offer, page_your_day]
 AFTER = [demo_page]
 
 CSS = '''
@@ -389,4 +565,24 @@ CSS = '''
 .eo-date:hover, .eo-date:focus-visible { border-color: var(--forest-deep); background: var(--white); }
 .eo-until { margin: 0; font-size: 14px; color: var(--stone); }
 .eo-hold { margin: 0; padding: 14px 16px; border-left: 3px solid var(--gold, #c4a265); background: var(--cream); font-size: 16px; line-height: 1.5; color: var(--bark); }
+
+/* ---- The public "Your day" page: the picker (the package, then one month of open arrival days in
+   the booking calendar's own clothes), the ask. ---- */
+.yd-pick { display: grid; gap: 26px; margin-bottom: 30px; }
+.yd-pick:empty { display: none; }
+.yd-pick__h { margin: 0 0 10px; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: clamp(1.7rem, 6vw, 2.2rem); line-height: 1.15; color: var(--forest-deep); }
+.yd-pkgs { border: 0; margin: 0; padding: 0; display: grid; gap: 10px; min-width: 0; }
+.yd-pkgs legend { padding: 0; float: left; width: 100%; }
+.yd-pkg { display: grid; grid-template-columns: 26px 1fr auto; gap: 4px 14px; align-items: center; padding: 14px 16px; min-height: 56px; cursor: pointer; background: var(--cream); border: 1px solid var(--driftwood); }
+.yd-pkg input { margin: 0; width: 22px; height: 22px; accent-color: var(--forest-deep); }
+.yd-pkg:has(input:checked) { border-color: var(--forest-deep); background: var(--white); }
+.yd-pkg:has(input:focus-visible) { outline: 2px solid var(--gold); outline-offset: 2px; }
+.yd-pkg__name { font-size: 18px; font-weight: 600; color: var(--forest-deep); }
+.yd-pkg__price { font-family: 'Montserrat', Arial, sans-serif; font-size: 12px; letter-spacing: .6px; text-transform: uppercase; color: var(--stone); white-space: nowrap; }
+.yd-note { margin: 10px 0 0; font-size: 14px; line-height: 1.5; color: var(--stone); }
+.yd-cal .gh-months .gh-month:nth-child(2) { display: none; }
+.yd-cal .gh-hint { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.3rem; letter-spacing: 0; text-transform: none; color: var(--forest-deep); }
+.yd-cal .gh-day { min-height: 46px; }
+.yd-ask .lf-inq { max-width: 640px; margin: 0 auto; }
+.yd-ask .lf-eyebrow:empty, .yd-ask .lf-lead:empty { display: none; }
 '''
