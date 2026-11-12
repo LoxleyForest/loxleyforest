@@ -88,7 +88,28 @@ function offer(over) {
     retainer_cents: 261500, balance_cents: 261500, balance_due: day(15), pay_later: ['klarna'], expires_at: '2026-10-29T23:59:00+00:00',
     check_in_time: '3:00 p.m.', clearing: false, agreement: { text: AGREEMENT_TEXT, version: 'v-check', choices: [CHOICE] } }, over || {});
 }
-const SECRETS = [TOKEN, SESSION, NAMES, GREETING, EMAIL, 'Ana', 'Luis'];
+// The Invitation (2026-11-11; the Forge's rulings of 2026-11-12): GET /v1/invitation, no agreement,
+// no name kept by the engine (the names ride after the #), days, note, open dates, the ask or the hold.
+const INVITE = 'inv-AbC123xyz789qwe456rty012uio345pq';
+function invitation(over) {
+  return Object.assign({ package: { key: 'the-crossing', name: 'The Crossing', includes: ['Two nights in the treehouse',
+    'Your vows out on the rope bridge, at golden hour', 'An officiant'] },
+    check_in: '2027-04-16', check_out: '2027-04-18', nights: 2, party: 2,
+    extras: ['The Morning After, champagne brunch carried across the bridge', 'A small cake'],
+    note: 'A made-up line from Mick.',
+    days: [{ date: '2027-04-16', sunrise: '7:06 a.m.', sunset: '8:13 p.m.', stops: [{ time: '3:00 p.m.', title: 'Your treehouse is ready', words: 'Made-up words.' }, { time: 'After dark', title: 'The bridge', words: '' }] },
+      { date: '2027-04-17', sunrise: '7:05 a.m.', sunset: '8:14 p.m.', stops: [{ time: null, title: 'The ceremony', ceremony: true, words: 'Golden hour.' }, { time: null, title: 'A private dinner', words: '' }] },
+      { date: '2027-04-18', sunrise: '7:04 a.m.', sunset: '8:15 p.m.', stops: [{ time: '10:00 a.m.', title: 'The Morning After', words: '' }, { time: '12:00 p.m.', title: 'Checkout', words: '' }] }],
+    lines: [{ label: 'The Crossing', cents: 650000 }, { label: 'Sales tax', cents: 52000 }, { label: 'Lumpkin County hotel-motel tax', cents: 52000 }, { label: 'Georgia hotel-motel fee', cents: 1000 }],
+    total_cents: 755000, modes: ['deposit', 'full'],
+    plans: { deposit: [{ kind: 'deposit', label: 'Retainer', amount_cents: 377500, due_on: null }, { kind: 'balance', label: 'Balance', amount_cents: 377500, due_on: '2027-03-17' }],
+      full: [{ kind: 'full', label: '', amount_cents: 755000, due_on: null }] },
+    retainer_cents: 377500, balance_cents: 377500, balance_due: '2027-03-17', check_in_time: '3:00 p.m.',
+    open_dates: [{ check_in: '2027-04-23', check_out: '2027-04-25' }, { check_in: '2027-04-30', check_out: '2027-05-02' }, { check_in: '2027-05-07', check_out: '2027-05-09' }],
+    hold: { mode: 'ask', hours: null, until: null } }, over || {});
+}
+const INVITATION = invitation();
+const SECRETS = [TOKEN, INVITE, SESSION, NAMES, GREETING, EMAIL, 'Ana', 'Luis'];
 
 let failures = 0, passes = 0;
 function check(ok, what) { if (ok) { passes++; console.log('  ok   ' + what); } else { failures++; console.log('  FAIL ' + what); } }
@@ -100,7 +121,7 @@ function statics() {
   check(has(h, 'GTM-5N4BX66K'), 'Tag Manager on the page (the house rule)');
   const keysAt = h.indexOf('<!-- Booking keys'), gtmAt = h.indexOf('gtm.js?id=');
   check(keysAt > 0 && gtmAt > keysAt, 'the keys script runs before Tag Manager');
-  check(/'code','offer'\]/.test(h) && /code\|offer\)=/.test(h), 'the keys script lifts offer (and session_id)');
+  check(/'code','offer','invite'\]/.test(h) && /code\|offer\|invite\)=/.test(h), 'the keys script lifts offer and invite (and session_id)');
   check(has(h, 'noindex') && /src="\/js\/offer\.js"/.test(h) && /href="\/css\/v2-pages\.css"/.test(h), 'noindex, root paths (served one folder deep)');
   check(REWRITES['/elopement/offer'] === '/elopement-offer.html', 'netlify.toml serves /elopement/offer');
   check(!/elopement\/offer|elopement-offer/.test(read('sitemap.xml')), 'not in sitemap.xml');
@@ -108,7 +129,24 @@ function statics() {
     .filter((n) => /elopement\/offer|elopement-offer/.test(read(n)));
   check(linking.length === 0, 'linked from no page' + (linking.length ? ': ' + linking.join(', ') : ''));
   check(SLOTS.every((k) => typeof BUILT[k] === 'string' && BUILT[k]), 'every slot of the Writer\'s is in WORDS');
-  check(BUILT.ready === true && /Your day in the trees/.test(h), 'as built, ready on Mick\'s approved words, its title his');
+  // The words carry Mick's hash of Oct 27, or wait for his yes to the Invitation's new words
+  // (2026-11-11): closed as built is right until then. The browser runs below force the words ready
+  // to prove them either way.
+  check(BUILT.ready === true ? /Your day in the trees/.test(h) : /<title>Loxley Forest<\/title>/.test(h),
+    BUILT.ready === true ? 'as built, ready on Mick\'s approved words, its title his' : 'as built, closed: the words wait for Mick\'s yes by hash, the title plain');
+  check(BUILT.demo === undefined, 'the live page never carries the demo');
+  check(['the-crossing', 'the-vow', 'firelight', 'the-falls'].every((k) => has(h, 'data-eo-photos="' + k + '"')), 'a photograph set for every package key');
+  const demos = fs.readdirSync(path.join(ROOT, 'private')).filter((n) => /^invitation-demo-[0-9a-f]{6}$/.test(n));
+  check(demos.length === 1, 'one demo folder under private/');
+  if (demos.length === 1) {
+    const d = read(path.join('private', demos[0], 'index.html'));
+    const dw = JSON.parse(BLOCK.exec(d)[1]);
+    check(!has(d, 'GTM-') && has(d, 'noindex') && dw.ready === true && dw.demo && dw.demo.package && dw.demo.package.key === 'the-crossing',
+      'the demo: a private page, no Tag Manager, noindex, ready on the invented Invitation');
+    check(!/Avery|\bSam\b/.test(d) && dw.demo.greeting === '', 'the demo file names no one: the names ride after the #');
+    check(has(d, 'DOMContentLoaded') && !has(d, 'src="/js/offer.js"') && has(d, '.eo-days {'), 'the demo carries the script and the styles inline, so it stands on its own wherever main is');
+    check(!dw.demo.agreement && !dw.demo.expires_at && dw.demo.hold && dw.demo.hold.mode === 'ask', 'the demo is an Invitation in ask mode: no agreement, no expiry, nothing held');
+  }
   check(BUILT.not_ready === NOT_READY && has(read('book.html'), 'Questions? Call or text <a href="tel:+17065024823">706-502-4823</a>, or write to'),
     'while they wait, /book\'s own live line');
   check(has(h, 'book-hero-phone-828') && has(h, 'lf-bk-top'), 'the dusk photograph from /book');
@@ -144,13 +182,14 @@ async function main() {
     engine = Object.assign({ ready: true, read: offer(), checkout: 'ok', width: 390 }, engine || {});
     const height = engine.width === 430 ? 932 : 844;
     const ctx = await browser.newContext({ viewport: { width: engine.width, height }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
-    const rec = { reads: [], checkouts: [], booked: [], outside: [], beacons: [], addresses: [] };
+    const rec = { reads: [], invites: [], asks: [], holds: [], checkouts: [], booked: [], outside: [], beacons: [], addresses: [] };
     await ctx.route('**/*', async (route) => {
       const req = route.request(), u = new URL(req.url());
-      if (u.hostname === '127.0.0.1' && u.pathname === '/elopement/offer' && !engine.ready) {
-        // Words that are not the approved ones: the page as it must then stand, not ready.
+      if (u.hostname === '127.0.0.1' && u.pathname === '/elopement/offer') {
+        // The words as the run needs them: ready (as Mick's yes makes them) or not (the page as it
+        // must then stand).
         const res = await route.fetch();
-        const words = JSON.stringify(Object.assign({}, WORDS, { ready: false })).replace(/<\//g, '<\\/');
+        const words = JSON.stringify(Object.assign({}, WORDS, { ready: !!engine.ready })).replace(/<\//g, '<\\/');
         return route.fulfill({ response: res, body: (await res.text()).replace(BLOCK,
           () => '<script type="application/json" id="lf-offer-words">' + words + '</script>') });
       }
@@ -168,6 +207,14 @@ async function main() {
           if (r === 404) return json({ error: 'not found' }, 404);
           return b.token === TOKEN ? json(r) : json({ error: 'not found' }, 404);
         }
+        if (u.pathname === '/v1/invitation' && req.method() === 'GET') {
+          rec.invites.push(Object.fromEntries(u.searchParams));
+          const r = typeof engine.invite === 'function' ? engine.invite(u.searchParams.get('check_in')) : engine.invite;
+          if (!r || u.searchParams.get('token') !== INVITE) return json({ error: 'not found' }, 404);
+          return json(r);
+        }
+        if (u.pathname === '/v1/invitation/ask') { rec.asks.push(b); return json({ asked: true }); }
+        if (u.pathname === '/v1/invitation/hold') { rec.holds.push(b); return json({ token: TOKEN }); }
         if (u.pathname === '/v1/offer/checkout') {
           rec.checkouts.push(b);
           if (engine.checkout !== 'ok') return json({ error: engine.checkout.error }, engine.checkout.status);
@@ -230,12 +277,14 @@ async function main() {
     check(rec.reads.length === 1 && rec.reads[0].token === TOKEN && Object.keys(rec.reads[0]).join() === 'token', 'reads the offer by posting its token, and nothing else');
     check(!has(page.url(), TOKEN), 'the token is out of the address bar (the keys script runs before Tag Manager)');
     check((await text(page, '[data-eo-h1]')) === fill(WORDS.headline), 'the headline greets them by name');
-    check((await text(page, '[data-eo-eyebrow]')) === 'The Vow' && (await text(page, '[data-eo-lead]')) === WORDS.opening, 'the package and the opening over the photograph');
+    check(/^The Vow · [A-Z][a-z]+day, /.test(await text(page, '[data-eo-eyebrow]')) && (await text(page, '[data-eo-lead]')) === WORDS.opening, 'the package, the dates and the opening over the photograph');
     check(/^[A-Z][a-z]+day, [A-Z][a-z]+ \d+ to [A-Z][a-z]+day, [A-Z][a-z]+ \d+, \d{4}$/.test(await text(page, '.eo-dates')), 'their dates under Your day, the year once');
     check(!(await visible(page, '.book-fab')), 'one action on the page: the floating "Book your dates" steps aside');
     check(await page.evaluate(() => { const i = document.querySelector('.lf-bk-top__photo img'); return !!i && i.complete && i.naturalWidth > 0; }), 'the dusk photograph is shown');
     const day = await text(page, '#eo-day-h');
-    check(day === 'Your day' && (await page.$$eval('.eo-list li', (l) => l.length)) === 9, 'the day: its six lines, then the three gifts');
+    check(day === WORDS.package_h && (await page.$$eval('.eo-list li', (l) => l.length)) === 9, 'what is provided: its six lines, then the three gifts');
+    check(!(await visible(page, '#eo-days-h')) && !(await visible(page, '#eo-note-h')) && !(await visible(page, '#eo-dates-h')),
+      'an offer without days, note or open dates shows none of those parts');
     check((await text(page, '#eo-gifts-h')) === 'And on us', 'the gifts under their own heading, no price beside them');
     check(!/\$\s?\d/.test(await text(page, '.eo-list')), 'no price or value beside a gift (Letter Law 1)');
     check(has(await text(page, '.eo-total'), '$5,230.00') && has(await text(page, '.eo-total'), 'All in'), 'one total, all in');
@@ -286,6 +335,70 @@ async function main() {
     await until(() => visible(page, '#eo-paybtn'));
     check((await page.$$eval('.eo-way', (l) => l.length)) === 1 && (await page.isChecked('#eo-way-full')) && (await text(page, '#eo-paybtn')) === 'Sign and pay $5,230.00',
       'only all of it today, and the button says so');
+    await ctx.close();
+  }
+
+  // ---- the Invitation (2026-11-11): read by GET, nothing held, the names from the link
+  console.log('the Invitation');
+  {
+    const { ctx, page, rec } = await open('invite', { invite: invitation() });
+    await page.goto(BASE + '/elopement/offer#invite=' + INVITE + '&for=' + encodeURIComponent(GREETING));
+    await until(() => visible(page, '#eo-askbtn'));
+    check(rec.reads.length === 0 && rec.invites.length === 1 && rec.invites[0].token === INVITE && !rec.invites[0].check_in,
+      'reads the Invitation by GET with its token, never POST /v1/offer');
+    check(!has(page.url(), INVITE) && has(page.url(), 'for='), 'the token is out of the address bar; the names stay in it');
+    check((await text(page, '[data-eo-h1]')) === fill(WORDS.headline), 'the headline greets them by the names in the link');
+    check((await text(page, '#eo-note-h')) === WORDS.note_h && (await text(page, '.eo-note p')) === INVITATION.note, 'Mick\'s word, as sent');
+    check((await page.$$eval('.eo-day', (l) => l.length)) === 3 && (await page.$$eval('.eo-stop', (l) => l.length)) === 6, 'the day hour by hour: three dates, six stops');
+    const stopTimes = await page.$$eval('.eo-stop__time', (l) => l.map((x) => x.textContent));
+    check(stopTimes[0] === '3:00 p.m.' && stopTimes[2] === WORDS.sunset_label + ' 8:14 p.m.', 'a stop with no clock time shows the day\'s sunset in its place');
+    check(has(await text(page, '.eo-sun'), '8:14 p.m.'), 'the ceremony day\'s sunset under the dates');
+    check((await page.$$eval('.eo-photos img', (l) => l.length)) === 4, 'four photographs for the package');
+    check((await page.$$eval('.eo-price li', (l) => l.length)) === 4 && has(await text(page, '.eo-total'), '$7,550.00'), 'the price to the dollar: four lines and the total');
+    check((await page.$$eval('.eo-dates-list .eo-date', (l) => l.length)) === 3, 'three open dates near theirs');
+    check(!(await visible(page, '.gh-agreement')) && !(await visible(page, '#eo-paybtn')) && !(await visible(page, '.eo-way')), 'no agreement, no payment, no ways to pay: nothing is held');
+    check((await text(page, '#eo-askbtn')) === WORDS.ask_button && has(await text(page, '.eo-hold'), WORDS.ask_line), 'the button asks; the page says nothing is held yet');
+    check(!/\{\{|\[WRITER|\[MICK/.test(await page.evaluate(() => document.body.innerText)), 'no merge field or placeholder left on the page');
+    await shot(page, 'invitation-390.png');
+    await page.click('.eo-dates-list .eo-date');
+    await until(() => rec.invites.length >= 2);
+    check(rec.invites[1].check_in === INVITATION.open_dates[0].check_in && rec.invites[1].token === INVITE, 'a tap on an open date reads the Invitation on that date, nothing written');
+    await until(() => visible(page, '#eo-askbtn'));
+    await page.click('#eo-askbtn');
+    await until(async () => has(await page.evaluate(() => document.getElementById('eo').innerText), WORDS.asked_h));
+    check(rec.asks.length === 1 && Object.keys(rec.asks[0]).join() === 'token' && rec.asks[0].token === INVITE, 'Ask posts the token and nothing else, and the page says Mick will send the agreement');
+    check(rec.holds.length === 0 && rec.checkouts.length === 0 && rec.reads.length === 0, 'nothing held, nothing charged, no offer read');
+    check(await noSideways(page), 'no sideways scroll at 390');
+    clean(rec, 'invite');
+    await ctx.close();
+  }
+  {
+    const { ctx, page, rec } = await open('invite hold', { invite: invitation({ hold: { mode: 'hold', hours: 48, until: null } }) });
+    await page.goto(BASE + '/elopement/offer#invite=' + INVITE + '&for=' + encodeURIComponent(GREETING));
+    await until(() => visible(page, '#eo-askbtn'));
+    check((await text(page, '#eo-askbtn')) === WORDS.hold_button && has(await text(page, '.eo-hold'), '48 hours'), 'in hold mode the button holds and the page says for how long');
+    await page.click('#eo-askbtn');
+    await until(() => visible(page, '#eo-paybtn'));
+    check(rec.holds.length === 1 && rec.holds[0].token === INVITE && rec.holds[0].names === GREETING && rec.reads.length === 1 && rec.reads[0].token === TOKEN,
+      'Hold posts the token and the names, then the made offer is read and its agreement shown');
+    await ctx.close();
+  }
+  {
+    const { ctx, page } = await open('invite gone', { invite: null });
+    await page.goto(BASE + '/elopement/offer#invite=' + INVITE);
+    await until(async () => has(await page.evaluate(() => document.getElementById('eo').innerText), WORDS.expired));
+    check(!(await visible(page, '#eo-askbtn')), 'an Invitation the engine cannot find: its own line, no button');
+    await ctx.close();
+  }
+  {
+    // A made offer that carries days and a note (the engine gains both) shows them above the agreement.
+    const { ctx, page } = await open('offer with days', { read: offer({ days: INVITATION.days, note: INVITATION.note, open_dates: INVITATION.open_dates }) });
+    await page.goto(BASE + '/elopement/offer#offer=' + TOKEN);
+    await until(() => visible(page, '#eo-paybtn'));
+    check((await page.$$eval('.eo-stop', (l) => l.length)) === 6 && (await text(page, '.eo-note p')) === INVITATION.note, 'a made offer with days and a note shows them');
+    const href = await page.$eval('.eo-dates-list .eo-date', (a) => a.getAttribute('href'));
+    check(/^sms:\d+\?&body=/.test(href) && has(decodeURIComponent(href), 'instead of'), 'on a made offer an open date composes a text to the house');
+    check(await visible(page, '.gh-agreement') && (await text(page, '#eo-paybtn')) === 'Sign and pay $2,615.00', 'and keeps its agreement and its button');
     await ctx.close();
   }
 

@@ -221,17 +221,6 @@ async function main() {
     });
   }
   async function until(fn) { for (let i = 0; i < 30 && !fn(); i++) await new Promise((r) => setTimeout(r, 100)); return fn(); }
-  // Taps a day as a guest does: on a phone the calendar shows one month (css/gatehouse.css hides the
-  // second under 768 px), so a day in the next month is reached by turning it with "Later months"
-  // first. Found 2026-11-12, when the second stay's check-out fell on Dec 1 and the click waited on a
-  // button laid out at zero width.
-  async function tapDay(page, day) {
-    const sel = '[data-day="' + day + '"]';
-    await page.waitForSelector(sel, { state: 'attached', timeout: 5000 });
-    const hidden = await page.$eval(sel, (b) => b.getBoundingClientRect().width === 0);
-    if (hidden) { await page.click('.gh-arrow[aria-label="Later months"]'); await page.waitForTimeout(250); }
-    await page.click(sel);
-  }
   // Scrolls until the element's top sits just under the fixed header (for a screenshot).
   async function underHeader(page, sel) {
     await page.evaluate((s) => { const n = document.querySelector(s), h = document.querySelector('.lf-hdr').getBoundingClientRect().bottom; window.scrollBy({ top: n.getBoundingClientRect().top - h - 12, behavior: 'instant' }); }, sel);
@@ -327,8 +316,9 @@ async function main() {
     await page.waitForTimeout(300);
     check(leads.length === 1, 'the same dates at begin_checkout: no second lead');
     await page.click('#gatehouse .gh-back');
-    await tapDay(page, CI2);
-    await tapDay(page, CO2);
+    await page.waitForSelector('[data-day="' + CI2 + '"]', { timeout: 5000 });
+    await page.click('[data-day="' + CI2 + '"]');
+    await page.click('[data-day="' + CO2 + '"]');
     await page.waitForSelector('#gatehouse button.gh-cta', { timeout: 5000 });
     await page.click('#gatehouse button.gh-cta');
     await page.waitForSelector('#gatehouse form.gh-form');
