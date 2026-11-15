@@ -164,8 +164,20 @@ WORDS = {
     'entered_eyebrow': 'Entered',
     'entered_h': 'You\'re in.',
     'entered_lead': 'We have your entry. One counts per email address.',
+    # The next step (the Chief's route of 2026-11-14, chief docs/routes/loxleyforest/2026-11-14-reel-
+    # next-step.md; Mick from Disney: turn the reel's views into bookings or elopements; the Writer's
+    # draft 1, version B, chief docs/drafts/2026-11-14-writer-reel-next-step.md): "Until then, there's
+    # nothing to do." gives way to the line that keeps the entry apart from any booking (Counsel's rule,
+    # visible before any door), the passage, and three links in the actions' place: the open nights,
+    # a proposal, an elopement. Version A, the restrained one, is the fallback (PASSAGES, NEXT_VERSION).
+    # The one line under the form on the rules page is the Writer's draft 2. The links' hrefs sit
+    # outside the hash, as the doors' do, tagged by page (NEXT_TAG, RULES_TAG). Every one of these
+    # words moves the hash, so they reach Mick's ear by it with the rest.
     'entered_1': ('We draw on Monday, December 14. If it\'s you, you\'ll hear from mic@loxleyforest.com, '
-                  'and from nowhere else. Until then, there\'s nothing to do.'),
+                  'and from nowhere else.'),
+    'next_apart': 'Your entry stands on its own. Nothing you book or buy changes it.',
+    'next_form_line': ('Here for the treehouse itself? See <a href="{{nights}}">the open nights</a>, or '
+                       '<a href="{{elopement}}">an elopement on the bridge</a>.'),
     # The reel's door (the Marketer's teardown and the Critic's site-audit sheet, 2026-11-08, the Chief's
     # route): the bridge they just watched, and three doors on, on /giveaway and on /giveaway-entered.
     # The links carry ?src=giveaway-site, as the entered page's open-nights link does. Behind the
@@ -178,6 +190,22 @@ WORDS = {
     'door_give': 'Give a stay',
     'door_give_p': 'The Golden Arrow: nights in the trees, as a gift.',
 }
+# The passage and the two links' words, in the Writer's two versions; Mick picks one by its hash.
+PASSAGES = {
+    'A': {'next_p': ('If a night up here is on your mind anyway, the calendar shows which are open and what '
+                     'each costs. Some couples come for an anniversary. Some come to ask a question halfway '
+                     'across the bridge. Some come to be married by the fire.'),
+          'next_ask': 'Asking the question',
+          'next_vows': 'Elopements'},
+    'B': {'next_p': ('If the bridge stayed with you, here is what it does at dusk. The small warm lights come '
+                     'on, and the treehouse glows at the far end like a lantern somebody lit for you. Couples '
+                     'cross it for an anniversary, to ask a question halfway over, or to say their vows by '
+                     'the fire.'),
+          'next_ask': 'Ask on the bridge',
+          'next_vows': 'Your vows by the fire'},
+}
+NEXT_VERSION = 'B'  # the Chief's pick to build, 2026-11-14; A stays ready
+WORDS.update(PASSAGES[NEXT_VERSION])
 # The bridge, as the reel shows it, over the rules and on the entered page (the one photograph).
 # The photograph over the rules and on the entered page: Mick's daylight aerial (2026-11-08, about
 # 22:35 ET, "consider one of these photos instead"), the rope bridge running into the deck and the
@@ -186,20 +214,52 @@ WORDS = {
 # not in WORDS, so his yes by hash stands. Before it: aerial-bridge, the reel's golden-hour frame.
 BRIDGE_PHOTO = ('giveaway-bridge', 'From above: the hundred-foot rope bridge through the canopy to the treehouse')
 BRIDGE_PHONE = 'giveaway-bridge-tall'
-DOORS = (('/book?src=giveaway-site', 'door_stay', 'door_stay_p'),
-         ('/elopements?src=giveaway-site', 'door_elope', 'door_elope_p'),
-         ('/gift?src=giveaway-site', 'door_give', 'door_give_p'))
+# The source tags the links carry (?src=, the engine's funnel token, [a-z0-9_-]{1,40}), one a page,
+# so the engine reads the entered page's clicks apart from the rules page's (the Chief's route of
+# 2026-11-14: the bio link's visits picked dates 0 times, and the one tag hid where they stopped).
+# giveaway-site is named in the engine (counts.SOURCES, clock.SOURCE_NAMES); giveaway-entered and
+# giveaway-rules are kept raw by the funnel and read as "other" in the named counts until the Forge
+# adds them there.
+SITE_TAG = 'giveaway-site'        # the rules page's doors
+NEXT_TAG = 'giveaway-entered'     # every link on the entered page
+RULES_TAG = 'giveaway-rules'      # the one line under the form on the rules page
+DOORS = (('/book', 'door_stay', 'door_stay_p'),
+         ('/elopements', 'door_elope', 'door_elope_p'),
+         ('/gift', 'door_give', 'door_give_p'))
 
 
-def doors_html():
+def tagged(href, tag):
+    return f'{href}?src={tag}'
+
+
+def doors_html(tag=SITE_TAG):
     e = lambda k: escape(WORDS[k], quote=False)
-    items = ''.join(f'\n        <a class="gw-door" href="{href}"><strong>{e(h)}</strong><span>{e(p)}</span></a>' for href, h, p in DOORS)
+    items = ''.join(f'\n        <a class="gw-door" href="{tagged(href, tag)}"><strong>{e(h)}</strong><span>{e(p)}</span></a>' for href, h, p in DOORS)
     return f'''
     <nav class="gw-doors" aria-labelledby="gw-doors-h">
       <p class="lf-eyebrow" id="gw-doors-h">{e('doors_h')}</p>
       <div class="gw-doors__row">{items}
       </div>
     </nav>'''
+
+
+# The next step's links (2026-11-14): the entered page's three actions, in the "Return home / See the
+# open nights" pair's place, and the two in the line under the form. Hrefs outside the hash, each
+# tagged by its page. The "While you're here" row on the entered page is off: two of its three
+# doors would repeat the actions right above it (the seat's call, 2026-11-14; one line brings it
+# back, tagged NEXT_TAG); the rules page keeps its row.
+NEXT_ACTIONS = (('/book', 'entered_link'),
+                ('/where-to-propose-north-georgia', 'next_ask'),
+                ('/elopements', 'next_vows'))
+NEXT_FORM_HREFS = {'nights': '/book', 'elopement': '/elopements'}
+ENTERED_DOORS = False
+
+
+def next_line_html():
+    """The one line under the form on the rules page, outside the form's wrapper so it stays when
+    the form gives way to the closed line."""
+    merged = w('next_form_line', **{k: tagged(href, RULES_TAG) for k, href in NEXT_FORM_HREFS.items()})
+    return f'\n        <p class="gw-next-line">{merged}</p>'
 # The SHA-256 of WORDS (words_sha256) once Mick has approved every word. None: not yet.
 # Mick's yes, 2026-11-08 about 22:35 ET by the Chief, to the page as he read it on his phone.
 APPROVED_SHA256 = '4de06ad37e1a5fb1a723e5ce507344506999fbc92278cd0ee28037ebdd215766'
@@ -298,9 +358,11 @@ def page_giveaway():
     head, gtm = sys.modules['lfpage_gift'].head_for(WORDS['title'], WORDS['desc'], URL, noindex=True)
     open_now = ready()
     if not open_now:
+        other = 'A' if NEXT_VERSION == 'B' else 'B'
         print(f'giveaway: the form is closed; words sha256 {words_sha256()} (APPROVED_SHA256 '
               f'{"matches" if APPROVED_SHA256 == words_sha256() else "unset or stale"}; OPENS {OPENS!r}; '
-              f'ADDRESS {"set" if ADDRESS else "unset"}; OPEN {OPEN})')
+              f'ADDRESS {"set" if ADDRESS else "unset"}; OPEN {OPEN}; the next step\'s version {NEXT_VERSION}; '
+              f'with version {other} the hash would be {words_sha256({**WORDS, **PASSAGES[other]})})')
     opens = f'on {OPENS}' if OPENS else 'soon'
     e = lambda k, **m: escape(w(k, **m), quote=False)
     result = (f'\n      <p class="gw-result">{e("frozen", frozen=FROZEN)}</p>' if FROZEN else '') + (
@@ -340,7 +402,7 @@ def page_giveaway():
       <p class="lf-legal-sign">{e('sponsor', address=ADDRESS or ADDRESS_PLACEHOLDER)}</p>
       </div>
       <div class="gw-entry">{closed_soon}
-        <p class="gw-closed" id="gw-after" hidden>{e('closed_after')}</p>{form_html(open_now)}
+        <p class="gw-closed" id="gw-after" hidden>{e('closed_after')}</p>{form_html(open_now)}{next_line_html()}
       </div>
     </section>
     <section class="lf-sec lf-parch" aria-label="{e('doors_h')}">
@@ -356,16 +418,19 @@ def page_giveaway_entered():
     c = sys.modules['lfpage_confirmations']
     head, gtm = sys.modules['lfpage_gift'].head_for('Entered | Loxley Forest', WORDS['entered_lead'], ENTERED_URL, noindex=True)
     e = lambda k: escape(WORDS[k], quote=False)
-    body = c.note(e('entered_eyebrow'), e('entered_h'), e('entered_lead'), [e('entered_1')],
+    body = c.note(e('entered_eyebrow'), e('entered_h'), e('entered_lead'), [e('entered_1'), e('next_apart'), e('next_p')],
                   B.pic(BRIDGE_PHOTO[0], BRIDGE_PHOTO[1], '(min-width: 900px) 50vw, 100vw', eager=True, phone=BRIDGE_PHONE))
-    # The Marketer's move (the table of 2026-11-07): the open nights, in place of the treehouse link.
-    old = '<a href="/treehouses" class="lf-link">See the treehouse</a>'
-    assert body.count(old) == 1, 'the thank-you note lost its second link; the entered page replaces it'
-    body = body.replace(old, f'<a href="/book?src=giveaway-site" class="lf-link">{e("entered_link")}</a>')
-    # and the three doors on (2026-11-08), under the note
-    body += f'''
+    # The three actions in the note's pair's place (2026-11-14; before it, the Marketer's move of
+    # 2026-11-07 put the open nights in the treehouse link's place): every link on this page carries
+    # NEXT_TAG, so the engine reads this page's clicks apart from the rules page's.
+    old = '<div class="lf-actions"><a href="/" class="lf-link">Return home</a><a href="/treehouses" class="lf-link">See the treehouse</a></div>'
+    assert body.count(old) == 1, 'the thank-you note lost its actions; the entered page replaces them'
+    actions = ''.join(f'<a href="{tagged(href, NEXT_TAG)}" class="lf-link">{e(k)}</a>' for href, k in NEXT_ACTIONS)
+    body = body.replace(old, f'<div class="lf-actions">{actions}</div>')
+    if ENTERED_DOORS:
+        body += f'''
     <section class="lf-sec lf-parch" aria-label="{e('doors_h')}">
-      <div class="lf-wrap">{doors_html()}
+      <div class="lf-wrap">{doors_html(NEXT_TAG)}
       </div>
     </section>
 '''
@@ -401,6 +466,10 @@ CSS = '''
 .lf-form .gw-check input[type="checkbox"] { width: 20px; height: 20px; min-height: 0; margin: 4px 0 0; padding: 0; border: 0; background: none; flex: none; -webkit-appearance: checkbox; appearance: auto; accent-color: var(--forest-deep); }
 .gw-closed { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 1.3rem; line-height: 1.5; color: var(--stone); margin: 0; }
 .gw-closed + .gw-form { margin-top: 28px; }
+/* the next step (2026-11-14): the one line under the form on the rules page */
+.gw-next-line { margin: 26px 0 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.15rem; line-height: 1.5; color: var(--stone); }
+.gw-next-line a { color: var(--forest-deep); font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.gw-next-line a:focus-visible { outline: 2px solid var(--forest-deep); outline-offset: 2px; }
 
 /* The invitation (js/giveaway-popup.js): a card at the corner on a desktop, a bottom sheet on a phone,
    never full screen; the folded line under the header after a dismissal; /book's quiet line. */
