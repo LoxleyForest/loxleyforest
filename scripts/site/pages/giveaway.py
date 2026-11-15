@@ -270,7 +270,11 @@ def next_line_html():
     return f'\n        <p class="gw-next-line">{merged}</p>'
 # The SHA-256 of WORDS (words_sha256) once Mick has approved every word. None: not yet.
 # Mick's yes, 2026-11-08 about 22:35 ET by the Chief, to the page as he read it on his phone.
-APPROVED_SHA256 = '4de06ad37e1a5fb1a723e5ce507344506999fbc92278cd0ee28037ebdd215766'
+# Mick's yes, 2026-11-14 night by the Chief (its message: about 11:15 PM ET), to the reel's next step,
+# version B, by this hash: shown every word of the entered page as built, what left it, and the one
+# line under the form on the rules page; asked to say yes to adec35af; "Yes". Before it, 2026-11-08:
+# 4de06ad37e1a5fb1a723e5ce507344506999fbc92278cd0ee28037ebdd215766.
+APPROVED_SHA256 = 'adec35af2e50e8703a6fad588a8cddf5514d538a5be4a18aeb8226d7fb3ff291'
 
 
 def words_sha256(words=None):
