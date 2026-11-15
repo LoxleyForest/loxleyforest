@@ -176,8 +176,14 @@ WORDS = {
     'entered_1': ('We draw on Monday, December 14. If it\'s you, you\'ll hear from mic@loxleyforest.com, '
                   'and from nowhere else.'),
     'next_apart': 'Your entry stands on its own. Nothing you book or buy changes it.',
-    'next_form_line': ('Here for the treehouse itself? See <a href="{{nights}}">the open nights</a>, or '
-                       '<a href="{{elopement}}">an elopement on the bridge</a>.'),
+    # The reel sold Christmas (its cover "Christmas Treehouse, Just 1 hour from Atlanta"; the Chief,
+    # 2026-11-14 night; the Writer's Christmas drafts, chief docs/drafts/2026-11-14-writer-reel-
+    # christmas.md, B): a fourth link under the three, and the line under the form as its 2b, which
+    # stays true after Christmas sells. Christmas is one stay, Wed Dec 23 to Sat Dec 26 (Mick's rule
+    # of 2026-11-09); the links open /book on December (?month=2026-12, live since 2026-11-08).
+    'next_christmas': 'Christmas in the trees: one stay, Dec 23 to 26',
+    'next_form_line': ('Here for the treehouse itself? See <a href="{{nights}}">December\'s nights</a>, or '
+                       '<a href="{{elopement}}">an elopement between Christmas and New Year\'s</a>.'),
     # The reel's door (the Marketer's teardown and the Critic's site-audit sheet, 2026-11-08, the Chief's
     # route): the bridge they just watched, and three doors on, on /giveaway and on /giveaway-entered.
     # The links carry ?src=giveaway-site, as the entered page's open-nights link does. Behind the
@@ -229,7 +235,7 @@ DOORS = (('/book', 'door_stay', 'door_stay_p'),
 
 
 def tagged(href, tag):
-    return f'{href}?src={tag}'
+    return f'{href}{"&" if "?" in href else "?"}src={tag}'
 
 
 def doors_html(tag=SITE_TAG):
@@ -248,10 +254,12 @@ def doors_html(tag=SITE_TAG):
 # tagged by its page. The "While you're here" row on the entered page is off: two of its three
 # doors would repeat the actions right above it (the seat's call, 2026-11-14; one line brings it
 # back, tagged NEXT_TAG); the rules page keeps its row.
+DECEMBER = '/book?month=2026-12'  # the calendar opened on December (js/gatehouse.js readUrl, 2026-11-08)
 NEXT_ACTIONS = (('/book', 'entered_link'),
                 ('/where-to-propose-north-georgia', 'next_ask'),
-                ('/elopements', 'next_vows'))
-NEXT_FORM_HREFS = {'nights': '/book', 'elopement': '/elopements'}
+                ('/elopements', 'next_vows'),
+                (DECEMBER, 'next_christmas'))
+NEXT_FORM_HREFS = {'nights': DECEMBER, 'elopement': '/christmas-new-years-elopement'}
 ENTERED_DOORS = False
 
 

@@ -61,11 +61,16 @@ def main():
     # The pages the links lead to.
     hrefs = [h for h, _k in gw.NEXT_ACTIONS] + list(gw.NEXT_FORM_HREFS.values()) + [h for h, _a, _b in gw.DOORS]
     for h in sorted(set(hrefs)):
-        f = os.path.join(ROOT, 'index.html' if h == '/' else h.lstrip('/') + '.html')
+        p, _q, query = h.partition('?')
+        f = os.path.join(ROOT, 'index.html' if p == '/' else p.lstrip('/') + '.html')
         ok = os.path.exists(f)
-        check(ok, 'the page %s exists' % h)
+        check(ok, 'the page %s exists' % p)
         if ok:
-            check('content="noindex' not in open(f, encoding='utf-8').read(), 'the page %s is not noindex' % h)
+            check('content="noindex' not in open(f, encoding='utf-8').read(), 'the page %s is not noindex' % p)
+        if query:
+            # Only the month link, and only on /book, where js/gatehouse.js reads ?month=YYYY-MM.
+            check(p == '/book' and re.fullmatch(r'month=\d{4}-(0[1-9]|1[0-2])', query) is not None, 'the query on %s is /book\'s month link' % h)
+    check(all('?' in gw.tagged(h, 'x') and gw.tagged(h, 'x').count('?') == 1 for h in hrefs), 'a tagged link carries one ? whatever it had')
 
     # The words.
     for v, d in gw.PASSAGES.items():
