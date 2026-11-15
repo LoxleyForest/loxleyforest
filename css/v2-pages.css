@@ -525,7 +525,11 @@ body:has(#ga-buy, #ga-card-page, #ga-manage, #ga-thanks) .book-fab { display: no
 .gw-fields { border: 0; padding: 0; margin: 0; display: grid; gap: 22px; min-width: 0; }
 .gw-h2 { margin: 0 0 4px; padding: 0; }
 .lf-form label.gw-check { display: flex; gap: 12px; align-items: flex-start; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.15rem; font-weight: 400; letter-spacing: 0; text-transform: none; line-height: 1.5; color: var(--bark); cursor: pointer; }
-.lf-form .gw-check input[type="checkbox"] { width: 20px; height: 20px; margin: 4px 0 0; padding: 0; flex: none; accent-color: var(--forest-deep); }
+/* The browser draws the box and its tick (2026-11-13, an Instagram comment: "the boxes are not working").
+   `.lf-form input` above strips the native look from every input (appearance none, min-height 52px,
+   a border and a linen ground), so a ticked box looked empty and drew 20 by 52 px; a visitor tapped
+   twice and unticked the required box. Proven by scripts/site/check_boxes.js. */
+.lf-form .gw-check input[type="checkbox"] { width: 20px; height: 20px; min-height: 0; margin: 4px 0 0; padding: 0; border: 0; background: none; flex: none; -webkit-appearance: checkbox; appearance: auto; accent-color: var(--forest-deep); }
 .gw-closed { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 1.3rem; line-height: 1.5; color: var(--stone); margin: 0; }
 .gw-closed + .gw-form { margin-top: 28px; }
 

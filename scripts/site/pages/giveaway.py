@@ -186,20 +186,94 @@ WORDS = {
 # not in WORDS, so his yes by hash stands. Before it: aerial-bridge, the reel's golden-hour frame.
 BRIDGE_PHOTO = ('giveaway-bridge', 'From above: the hundred-foot rope bridge through the canopy to the treehouse')
 BRIDGE_PHONE = 'giveaway-bridge-tall'
-DOORS = (('/book?src=giveaway-site', 'door_stay', 'door_stay_p'),
-         ('/elopements?src=giveaway-site', 'door_elope', 'door_elope_p'),
-         ('/gift?src=giveaway-site', 'door_give', 'door_give_p'))
+# The source tags the links carry (?src=, the engine's funnel token, [a-z0-9_-]{1,40}), one a page,
+# so the engine reads the entered page's clicks apart from the rules page's (the Chief's route of
+# 2026-11-14: the bio link's visits picked dates 0 times, and the one tag hid where they stopped).
+# giveaway-site is named in the engine (counts.SOURCES, clock.SOURCE_NAMES); giveaway-entered and
+# giveaway-rules are kept raw by the funnel and read as "other" in the named counts until the Forge
+# adds them there.
+SITE_TAG = 'giveaway-site'        # the rules page's doors
+NEXT_TAG = 'giveaway-entered'     # every link on the entered page
+RULES_TAG = 'giveaway-rules'      # the one line under the form on the rules page
+DOORS = (('/book', 'door_stay', 'door_stay_p'),
+         ('/elopements', 'door_elope', 'door_elope_p'),
+         ('/gift', 'door_give', 'door_give_p'))
 
 
-def doors_html():
+def tagged(href, tag):
+    return f'{href}?src={tag}'
+
+
+def doors_html(tag=SITE_TAG):
     e = lambda k: escape(WORDS[k], quote=False)
-    items = ''.join(f'\n        <a class="gw-door" href="{href}"><strong>{e(h)}</strong><span>{e(p)}</span></a>' for href, h, p in DOORS)
+    items = ''.join(f'\n        <a class="gw-door" href="{tagged(href, tag)}"><strong>{e(h)}</strong><span>{e(p)}</span></a>' for href, h, p in DOORS)
     return f'''
     <nav class="gw-doors" aria-labelledby="gw-doors-h">
       <p class="lf-eyebrow" id="gw-doors-h">{e('doors_h')}</p>
       <div class="gw-doors__row">{items}
       </div>
     </nav>'''
+
+
+# =============================================================================================
+# THE NEXT STEP (the Chief's route of 2026-11-14, chief docs/routes/loxleyforest/
+# 2026-11-14-reel-next-step.md; Mick from Disney: turn the reel's views into bookings or elopements).
+# The reel's visitors entered and the page ended "there's nothing to do". Once approved, the entered
+# page carries a short passage and up to three links in the three doors' place (the open nights, an
+# anniversary or a proposal, an elopement for two), every link tagged NEXT_TAG; and the rules page
+# one line under the form, tagged RULES_TAG. The words are the Writer's, in NEXT, under their own
+# hash (next_sha256), so the rules page's approved words and their hash (APPROVED_SHA256) never move:
+# Mick reads these by their own hash and his yes names it in NEXT_APPROVED_SHA256. Until then nothing
+# of it renders: the entered page keeps its doors and the rules page its form. The hrefs sit outside
+# the hash, as the doors' do. Counsel: nothing here ties entry or odds to a booking or any act;
+# scripts/site/check_next_step.py refuses "odds" and "chance" in these words, the Critic reads the rest.
+# =============================================================================================
+NEXT = {
+    'h': '',                          # the eyebrow over the passage; may stay empty
+    'p': '',                          # the passage, a sentence or two; empty, nothing renders
+    'link_1': '', 'link_1_p': '',     # the open nights
+    'link_2': '', 'link_2_p': '',     # an anniversary or a proposal
+    'link_3': '', 'link_3_p': '',     # an elopement for two
+    'form_line': '', 'form_link': '',  # the rules page, under the form; empty, no line
+}
+NEXT_LINKS = (('/book', 'link_1', 'link_1_p'),
+              ('/where-to-propose-north-georgia', 'link_2', 'link_2_p'),
+              ('/elopements', 'link_3', 'link_3_p'))
+NEXT_FORM_HREF = '/book'
+# The SHA-256 of NEXT (next_sha256) once Mick has approved every word of it. None: not yet.
+NEXT_APPROVED_SHA256 = None
+
+
+def next_sha256(words=None):
+    return hashlib.sha256(json.dumps(words or NEXT, ensure_ascii=False, sort_keys=True)
+                          .encode('utf-8')).hexdigest()
+
+
+def next_ready():
+    return NEXT_APPROVED_SHA256 is not None and next_sha256() == NEXT_APPROVED_SHA256 and bool(NEXT['p'].strip())
+
+
+def next_html():
+    """The next step on the entered page: the passage, then the links that have words, each tagged."""
+    e = lambda k: escape(NEXT[k], quote=False)
+    links = [(href, h, p) for href, h, p in NEXT_LINKS if NEXT[h].strip()]
+    items = ''.join(f'\n        <a class="gw-door" href="{tagged(href, NEXT_TAG)}"><strong>{e(h)}</strong><span>{e(p)}</span></a>' for href, h, p in links)
+    eyebrow = f'\n      <p class="lf-eyebrow" id="gw-next-h">{e("h")}</p>' if NEXT['h'].strip() else ''
+    return f'''
+    <nav class="gw-doors gw-next" aria-labelledby="gw-next-p">{eyebrow}
+      <p class="gw-next__p" id="gw-next-p">{e('p')}</p>
+      <div class="gw-doors__row">{items}
+      </div>
+    </nav>'''
+
+
+def next_line_html():
+    """The one line under the form on the rules page, outside the form's wrapper so it stays when
+    the form gives way to the closed line."""
+    if not next_ready() or not NEXT['form_line'].strip():
+        return ''
+    return (f'\n        <p class="gw-next-line">{escape(NEXT["form_line"], quote=False)} '
+            f'<a href="{tagged(NEXT_FORM_HREF, RULES_TAG)}">{escape(NEXT["form_link"], quote=False)}</a></p>')
 # The SHA-256 of WORDS (words_sha256) once Mick has approved every word. None: not yet.
 # Mick's yes, 2026-11-08 about 22:35 ET by the Chief, to the page as he read it on his phone.
 APPROVED_SHA256 = '4de06ad37e1a5fb1a723e5ce507344506999fbc92278cd0ee28037ebdd215766'
@@ -340,7 +414,7 @@ def page_giveaway():
       <p class="lf-legal-sign">{e('sponsor', address=ADDRESS or ADDRESS_PLACEHOLDER)}</p>
       </div>
       <div class="gw-entry">{closed_soon}
-        <p class="gw-closed" id="gw-after" hidden>{e('closed_after')}</p>{form_html(open_now)}
+        <p class="gw-closed" id="gw-after" hidden>{e('closed_after')}</p>{form_html(open_now)}{next_line_html()}
       </div>
     </section>
     <section class="lf-sec lf-parch" aria-label="{e('doors_h')}">
@@ -394,7 +468,11 @@ CSS = '''
 .gw-fields { border: 0; padding: 0; margin: 0; display: grid; gap: 22px; min-width: 0; }
 .gw-h2 { margin: 0 0 4px; padding: 0; }
 .lf-form label.gw-check { display: flex; gap: 12px; align-items: flex-start; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.15rem; font-weight: 400; letter-spacing: 0; text-transform: none; line-height: 1.5; color: var(--bark); cursor: pointer; }
-.lf-form .gw-check input[type="checkbox"] { width: 20px; height: 20px; margin: 4px 0 0; padding: 0; flex: none; accent-color: var(--forest-deep); }
+/* The browser draws the box and its tick (2026-11-13, an Instagram comment: "the boxes are not working").
+   `.lf-form input` above strips the native look from every input (appearance none, min-height 52px,
+   a border and a linen ground), so a ticked box looked empty and drew 20 by 52 px; a visitor tapped
+   twice and unticked the required box. Proven by scripts/site/check_boxes.js. */
+.lf-form .gw-check input[type="checkbox"] { width: 20px; height: 20px; min-height: 0; margin: 4px 0 0; padding: 0; border: 0; background: none; flex: none; -webkit-appearance: checkbox; appearance: auto; accent-color: var(--forest-deep); }
 .gw-closed { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 1.3rem; line-height: 1.5; color: var(--stone); margin: 0; }
 .gw-closed + .gw-form { margin-top: 28px; }
 
