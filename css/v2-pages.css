@@ -532,6 +532,10 @@ body:has(#ga-buy, #ga-card-page, #ga-manage, #ga-thanks) .book-fab { display: no
 .lf-form .gw-check input[type="checkbox"] { width: 20px; height: 20px; min-height: 0; margin: 4px 0 0; padding: 0; border: 0; background: none; flex: none; -webkit-appearance: checkbox; appearance: auto; accent-color: var(--forest-deep); }
 .gw-closed { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 1.3rem; line-height: 1.5; color: var(--stone); margin: 0; }
 .gw-closed + .gw-form { margin-top: 28px; }
+/* the next step (2026-11-14): the one line under the form on the rules page */
+.gw-next-line { margin: 26px 0 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.15rem; line-height: 1.5; color: var(--stone); }
+.gw-next-line a { color: var(--forest-deep); font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.gw-next-line a:focus-visible { outline: 2px solid var(--forest-deep); outline-offset: 2px; }
 
 /* The invitation (js/giveaway-popup.js): a card at the corner on a desktop, a bottom sheet on a phone,
    never full screen; the folded line under the header after a dismissal; /book's quiet line. */

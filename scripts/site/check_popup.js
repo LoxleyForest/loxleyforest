@@ -283,7 +283,8 @@ async function main() {
     const { ctx, page } = await visitor({ live: true });
     await go(page, '/giveaway-entered');
     check(await page.evaluate(() => !!JSON.parse(localStorage.getItem('lf_giveaway') || '{}').entered), 'the entered page remembers the entry');
-    check(await page.evaluate(() => { const a = document.querySelector('.lf-actions a[href="/book?src=giveaway-site"]'); return !!a; }), 'and links the open nights');
+    // The entered page's links carry giveaway-entered since the reel's next step (2026-11-14; giveaway-site before it).
+    check(await page.evaluate(() => { const a = document.querySelector('.lf-actions a[href="/book?src=giveaway-entered"]'); return !!a; }), 'and links the open nights, tagged giveaway-entered');
     await go(page, '/experiences'); await runFor(page, 6000); await exit(page);
     check(!(await card(page)) && steps(ctx).length === 0, 'never a card after an entry, and no step');
     await ctx.close();
