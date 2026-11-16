@@ -1,0 +1,845 @@
+/* ============================================================
+   THE GOLDEN ARROW · the purchase panel (/gift) and the card (/gift/card)
+   The house's gift of three nights and the Dawn Table (Mick,
+   2026-10-25). Loaded after js/gatehouse.js, whose helpers it uses
+   (window.Gatehouse: el, api, money, the phone). Every sentence it
+   shows is in the page's JSON block (id lf-gift-words), written by
+   scripts/site/pages/gift.py from its WORDS (awaiting Mick).
+
+   The engine (book.loxleyforest.com, loxley-rescue ceo/golden-arrow,
+   cdb68bc):
+     GET  /v1/health -> {..., gift_sales, gift_delivery, gift_sizes}:
+          whether to sell, whether to offer "a day I choose", and each
+          open size that still sells (main c78de5b).
+     GET  /v1/gift/sizes -> {sizes: [{product, nights, name, subtitle,
+          price_cents (all in, what the checkout charges), terms, includes,
+          sold_out, sentence}]} in nights order, the sizes on sale alone
+          (the Forge, 2026-11-08); 404 while the sales door is off. Read
+          once a page load, only with SIZES on.
+     POST /v1/gift/checkout {product, email, giver_name,
+          recipient_names, ship_to?{name, line1, line2, city, state
+          (two letters), zip (five digits)}, deliver?{email, date
+          "YYYY-MM-DD", hour 0-23 Eastern, message}, src?, referrer?}
+          -> {url, total_cents}; no deliver: the card goes to the buyer;
+          src and referrer are the visit's own (gh_entry), when it has
+          them (loxley-rescue forge/gift-counts);
+          400 or 503 {error: a sentence}. Stripe returns the buyer to
+          /gift/thanks?session_id=..., or to /gift on the way back.
+     GET  /v1/gift?code=LF-XXXX-XXXX -> {code, product, name, status
+          (issued, redeemed or void), recipient_names, giver_name,
+          covers, never_expires, includes, state (unused, booked or
+          used), month ("January 2027" or null)}; 404 {error}. A gift
+          Mick gave its own window (loxley-rescue forge/gift-window,
+          `gifts extend`) also reads window {from, to, whole, line}:
+          the card's January-to-May line is not true for it, so the
+          card shows `line` in its place, or no dates line while that
+          is "" (its words wait for Mick).
+     POST /v1/gift/resend {email} -> {ok, message}: one sentence,
+          the same whatever the email.
+     GET  /v1/gift/delivery?token= and POST /v1/gift/delivery {token,
+          date?, hour?, email?} -> {name, recipient_names, giver_name,
+          email, date, hour, when, message, sent, can_change}: the
+          buyer's change page. GET /v1/health's gift_delivery says
+          whether "a day I choose" is offered.
+   (engine round two: loxley-rescue ceo/golden-arrow-2, 4c9175d.)
+   Each has its own door (sales, lookup). A door that is off answers
+   404 with the engine's bare {"error": "not found"}, as for a path it
+   does not have: the panel then says to call or text Mick. Anything
+   the engine refuses is a sentence, shown as is.
+
+   The card's code arrives after # and the keys script in the head
+   (scripts/site/build_v2.py KEYS_SCRIPT) has already lifted it out
+   of the address bar into window.__ghKeys before Tag Manager loads.
+   It goes to our own booking server and nowhere else: never a
+   beacon, never the tag manager, never an <a href> a tag could
+   read (the buttons below navigate by script, as /book does).
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var G = window.Gatehouse;
+  if (!G) return;
+  var el = G.el;
+
+  var W = (function () {
+    try { var n = document.getElementById('lf-gift-words'); return (n && JSON.parse(n.textContent)) || {}; } catch (e) { return {}; }
+  })();
+  function w(k) { return W[k] || ''; }
+  // The engine's refusal, as it wrote it, then Mick's number; our own words when it gave none.
+  function said(e, fallback) {
+    var t = e && e.body && typeof e.body.error === 'string' ? e.body.error.trim() : '';
+    return t ? t + ' ' + w('questions') : (e && e.message) || w(fallback);
+  }
+
+  // The engine's own answer for a door that is off (or a path it does not have).
+  function routeOff(e) { return !!(e && e.status === 404 && e.body && e.body.error === 'not found'); }
+  // No answer at all, a timeout, or the server's own failure.
+  function unreachable(e) { return !e || !e.status || e.status >= 500; }
+
+  var PRODUCT = 'golden-arrow';
+  // The gift in its sizes (the Chief's route, 2026-11-08; the Forge's opening piece, Loxley main
+  // c78de5b), in shadow: SIZES false, the page is as it was, the 3-night card alone. true on the
+  // Chief's word: the panel first offers one card per size the engine sells, each with its own
+  // front, its price and its terms as the engine sends them (GET /v1/gift/sizes; never typed
+  // here), buyable only while /v1/health's gift_sizes names it, else with the engine's own
+  // sentence for a size at the season's cap. Only sizes the engine lists ever show; a read that
+  // fails leaves the page as it was. scripts/site/check_gift.js proves both states.
+  var SIZES = true;
+  // The Writer's two lines for a card of one night or two (its gift line and its "Unused, ready
+  // for ..." status, gift.py card_gift_N and state_unused_N), for Mick's ear: SIZE_WORDS false, a
+  // card of another size shows its own subtitle and terms (the printed card's words, the engine's)
+  // and no gift line or unused status at all; true on the Chief's word once Mick has heard them.
+  // Apart from SIZES: a hand-issued card of another size can exist before /gift offers the sizes
+  // (the Critic, 2026-11-08), and the card page must never read "three nights" for it.
+  var SIZE_WORDS = true;
+  // The engine's price on /gift before the names are typed (the Critic's site-audit sheet, 2026-11-08,
+  // the Chief's route; it reverses Mick's rule of 2026-10-19 that the amount shows only right before
+  // Stripe, so it waits for his yes): PRICE true, the price of the card on sale, read from
+  // /v1/gift/sizes, stands above the names with "Taxes and fees included."; typed nowhere; nothing
+  // shown if the engine is silent. false: as it was.
+  var PRICE = true;
+  var FRONTS = { 'golden-arrow-1': '/images/gift/golden-arrow-card-front-1-night.jpg',
+                 'golden-arrow-2': '/images/gift/golden-arrow-card-front-2-nights.jpg',
+                 'golden-arrow': '/images/gift/golden-arrow-card-front.jpg' };
+  var USABLE = { issued: 1 };
+  var USED = { redeemed: 1 };
+  var STRIPE = /^https:\/\/([a-z0-9-]+\.)*stripe\.com\//i;
+
+  // Two taps for the phone, under a sentence that already gives the number.
+  function callLine() {
+    return el('div', { 'class': 'ga-calls' }, [
+      el('a', { 'class': 'lf-btn gh-btn--quiet', href: G.TEL, text: w('call_mick') }),
+      el('a', { 'class': 'lf-btn gh-btn--quiet', href: G.SMS, text: w('text_mick') })]);
+  }
+
+  // The card's dedication must sit beside the photograph, never under it: long names step down
+  // (--ns, the names' scale), five per cent at a time, to half size at the most. Everything on the
+  // card is in units of its width, so the scale that fits here fits on any screen and on paper.
+  function fit(card) {
+    var side = card.querySelector('.ga-side'), arch = card.querySelector('.ga-arch');
+    if (!side || !arch) return;
+    var ns = 1;
+    card.style.removeProperty('--ns');
+    while (side.scrollHeight > arch.offsetHeight + 1 && ns > 0.5) {
+      ns = Math.round((ns - 0.05) * 100) / 100;
+      card.style.setProperty('--ns', String(ns));
+    }
+  }
+  function fitAll() { document.querySelectorAll('.ga-card').forEach(fit); }
+  fitAll();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitAll);
+
+  // ---- time, as the engine counts it: Eastern, "YYYY-MM-DDTHH:MM"
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function nowEastern() {
+    try {
+      var p = {};
+      new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date()).forEach(function (x) { p[x.type] = x.value; });
+      return p.year + '-' + p.month + '-' + p.day + 'T' + p.hour + ':' + p.minute;
+    } catch (e) { var d = new Date(); return G.iso(d) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+  }
+  // The last day a card may be sent: twelve months from today.
+  function lastDay() { var d = G.parse(G.today()); d.setMonth(d.getMonth() + 12); return G.iso(d); }
+  // The next 7 AM on a day of the year ("12-25"), this year if it is still ahead: its day.
+  function nextMorning(md) {
+    var y = +G.today().slice(0, 4), at = y + '-' + md + 'T07:00';
+    return (at > nowEastern() ? at : (y + 1) + '-' + md + 'T07:00').slice(0, 10);
+  }
+  function hourWords(h) { return (h % 12 || 12) + ' ' + (h < 12 ? 'AM' : 'PM'); }
+  function at(day, hour) { return day + 'T' + pad(+hour) + ':00'; }
+  // "Christmas morning at 7 AM", "Valentine's Day at 7 AM", "Friday, January 8, 2027 at 9 AM".
+  function whenWords(day, hour) {
+    var md = String(day).slice(5, 10), h = +hour;
+    var d = md === '12-25' && h < 12 ? w('when_christmas') : md === '02-14' ? w('when_valentine') : G.long(day);
+    return w('when_at').replace('{day}', d).replace('{hour}', hourWords(h));
+  }
+  // Is a day and hour one the engine takes: still ahead, and no later than twelve months out?
+  function whenProblem(day, hour) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(day || '') || day < G.today() || day > lastDay()) return 'need_day';
+    if (at(day, hour) <= nowEastern()) return 'need_future';
+    return '';
+  }
+
+  // A labelled field bound to obj[key].
+  function inputField(obj, id, key, label, opts) {
+    opts = opts || {};
+    var input = el('input', { id: id, name: key, type: opts.type || 'text', autocomplete: opts.auto || null,
+      inputmode: opts.mode || null, maxlength: opts.type === 'date' ? null : opts.max || 120, required: opts.optional ? null : 'required',
+      min: opts.min || null, max: opts.type === 'date' ? opts.maxDay || null : null,
+      'aria-describedby': opts.hint ? id + '-hint' : null, value: obj[key] === undefined || obj[key] === null ? '' : obj[key],
+      oninput: function (e) { obj[key] = e.target.value; if (opts.after) opts.after(); } });
+    return el('div', { 'class': 'gh-field' }, [
+      el('label', { 'for': id, text: label + (opts.optional ? ' ' + w('optional') : '') }), input,
+      opts.hint ? el('small', { id: id + '-hint', text: opts.hint }) : null]);
+  }
+
+  // The day, the hour (Eastern) and the quick picks, bound to t {day, hour, pick}; for the purchase
+  // panel and the buyer's change page alike.
+  function whenPicker(t) {
+    function unpick() { t.pick = ''; refresh(); }
+    var day = inputField(t, 'ga-day', 'day', w('day_label'), { type: 'date', min: G.today(), maxDay: lastDay(), after: unpick });
+    var hour = el('select', { id: 'ga-hour', name: 'hour', onchange: function (e) { t.hour = +e.target.value; unpick(); } });
+    for (var h = 0; h < 24; h++) hour.appendChild(el('option', { value: String(h), text: hourWords(h), selected: +t.hour === h ? 'selected' : null }));
+    var picks = [['christmas', '12-25', w('pick_christmas')], ['valentine', '02-14', w('pick_valentine')]].map(function (p) {
+      var d = nextMorning(p[1]);
+      if (d > lastDay()) return null;
+      return el('button', { type: 'button', 'class': 'ga-pick', 'data-pick': p[0], 'aria-pressed': 'false', text: p[2], onclick: function () {
+        t.pick = p[0]; t.day = d; t.hour = 7;
+        day.querySelector('input').value = d; hour.value = '7'; refresh();
+      } });
+    }).filter(Boolean);
+    function refresh() { picks.forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-pick') === t.pick ? 'true' : 'false'); }); }
+    refresh();
+    return [el('div', { 'class': 'ga-row2' }, [day, el('div', { 'class': 'gh-field' }, [el('label', { 'for': 'ga-hour', text: w('hour_label') }), hour])]),
+      picks.length ? el('div', { 'class': 'ga-picks', role: 'group', 'aria-labelledby': 'ga-picks-l' }, [el('span', { id: 'ga-picks-l', text: w('picks_label') })].concat(picks)) : null];
+  }
+
+  // ================================================== /gift: the purchase panel
+
+  function Buy(root) {
+    var API = (root.getAttribute('data-api') || '').replace(/\/$/, '');
+    var f = { recipient_names: '', giver_name: '', email: '', mail: false,
+              ship: { name: '', line1: '', line2: '', city: '', state: '', zip: '' },
+              deliver: 'me', them: { email: '', day: '', hour: 7, pick: '', message: '' } };
+    var opened = null;          // {key, res, at}: a payment page already made for these exact details
+    var error = '';
+    var canDeliver = false;     // GET /v1/health's gift_delivery: "a day I choose" is offered
+    var sizes = null;           // the engine's sizes, when SIZES is on and it lists them
+    var size = null;            // the one chosen
+    var product = PRODUCT;      // what the checkout is asked for
+    var onlyPrice = 0;          // PRICE: the engine's price of the card the form sells, for the line above the names
+    var termsLine = document.querySelector('.ga-terms-line');   // the card's words under the panel
+
+    function show(nodes) { root.replaceChildren.apply(root, nodes); }
+
+    // The engine's sizes, kept only as it sent them: a product, its nights, its price in cents,
+    // its words. Buyable while health names it and it is not at the cap; at the cap it shows only
+    // with the engine's own sentence; anything else is not shown.
+    function usable(answer, named) {
+      // GET /v1/gift/sizes -> {sizes: [...]} (the Forge, 2026-11-08, forge/gift-sizes-read)
+      var list = answer && Array.isArray(answer.sizes) ? answer.sizes : null;
+      if (!list) return [];
+      var out = [];
+      list.forEach(function (s) {
+        if (!s || typeof s.product !== 'string' || !s.product) return;
+        var price = Number(s.price_cents), nights = Number(s.nights);
+        if (!isFinite(price) || price <= 0 || !isFinite(nights) || nights <= 0) return;
+        if (typeof s.subtitle !== 'string' || !s.subtitle.trim()) return;
+        // terms "" is a size without its own words (never the 3-night's borrowed): shown without a terms line
+        var terms = typeof s.terms === 'string' ? s.terms.trim() : '';
+        var sentence = typeof s.sentence === 'string' ? s.sentence.trim() : '';
+        var buyable = s.sold_out !== true && (!named || named.indexOf(s.product) >= 0);
+        if (!buyable && !sentence) return;
+        out.push({ product: s.product, nights: nights, price_cents: Math.round(price), subtitle: s.subtitle.trim(),
+          terms: terms, sentence: sentence, buyable: buyable });
+      });
+      out.sort(function (a, b) { return a.nights - b.nights; });
+      return out;
+    }
+    function choose(s) {
+      size = s; product = s.product; opened = null;
+      if (termsLine) { termsLine.textContent = s.terms; termsLine.hidden = !s.terms; }
+      // The sample card above shows the size chosen: its line and its terms the engine's, its gift
+      // line the site's by its nights (the Chief, 2026-11-08).
+      var sample = document.querySelector('.ga-show .ga-card');
+      if (sample) {
+        var st = sample.querySelector('.ga-subtitle'), gl = sample.querySelector('.ga-gift'), nt = sample.querySelector('.ga-nights');
+        if (st) st.textContent = s.subtitle;
+        // the gift line: the 3-night card's own, or the Writer's for its size once heard (SIZE_WORDS), else none
+        if (gl) { var t = s.nights === 3 ? w('card_gift_3') : (SIZE_WORDS ? w('card_gift_' + s.nights) : ''); gl.textContent = t; gl.hidden = !t; }
+        if (nt) { nt.textContent = s.terms; nt.hidden = !s.terms; }
+        fit(sample);
+      }
+    }
+    // The "When" row above the panel: the Writer's one sentence for every size, only while all
+    // three sizes sell (it names the one-night card's weeknights); else the 3-night card's words as built.
+    function whenRow(got) {
+      var dd = document.querySelector('[data-ga-when]');
+      if (!dd || !w('when_sizes')) return;
+      var nights = {};
+      got.forEach(function (s) { if (s.buyable) nights[s.nights] = true; });
+      if (nights[1] && nights[2] && nights[3]) dd.textContent = w('when_sizes');
+    }
+    // One card per size: its front, its line, its price (the engine's, with "taxes and fees
+    // included"), its terms; a size at the cap carries the engine's sentence and takes no tap.
+    function chooser() {
+      if (termsLine) termsLine.hidden = true;
+      var err = el('p', { 'class': 'gh-error', id: 'ga-size-error', role: 'alert', text: error });
+      var options = sizes.map(function (s) {
+        var id = 'ga-size-' + s.product;
+        var front = FRONTS[s.product] || '';
+        var input = el('input', { type: 'radio', id: id, name: 'size', value: s.product, disabled: s.buyable ? null : 'disabled',
+          checked: size && size.product === s.product ? 'checked' : null, 'aria-describedby': id + '-terms' + (s.buyable ? '' : ' ' + id + '-out'),
+          onchange: function () { error = ''; err.textContent = ''; choose(s); } });
+        return el('label', { 'class': 'ga-size' + (s.buyable ? '' : ' ga-size--out') + (front ? '' : ' ga-size--noart'), 'for': id }, [
+          input,
+          front ? el('img', { 'class': 'ga-size__front', src: front, width: '720', height: '1008', alt: '', loading: 'lazy', decoding: 'async' }) : null,
+          el('span', { 'class': 'ga-size__text' }, [
+            el('span', { 'class': 'ga-size__name', text: s.subtitle }),
+            s.buyable ? el('span', { 'class': 'ga-size__price' }, [G.money(s.price_cents), el('small', { text: ' ' + w('all_in') })]) : null,
+            s.terms ? el('span', { 'class': 'ga-size__terms', id: id + '-terms', text: s.terms }) : null,
+            s.buyable ? null : el('span', { 'class': 'ga-size__out', id: id + '-out', role: 'status', text: s.sentence })])]);
+      });
+      var btn = el('button', { type: 'submit', 'class': 'lf-btn gh-btn--dark gh-cta', text: w('continue') });
+      return el('form', { 'class': 'ga-form ga-sizes-form', novalidate: 'novalidate', onsubmit: function (ev) {
+        ev.preventDefault();
+        if (!size) {
+          error = w('need_size'); err.textContent = error;
+          var first = root.querySelector('.ga-sizes input:not([disabled])'); if (first && first.focus) first.focus();
+          return;
+        }
+        error = ''; show([form()]);
+        var x = document.getElementById('ga-for'); if (x && x.focus) x.focus({ preventScroll: true });
+      } }, [el('fieldset', { 'class': 'ga-sizes' }, [el('legend', { text: w('size_legend') })].concat(options)), err, btn]);
+    }
+    // The engine's price above the names (PRICE), when the form sells one card and no size line stands there.
+    function priceLine() {
+      if (!PRICE || !onlyPrice || (sizes && size)) return null;
+      return el('p', { 'class': 'ga-price' }, [G.money(onlyPrice), el('small', { text: ' ' + w('all_in') })]);
+    }
+    // The size chosen, above the names, one tap from choosing again.
+    function chosenLine() {
+      if (!sizes || !size) return null;
+      return el('p', { 'class': 'ga-chosen' }, [el('strong', { text: size.subtitle }), G.money(size.price_cents) + ' ' + w('all_in') + ' ',
+        el('button', { type: 'button', 'class': 'ga-inline', 'aria-label': w('confirm_change') + ': ' + w('size_legend'), text: w('confirm_change'), onclick: function () { show([chooser()]); } })]);
+    }
+
+    function off(kind, sentence) {
+      // The lead above promises a price before paying; with no way to pay here, it steps aside.
+      var lead = document.querySelector('.ga-give__lead');
+      if (lead) lead.hidden = true;
+      show([el('div', { 'class': 'ga-panel', role: 'status' }, [
+        el('p', { 'class': 'ga-panel__lead', text: sentence || w(kind) }), callLine()])]);
+    }
+
+    function field(id, key, label, opts) {
+      opts = opts || {};
+      return inputField(opts.obj || (opts.ship ? f.ship : f), id, key, label, opts);
+    }
+
+    // How the card arrives: to the buyer (the default), or to them by email on a day chosen here,
+    // with a note (round two, 2026-10-25).
+    function deliverBlock() {
+      var t = f.them;
+      var them = el('div', { 'class': 'ga-them', hidden: f.deliver === 'them' ? null : 'hidden' });
+      function choice(v, text) {
+        return el('label', { 'class': 'ga-choice', 'for': 'ga-deliver-' + v }, [
+          el('input', { type: 'radio', id: 'ga-deliver-' + v, name: 'deliver', value: v, checked: f.deliver === v ? 'checked' : null,
+            onchange: function () { f.deliver = v; them.hidden = v !== 'them'; } }),
+          el('span', { text: text })]);
+      }
+      function counted() { return w('note_count').replace('{n}', String(t.message.length)); }
+      var count = el('span', { 'class': 'ga-count', id: 'ga-note-count', text: counted() });
+      var note = el('textarea', { id: 'ga-note', name: 'message', maxlength: '500', rows: '4', 'aria-describedby': 'ga-note-hint ga-note-count',
+        oninput: function (e) { t.message = e.target.value.slice(0, 500); count.textContent = counted(); } });
+      note.value = t.message;
+      [field('ga-their-email', 'email', w('their_email_label'), { obj: t, type: 'email', auto: 'off', mode: 'email', hint: w('their_email_hint') })]
+      .concat(whenPicker(t)).concat([
+       el('div', { 'class': 'gh-field' }, [el('label', { 'for': 'ga-note', text: w('note_label') + ' ' + w('optional') }), note,
+         el('small', { id: 'ga-note-hint', text: w('note_hint') }), count])
+      ]).forEach(function (n) { if (n) them.appendChild(n); });
+      return el('fieldset', { 'class': 'ga-deliver' }, [el('legend', { text: w('deliver_legend') }),
+        choice('me', w('deliver_me')), choice('them', w('deliver_them')), them]);
+    }
+
+    function form() {
+      var err = el('p', { 'class': 'gh-error', id: 'ga-error', role: 'alert', text: error });
+      var mail = el('input', { type: 'checkbox', id: 'ga-mail', name: 'mail', checked: f.mail ? 'checked' : null, 'aria-describedby': 'ga-mail-hint',
+        onchange: function (e) { f.mail = e.target.checked; ship.hidden = !f.mail; } });
+      var ship = el('fieldset', { 'class': 'ga-ship', hidden: f.mail ? null : 'hidden' }, [
+        el('legend', { 'class': 'gh-eyebrow', text: w('mail_label') }),
+        field('ga-ship-name', 'name', w('ship_name'), { ship: true, auto: 'shipping name' }),
+        field('ga-ship-line1', 'line1', w('ship_line1'), { ship: true, auto: 'shipping address-line1' }),
+        field('ga-ship-line2', 'line2', w('ship_line2'), { ship: true, auto: 'shipping address-line2', optional: true }),
+        field('ga-ship-city', 'city', w('ship_city'), { ship: true, auto: 'shipping address-level2' }),
+        el('div', { 'class': 'ga-row2' }, [
+          field('ga-ship-state', 'state', w('ship_state'), { ship: true, auto: 'shipping address-level1', max: 2 }),
+          field('ga-ship-zip', 'zip', w('ship_zip'), { ship: true, auto: 'shipping postal-code', mode: 'numeric', max: 5 })])
+      ]);
+      var btn = el('button', { type: 'submit', 'class': 'lf-btn gh-btn--dark gh-cta', text: w('continue') });
+      return el('form', { 'class': 'ga-form', novalidate: 'novalidate', onsubmit: function (ev) { ev.preventDefault(); submit(ev.target, btn, err); } }, [
+        priceLine(),
+        chosenLine(),
+        field('ga-for', 'recipient_names', w('for_label'), { hint: w('for_hint'), auto: 'off', max: 80 }),
+        field('ga-from', 'giver_name', w('from_label'), { hint: w('from_hint'), auto: 'name', max: 80 }),
+        field('ga-email', 'email', w('email_label'), { type: 'email', auto: 'email', mode: 'email' }),
+        canDeliver ? deliverBlock() : null,
+        el('div', {}, [el('label', { 'class': 'gh-optin', 'for': 'ga-mail' }, [mail, el('span', { text: w('mail_label') })]),
+          el('p', { 'class': 'ga-mail-hint', id: 'ga-mail-hint', text: w('mail_hint') })]),
+        ship, err, btn]);
+    }
+
+    function body() {
+      var b = { product: product, email: f.email.trim(), giver_name: f.giver_name.trim(), recipient_names: f.recipient_names.trim() };
+      if (f.mail) {
+        b.ship_to = {};
+        ['name', 'line1', 'line2', 'city', 'state', 'zip'].forEach(function (k) { b.ship_to[k] = String(f.ship[k] || '').trim(); });
+        b.ship_to.state = b.ship_to.state.toUpperCase();
+      }
+      // "Email it to them on a day I choose": deliver {email, date, hour, message}. Without it the
+      // card goes to the buyer.
+      var t = f.them;
+      if (canDeliver && f.deliver === 'them') b.deliver = { email: t.email.trim(), date: t.day || '', hour: +t.hour, message: t.message.trim() };
+      // Where this visit came from, so the engine can count the sale by it (loxley-rescue
+      // forge/gift-counts, sources.of_sale: it keeps one word, never the referrer whole): the
+      // visit's own entry (js/funnel.js gh_entry, this tab only), never the long-lived attribution
+      // (gh_attr, loxley_attribution). A missing or broken entry never stops a sale.
+      try {
+        var entry = JSON.parse(sessionStorage.getItem('gh_entry') || 'null');
+        if (entry && typeof entry === 'object') {
+          if (typeof entry.src === 'string' && entry.src) b.src = entry.src;
+          if (typeof entry.referrer === 'string' && entry.referrer) b.referrer = entry.referrer;
+        }
+      } catch (e) {}
+      return b;
+    }
+
+    function problem(b) {
+      if (!b.recipient_names) return ['need_for', 'ga-for'];
+      if (!b.giver_name) return ['need_from', 'ga-from'];
+      if (!/^\S+@\S+\.\S+$/.test(b.email)) return ['need_email', 'ga-email'];
+      var d = b.deliver;
+      if (d) {
+        if (!/^\S+@\S+\.\S+$/.test(d.email)) return ['need_their_email', 'ga-their-email'];
+        var wp = whenProblem(d.date, d.hour);
+        if (wp) return [wp, wp === 'need_day' ? 'ga-day' : 'ga-hour'];
+      }
+      if (b.ship_to) {
+        // The engine's rule: the state as two letters, the ZIP as five digits.
+        var s = b.ship_to, miss = !s.name ? 'name' : !s.line1 ? 'line1' : !s.city ? 'city' : '';
+        if (miss) return ['need_address', 'ga-ship-' + miss];
+        if (!/^[A-Z]{2}$/.test(s.state)) return ['need_state', 'ga-ship-state'];
+        if (!/^\d{5}$/.test(s.zip)) return ['need_zip', 'ga-ship-zip'];
+      }
+      return null;
+    }
+
+    function submit(formEl, btn, err) {
+      var b = body(), p = problem(b);
+      if (p) {
+        error = w(p[0]); err.textContent = error;
+        var x = document.getElementById(p[1]); if (x && x.focus) x.focus();
+        return;
+      }
+      error = ''; err.textContent = '';
+      var key = JSON.stringify(b);
+      // Same details within the half hour: the payment page already made, never a second one.
+      if (opened && opened.key === key && Date.now() - opened.at < 25 * 60 * 1000) return confirm(opened.res, b);
+      btn.disabled = true; btn.textContent = w('adding');
+      G.api(API, '/v1/gift/checkout', b, 20000).then(function (res) {
+        if (!res || !STRIPE.test(String(res.url || ''))) throw new Error(w('no_payment'));
+        opened = { key: key, res: res, at: Date.now() };
+        confirm(res, b);
+      }).catch(function (e) {
+        if (routeOff(e)) return off('off');
+        // Spoken for this season (409, the engine's sales cap): its sentence, as is, in place of the panel.
+        if (e && e.status === 409 && e.body && typeof e.body.error === 'string' && e.body.error.trim()) return off('', e.body.error.trim());
+        error = e && e.body && e.body.error ? said(e) : (e && e.message) || w('no_payment');
+        err.textContent = error; btn.disabled = false; btn.textContent = w('continue');
+      });
+    }
+
+    // The purchase step: the whole amount, from the engine, right before Stripe. Never in the
+    // page's prose (Mick, 2026-10-19). The Google Ads conversion for a gift bought is not here: it
+    // fires on /gift/thanks (Sold, below), only once the engine says the session is paid.
+    function confirm(res, b) {
+      var total = Number(res.total_cents);
+      var amount = [];
+      if (total > 0) {
+        var dl = el('dl', { 'class': 'gh-lines' });
+        (Array.isArray(res.lines) ? res.lines : []).forEach(function (l) {
+          if (!l || !l.label || !isFinite(Number(l.cents))) return;
+          dl.appendChild(el('dt', { text: String(l.label) }));
+          dl.appendChild(el('dd', { text: G.money(Number(l.cents)) }));
+        });
+        dl.appendChild(el('dt', { 'class': 'gh-total', text: w('total_label') }));
+        dl.appendChild(el('dd', { 'class': 'gh-total', text: G.money(total) }));
+        amount = [dl, el('p', { 'class': 'gh-fine', text: w('all_in') })];
+      } else {
+        amount = [el('p', { 'class': 'gh-fine', text: w('total_at_stripe') })];
+      }
+      var where = b.ship_to ? [b.ship_to.name, b.ship_to.line1, b.ship_to.line2, b.ship_to.city, b.ship_to.state + ' ' + b.ship_to.zip]
+        .filter(function (x) { return String(x || '').trim(); }).join(', ') : '';
+      var pay = el('button', { type: 'button', 'class': 'lf-btn gh-btn--dark ga-pay', text: w('pay'), onclick: function () {
+        pay.disabled = true; pay.textContent = w('leaving');
+        // For /gift/thanks to read back how the card arrives: the choice and its moment only,
+        // never an email or the note, in this tab alone.
+        // The buyer's email rides along so the thank-you can say where it went; this tab only,
+        // never a beacon or the tag manager, and the thank-you clears it once shown.
+        var keep = b.deliver ? { to: 'them', date: b.deliver.date, hour: b.deliver.hour } : { to: 'me' };
+        keep.email = b.email; keep.printed = !!b.ship_to; keep.product = b.product;
+        try { sessionStorage.setItem('ga_deliver', JSON.stringify(keep)); } catch (e) {}
+        location.assign(res.url);
+      } });
+      var d = b.deliver, them = !!d;
+      var head = el('p', { 'class': 'gh-eyebrow', tabindex: '-1', text: w('confirm_eyebrow') });
+      // The buyer's own email, seen before paying, one tap from the field to fix it.
+      var mine = el('p', { 'class': 'gh-fine ga-mine' }, [w(them ? 'confirm_to_you' : 'confirm_to_me').replace('{email}', b.email) + ' ',
+        el('button', { type: 'button', 'class': 'ga-inline', 'aria-label': w('confirm_change') + ': ' + w('email_label'), text: w('confirm_change'), onclick: function () {
+          show([form()]);
+          var x = document.getElementById('ga-email'); if (x) { x.focus(); x.select && x.select(); }
+        } })]);
+      show([el('div', { 'class': 'ga-confirm' }, [
+        head,
+        sizes && size ? el('p', { 'class': 'ga-confirm__size', text: size.subtitle }) : null,
+        el('p', { 'class': 'ga-confirm__names' }, [w('card_for') + ' ' + b.recipient_names, el('span', { text: w('card_from') + ' ' + b.giver_name })]),
+        mine,
+        them ? el('p', { 'class': 'gh-fine', text: w('confirm_them').replace('{email}', d.email).replace('{when}', whenWords(d.date, d.hour)) }) : null,
+        them && d.message ? el('p', { 'class': 'ga-confirm__note', 'aria-label': w('confirm_note') }, [d.message]) : null,
+        b.ship_to ? el('p', { 'class': 'gh-fine', text: w('confirm_mail') + ' ' + where + '.' }) : null,
+        el('div', {}, amount),
+        pay,
+        el('button', { type: 'button', 'class': 'gh-back', text: w('change'), onclick: function () { show([form()]); } }),
+        el('p', { 'class': 'gh-fine', text: w('pay_fine') })
+      ])]);
+      try { head.focus({ preventScroll: true }); } catch (e) {}
+    }
+
+    // Is the sales door open? GET /v1/health says so, gift_sales true or false (the engine, main
+    // 002ab6c). A missing field or a failed read counts as closed: the call-or-text panel.
+    G.api(API, '/v1/health', null, 8000).then(function (h) {
+      canDeliver = !!(h && h.gift_delivery === true);
+      var selling = !!(h && h.gift_sales === true);
+      // The page as it was: the 3-night form while the engine sells that card, else call or text Mick.
+      function asIs() { return selling ? show([form()]) : off('off'); }
+      if (!SIZES && !PRICE) return asIs();
+      var named = h && Array.isArray(h.gift_sizes) ? h.gift_sizes.map(String) : null;
+      // PRICE alone: the form at once, as it was, and the engine's price joins it above the names when
+      // the sizes answer (the Critic: the form never waits on that read).
+      if (!SIZES) {
+        asIs();
+        if (!selling) return;
+        return G.api(API, '/v1/gift/sizes', null, 8000).then(function (answer) {
+          usable(answer, named).forEach(function (s) { if (s.product === PRODUCT && s.buyable) onlyPrice = s.price_cents; });
+          var frm = root.querySelector('form.ga-form'), pl = priceLine();
+          if (frm && pl && !frm.querySelector('.ga-price')) frm.insertBefore(pl, frm.firstChild);
+        }, function () {});
+      }
+      // health's gift_sales speaks for the 3-night card alone (false at its cap), so the sizes are
+      // read whenever it or gift_sizes says anything sells; closed only when both say closed (the
+      // Critic, 2026-11-08). The sizes on sale, each with its price and its words, from the engine
+      // alone. The 3-night card by itself is the page as it was; anything else is the choice first.
+      // A read that fails or lists nothing usable leaves the page as it was. With PRICE, the price
+      // of the card the form sells (the 3-night) rides the read and stands above the names.
+      if (!selling && !(named && named.length)) return off('off');
+      return G.api(API, '/v1/gift/sizes', null, 8000).then(function (answer) {
+        var got = usable(answer, named);
+        got.forEach(function (s) { if (s.product === PRODUCT && s.buyable) onlyPrice = s.price_cents; });
+        if (!got.length || (got.length === 1 && got[0].product === PRODUCT && got[0].buyable)) return asIs();
+        sizes = got;
+        whenRow(got);
+        show([chooser()]);
+      }, asIs);
+    }, function (e) { off(unreachable(e) ? 'down' : 'off'); });
+  }
+
+  // =================================================== /gift/card: the card
+
+  function Card(root) {
+    var API = (root.getAttribute('data-api') || '').replace(/\/$/, '');
+    var CODE = String((window.__ghKeys || {}).code || '');
+    var wait = root.querySelector('[data-ga-wait]'), fig = root.querySelector('[data-ga-card]');
+    var note = root.querySelector('[data-ga-note]'), actions = root.querySelector('[data-ga-actions]');
+    var keep = root.querySelector('[data-ga-keep]'), out = root.querySelector('[data-ga-share-out]');
+    var status = root.querySelector('[data-ga-status]');
+    function say(k, text) { wait.hidden = true; note.textContent = text || w(k); note.hidden = false; }
+
+    // The stay's month in words, from the engine's "YYYY-MM" (or a date, or words already).
+    function monthOf(g) {
+      var m = String(g.month || g.check_in || '').trim(), x = /^(\d{4})-(\d{2})/.exec(m);
+      return x ? new Date(+x[1], +x[2] - 1, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : m;
+    }
+    // The status line; "" for an unused card of another size until its words are heard (the line hides).
+    function stateLine(state, g, sw) {
+      if (state === 'unused' && sw) return sw.unused || '';
+      var m = monthOf(g), t = w('state_' + state);
+      return m ? t.replace('{month}', m) : t.replace(/\s*\S+ \{month\}/, '');
+    }
+    // Which Golden Arrow this is, by nights: the engine's nights, else its product's (-1, -2), else three.
+    function nightsOf(g) {
+      var n = Number(g && g.nights);
+      if (isFinite(n) && n > 0) return Math.round(n);
+      var m = /^golden-arrow-(\d+)$/.exec(String((g && g.product) || ''));
+      return m ? +m[1] : 3;
+    }
+    // The card's words for its size (the Chief, 2026-11-08). The 3-night card is as it was. Any
+    // other size: its subtitle and terms as the engine sends them (the printed card's own words,
+    // ruled 2026-10-27), else the site's copy of those words by nights; its gift line and unused
+    // status the Writer's, only once SIZE_WORDS is on, else none (never the 3-night's).
+    // The site's copy by product fills in only when the engine sends no field at all (an older
+    // answer); a field it sends empty means none (the Forge, main ac3bb9a: a gift with its own
+    // window carries terms "", its dates line the window's; a size without its own words sends "",
+    // never the 3-night's), and the page shows none, never the twelve-month words from the product.
+    function sizeWords(g) {
+      var n = nightsOf(g);
+      if (n === 3) return null;
+      var sub = typeof g.subtitle === 'string' ? g.subtitle.trim() : w('card_subtitle_' + n);
+      var terms = typeof g.terms === 'string' ? g.terms.trim() : w('card_nights_' + n);
+      return { n: n, subtitle: sub, terms: terms, gift: SIZE_WORDS ? w('card_gift_' + n) : '', unused: SIZE_WORDS ? w('state_unused_' + n) : '' };
+    }
+    // The reveal plays once per card on this device: a short hash of the code, never the code.
+    function firstOpen() {
+      var h = 5381;
+      for (var i = 0; i < CODE.length; i++) h = ((h << 5) + h + CODE.charCodeAt(i)) >>> 0;
+      var key = 'c' + h.toString(36), seen = [];
+      try { seen = JSON.parse(localStorage.getItem('ga_opened') || '[]') || []; } catch (e) {}
+      if (seen.indexOf(key) >= 0) return false;
+      seen.push(key);
+      try { localStorage.setItem('ga_opened', JSON.stringify(seen.slice(-20))); } catch (e) {}
+      return true;
+    }
+    function reveal(card) {
+      if (!firstOpen() || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+      var stop = function () { card.classList.remove('is-opening'); };
+      card.classList.add('is-opening');
+      card.addEventListener('animationend', function (e) { if (e.animationName === 'ga-door-r') stop(); });
+      setTimeout(stop, 1200);
+    }
+
+    function draw(g, state) {
+      var card = fig.querySelector('.ga-card'), usable = state === 'unused';
+      var giver = String(g.giver_name || '').trim();
+      card.querySelector('[data-fill="names"]').textContent = String(g.recipient_names || '').trim();
+      card.querySelector('[data-fill="giver"]').textContent = giver;
+      // Its size's words (sizeWords: null for the 3-night card, which is as it was).
+      var sw = sizeWords(g);
+      if (sw) {
+        var subEl = card.querySelector('.ga-subtitle'), giftEl = card.querySelector('.ga-gift');
+        if (subEl) { subEl.textContent = sw.subtitle; subEl.hidden = !sw.subtitle; }
+        if (giftEl) { giftEl.textContent = sw.gift; giftEl.hidden = !sw.gift; }
+      }
+      // The giver's note, under the dedication, as they wrote it (text only, line breaks kept).
+      var msg = String(g.message || '').trim(), box = fig.querySelector('[data-ga-message]');
+      if (msg && box) {
+        box.querySelector('[data-ga-message-from]').textContent = w('note_from').replace('{giver}', giver);
+        box.querySelector('[data-ga-message-text]').textContent = msg;
+        box.hidden = false;
+      }
+      // The gift's number is its code (LF-XXXX-XXXX), as the card prints it: what the couple
+      // reads to Mick when they call, and what the link carries.
+      var no = card.querySelector('[data-ga-giftno]'), num = String(g.code || '').trim();
+      if (no && num) { no.querySelector('[data-fill="giftno"]').textContent = num; no.hidden = false; }
+      // A gift with its own window: the engine's dates line for it, or none (never January to May).
+      var nights = card.querySelector('.ga-nights');
+      if (nights && g.window) {
+        var line = String(g.window.line || '').trim();
+        if (line) nights.textContent = line; else nights.hidden = true;
+      } else if (nights && sw) { nights.textContent = sw.terms; nights.hidden = !sw.terms; }   // its size's terms, the engine's; none when it sends none
+      wait.hidden = true; note.hidden = true;
+      fig.hidden = false;
+      fit(card);
+      reveal(card);
+      var line = stateLine(state, g, sw);
+      status.textContent = line;
+      status.hidden = !line;
+      actions.hidden = false;
+      root.querySelector('[data-ga-dates]').hidden = !usable;
+      keep.hidden = !usable;
+    }
+
+    // Lost card: the email that bought it, and the engine's one sentence, whatever it is.
+    function lost() {
+      var form = root.querySelector('[data-ga-lost]');
+      if (!form) return;
+      var input = form.querySelector('#ga-lost-email'), err = form.querySelector('#ga-lost-error');
+      var btn = form.querySelector('button[type=submit]'), out = form.querySelector('[data-ga-lost-said]');
+      form.hidden = false;
+      form.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        var email = input.value.trim();
+        if (!/^\S+@\S+\.\S+$/.test(email)) { err.textContent = w('lost_need'); input.focus(); return; }
+        err.textContent = ''; btn.disabled = true; btn.textContent = w('lost_sending');
+        function done(t) { out.textContent = t; out.hidden = false; btn.hidden = true; input.disabled = true; }
+        G.api(API, '/v1/gift/resend', { email: email }, 15000).then(function (r) {
+          done(String((r && (r.message || r.sentence)) || '').trim() || w('lost_sent'));
+        }, function (e) {
+          if (routeOff(e)) return done(w('lost_off'));
+          var t = e && e.body && typeof e.body.error === 'string' ? e.body.error.trim() : '';
+          if (t) return done(t);
+          btn.disabled = false; btn.textContent = w('lost_send'); err.textContent = w('card_down');
+        });
+      });
+    }
+
+    function load() {
+      G.api(API, '/v1/gift?code=' + encodeURIComponent(CODE), null, 12000).then(function (g) {
+        // Every Golden Arrow, whatever its size (the Chief, 2026-11-08); anything else is not a card this page knows.
+        if (!g || !/^golden-arrow(-[a-z0-9]+)?$/i.test(String(g.product || ''))) return say('card_unknown');
+        var st = String(g.status || '').toLowerCase(), state = String(g.state || '').toLowerCase();
+        if (st === 'void') return say('card_void');
+        // The engine's state (unused, booked, used); from the status when an older answer lacks it.
+        if (!/^(unused|booked|used)$/.test(state)) state = USABLE[st] ? 'unused' : USED[st] ? 'used' : '';
+        if (state) return draw(g, state);
+        say('card_void');
+      }).catch(function (e) {
+        if (routeOff(e)) return say('card_off');
+        if (unreachable(e)) return say('card_down');
+        // A code it cannot find (404), or too many tries (429): the engine's sentence, as is, and
+        // the lost-card form.
+        say('card_unknown', e && e.body && e.body.error ? said(e) : '');
+        if (e && e.status === 404) lost();
+      });
+    }
+
+    function link() { return location.origin + '/gift/card#code=' + encodeURIComponent(CODE); }
+
+    root.querySelector('[data-ga-print]').addEventListener('click', function () { window.print(); });
+    root.querySelector('[data-ga-dates]').addEventListener('click', function () {
+      location.assign('/book#gift=' + encodeURIComponent(CODE));
+    });
+    root.querySelector('[data-ga-share]').addEventListener('click', function () {
+      var url = link();
+      function manual() {
+        var input = el('input', { type: 'text', readonly: 'readonly', value: url, 'aria-label': w('share_manual') });
+        out.replaceChildren(el('p', { text: w('share_manual') }), input);
+        out.hidden = false;
+        input.focus(); input.select();
+      }
+      function copied() { out.replaceChildren(el('p', { role: 'status', text: w('share_copied') })); out.hidden = false; }
+      if (navigator.share) {
+        navigator.share({ title: w('card_name'), url: url }).catch(function () {});
+      } else if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(copied, manual);
+      } else manual();
+    });
+
+    if (!CODE) { say('card_none'); return lost(); }
+    load();
+  }
+
+  // ====================================== /gift/manage: the buyer's change page
+
+  // A card emailed to them on a day the buyer chose: its day, hour and email can change until it
+  // goes; the note never does. The token arrives after # in the buyer's letter and the keys script
+  // has lifted it out of the address bar; it goes to our own booking server and nowhere else.
+  function Manage(root) {
+    var API = (root.getAttribute('data-api') || '').replace(/\/$/, '');
+    var TOKEN = String((window.__ghKeys || {}).token || '');
+    function q(sel) { return root.querySelector(sel); }
+    var wait = q('[data-ga-wait]'), note = q('[data-ga-note]'), letter = q('[data-ga-letter]');
+    var saved = q('[data-ga-saved]'), change = q('[data-ga-change]');
+    function say(t) { wait.hidden = true; letter.hidden = true; change.replaceChildren(); note.textContent = t; note.hidden = false; }
+    function fail(e) {
+      if (routeOff(e)) return say(w('manage_off'));
+      if (unreachable(e)) return say(w('manage_down'));
+      say(e && e.body && e.body.error ? said(e) : w('manage_down'));
+    }
+
+    function render(v) {
+      wait.hidden = true; note.hidden = true;
+      letter.querySelector('[data-v="names"]').textContent = String(v.recipient_names || '').trim();
+      letter.querySelector('[data-v="giver"]').textContent = String(v.giver_name || '').trim();
+      letter.querySelector('[data-v="when"]').textContent = w(v.sent ? 'manage_went' : 'manage_goes')
+        .replace('{email}', String(v.email || '')).replace('{when}', String(v.when || ''));
+      var msg = String(v.message || '').trim(), nb = letter.querySelector('[data-ga-letter-note]');
+      nb.querySelector('[data-v="message"]').textContent = msg;
+      nb.hidden = !msg;
+      letter.hidden = false;
+      change.replaceChildren();
+      if (v.can_change && !v.sent) change.appendChild(form(v));
+    }
+
+    function form(v) {
+      var t = { email: String(v.email || ''), day: String(v.date || ''), hour: +v.hour || 0, pick: '' };
+      var err = el('p', { 'class': 'gh-error', id: 'ga-change-error', role: 'alert' });
+      var btn = el('button', { type: 'submit', 'class': 'lf-btn gh-btn--dark', text: w('manage_save') });
+      function focus(id) { var n = document.getElementById(id); if (n && n.focus) n.focus(); }
+      return el('form', { 'class': 'ga-change', novalidate: 'novalidate', 'aria-labelledby': 'ga-change-h', onsubmit: function (ev) {
+        ev.preventDefault();
+        saved.textContent = '';
+        if (!/^\S+@\S+\.\S+$/.test(t.email.trim())) { err.textContent = w('need_their_email'); return focus('ga-their-email'); }
+        var wp = whenProblem(t.day, t.hour);
+        if (wp) { err.textContent = w(wp); return focus(wp === 'need_day' ? 'ga-day' : 'ga-hour'); }
+        err.textContent = ''; btn.disabled = true; btn.textContent = w('manage_saving');
+        G.api(API, '/v1/gift/delivery', { token: TOKEN, date: t.day, hour: +t.hour, email: t.email.trim() }, 15000).then(function (nv) {
+          render(nv);
+          saved.textContent = w('manage_saved').replace('{email}', String(nv.email || '')).replace('{when}', String(nv.when || ''));
+        }, function (e) {
+          btn.disabled = false; btn.textContent = w('manage_save');
+          if (routeOff(e)) return say(w('manage_off'));
+          // Already emailed (422): the engine's sentence, and the page as it now stands.
+          if (e && e.status === 422 && e.body && e.body.error) { load(); saved.textContent = said(e); return; }
+          err.textContent = e && e.body && e.body.error ? said(e) : w('manage_down');
+        });
+      } }, [el('h2', { 'class': 'ga-change__h', id: 'ga-change-h', text: w('manage_change_h') }),
+        inputField(t, 'ga-their-email', 'email', w('their_email_label'), { type: 'email', auto: 'off', mode: 'email' })]
+        .concat(whenPicker(t)).concat([err, btn, el('p', { 'class': 'gh-fine', text: w('questions') })]).filter(Boolean));
+    }
+
+    function load() { G.api(API, '/v1/gift/delivery?token=' + encodeURIComponent(TOKEN), null, 12000).then(render, fail); }
+    if (!TOKEN) return say(w('manage_none'));
+    load();
+  }
+
+  // ============================================ /gift/thanks: how the card arrives
+
+  function Thanks(root) {
+    var d = null;
+    try { d = JSON.parse(sessionStorage.getItem('ga_deliver') || 'null'); } catch (e) {}
+    if (!d) return;
+    // Shown once, then cleared: a refresh shows the general lines.
+    try { sessionStorage.removeItem('ga_deliver'); } catch (e) {}
+    var lead = root.querySelector('[data-ga-thanks-lead]'), me = root.querySelector('[data-ga-thanks-me]');
+    var you = root.querySelector('[data-ga-thanks-you]'), printed = root.querySelector('[data-ga-thanks-printed]');
+    var email = typeof d.email === 'string' && /^\S+@\S+\.\S+$/.test(d.email) ? d.email : '';
+    if (d.to === 'them' && /^\d{4}-\d{2}-\d{2}$/.test(d.date || '') && d.hour >= 0 && d.hour <= 23) {
+      lead.textContent = w('thanks_them').replace('{when}', whenWords(d.date, d.hour));
+      me.hidden = true;
+      if (email) { you.textContent = w('thanks_you_at').replace('{email}', email); you.hidden = false; }
+    } else if (d.to === 'me') lead.textContent = email ? w('thanks_me').replace('{email}', email) : w('thanks_me_inbox');
+    else return;
+    if (d.printed) printed.textContent = w('thanks_printed'); else printed.hidden = true;
+  }
+
+  // ============================================ /gift/thanks: the sale, for the tag manager
+
+  // Stripe returns the buyer here when the session completes: paid, or a bank payment still
+  // clearing. The engine says which; nothing is counted until it answers paid.
+  // GET /v1/gift/sold?session_id= (the engine, the Forge 2026-10-29) -> {paid: true|false, cents:
+  // the amount paid}; 404 for anything that is not a gift session. As /booked counts a stay
+  // (js/gatehouse-stay.js purchase): the session goes to our own booking server and nowhere else,
+  // the sale is pushed once per session in this tab, its id a one-way hash of the session so no tag
+  // ever holds a key. An error, a 404 or paid false: nothing pushed. Never a name, an email or the
+  // note. The event is gift_purchase, not purchase: the booking engine's Ads tag fires on every
+  // purchase event, on any page (container version 7), so a purchase here would count a card as a
+  // booked stay. Google Ads counts it once Mick's action "Gift - Golden Arrow" and its tag exist
+  // (loxley-rescue docs/site-tags.md).
+  var SOLD_EVENT = 'gift_purchase';
+  var SESSION_ID = /^cs_(live|test)_\w{1,250}$/;
+  function saleId(s) {
+    if (!(window.crypto && crypto.subtle && window.TextEncoder)) return Promise.resolve('');
+    return crypto.subtle.digest('SHA-256', new TextEncoder().encode('loxley-gift:' + s)).then(function (b) {
+      return 'lf-' + Array.prototype.map.call(new Uint8Array(b).slice(0, 8), function (x) { return ('0' + x.toString(16)).slice(-2); }).join('');
+    }).catch(function () { return ''; });
+  }
+  function Sold(root) {
+    var API = (root.getAttribute('data-api') || '').replace(/\/$/, '');
+    var sid = String((window.__ghKeys || {}).session_id || '');
+    if (!API || !SESSION_ID.test(sid)) return;
+    // The size bought, as the purchase panel kept it in this tab (Thanks clears the record once shown).
+    var item = PRODUCT;
+    try { var kept = JSON.parse(sessionStorage.getItem('ga_deliver') || 'null'); if (kept && typeof kept.product === 'string' && kept.product) item = kept.product; } catch (e) {}
+    G.api(API, '/v1/gift/sold?session_id=' + encodeURIComponent(sid), null, 12000).then(function (r) {
+      var cents = Number(r && r.cents);
+      if (!r || r.paid !== true || !isFinite(cents) || cents <= 0) return;
+      return saleId(sid).then(function (id) {
+        var seen = 'ga_purchase_' + (id || 'x');
+        try { if (sessionStorage.getItem(seen)) return; sessionStorage.setItem(seen, '1'); } catch (e) {}
+        var data = { value: Math.round(cents) / 100, currency: 'USD' };
+        if (id) data.transaction_id = id;
+        data.item = item;
+        G.track(SOLD_EVENT, data);
+      });
+    }).catch(function () {});
+  }
+
+  var buy = document.getElementById('ga-buy');
+  if (buy) Buy(buy);
+  var page = document.getElementById('ga-card-page');
+  if (page) Card(page);
+  var thanks = document.getElementById('ga-thanks');
+  if (thanks) { Sold(thanks); Thanks(thanks); }
+  var manage = document.getElementById('ga-manage');
+  if (manage) Manage(manage);
+})();

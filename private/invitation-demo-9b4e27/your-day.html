@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A demo of Your day | Loxley Forest</title>
+  <meta name="description" content="Loxley Forest, Dahlonega, Georgia.">
+  <meta property="og:title" content="Loxley Forest">
+  <meta property="og:description" content="Loxley Forest, Dahlonega, Georgia.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://loxleyforest.com/private/invitation-demo-9b4e27/your-day.html">
+  <meta property="og:image" content="https://loxleyforest.com/images/EQ3A0906.webp">
+  <meta property="og:image:width" content="1620">
+  <meta property="og:image:height" content="1080">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/brand/logo/kit/favicon-32.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="canonical" href="https://loxleyforest.com/private/invitation-demo-9b4e27/your-day.html">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+
+  <link rel="preconnect" href="https://book.loxleyforest.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/gatehouse.css">
+  <link rel="stylesheet" href="/css/v2.css">
+  <link rel="stylesheet" href="/css/v2-pages.css">
+  <link rel="preload" as="image" type="image/webp" imagesrcset="/images/book-hero-phone-640.webp 640w, /images/book-hero-phone-828.webp 828w, /images/book-hero-phone-1080.webp 1080w" imagesizes="100vw" media="(max-width: 767px) and (orientation: portrait)" fetchpriority="high">
+  <link rel="preload" as="image" type="image/webp" imagesrcset="/images/book-hero-desk-960.webp 960w, /images/book-hero-desk-1280.webp 1280w, /images/book-hero-desk-1620.webp 1620w" imagesizes="100vw" media="not all and (max-width: 767px) and (orientation: portrait)" fetchpriority="high">
+<style>
+/* The invitation's top: /book's dusk photograph (lf-bk-top), their names over it. It carries more
+   words than /book's, so it stands taller and its dark band begins higher: the words sit below the
+   lit canopy, never on it. */
+.eo-top { min-height: clamp(620px, 112svh, 920px); }
+.eo-top::before {
+  background: linear-gradient(180deg, rgba(20, 36, 24, 0.62) 0%, rgba(20, 36, 24, 0) 14%, rgba(20, 36, 24, 0) 34%,
+    rgba(20, 36, 24, 0.8) 50%, rgba(20, 36, 24, 0.93) 66%, var(--ink) 100%);
+}
+.eo-top .lf-h1 { font-size: clamp(2.3rem, 8.4vw, 4.4rem); overflow-wrap: anywhere; }
+.eo-top .lf-lead { white-space: pre-line; }
+.eo { padding-top: 40px; }
+.eo__in { width: min(640px, 100%); margin: 0 auto; padding: 0 16px; }
+.eo-wait, .eo-noscript { margin: 0; font-size: 18px; line-height: 1.55; color: var(--bark); text-align: center; }
+.eo-body { display: grid; gap: 34px; }
+.eo-part { display: grid; gap: 12px; }
+.eo-part > h2 { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: clamp(1.7rem, 6vw, 2.2rem); line-height: 1.15; color: var(--forest-deep); }
+.eo-dates { margin: 0; font-family: 'Montserrat', Arial, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--forest); }
+.eo-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.eo-list li { position: relative; padding-left: 26px; font-size: 18px; line-height: 1.45; color: var(--bark); overflow-wrap: anywhere; }
+.eo-list li::before { content: ''; position: absolute; left: 4px; top: 0.62em; width: 8px; height: 8px; border-radius: 50%; background: var(--gold, #b8955a); }
+.eo-total { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 16px 18px; background: var(--cream); border: 1px solid var(--parchment); }
+.eo-total__label { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 24px; color: var(--forest-deep); }
+.eo-total__sum { font-family: 'Montserrat', Arial, sans-serif; font-size: 22px; font-weight: 600; color: var(--forest-deep); }
+.eo-sub { margin: 0; font-size: 16px; line-height: 1.5; color: var(--stone); }
+.eo-ways { border: 0; margin: 0; padding: 0; display: grid; gap: 10px; min-width: 0; }
+.eo-way { display: grid; grid-template-columns: 26px 1fr; gap: 4px 14px; align-items: start; padding: 14px 16px; min-height: 56px; cursor: pointer;
+  background: var(--cream); border: 1px solid var(--driftwood); }
+.eo-way input { margin: 3px 0 0; width: 22px; height: 22px; accent-color: var(--forest-deep); grid-row: span 2; }
+.eo-way:has(input:checked) { border-color: var(--forest-deep); background: var(--white); }
+.eo-way:has(input:focus-visible) { outline: 2px solid var(--gold); outline-offset: 2px; }
+.eo-way__label { font-size: 18px; font-weight: 600; color: var(--forest-deep); }
+.eo-way__line { font-size: 16px; line-height: 1.45; color: var(--bark); }
+.eo-lead-in { margin: 0; font-size: 17px; line-height: 1.55; color: var(--bark); }
+.eo .gh-agreement { overflow-wrap: anywhere; }
+.eo-choice { border: 0; margin: 0.4em 0 1em; padding: 0; display: grid; gap: 8px; min-width: 0; }
+.eo-choice legend { padding: 0; margin-bottom: 4px; font-weight: 600; color: var(--forest-deep); }
+.eo-choice label { display: flex; gap: 10px; align-items: flex-start; min-height: 44px; cursor: pointer; line-height: 1.4; }
+.eo-choice input { flex: none; width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--forest-deep); }
+.eo-sign { display: grid; gap: 12px; }
+.eo-sign .lf-btn { width: 100%; justify-content: center; min-height: 56px; font-size: 16px; }
+.eo-pay { min-height: 0; }
+.eo-pay:empty { display: none; }
+.eo-done { text-align: center; display: grid; gap: 14px; }
+.eo-done h2 { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: clamp(1.9rem, 7vw, 2.6rem); color: var(--forest-deep); }
+.eo-done p { margin: 0; font-size: 18px; line-height: 1.55; color: var(--bark); white-space: pre-line; }
+.eo-call { margin: 0; font-size: 16px; color: var(--stone); text-align: center; }
+.eo-call a { color: var(--forest-deep); }
+/* The invitation has one action, Sign and pay: the site's floating "Book your dates" steps aside. */
+.v2[data-lf-path="/private/invitation-demo-9b4e27"] .book-fab, .v2[data-lf-path^="/private/invitation-demo"] .book-fab { display: none; }
+
+/* ---- The Invitation grown (2026-11-11): the demo ribbon, Mick's word, the day hour by hour, the
+   photographs, the price to the dollar, the open dates, the hold. Shown only when the engine sends
+   each field. ---- */
+.eo-demo { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; margin: 0; padding: 9px 16px calc(9px + env(safe-area-inset-bottom)); background: var(--gold, #c4a265); color: var(--ink); font-family: 'Montserrat', Arial, sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; text-align: center; line-height: 1.45; box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.18); }
+.eo-sun { margin: 0; font-size: 15px; color: var(--stone); }
+.eo-note { position: relative; padding: 26px 24px 22px; background: var(--white); border: 1px solid var(--parchment); }
+.eo-note::before { content: '\201C'; position: absolute; left: 14px; top: -4px; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 64px; line-height: 1; color: var(--gold, #c4a265); }
+.eo-note p { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: clamp(1.25rem, 4.6vw, 1.5rem); line-height: 1.4; color: var(--forest-deep); }
+.eo-days { display: grid; gap: 26px; }
+.eo-day { display: grid; gap: 10px; }
+.eo-day__h { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 1.5rem; line-height: 1.15; color: var(--forest-deep); }
+.eo-day__sun { margin: 0; font-family: 'Montserrat', Arial, sans-serif; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--stone); }
+.eo-stops { margin: 4px 0 0; padding: 0; list-style: none; display: grid; border-left: 1px solid var(--driftwood); }
+.eo-stop { position: relative; padding: 10px 0 14px 22px; }
+.eo-stop::before { content: ''; position: absolute; left: -5px; top: 19px; width: 9px; height: 9px; border-radius: 50%; background: var(--gold, #c4a265); box-shadow: 0 0 0 3px var(--parchment); }
+.eo-stop__time { display: block; font-family: 'Montserrat', Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 1.4px; text-transform: uppercase; color: var(--forest); }
+.eo-stop__title { display: block; margin-top: 2px; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 1.35rem; line-height: 1.15; color: var(--forest-deep); }
+.eo-stop__words { margin: 4px 0 0; font-size: 16px; line-height: 1.5; color: var(--bark); }
+.eo-photos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0; }
+.eo-photo { margin: 0; overflow: hidden; aspect-ratio: 4 / 3; background: var(--parchment); }
+.eo-photo:first-child, .eo-photo:nth-child(4) { grid-column: 1 / -1; aspect-ratio: 16 / 10; }
+.eo-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.eo-price { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--driftwood); }
+.eo-price li { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--parchment); font-size: 16px; color: var(--bark); }
+.eo-price li span:last-child { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.eo-dates-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.eo-date { display: inline-flex; align-items: center; min-height: 44px; padding: 8px 14px; border: 1px solid var(--driftwood); background: var(--cream); font: inherit; font-size: 15px; color: var(--forest-deep); text-decoration: none; cursor: pointer; }
+.eo-date:hover, .eo-date:focus-visible { border-color: var(--forest-deep); background: var(--white); }
+.eo-until { margin: 0; font-size: 14px; color: var(--stone); }
+.eo-hold { margin: 0; padding: 14px 16px; border-left: 3px solid var(--gold, #c4a265); background: var(--cream); font-size: 16px; line-height: 1.5; color: var(--bark); }
+
+/* ---- The public "Your day" page: the picker (the package, then one month of open arrival days in
+   the booking calendar's own clothes), the ask. ---- */
+.yd-pick { display: grid; gap: 26px; margin-bottom: 30px; }
+.yd-pick:empty { display: none; }
+.yd-pick__h { margin: 0 0 10px; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: clamp(1.7rem, 6vw, 2.2rem); line-height: 1.15; color: var(--forest-deep); }
+.yd-pkgs { border: 0; margin: 0; padding: 0; display: grid; gap: 10px; min-width: 0; }
+.yd-pkgs legend { padding: 0; float: left; width: 100%; }
+.yd-pkg { display: grid; grid-template-columns: 26px 1fr auto; gap: 4px 14px; align-items: center; padding: 14px 16px; min-height: 56px; cursor: pointer; background: var(--cream); border: 1px solid var(--driftwood); }
+.yd-pkg input { margin: 0; width: 22px; height: 22px; accent-color: var(--forest-deep); }
+.yd-pkg:has(input:checked) { border-color: var(--forest-deep); background: var(--white); }
+.yd-pkg:has(input:focus-visible) { outline: 2px solid var(--gold); outline-offset: 2px; }
+.yd-pkg__name { font-size: 18px; font-weight: 600; color: var(--forest-deep); }
+.yd-pkg__price { font-family: 'Montserrat', Arial, sans-serif; font-size: 12px; letter-spacing: .6px; text-transform: uppercase; color: var(--stone); white-space: nowrap; }
+.yd-note { margin: 10px 0 0; font-size: 14px; line-height: 1.5; color: var(--stone); }
+.yd-cal .gh-months .gh-month:nth-child(2) { display: none; }
+.yd-cal .gh-hint { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.3rem; letter-spacing: 0; text-transform: none; color: var(--forest-deep); }
+.yd-cal .gh-day { min-height: 46px; }
+.yd-ask .lf-inq { max-width: 640px; margin: 0 auto; }
+.yd-ask .lf-eyebrow:empty, .yd-ask .lf-lead:empty { display: none; }
+</style>
+</head>
+<body class="v2" data-lf-path="/your-day" data-lf-api="https://book.loxleyforest.com">
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <header class="lf-hdr">
+    <a href="/" class="lf-hdr__mark" aria-label="Loxley Forest, home"><img src="/images/brand/logo/loxley-wordmark-on-dark.svg" alt="Loxley Forest" width="236" height="32"></a>
+    <nav class="lf-hdr__nav" aria-label="Main"><a href="/treehouses">The Treehouse</a><a href="/experiences">Experiences</a><a href="/elopements">Elopements</a><a href="/our-story">Our Story</a><a href="/gallery">Gallery</a><a href="/local-guide">Local Guide</a></nav>
+    <a href="/book" class="lf-btn lf-hdr__book">Book your dates</a>
+    <button class="lf-menu-btn" type="button" aria-expanded="false" aria-controls="lf-menu" aria-label="Open menu"><span></span></button>
+  </header>
+  <div class="lf-menu" id="lf-menu" aria-hidden="true">
+    <nav aria-label="Menu"><a href="/treehouses">The Treehouse</a><a href="/gift">Give a Stay</a><a href="/experiences">Experiences</a><a href="/elopements">Elopements</a><a href="/our-story">Our Story</a><a href="/gallery">Gallery</a><a href="/local-guide">Local Guide</a><a href="/faq">Questions</a></nav>
+    <a href="/book" class="lf-btn"><svg viewBox="0 0 16 20" aria-hidden="true"><path fill="currentColor" d="M8 2.2C4.6 2.2 1.9 4.6 1.9 8H14.1C14.1 4.6 11.4 2.2 8 2.2ZM2.8 8.9H13.2C13.2 13.4 10.8 17.2 8 19.2C5.2 17.2 2.8 13.4 2.8 8.9ZM7.6 2.4C7.7 1.2 8.4 .4 9.6 .1L9.9 .7C9 1 8.5 1.6 8.5 2.4Z"/></svg>Book your dates</a>
+    <p class="lf-menu__foot">Dahlonega, Georgia<br>Just over an hour from Atlanta</p>
+  </div>
+
+  <main id="main">
+  <p class="eo-demo">A demo: an invented couple on invented dates, every number made up. Nothing is sent, held or charged.</p>
+
+    <!-- ========== YOUR DAY: the dusk photograph; the words come with the script, once approved ========== -->
+    <section class="lf-sec lf-dark lf-center lf-bk-top eo-top" aria-labelledby="eo-h">
+      <picture class="lf-bk-top__photo">
+        <source media="(max-width: 767px) and (orientation: portrait)" type="image/webp" srcset="/images/book-hero-phone-640.webp 640w, /images/book-hero-phone-828.webp 828w, /images/book-hero-phone-1080.webp 1080w" sizes="100vw">
+        <source media="(max-width: 767px) and (orientation: portrait)" srcset="/images/book-hero-phone-828.jpg">
+        <source type="image/webp" srcset="/images/book-hero-desk-960.webp 960w, /images/book-hero-desk-1280.webp 1280w, /images/book-hero-desk-1620.webp 1620w" sizes="100vw">
+        <img src="/images/book-hero-desk-1280.jpg" width="1280" height="720" alt="" fetchpriority="high">
+      </picture>
+      <div class="lf-wrap">
+        <p class="lf-eyebrow" data-eo-eyebrow>Dahlonega, Georgia</p>
+        <h1 class="lf-h1" id="eo-h" data-eo-h1>Loxley Forest</h1>
+        <p class="lf-lead" data-eo-lead hidden></p>
+      </div>
+    </section>
+
+    <!-- ========== THE PICKER AND THE DAY (js/offer.js, public mode): GET /v1/your-day/dates, then
+         POST /v1/your-day. A read; nothing is held and nothing is charged. ========== -->
+    <section class="lf-sec lf-parch eo" id="eo" data-api="https://book.loxleyforest.com" data-phone="706-502-4823" data-mode="public" aria-live="polite">
+      <div class="eo__in">
+        <div class="yd-pick" data-yd-pick></div>
+        <p class="eo-wait" role="status" data-eo-wait></p>
+        <noscript><p class="eo-noscript">Questions? Call or text 706-502-4823, or write to stay@loxleyforest.com.</p></noscript>
+        <div class="eo-body" data-eo-body hidden></div>
+      </div>
+    </section>
+
+    <!-- ========== THE ASK: /elopements' own form, filled in by the button ========== -->
+    <section class="lf-sec lf-light yd-ask" id="inquiry" aria-labelledby="yd-form-h">
+      <div class="lf-wrap lf-inq">
+        <div class="lf-center">
+          <p class="lf-eyebrow" data-yd-form-eyebrow></p>
+          <h2 class="lf-h2" id="yd-form-h" data-yd-form-h>Ask Mick</h2>
+          <p class="lf-lead" data-yd-form-lead hidden></p>
+        </div>
+        <div class="lf-inq__wrap">
+          <form class="lf-form lf-form--light" name="elopement-inquiry" action="#" data-demo-form>
+            <input type="hidden" name="form-name" value="elopement-inquiry">
+            <input type="hidden" name="page" value="/your-day">
+            <input type="hidden" name="list" value="">
+            <input type="hidden" name="gclid" data-lf-attr="gclid">
+            <input type="hidden" name="gbraid" data-lf-attr="gbraid">
+            <input type="hidden" name="wbraid" data-lf-attr="wbraid">
+            <input type="hidden" name="utm_source" data-lf-attr="utm_source">
+            <input type="hidden" name="utm_campaign" data-lf-attr="utm_campaign">
+            <input type="hidden" name="landing_page" data-lf-attr="landing">
+            <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
+
+            <div class="lf-form__row">
+              <label for="el-names">Your names</label>
+              <input type="text" id="el-names" name="names" required>
+            </div>
+
+            <div class="lf-form__row">
+              <label for="el-email">Email</label>
+              <input type="email" id="el-email" name="email" required autocomplete="email">
+            </div>
+
+            <div class="lf-form__row">
+              <label for="el-phone">Phone</label>
+              <input type="tel" id="el-phone" name="phone" autocomplete="tel">
+            </div>
+
+            <div class="lf-form__row">
+              <label for="el-date">Preferred date or month</label>
+              <input type="text" id="el-date" name="preferred_date" placeholder="e.g. May 2027 or 5/12/2027">
+            </div>
+
+            <div class="lf-form__row">
+              <label for="el-guests">Guest count</label>
+              <select id="el-guests" name="guest_count">
+                <option value="">Select...</option>
+                <option value="just-us">Just us</option>
+                <option value="2-6">2 to 6 guests</option>
+              </select>
+              <p class="lf-form__help">Because Loxley Forest is our home and yours during your stay, all ceremony guests are welcomed as part of your booking party.</p>
+            </div>
+
+            <div class="lf-form__row">
+              <label for="el-package">Which package interests you?</label>
+              <select id="el-package" name="package">
+                <option value="">Select...</option>
+                <option value="the-crossing">The Crossing</option><option value="the-vow">The Vow</option><option value="firelight">Firelight</option>
+                <option value="the-falls" data-list="waterfall-2027">The Falls</option>
+                <option value="not-sure">Not sure yet, help me decide</option>
+              </select>
+            </div>
+
+            <div class="lf-form__row">
+              <label for="el-referral">How did you hear about us?</label>
+              <select id="el-referral" name="referral">
+                <option value="">Select...</option>
+                <option value="instagram">Instagram</option>
+                <option value="pinterest">Pinterest</option>
+                <option value="google">Google</option>
+                <option value="romantic-atlanta">Romantic Atlanta</option>
+                <option value="photographer">Photographer Referral</option>
+                <option value="the-knot">The Knot</option>
+                <option value="ai-assistant">An AI assistant (ChatGPT, Claude, Gemini)</option>
+                <option value="friend">Friend / Word of Mouth</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div class="lf-form__row">
+              <label for="el-vision">Tell us your vision</label>
+              <textarea id="el-vision" name="vision" rows="5" placeholder="Your ceremony style, your must-haves, the feeling you want. We'll design around it."></textarea>
+            </div>
+
+            <button type="submit" class="lf-btn lf-btn--forest">Inquire about your date</button>
+            <script>
+              // The 2027 list follows the package (the Critic, 2026-10-30): picking the waterfall's
+              // option sets the hidden "list" field to its data-list; any other pick clears it. It sits
+              // inside the form so every page that copies the form (pages/pseo.py) carries it.
+              (function(){
+                var form = document.currentScript && document.currentScript.closest('form');
+                var pkg = form && form.querySelector('select[name="package"]');
+                var list = form && form.querySelector('input[name="list"]');
+                if (!pkg || !list) return;
+                pkg.addEventListener('change', function(){
+                  var o = pkg.options[pkg.selectedIndex];
+                  list.value = (o && o.getAttribute('data-list')) || '';
+                });
+              })();
+            </script>
+          </form>
+        </div>
+      </div>
+    </section>
+    <script type="application/json" id="lf-yd-packages">[{"key": "the-crossing", "name": "The Crossing", "price": "$6,500 plus tax"}, {"key": "the-vow", "name": "The Vow", "price": "$4,500 plus tax"}, {"key": "firelight", "name": "Firelight", "price": "$2,500 plus tax"}]</script>
+    <template data-eo-photos="the-crossing"><figure class="eo-photo"><picture><source media="(max-width: 767px)" srcset="/images/v2/ra-bridge-dusk-800.webp" type="image/webp"><img src="/images/v2/ra-bridge-dusk-800.webp" srcset="/images/v2/ra-bridge-dusk-800.webp 800w, /images/v2/ra-bridge-dusk-1600.webp 1600w" sizes="(min-width: 900px) 640px, 100vw" width="800" height="533" alt="The rope bridge at dusk, the treehouse lit at its far end" loading="lazy" decoding="async" class="eo-photo__img"></picture></figure><figure class="eo-photo"><picture><source media="(max-width: 767px)" srcset="/images/v2/aerial-bridge-800.webp" type="image/webp"><img src="/images/v2/aerial-bridge-800.webp" srcset="/images/v2/aerial-bridge-800.webp 800w, /images/v2/aerial-bridge-1600.webp 1600w" sizes="(min-width: 900px) 640px, 100vw" width="800" height="599" alt="From above: the hundred-foot rope bridge through the canopy at golden hour" loading="lazy" decoding="async" class="eo-photo__img"></picture></figure><figure class="eo-photo"><picture><source media="(max-width: 767px)" srcset="/images/v2/ra-deck-dusk-800.webp" type="image/webp"><img src="/images/v2/ra-deck-dusk-800.webp" srcset="/images/v2/ra-deck-dusk-800.webp 800w, /images/v2/ra-deck-dusk-1600.webp 1600w" sizes="(min-width: 900px) 640px, 100vw" width="800" height="1200" alt="The deck at dusk, sixty feet up" loading="lazy" decoding="async" class="eo-photo__img"></picture></figure><figure class="eo-photo"><picture><source media="(max-width: 767px)" srcset="/images/v2/ra-room-800.webp" type="image/webp"><img src="/images/v2/ra-room-800.webp" srcset="/images/v2/ra-room-800.webp 800w, /images/v2/ra-room-1600.webp 1600w" sizes="(min-width: 900px) 640px, 100vw" width="800" height="1200" alt="The room under the canvas peak" loading="lazy" decoding="async" class="eo-photo__img"></picture></figure></template>
+    <template data-eo-photos="the-vow"><figure class="eo-photo"><img src="/images/v2/img_1717-800.webp" srcset="/images/v2/img_1717-800.webp 800w" sizes="(min-width: 900px) 640px, 100vw" width="800" height="1067" alt="The stone fire pit on the forest floor, ringed with ferns" loading="lazy" decoding="async" class="eo-photo__img"></figure><figure class="eo-photo"><img src="/images/v2/img_2546-800.webp" srcset="/images/v2/img_2546-800.webp 800w" sizes="(min-width: 900px) 640px, 100vw" width="800" height="1067" alt="The treehouse deck with chairs, above the forest" loading="lazy" decoding="async" class="eo-photo__img"></figure><figure class="eo-photo"><picture><source media="(max-width: 767px)" srcset="/images/v2/ra-bridge-dusk-800.webp" type="image/webp"><img src="/images/v2/ra-bridge-dusk-800.webp" srcset="/images/v2/ra-bridge-dusk-800.webp 800w, /images/v2/ra-bridge-dusk-1600.webp 1600w" sizes="(min-width: 900px) 640px, 100vw" width="800" height="533" alt="The rope bridge at dusk, the treehouse lit at its far end" loading="lazy" decoding="async" class="eo-photo__img"></picture></figure><figure class="eo-photo"><picture><source media="(max-width: 767px)" srcset="/images/v2/ra-room-800.webp" type="image/webp"><img src="/images/v2/ra-room-800.webp" srcset="/images/v2/ra-room-800.webp 800w, /images/v2/ra-room-1600.webp 1600w" sizes="(min-width: 900px) 640px, 100vw" width="800" height="1200" alt="The room under the canvas peak" loading="lazy" decoding="async" class="eo-photo__img"></picture></figure></template>
+    <template data-eo-photos="the-falls"><figure class="eo-photo"><picture><source media="(max-width: 767px)" srcset="/images/v2/waterfall-falls-800.webp" type="image/webp"><img src="/images/v2/waterfall-falls-800.webp" srcset="/images/v2/waterfall-falls-800.webp 800w, /images/v2/waterfall-falls-1600.webp 1600w" sizes="(min-width: 900px) 640px, 100vw" width="800" height="450" alt="The waterfall at Loxley Forest, the falls over the rock shelf" loading="lazy" decoding="async" class="eo-photo__img"></picture></figure><figure class="eo-photo"><picture><source media="(max-width: 767px)" srcset="/images/v2/aerial-bridge-800.webp" type="image/webp"><img src="/images/v2/aerial-bridge-800.webp" srcset="/images/v2/aerial-bridge-800.webp 800w, /images/v2/aerial-bridge-1600.webp 1600w" sizes="(min-width: 900px) 640px, 100vw" width="800" height="599" alt="From above: the hundred-foot rope bridge through the canopy at golden hour" loading="lazy" decoding="async" class="eo-photo__img"></picture></figure><figure class="eo-photo"><picture><source media="(max-width: 767px)" srcset="/images/v2/ra-deck-dusk-800.webp" type="image/webp"><img src="/images/v2/ra-deck-dusk-800.webp" srcset="/images/v2/ra-deck-dusk-800.webp 800w, /images/v2/ra-deck-dusk-1600.webp 1600w" sizes="(min-width: 900px) 640px, 100vw" width="800" height="1200" alt="The deck at dusk, sixty feet up" loading="lazy" decoding="async" class="eo-photo__img"></picture></figure><figure class="eo-photo"><picture><source media="(max-width: 767px)" srcset="/images/v2/ra-room-800.webp" type="image/webp"><img src="/images/v2/ra-room-800.webp" srcset="/images/v2/ra-room-800.webp 800w, /images/v2/ra-room-1600.webp 1600w" sizes="(min-width: 900px) 640px, 100vw" width="800" height="1200" alt="The room under the canvas peak" loading="lazy" decoding="async" class="eo-photo__img"></picture></figure></template>
+    <template data-eo-photos="firelight"><figure class="eo-photo"><img src="/images/v2/img_1717-800.webp" srcset="/images/v2/img_1717-800.webp 800w" sizes="(min-width: 900px) 640px, 100vw" width="800" height="1067" alt="The stone fire pit on the forest floor, ringed with ferns" loading="lazy" decoding="async" class="eo-photo__img"></figure><figure class="eo-photo"><img src="/images/v2/img_2546-800.webp" srcset="/images/v2/img_2546-800.webp 800w" sizes="(min-width: 900px) 640px, 100vw" width="800" height="1067" alt="The treehouse deck with chairs, above the forest" loading="lazy" decoding="async" class="eo-photo__img"></figure><figure class="eo-photo"><picture><source media="(max-width: 767px)" srcset="/images/v2/ra-bridge-dusk-800.webp" type="image/webp"><img src="/images/v2/ra-bridge-dusk-800.webp" srcset="/images/v2/ra-bridge-dusk-800.webp 800w, /images/v2/ra-bridge-dusk-1600.webp 1600w" sizes="(min-width: 900px) 640px, 100vw" width="800" height="533" alt="The rope bridge at dusk, the treehouse lit at its far end" loading="lazy" decoding="async" class="eo-photo__img"></picture></figure><figure class="eo-photo"><picture><source media="(max-width: 767px)" srcset="/images/v2/ra-room-800.webp" type="image/webp"><img src="/images/v2/ra-room-800.webp" srcset="/images/v2/ra-room-800.webp 800w, /images/v2/ra-room-1600.webp 1600w" sizes="(min-width: 900px) 640px, 100vw" width="800" height="1200" alt="The room under the canvas peak" loading="lazy" decoding="async" class="eo-photo__img"></picture></figure></template>
+    <script type="application/json" id="lf-offer-words">{"agreement_lead": "Last, the agreement. It's in plain words, and it says what happens if plans change or the weather turns.", "ask_button": "Ask Mick for this date", "ask_h": "Nothing is held yet", "ask_line": "Press, and Mick reads it himself and sends your agreement to sign. The date is yours when you do.", "asked": "Mick will send your agreement to sign. The date is yours when you do, and he is a call or a text away until then.", "asked_h": "Asked.", "clearing": "Your bank payment is on its way. It can take a few days to clear, and your dates stay held for you until it does. Your confirmation comes by email once it's through.", "dates_ask": "Could we have {{dates}} instead of {{our_dates}}?", "dates_h": "Other open dates near yours", "dates_line": "Tap one to see your day on that date instead.", "dates_line_offer": "Tap one and it goes to Mick as a text. Nothing moves until he writes back.", "day_h": "Your day, hour by hour", "demo_public": {"days": {"firelight": {"available": true, "balance_cents": 145250, "balance_due": "2027-03-17", "check_in": "2027-04-19", "check_in_time": "3:00 p.m.", "check_out": "2027-04-20", "days": [{"date": "2027-04-19", "stops": [{"time": "3:00 p.m.", "title": "Your treehouse is ready", "words": "Drive in between the two signs, park at the end of Bobcat Road, and walk ten minutes under the trees until the laurel opens and the bridge is there. That bridge is your front door."}, {"ceremony": true, "time": null, "title": "Your vows at the Fire Circle", "words": "Golden hour. The Fire Circle lit for your ceremony; your officiant and your photographer are there."}, {"time": "After dark", "title": "The bridge with its lights on", "words": "Cross it again once the string lights are on. It is a different walk at night, and the forest is yours."}], "sunrise": "7:02 a.m.", "sunset": "8:16 p.m."}, {"date": "2027-04-20", "stops": [{"time": "10:00 a.m.", "title": "The Morning After", "words": "Champagne brunch carried across the bridge to your door, and the small cake."}, {"time": "12:00 noon", "title": "Checkout", "words": "Take your time with the last of it."}], "sunrise": "7:01 a.m.", "sunset": "8:17 p.m."}], "extras": ["The Morning After, champagne brunch carried across the bridge", "A small cake"], "hold": {"hours": null, "mode": "ask", "until": null}, "lines": [{"cents": 250000, "label": "Firelight"}, {"cents": 20000, "label": "Sales tax"}, {"cents": 20000, "label": "Lumpkin County hotel-motel tax"}, {"cents": 500, "label": "Georgia hotel-motel fee"}], "modes": ["deposit", "full"], "nights": 1, "note": "", "open_dates": [], "package": {"includes": ["One night in the treehouse", "Your vows at the Fire Circle, its fire lit for your ceremony", "An officiant", "Photographs of your ceremony", "A bouquet and a boutonniere", "A champagne toast"], "key": "firelight", "name": "Firelight"}, "party": 2, "plans": {"deposit": [{"amount_cents": 145250, "due_on": null, "kind": "deposit", "label": "Retainer"}, {"amount_cents": 145250, "due_on": "2027-03-17", "kind": "balance", "label": "Balance"}], "full": [{"amount_cents": 290500, "due_on": null, "kind": "full", "label": ""}]}, "retainer_cents": 145250, "total_cents": 290500}, "the-crossing": {"available": true, "balance_cents": 377500, "balance_due": "2027-03-17", "check_in": "2027-04-16", "check_in_time": "3:00 p.m.", "check_out": "2027-04-18", "days": [{"date": "2027-04-16", "stops": [{"time": "3:00 p.m.", "title": "Your treehouse is ready", "words": "Drive in between the two signs, park at the end of Bobcat Road, and walk ten minutes under the trees until the laurel opens and the bridge is there. That bridge is your front door."}, {"time": "After dark", "title": "The bridge with its lights on", "words": "Cross it again once the string lights are on. It is a different walk at night, and the forest is yours."}], "sunrise": "7:06 a.m.", "sunset": "8:13 p.m."}, {"date": "2027-04-17", "stops": [{"time": "11:00 a.m.", "title": "The Builder's Tour", "words": "Mick walks you through what he and the family built, from the anchors in the oaks to the oven on the Sky Deck."}, {"ceremony": true, "time": null, "title": "Your vows, out on the rope bridge", "words": "Golden hour. Your officiant and your photographer are there; the two of you walk out to the middle of the span and say it."}, {"time": null, "title": "A private dinner, carried across the bridge", "words": "Set on the deck, sixty feet up, with the champagne toast."}], "sunrise": "7:05 a.m.", "sunset": "8:14 p.m."}, {"date": "2027-04-18", "stops": [{"time": "10:00 a.m.", "title": "The Morning After", "words": "Champagne brunch carried across the bridge to your door, and the small cake."}, {"time": "12:00 noon", "title": "Checkout", "words": "Take your time with the last of it."}], "sunrise": "7:04 a.m.", "sunset": "8:15 p.m."}], "extras": ["The Morning After, champagne brunch carried across the bridge", "A small cake"], "hold": {"hours": null, "mode": "ask", "until": null}, "lines": [{"cents": 650000, "label": "The Crossing"}, {"cents": 52000, "label": "Sales tax"}, {"cents": 52000, "label": "Lumpkin County hotel-motel tax"}, {"cents": 1000, "label": "Georgia hotel-motel fee"}], "modes": ["deposit", "full"], "nights": 2, "note": "", "open_dates": [], "package": {"includes": ["Two nights in the treehouse", "Your vows out on the rope bridge, at golden hour", "An officiant", "Two hours of photographs, on the bridge and in the forest", "A bouquet and a boutonniere", "A champagne toast", "A private dinner carried across the bridge to your door", "Your day planned with Mick, hour by hour", "The Builder's Tour"], "key": "the-crossing", "name": "The Crossing"}, "party": 2, "plans": {"deposit": [{"amount_cents": 377500, "due_on": null, "kind": "deposit", "label": "Retainer"}, {"amount_cents": 377500, "due_on": "2027-03-17", "kind": "balance", "label": "Balance"}], "full": [{"amount_cents": 755000, "due_on": null, "kind": "full", "label": ""}]}, "retainer_cents": 377500, "total_cents": 755000}, "the-vow": {"available": true, "balance_cents": 261500, "balance_due": "2027-03-17", "check_in": "2027-04-16", "check_in_time": "3:00 p.m.", "check_out": "2027-04-18", "days": [{"date": "2027-04-16", "stops": [{"time": "3:00 p.m.", "title": "Your treehouse is ready", "words": "Drive in between the two signs, park at the end of Bobcat Road, and walk ten minutes under the trees until the laurel opens and the bridge is there. That bridge is your front door."}, {"time": "After dark", "title": "The bridge with its lights on", "words": "Cross it again once the string lights are on. It is a different walk at night, and the forest is yours."}], "sunrise": "7:06 a.m.", "sunset": "8:13 p.m."}, {"date": "2027-04-17", "stops": [{"ceremony": true, "time": null, "title": "Your vows, where you choose", "words": "Golden hour, at the Fire Circle in the trees or on the Sky Deck with the rope bridge as your aisle. Your officiant and your photographer are there."}, {"time": null, "title": "The evening is yours", "words": "The champagne toast on the deck, the fire table lit, and the forest going quiet around you."}], "sunrise": "7:05 a.m.", "sunset": "8:14 p.m."}, {"date": "2027-04-18", "stops": [{"time": "10:00 a.m.", "title": "The Morning After", "words": "Champagne brunch carried across the bridge to your door, and the small cake."}, {"time": "12:00 noon", "title": "Checkout", "words": "Take your time with the last of it."}], "sunrise": "7:04 a.m.", "sunset": "8:15 p.m."}], "extras": ["The Morning After, champagne brunch carried across the bridge", "A small cake"], "hold": {"hours": null, "mode": "ask", "until": null}, "lines": [{"cents": 450000, "label": "The Vow"}, {"cents": 36000, "label": "Sales tax"}, {"cents": 36000, "label": "Lumpkin County hotel-motel tax"}, {"cents": 1000, "label": "Georgia hotel-motel fee"}], "modes": ["deposit", "full"], "nights": 2, "note": "", "open_dates": [], "package": {"includes": ["Two nights in the treehouse", "Your vows at the Fire Circle, or on the Sky Deck with the rope bridge as your aisle", "An officiant", "Photographs of your ceremony", "A bouquet and a boutonniere", "A champagne toast"], "key": "the-vow", "name": "The Vow"}, "party": 2, "plans": {"deposit": [{"amount_cents": 261500, "due_on": null, "kind": "deposit", "label": "Retainer"}, {"amount_cents": 261500, "due_on": "2027-03-17", "kind": "balance", "label": "Balance"}], "full": [{"amount_cents": 523000, "due_on": null, "kind": "full", "label": ""}]}, "retainer_cents": 261500, "total_cents": 523000}}, "demo_line": "A demo: an invented couple on invented dates, every number made up. Nothing is sent, held or charged.", "open": {"firelight": ["2027-04-19", "2027-04-20", "2027-04-21", "2027-04-22", "2027-04-26", "2027-04-27", "2027-04-28", "2027-04-29", "2027-05-03", "2027-05-04", "2027-05-05", "2027-05-06"], "the-crossing": ["2027-04-16", "2027-04-23", "2027-04-24", "2027-04-30", "2027-05-07", "2027-05-14", "2027-05-21", "2027-05-28"], "the-vow": ["2027-04-16", "2027-04-23", "2027-04-24", "2027-04-30", "2027-05-07", "2027-05-14", "2027-05-21", "2027-05-28"]}}, "expired": "This offer has closed, and its dates are no longer held. That happens, and it's alright. Mick will tell you exactly where the dates stand.", "extras_h": "And on us", "failure": "Something went wrong just now. Please try again in a moment.", "half_label": "Half today", "half_line": "{{today_amount}} by card holds the date, and it does not come back. The rest, {{balance}}, comes off the same card on {{balance_date}}.", "headline": "{{first_names}}, that bridge is your front door.", "hold_button": "Hold our date", "hold_h": "Hold your date", "hold_line": "Nothing is held until you press. Then the date is yours for {{hold_hours}} hours while you sign and pay.", "invite_plan": "Half, {{retainer}}, holds the date once Mick sends your agreement and you sign; the rest, {{balance}}, comes off the same card on {{balance_date}}.", "invite_plan_whole": "Inside thirty days the whole of it, {{total}}, is paid when you sign.", "loading": "One moment…", "need_sign": "Please type your full name, tick the box, and answer the photo question to sign.", "need_sign_plain": "Please type your full name and tick the box to sign.", "not_ready": "Questions? Call or text 706-502-4823, or write to stay@loxleyforest.com.", "note_h": "A word from Mick", "opening": "Mick here. You'll walk in the way everyone does, ten minutes under the trees, until the laurel opens up and the bridge is there. Everything for your day is below. When it reads right, sign at the bottom, and the date is yours.", "package_h": "What is provided", "pay": "Sign and pay {{today_amount}}", "photos_h": "Where it happens", "price_h": "The price, to the dollar", "questions": "Questions? Call or text Mick at 706-502-4823.", "ready": true, "sign_label": "Type your full name to sign", "stands_until": "This invitation stands until {{expires}}.", "sunrise_label": "Sunrise", "sunset_label": "Sunset", "sunset_line": "The sun sets at {{sunset}} on your day.", "thanks": "{{package}}, {{dates}}.\nYour confirmation comes by email, with what happens next.\nSee you at the bridge.", "thanks_h": "The date is yours.", "tick": "I'm 18 or older and have read and agree to the elopement agreement, liability waiver included.", "title": "Your day in the trees | Loxley Forest", "total_label": "All in", "total_sub": "Taxes and fees included.", "whole_label": "All of it today", "whole_line": "{{today_amount}} by card, Link or Klarna, and no balance later.", "yd_ask_button": "Ask for this date", "yd_ask_h": "Ask for this date", "yd_ask_line": "Mick reads every ask himself and writes back with your day. Nothing is held and nothing is charged until you have his agreement and sign it.", "yd_date_h": "Your arrival day", "yd_date_hint": "Tap an open day.", "yd_dates_loading": "Reading the open days…", "yd_description": "Pick a package and an arrival day, and see your elopement day hour by hour: the sunset, what is provided, the price to the dollar, and the open days near it.", "yd_eyebrow": "Elopements at Loxley Forest", "yd_falls_note": "The Falls opens in October 2027 and takes no date yet; ask for it on the elopements page.", "yd_form_h": "Your names and an email", "yd_form_lead": "The day and the package are filled in below. Add your names and an email, and Mick writes back.", "yd_h1": "Pick a day. See your day.", "yd_lead": "Choose a package and an arrival day, and your day comes up hour by hour: the sunset, what is provided, the price to the dollar, the open days near it. One button asks Mick for it. Nothing is held and nothing is charged.", "yd_no_dates": "No open arrival days for this package just now. Call or text Mick at 706-502-4823.", "yd_not_open": "That day isn't open for this package. The open days near it are below.", "yd_package_h": "Which package?", "yd_title": "Your day at Loxley Forest | Elopements", "yd_too_soon": "That day is inside two weeks. Call or text Mick for it: 706-502-4823."}</script>
+
+  </main>
+
+  <footer class="lf-foot">
+    <div class="lf-foot__grid">
+      <div>
+        <img src="/images/brand/logo/loxley-wordmark-on-dark.svg" alt="Loxley Forest" width="220" height="30" loading="lazy">
+        <p style="margin-top:18px;font-size:1.1rem">Dahlonega, Georgia. Just over an hour from Atlanta.<br>42 acres of hardwood cove forest at 1,470 feet.</p>
+      </div>
+      <nav aria-label="Footer"><a href="/treehouses">The Treehouse</a><a href="/experiences">Experiences</a><a href="/elopements">Elopements</a><a href="/our-story">Our Story</a><a href="/gallery">Gallery</a><a href="/local-guide">Local Guide</a><a href="/faq">Questions</a><a href="/gift">The Golden Arrow</a></nav>
+      <nav aria-label="Contact"><a href="https://instagram.com/loxleyforest" target="_blank" rel="noopener">Instagram</a><a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a><a href="tel:+17065024823">706-502-4823</a></nav>
+      <div class="lf-foot__small"><span>&copy; 2026 Loxley Forest</span><a href="/privacy">Privacy</a><a href="/terms">Terms</a></div>
+    </div>
+  </footer>
+
+  <a href="/book" class="book-fab"><svg viewBox="0 0 16 20" aria-hidden="true"><path fill="currentColor" d="M8 2.2C4.6 2.2 1.9 4.6 1.9 8H14.1C14.1 4.6 11.4 2.2 8 2.2ZM2.8 8.9H13.2C13.2 13.4 10.8 17.2 8 19.2C5.2 17.2 2.8 13.4 2.8 8.9ZM7.6 2.4C7.7 1.2 8.4 .4 9.6 .1L9.9 .7C9 1 8.5 1.6 8.5 2.4Z"/></svg>Book your dates</a>
+  <script src="/js/vendor/lenis.min.js"></script>
+  <script src="/js/global.js"></script>
+  <script src="/js/reviews.js" defer></script>
+  <script src="/js/gatehouse.js" defer></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+/* ============================================================
+   AN ELOPEMENT PACKAGE OFFER, THE INVITATION, AND YOUR DAY
+   One script for three pages that share one design and one set of
+   words (scripts/site/pages/offer.py WORDS, in the page's JSON block
+   lf-offer-words; while Mick has not approved them, "ready" false,
+   every page shows only /book's own "Questions?" line). Loaded after
+   js/gatehouse.js, whose helpers it uses (window.Gatehouse: el, api,
+   money, long, markdown, mountStripe).
+
+   /elopement/offer#offer=<token>  A MADE OFFER (loxley-rescue
+     gatehouse/offers.py; GATEHOUSE-SPEC.md section 16): its nights
+     claimed, the agreement to sign, the payment in place.
+     POST /v1/offer {token} -> {status: open | booked | expired |
+          cancelled, package {key, name, includes[]}, check_in,
+          check_out, nights, and, while open: greeting, extras[],
+          party, lines[], total_cents, modes [deposit?, full],
+          plans, retainer_cents, balance_cents, balance_due,
+          check_in_time, expires_at, clearing, agreement {text,
+          version, choices[{id, question, options[], default}]},
+          and (2026-11-12) note, days}; a bank payment clearing reads
+          {status: open, clearing: true} and no more. 404 not found.
+     POST /v1/offer/checkout {token, mode, typed_name, accepted:
+          true, agreement_version, choices} -> {client_secret, ...};
+          409 offer_closed | payment_clearing; 422 agreement_unsigned
+          | agreement_changed | agreement_unanswered | mode_not_offered.
+     GET  /v1/booked?session_id= -> the stay: reserved or paid (the
+          payment succeeded), held (a bank payment clearing).
+
+   /elopement/offer#invite=<token>  THE INVITATION (the Chief's route
+     and the table of 2026-11-11; the Forge's rulings of 2026-11-12):
+     the couple's page from their first reply, unsigned. It holds
+     nothing and the engine keeps no name: the names ride after the #
+     (&for=...), as the stay guides' do.
+     GET  /v1/invitation?token=&check_in= -> {package, check_in,
+          check_out, nights, lines, total_cents, extras, party, modes,
+          plans, retainer_cents, balance_cents, balance_due,
+          check_in_time, note, days [{date, sunrise, sunset, stops
+          [{time | null, title, words, ceremony?}]}], open_dates
+          [{check_in, check_out}], hold {mode: "ask" | "hold", hours,
+          until}}. No agreement, no expiry. A check_in from open_dates
+          reads the same Invitation on that date.
+     POST /v1/invitation/ask  {token} -> {asked: true}: one bell to
+          Mick, nothing held. The default.
+     POST /v1/invitation/hold {token, names} -> {token}: the made
+          offer, on Mick's word only; the page moves to it.
+
+   /your-day  THE PUBLIC DOOR (the table's Critic): the same page
+     without a name. A visitor picks a package and an arrival day
+     and sees their day; the one button fills /elopements' own
+     inquiry form on the page and asks Mick. It never holds and takes
+     no money.
+     GET  /v1/your-day/dates?package= -> {dates: ["YYYY-MM-DD", ...]}
+          (or a bare list), the open arrival days under the package's
+          rules.
+     POST /v1/your-day {package, check_in} -> the Invitation's shape
+          with available: true, or {available: false, reason:
+          min_nights | taken | no_arrival | not_offered | too_soon,
+          open_dates}.
+
+   Everything sent goes to our own booking server and nowhere else:
+   never a beacon, never the tag manager. The keys script in the head
+   (scripts/site/build_v2.py KEYS_SCRIPT) lifts offer, invite and
+   session_id out of the address bar before Tag Manager loads.
+
+   The demos (pages/offer.py DEMO and DEMO_PUBLIC, private pages for
+   Mick's read): the words block carries "demo" or "demo_public", an
+   invented Invitation, and the page renders it in the engine's
+   place, asks the engine nothing and sends nothing. The live pages'
+   blocks never carry either.
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var G = window.Gatehouse;
+  var root = document.getElementById('eo');
+  if (!G || !root) return;
+  var el = G.el;
+  var API = (root.getAttribute('data-api') || '').replace(/\/$/, '');
+  var KEY = root.getAttribute('data-stripe-key') || '';
+  var PHONE = (root.getAttribute('data-phone') || '').replace(/\D/g, '');
+  var PUBLIC = root.getAttribute('data-mode') === 'public';
+  var W = (function () {
+    try { var n = document.getElementById('lf-offer-words'); return (n && JSON.parse(n.textContent)) || {}; } catch (e) { return {}; }
+  })();
+  var DEMO = !PUBLIC && W.demo && typeof W.demo === 'object' ? W.demo : null;
+  var DEMO_PUBLIC = PUBLIC && W.demo_public && typeof W.demo_public === 'object' ? W.demo_public : null;
+  var keys = window.__ghKeys || {};
+  var wait = root.querySelector('[data-eo-wait]');
+  var body = root.querySelector('[data-eo-body]');
+  var top = { eyebrow: document.querySelector('[data-eo-eyebrow]'), h1: document.querySelector('[data-eo-h1]'),
+    lead: document.querySelector('[data-eo-lead]') };
+
+  // The merge values the words may use; filled as the page is read.
+  var vars = {};
+  function w(k, extra) {
+    var v = extra ? Object.assign({}, vars, extra) : vars;
+    return String(W[k] || '').replace(/\{\{(\w+)\}\}/g, function (m, n) { return v[n] != null ? v[n] : ''; });
+  }
+  function say(lines) {
+    body.hidden = true;
+    body.textContent = '';
+    wait.hidden = false;
+    wait.textContent = [].concat(lines).filter(Boolean).join(' ');
+  }
+  function show(nodes) {
+    wait.hidden = true;
+    body.textContent = '';
+    nodes.forEach(function (n) { if (n) body.appendChild(n); });
+    body.hidden = false;
+  }
+  // "Friday, December 11 to Sunday, December 13, 2026": the year once when it is one year.
+  function dates(a, b) { return (a.slice(0, 4) === b.slice(0, 4) ? G.longNoYear(a) : G.long(a)) + ' to ' + G.long(b); }
+  // The names in the link after the # (&for=...), for an Invitation and the demo; never sent.
+  function namesInLink() {
+    var m = /(?:^|&)for=([^&]*)/.exec(location.hash.replace(/^#/, ''));
+    try { return m ? decodeURIComponent(m[1].replace(/\+/g, ' ')).trim().slice(0, 80) : ''; } catch (e) { return ''; }
+  }
+  function addISO(s, n) { var d = new Date(s + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
+  function diffISO(a, b) { return Math.round((new Date(b + 'T12:00:00Z') - new Date(a + 'T12:00:00Z')) / 864e5); }
+
+  // Until Mick has approved every word, nothing shows.
+  if (W.ready !== true) { say(W.not_ready || ''); return; }
+
+  // ---------------------------------------------------------- the ends
+  function ended() { say([w('expired'), w('questions')]); }
+  function failed() { say([w('failure'), w('questions')]); }
+  function done(kind, extra) {
+    var parts = kind === 'thanks' ? [el('h2', { text: w('thanks_h') }), el('p', { text: w('thanks') })]
+      : kind === 'asked' ? [el('h2', { text: w('asked_h') }), el('p', { text: w('asked') })]
+      : [el('p', { text: w('clearing') })];
+    parts.push(el('p', { 'class': 'eo-call', text: w('questions') }));
+    if (extra) parts.push(el('p', { 'class': 'eo-call', text: extra }));
+    show([el('div', { 'class': 'eo-done', role: 'status' }, parts)]);
+  }
+  function stayVars(s) {
+    vars.package = s.package || '';
+    if (s.check_in && s.check_out) vars.dates = dates(s.check_in, s.check_out);
+    if (s.check_in) vars.arrival = G.longNoYear(s.check_in);
+    if (s.total_cents != null) vars.total = G.money(s.total_cents);
+    if (s.paid_cents != null) vars.today_amount = G.money(s.paid_cents);
+    var later = (s.payments || []).filter(function (p) { return p.status === 'scheduled'; })[0];
+    if (later) { vars.balance = G.money(later.amount_cents); vars.balance_date = G.long(later.due_on); }
+  }
+
+  // ---------------------------------------------------- back from Stripe
+  function returned(session) {
+    say(w('loading'));
+    G.api(API, '/v1/booked?session_id=' + encodeURIComponent(session), null, 20000).then(function (s) {
+      stayVars(s);
+      if (s.status === 'reserved' || s.status === 'paid') return done('thanks');
+      if (s.status === 'held') return done('clearing');
+      failed();
+    }).catch(failed);
+  }
+
+  // ------------------------------------------------------- a made offer
+  function load(token) {
+    say(w('loading'));
+    G.api(API, '/v1/offer', { token: token }, 20000).then(function (o) {
+      vars.package = o.package && o.package.name || '';
+      if (o.check_in && o.check_out) vars.dates = dates(o.check_in, o.check_out);
+      if (o.status === 'booked') return done('thanks');
+      if (o.status !== 'open') return ended();
+      if (o.clearing) return done('clearing');
+      render('offer', token, o);
+    }).catch(function (e) {
+      if (e && e.status === 404) return ended();
+      failed();
+    });
+  }
+
+  // ----------------------------------------------------- the Invitation
+  // A read, on their date or on one of the open dates near it; nothing held, no name kept.
+  function readInvite(token, checkIn) {
+    say(w('loading'));
+    if (DEMO) { render('invite', token, checkIn ? shifted(DEMO, checkIn, DEMO.open_dates) : DEMO); return; }
+    G.api(API, '/v1/invitation?token=' + encodeURIComponent(token) + (checkIn ? '&check_in=' + encodeURIComponent(checkIn) : ''), null, 20000)
+      .then(function (o) {
+        if (o.status && o.status !== 'open') return ended();
+        render('invite', token, o);
+      }).catch(function (e) {
+        if (e && e.status === 404) return ended();
+        failed();
+      });
+  }
+  // A demo's invented stay moved to another day: the same words, its days moved with the dates; the
+  // open dates near it are the others in the list.
+  function shifted(base, checkIn, openList) {
+    var shift = diffISO(base.check_in, checkIn);
+    var o = JSON.parse(JSON.stringify(base));
+    o.check_in = checkIn;
+    o.check_out = addISO(base.check_out, shift);
+    if (base.balance_due) o.balance_due = addISO(base.balance_due, shift);
+    (o.days || []).forEach(function (d) { if (d.date) d.date = addISO(d.date, shift); });
+    var nights = diffISO(base.check_in, base.check_out);
+    o.open_dates = (openList || []).map(function (d) { return typeof d === 'string' ? { check_in: d, check_out: addISO(d, nights) } : d; })
+      .filter(function (d) { return d.check_in !== checkIn; }).slice(0, 3);
+    if (!(openList || []).length) o.open_dates = [];
+    return o;
+  }
+
+  // The agreement as formatted text (the engine's own words), each of its questions ([[choice:id]])
+  // asked in place as a group of choices.
+  function agreementBox(ag, answers, labelId) {
+    var box = el('div', { 'class': 'gh-agreement', tabindex: '0', role: 'region', 'aria-labelledby': labelId });
+    var held = [];
+    function flush() { if (held.length) { box.appendChild(G.markdown(held.join('\n'))); held = []; } }
+    String(ag.text || '').split('\n').forEach(function (line) {
+      var m = /\[\[choice:([\w-]+)\]\]/.exec(line);
+      var c = m && (ag.choices || []).filter(function (x) { return x.id === m[1]; })[0];
+      if (!c) { held.push(line); return; }
+      flush();
+      var set = el('fieldset', { 'class': 'eo-choice' }, [el('legend', { text: line.replace(m[0], '').trim() || c.question })]);
+      c.options.forEach(function (opt, i) {
+        var input = el('input', { type: 'radio', name: 'eo-choice-' + c.id, value: opt, id: 'eo-choice-' + c.id + '-' + i,
+          onchange: function () { answers[c.id] = opt; } });
+        if (opt === c['default']) { input.checked = true; answers[c.id] = opt; }
+        set.appendChild(el('label', { 'for': input.id }, [input, el('span', { text: opt })]));
+      });
+      box.appendChild(set);
+    });
+    flush();
+    return box;
+  }
+
+  // ------------------------------------- the parts the pages share (2026-11-11)
+  function part(id, heading, kids) {
+    return el('section', { 'class': 'eo-part', 'aria-labelledby': id }, [el('h2', { id: id, text: heading })].concat(kids));
+  }
+  // The ceremony is the stop the engine flags ceremony: true (the Forge, 2026-11-12: a flag, never
+  // the words, which change by hash); its day is the ceremony day, else the second day, else the first.
+  function isCeremony(s) { return !!(s && s.ceremony === true); }
+  function ceremonyDay(days) {
+    var hit = days.filter(function (d) { return (d.stops || []).some(isCeremony); })[0];
+    return hit || days[1] || days[0] || null;
+  }
+  function noteBlock(o) {
+    if (!o.note) return null;
+    return part('eo-note-h', w('note_h'), [el('div', { 'class': 'eo-note' }, [el('p', { text: o.note })])]);
+  }
+  function daysBlock(o) {
+    var days = o.days || [];
+    if (!days.length) return null;
+    return part('eo-days-h', w('day_h'), [el('div', { 'class': 'eo-days' }, days.map(function (d) {
+      var sun = [d.sunrise ? w('sunrise_label') + ' ' + d.sunrise : '', d.sunset ? w('sunset_label') + ' ' + d.sunset : '']
+        .filter(Boolean).join(' · ');
+      return el('div', { 'class': 'eo-day' }, [
+        el('h3', { 'class': 'eo-day__h', text: d.date ? G.long(d.date) : '' }),
+        sun ? el('p', { 'class': 'eo-day__sun', text: sun }) : null,
+        el('ol', { 'class': 'eo-stops' }, (d.stops || []).map(function (s) {
+          // The ceremony has no clock time (the record has no hour; it is settled together): the
+          // day's sunset stands in its place. Another stop without a time shows none.
+          var when = s.time || (isCeremony(s) && d.sunset ? w('sunset_label') + ' ' + d.sunset : '');
+          return el('li', { 'class': 'eo-stop' }, [
+            el('span', { 'class': 'eo-stop__time', text: when }),
+            el('span', { 'class': 'eo-stop__title', text: s.title || '' }),
+            s.words ? el('p', { 'class': 'eo-stop__words', text: s.words }) : null]);
+        }))]);
+    }))]);
+  }
+  function photosBlock(o) {
+    var key = o.package && o.package.key || '';
+    var t = key && document.querySelector('template[data-eo-photos="' + key + '"]');
+    if (!t || !t.content) return null;
+    var grid = el('div', { 'class': 'eo-photos' });
+    grid.appendChild(t.content.cloneNode(true));
+    return part('eo-photos-h', w('photos_h'), [grid]);
+  }
+  function priceBlock(o) {
+    var lines = (o.lines || []).filter(function (l) { return l && l.label; });
+    var list = lines.length ? el('ul', { 'class': 'eo-price' }, lines.map(function (l) {
+      return el('li', {}, [el('span', { text: l.label }), el('span', { text: G.money(l.cents || 0) })]);
+    })) : null;
+    var total = el('div', { 'class': 'eo-total' }, [el('span', { 'class': 'eo-total__label', id: 'eo-total-h', text: w('total_label') }),
+      el('span', { 'class': 'eo-total__sum', text: vars.total })]);
+    var kids = [list, total, el('p', { 'class': 'eo-sub', text: w('total_sub') })];
+    if (vars.expires) kids.push(el('p', { 'class': 'eo-until', text: w('stands_until') }));
+    return lines.length ? part('eo-price-h', w('price_h'), kids)
+      : el('section', { 'class': 'eo-part', 'aria-labelledby': 'eo-total-h' }, kids.slice(1));
+  }
+  // The open dates near theirs. On an Invitation or the public page a tap reads the page on that
+  // date; on a made offer, whose nights are claimed, a tap composes a text to the house.
+  var publicPick = null;
+  function openDatesBlock(o, kind, token) {
+    var list = (o.open_dates || []).filter(function (d) { return d && d.check_in && d.check_out; });
+    if (!list.length) return null;
+    var reads = kind !== 'offer';
+    return part('eo-dates-h', w('dates_h'), [el('p', { 'class': 'eo-sub', text: w(reads ? 'dates_line' : 'dates_line_offer') }),
+      el('ul', { 'class': 'eo-dates-list' }, list.map(function (d) {
+        var label = dates(d.check_in, d.check_out);
+        if (reads) {
+          return el('li', {}, [el('button', { type: 'button', 'class': 'eo-date', text: label,
+            onclick: function () {
+              if (kind === 'public') { if (publicPick) publicPick(d.check_in); return; }
+              readInvite(token, d.check_in); root.scrollIntoView({ block: 'start' });
+            } })]);
+        }
+        var ask = w('dates_ask', { dates: label, our_dates: vars.dates });
+        return el('li', {}, [el('a', { 'class': 'eo-date', href: 'sms:' + PHONE + '?&body=' + encodeURIComponent(ask), text: label })]);
+      }))]);
+  }
+  // The public page's button: /elopements' own form on the page, filled in, and the page at it.
+  function fillForm(o) {
+    var form = document.querySelector('form[name="elopement-inquiry"]');
+    if (!form) return;
+    function set(name, value) { var f = form.querySelector('[name="' + name + '"]'); if (f) f.value = value; }
+    set('preferred_date', vars.dates);
+    set('package', o.package && o.package.key || '');
+    set('guest_count', 'just-us');
+    set('list', '');
+    var sec = document.getElementById('inquiry') || form;
+    sec.scrollIntoView({ block: 'start' });
+    var names = form.querySelector('[name="names"]');
+    if (names) setTimeout(function () { names.focus({ preventScroll: true }); }, 400);
+  }
+
+  // ---------------------------------------------------------- the page
+  function render(kind, token, o) {
+    var invite = kind === 'invite', pub = kind === 'public';
+    vars.package = o.package && o.package.name || '';
+    vars.dates = o.check_in && o.check_out ? dates(o.check_in, o.check_out) : '';
+    vars.first_names = invite ? (namesInLink() || (DEMO ? 'The two of you' : '')) : (o.greeting || '');
+    vars.arrival = o.check_in ? G.longNoYear(o.check_in) : '';
+    vars.check_in_time = o.check_in_time || '';
+    vars.total = G.money(o.total_cents || 0);
+    vars.retainer = G.money(o.retainer_cents || 0);
+    vars.balance = G.money(o.balance_cents || 0);
+    vars.balance_date = o.balance_due ? G.long(o.balance_due) : '';
+    vars.expires = o.expires_at ? G.long(String(o.expires_at).slice(0, 10)) : '';
+    vars.hold_hours = o.hold && o.hold.hours ? String(o.hold.hours) : '';
+    var cday = ceremonyDay(o.days || []);
+    vars.sunset = cday && cday.sunset || '';
+    var modes = o.modes || [];
+    var mode = modes.indexOf('deposit') >= 0 ? 'deposit' : 'full';
+    function today() { return G.money(mode === 'deposit' ? o.retainer_cents : o.total_cents); }
+    vars.today_amount = today();
+
+    top.eyebrow.textContent = [vars.package, vars.dates].filter(Boolean).join(' · ');
+    if (!pub) {
+      top.h1.textContent = w('headline');
+      top.lead.textContent = w('opening');
+      top.lead.hidden = !top.lead.textContent;
+    }
+
+    var provided = el('section', { 'class': 'eo-part', 'aria-labelledby': 'eo-day-h' }, [
+      el('h2', { id: 'eo-day-h', text: w('package_h') }),
+      el('p', { 'class': 'eo-dates', text: vars.dates }),
+      vars.sunset ? el('p', { 'class': 'eo-sun', text: w('sunset_line') }) : null,
+      el('ul', { 'class': 'eo-list' }, ((o.package || {}).includes || []).map(function (x) { return el('li', { text: x }); }))]);
+    var gifts = (o.extras || []).length ? el('section', { 'class': 'eo-part', 'aria-labelledby': 'eo-gifts-h' }, [
+      el('h2', { id: 'eo-gifts-h', text: w('extras_h') }),
+      el('ul', { 'class': 'eo-list' }, o.extras.map(function (x) { return el('li', { text: x }); }))]) : null;
+    var common = [noteBlock(o), daysBlock(o), provided, gifts, photosBlock(o), priceBlock(o)];
+    var call = el('p', { 'class': 'eo-call', text: w('questions') });
+    var plan = el('p', { 'class': 'eo-sub', text: w(modes.indexOf('deposit') >= 0 ? 'invite_plan' : 'invite_plan_whole') });
+
+    if (pub) {
+      // The public door: how the money would go, the open days near it, and the one button, which
+      // fills the form below and asks Mick. Nothing held, nothing charged.
+      var askBox = part('eo-ask-h', w('yd_ask_h'), [el('p', { 'class': 'eo-hold', text: w('yd_ask_line') })]);
+      var askBtn = el('button', { type: 'button', 'class': 'lf-btn gh-btn--dark', id: 'eo-askbtn', text: w('yd_ask_button'),
+        onclick: function () { fillForm(o); } });
+      show(common.concat([plan, openDatesBlock(o, 'public', null), askBox, el('section', { 'class': 'eo-part eo-sign', 'aria-label': askBtn.textContent }, [askBtn]), call]));
+      return;
+    }
+
+    if (invite) {
+      // The Invitation's foot: how the money goes once Mick sends the agreement, the open dates,
+      // and one button: Ask (nothing held) or, on Mick's word, Hold.
+      var holding = !!(o.hold && o.hold.mode === 'hold');
+      var foot = part(holding ? 'eo-hold-h' : 'eo-ask-h', w(holding ? 'hold_h' : 'ask_h'),
+        [el('p', { 'class': 'eo-hold', text: w(holding ? 'hold_line' : 'ask_line') })]);
+      var err = el('p', { 'class': 'gh-error', id: 'eo-error', role: 'alert' });
+      var btn = el('button', { type: 'button', 'class': 'lf-btn gh-btn--dark', id: 'eo-askbtn', text: w(holding ? 'hold_button' : 'ask_button') });
+      var act = el('section', { 'class': 'eo-part eo-sign', 'aria-label': btn.textContent }, [err, btn]);
+      show(common.concat([plan, openDatesBlock(o, 'invite', token), foot, act, call]));
+      btn.addEventListener('click', function () {
+        err.textContent = '';
+        // The demo sends nothing, holds nothing and charges nothing.
+        if (DEMO) { done('asked', String(o.demo_line || '')); return; }
+        btn.disabled = true;
+        var req = holding ? G.api(API, '/v1/invitation/hold', { token: token, names: vars.first_names }, 30000)
+          : G.api(API, '/v1/invitation/ask', { token: token }, 30000);
+        req.then(function (r) {
+          if (holding) { if (r && r.token) return load(r.token); return failed(); }
+          if (r && r.asked) return done('asked');
+          failed();
+        }).catch(function (e) {
+          btn.disabled = false;
+          if (e && (e.status === 404 || e.status === 409)) return ended();
+          err.textContent = [w('failure'), w('questions')].join(' ');
+        });
+      });
+      return;
+    }
+
+    // A made offer: the ways to pay, the agreement, the signature, the payment.
+    var payBtn = el('button', { type: 'button', 'class': 'lf-btn gh-btn--dark', id: 'eo-paybtn' });
+    function label() { vars.today_amount = today(); payBtn.textContent = w('pay'); }
+    var wayLines = [];
+    var ways = el('fieldset', { 'class': 'eo-ways', 'aria-labelledby': 'eo-total-h' }, modes.map(function (m) {
+      var input = el('input', { type: 'radio', name: 'eo-way', value: m, id: 'eo-way-' + m,
+        onchange: function () { mode = m; label(); } });
+      if (m === mode) input.checked = true;
+      var line = el('span', { 'class': 'eo-way__line' });
+      wayLines.push([m, line]);
+      return el('label', { 'class': 'eo-way', 'for': input.id }, [input,
+        el('span', { 'class': 'eo-way__label', text: w(m === 'deposit' ? 'half_label' : 'whole_label') }), line]);
+    }));
+    // Each way's own line names its own amount today.
+    wayLines.forEach(function (pair) {
+      var keep = mode; mode = pair[0]; vars.today_amount = today();
+      pair[1].textContent = w(pair[0] === 'deposit' ? 'half_line' : 'whole_line');
+      mode = keep;
+    });
+    label();
+
+    var answers = {};
+    var lead = el('p', { 'class': 'eo-lead-in', id: 'eo-ag-h', text: w('agreement_lead') });
+    var box = agreementBox(o.agreement || {}, answers, 'eo-ag-h');
+    var agreement = el('section', { 'class': 'eo-part', 'aria-labelledby': 'eo-ag-h' }, [lead, box]);
+
+    var name = el('input', { id: 'eo-name', name: 'name', type: 'text', autocomplete: 'name', autocapitalize: 'words', required: true });
+    var tick = el('input', { id: 'eo-tick', type: 'checkbox', required: true });
+    var error = el('p', { 'class': 'gh-error', id: 'eo-error', role: 'alert' });
+    var sign = el('section', { 'class': 'eo-part eo-sign', 'aria-label': w('sign_label') }, [
+      el('div', { 'class': 'gh-field' }, [el('label', { 'for': 'eo-name', text: w('sign_label') }), name]),
+      el('label', { 'class': 'gh-agree', 'for': 'eo-tick' }, [tick, el('span', { text: w('tick') })]),
+      error, payBtn]);
+    var pay = el('div', { 'class': 'eo-pay', id: 'eo-pay', tabindex: '-1' });
+    show(common.concat([openDatesBlock(o, 'offer', token), ways, agreement, sign, pay, call]));
+
+    payBtn.addEventListener('click', function () {
+      var typed = name.value.trim();
+      var choices = (o.agreement && o.agreement.choices) || [];
+      var missing = typed.replace(/[^A-Za-zÀ-ɏ]/g, '').length < 2 ? name
+        : !tick.checked ? tick
+        : choices.some(function (c) { return !answers[c.id]; }) ? box : null;
+      if (missing) { error.textContent = w(choices.length ? 'need_sign' : 'need_sign_plain'); missing.focus(); return; }
+      error.textContent = '';
+      payBtn.disabled = true;
+      G.api(API, '/v1/offer/checkout', { token: token, mode: mode, typed_name: typed, accepted: true,
+        agreement_version: o.agreement.version, choices: answers }, 30000).then(function (r) {
+        [ways, agreement, sign].forEach(function (n) { n.hidden = true; });
+        return G.mountStripe(KEY, r.client_secret, '#eo-pay').then(function () {
+          pay.focus({ preventScroll: true });
+          pay.scrollIntoView({ block: 'start' });
+        });
+      }).catch(function (e) {
+        payBtn.disabled = false;
+        [ways, agreement, sign].forEach(function (n) { n.hidden = false; });
+        var code = e && e.body && e.body.error;
+        if (code === 'payment_clearing') return done('clearing');
+        if (code === 'offer_closed' || (e && e.status === 404)) return ended();
+        if (code === 'agreement_changed') return load(token);
+        error.textContent = [w('failure'), w('questions')].join(' ');
+      });
+    });
+  }
+
+  // ------------------------------------------------------ the public door
+  function publicPage() {
+    var PK = (function () { try { var n = document.getElementById('lf-yd-packages'); return (n && JSON.parse(n.textContent)) || []; } catch (e) { return []; } })();
+    var pickBox = root.querySelector('[data-yd-pick]');
+    var pkg = PK[0] && PK[0].key || '', open = [], month = null, picked = null;
+    top.eyebrow.textContent = w('yd_eyebrow');
+    top.h1.textContent = w('yd_h1');
+    top.lead.textContent = w('yd_lead');
+    top.lead.hidden = false;
+    var fe = document.querySelector('[data-yd-form-eyebrow]'), fh = document.querySelector('[data-yd-form-h]'), fl = document.querySelector('[data-yd-form-lead]');
+    if (fe) fe.textContent = w('yd_ask_h');
+    if (fh) fh.textContent = w('yd_form_h');
+    if (fl) { fl.textContent = w('yd_form_lead'); fl.hidden = false; }
+    // The demo's form posts nowhere: a submit shows the ribbon's words.
+    var form = document.querySelector('form[name="elopement-inquiry"]');
+    if (DEMO_PUBLIC && form && form.hasAttribute('data-demo-form')) {
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var p = form.querySelector('.gh-error') || form.appendChild(el('p', { 'class': 'gh-error', role: 'alert' }));
+        p.textContent = String(DEMO_PUBLIC.demo_line || '');
+      });
+    }
+
+    function loadDates() {
+      open = []; picked = null; month = null;
+      body.hidden = true; body.textContent = '';
+      wait.hidden = false; wait.textContent = w('yd_dates_loading');
+      var got = DEMO_PUBLIC ? Promise.resolve({ dates: (DEMO_PUBLIC.open || {})[pkg] || [] })
+        : G.api(API, '/v1/your-day/dates?package=' + encodeURIComponent(pkg), null, 20000);
+      got.then(function (r) {
+        open = (Array.isArray(r) ? r : (r && r.dates) || []).filter(function (d) { return /^\d{4}-\d{2}-\d{2}$/.test(d); }).sort();
+        month = open.length ? open[0].slice(0, 7) : null;
+        wait.hidden = true; wait.textContent = '';
+        if (!open.length) { wait.hidden = false; wait.textContent = w('yd_no_dates'); }
+        drawPick();
+      }).catch(function () {
+        wait.hidden = false; wait.textContent = [w('failure'), w('questions')].join(' ');
+        drawPick();
+      });
+    }
+    function drawPick() {
+      pickBox.textContent = '';
+      var pk = el('fieldset', { 'class': 'yd-pkgs' }, [el('legend', { 'class': 'yd-pick__h', text: w('yd_package_h') })].concat(PK.map(function (p) {
+        var input = el('input', { type: 'radio', name: 'yd-pkg', value: p.key, id: 'yd-pkg-' + p.key,
+          onchange: function () { pkg = p.key; loadDates(); } });
+        if (p.key === pkg) input.checked = true;
+        return el('label', { 'class': 'yd-pkg', 'for': input.id }, [input, el('span', { 'class': 'yd-pkg__name', text: p.name }),
+          el('span', { 'class': 'yd-pkg__price', text: p.price || '' })]);
+      })));
+      var falls = el('p', { 'class': 'yd-note', text: w('yd_falls_note') });
+      var cal = el('div', { 'class': 'yd-cal' }, [el('h2', { 'class': 'yd-pick__h', text: w('yd_date_h') }),
+        month ? calendar() : null, el('p', { 'class': 'yd-note', text: month ? w('yd_date_hint') : '' })]);
+      pickBox.appendChild(el('div', { 'class': 'yd-pick__pkg' }, [pk, falls]));
+      pickBox.appendChild(cal);
+    }
+    // One month of open arrival days, in the booking calendar's own clothes (css/gatehouse.css).
+    function calendar() {
+      var y = +month.slice(0, 4), m = +month.slice(5, 7) - 1;
+      var first = new Date(y, m, 1), label = first.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+      var seen = {}; open.forEach(function (d) { seen[d.slice(0, 7)] = 1; });
+      var months = Object.keys(seen).sort(), i = months.indexOf(month);
+      var nav = el('div', { 'class': 'gh-nav' }, [
+        el('button', { type: 'button', 'class': 'gh-arrow', 'aria-label': 'Earlier months', text: '‹', disabled: i <= 0 ? 'disabled' : null,
+          onclick: function () { month = months[i - 1]; drawPick(); } }),
+        el('span', { 'class': 'gh-hint', text: label }),
+        el('button', { type: 'button', 'class': 'gh-arrow', 'aria-label': 'Later months', text: '›', disabled: i >= months.length - 1 ? 'disabled' : null,
+          onclick: function () { month = months[i + 1]; drawPick(); } })]);
+      var g = el('div', { 'class': 'gh-grid', role: 'group', 'aria-label': label });
+      ['S', 'M', 'T', 'W', 'T', 'F', 'S'].forEach(function (x) { g.appendChild(el('span', { 'class': 'gh-dow', 'aria-hidden': 'true', text: x })); });
+      for (var k = 0, lead = first.getDay(); k < lead; k++) g.appendChild(el('span', { 'class': 'gh-pad' }));
+      for (var d = 1, days = new Date(y, m + 1, 0).getDate(); d <= days; d++) {
+        var day = month + '-' + (d < 10 ? '0' + d : d), ok = open.indexOf(day) >= 0;
+        g.appendChild(el('button', { type: 'button', 'class': 'gh-day' + (ok ? '' : ' gh-day--taken') + (day === picked ? ' gh-day--edge' : ''),
+          'data-day': day, 'aria-pressed': day === picked ? 'true' : 'false', disabled: ok ? null : 'disabled',
+          onclick: (function (x) { return function () { pick(x); }; })(day) },
+          [el('span', { 'class': 'gh-num', text: String(d) }), el('span', { 'class': 'gh-sr', text: ' ' + G.long(day) + (ok ? '' : ', not open') })]));
+      }
+      return el('div', { 'class': 'gh-calendar' }, [nav, el('div', { 'class': 'gh-months' }, [el('div', { 'class': 'gh-month' }, [g])])]);
+    }
+    function pick(day) {
+      picked = day;
+      if (day.slice(0, 7) !== month && open.indexOf(day) >= 0) month = day.slice(0, 7);
+      drawPick();
+      say(w('loading'));
+      var got = DEMO_PUBLIC ? Promise.resolve(shifted((DEMO_PUBLIC.days || {})[pkg] || {}, day, (DEMO_PUBLIC.open || {})[pkg] || []))
+        : G.api(API, '/v1/your-day', { package: pkg, check_in: day }, 20000);
+      got.then(function (o) {
+        if (!o || o.available === false) {
+          var why = o && o.reason === 'too_soon' ? w('yd_too_soon') : w('yd_not_open');
+          show([el('p', { 'class': 'eo-lead-in', role: 'alert', text: why }), openDatesBlock(o || {}, 'public', null), el('p', { 'class': 'eo-call', text: w('questions') })]);
+          return;
+        }
+        render('public', null, o);
+        body.scrollIntoView({ block: 'start' });
+      }).catch(function (e) {
+        if (e && e.status === 404) { say([w('yd_not_open'), w('questions')]); return; }
+        failed();
+      });
+    }
+    publicPick = pick;
+    loadDates();
+  }
+
+  if (PUBLIC) { publicPage(); return; }
+  // The demo: the invented Invitation in the engine's place.
+  if (DEMO) { readInvite('demo'); return; }
+  // No offer, no invitation and no payment in the address: there is nothing to try again, so the
+  // page stands closed, as it does when the words are not the approved ones (/book's own line).
+  if (keys.session_id) returned(keys.session_id);
+  else if (keys.offer) load(keys.offer);
+  else if (keys.invite) readInvite(keys.invite);
+  else say(W.not_ready || '');
+})();
+
+});</script>
+</body>
+</html>
