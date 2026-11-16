@@ -50,6 +50,15 @@
   // site-audit sheet, 2026-11-08: the first two cases alone; it moves a guest to other dates from one
   // tap, and needs Mick's own yes). false: such a tap refuses as it always did. true on his word.
   var OFFER_NEAREST = false;
+  // THE STAY BAR (the Chief's route of 2026-11-16: since the reel, 129 visits were shown a price
+  // and 1 started checkout; on a phone the card starts at the fold and the Reserve button sits a
+  // full swipe below it). true: on a screen narrower than 960 px, where the card sits under the
+  // calendar instead of beside it, the moment a price exists a bar fixed to the bottom of the
+  // screen carries the dates, the total, the chosen way to pay ("Reserve with $X today") and the
+  // card's own button, which goes to the pay step as the card's does; it steps aside while the
+  // card's pay choices or its button are on screen, and is gone on the pay step. Every word in it
+  // is the card's own. false: nothing changes. scripts/site/check_stay_bar.js proves both states.
+  var STAY_BAR = false;
   var OFFLINE = "We couldn't reach our booking system just now. Nothing was charged. Please try again in a moment, or call or text " + PHONE + '.';
 
   // ---------------------------------------------------------------- helpers
@@ -1526,12 +1535,62 @@
 
   // ----------------------------------------------------------------- render
 
+  // ------------------------------------------------------------ the stay bar
+
+  // One bar, made once, kept outside the root (render() replaces the root's children). Shown only
+  // with a price on the dates step, on a narrow screen, on /book itself (a page that hands off
+  // has its own link on the card). Steps aside (is-away) while the card's pay choices or its
+  // button can be seen, so there is never a second Reserve button on screen.
+  var bar = null, barWatch = null;
+  function barWanted() {
+    return STAY_BAR && !HANDOFF && state.step === 'dates' && !!state.quote && !state.busy &&
+      !!(window.matchMedia && window.matchMedia('(max-width: 959px)').matches);
+  }
+  function renderBar() {
+    if (barWatch) { barWatch.disconnect(); barWatch = null; }
+    if (!barWanted()) {
+      if (bar) { bar.hidden = true; bar.classList.remove('is-away'); }
+      document.documentElement.classList.remove('gh-bar-on');
+      return;
+    }
+    var q = state.quote;
+    if (!bar) {
+      bar = el('div', { 'class': 'gh-bar', role: 'region', 'aria-label': 'Your stay' });
+      document.body.appendChild(bar);
+    }
+    // The dates and the total on one line, the card's own button under them: its words carry the
+    // way to pay ("Reserve for $X" is the retainer; "Book for $X" the whole), right beside the total.
+    bar.replaceChildren(
+      el('p', { 'class': 'gh-bar__dates', text: span(cal.checkIn, cal.checkOut) }),
+      el('p', { 'class': 'gh-bar__total', text: 'Total ' + money(q.quote.total_cents) }),
+      el('button', { type: 'button', 'class': 'lf-btn gh-cta gh-bar__btn', text: ctaText(q, state.payMode),
+        onclick: function () { track('gh_bar_reserve', { gh_unit: UNIT, gh_mode: state.payMode }); toCheckout(false); } })
+    );
+    bar.hidden = false;
+    bar.classList.remove('is-away');
+    document.documentElement.classList.add('gh-bar-on');
+    if (!('IntersectionObserver' in window)) return;
+    var seen = [];
+    var targets = Array.prototype.slice.call(root.querySelectorAll('.gh-summary .gh-options, .gh-summary .gh-cta, .gh-summary .gh-covered'));
+    if (!targets.length) return;
+    barWatch = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        var i = seen.indexOf(e.target);
+        if (e.isIntersecting && i < 0) seen.push(e.target);
+        if (!e.isIntersecting && i >= 0) seen.splice(i, 1);
+      });
+      if (bar) bar.classList.toggle('is-away', seen.length > 0);
+    }, { threshold: 0.2 });
+    targets.forEach(function (t) { barWatch.observe(t); });
+  }
+
   function render() {
     var side = state.step === 'pay' && state.quote ? details() : summary();
     var wrap = el('div', { 'class': 'gh-wrap' + (state.step === 'pay' && state.quote ? ' is-checkout' : '') },
       [state.step === 'pay' && state.quote ? null : cal.render(), side]);
     root.replaceChildren(wrap);
     if (state.step === 'pay' && state.quote) watchPay(); else unwatchPay();
+    renderBar();
   }
 
   // ------------------------------------------------------------------- boot
