@@ -58,7 +58,9 @@
   // card's own button, which goes to the pay step as the card's does; it steps aside while the
   // card's pay choices or its button are on screen, and is gone on the pay step. Every word in it
   // is the card's own. false: nothing changes. scripts/site/check_stay_bar.js proves both states.
-  var STAY_BAR = false;
+  // ON since 2026-11-16 (Mick, about 7:46 AM ET by the Chief: "Go ahead with the bar it's
+  // brilliant."; the bar's button opens the pay step directly, his pick of the two put to him).
+  var STAY_BAR = true;
   var OFFLINE = "We couldn't reach our booking system just now. Nothing was charged. Please try again in a moment, or call or text " + PHONE + '.';
 
   // ---------------------------------------------------------------- helpers
