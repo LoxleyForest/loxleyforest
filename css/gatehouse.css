@@ -314,7 +314,7 @@
    over the fixed Book button (900), which it hides while it is on. */
 .gh-bar {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 930;
-  display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 14px; row-gap: 2px; align-items: center;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px; row-gap: 8px; align-items: baseline;
   padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
   background: var(--white); border-top: 1px solid var(--parchment);
   box-shadow: 0 -14px 34px -20px rgba(10, 20, 10, 0.45);
@@ -322,10 +322,9 @@
 }
 .gh-bar[hidden] { display: none; }
 .gh-bar.is-away { transform: translateY(110%); opacity: 0; pointer-events: none; }
-.gh-bar__dates { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 17px; line-height: 1.25; color: var(--forest-deep); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.gh-bar__sum { margin: 0; font-family: 'Montserrat', Arial, sans-serif; font-size: 12px; line-height: 1.4; color: var(--stone); }
-.gh-bar__sum b { font-weight: 600; color: var(--forest-deep); }
-.gh-bar__btn { grid-column: 2; grid-row: 1 / 3; width: auto; margin: 0; min-height: 48px; padding: 0 18px; white-space: nowrap; }
+.gh-bar__dates { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 18px; line-height: 1.25; color: var(--forest-deep); }
+.gh-bar__total { margin: 0; font-family: 'Montserrat', Arial, sans-serif; font-size: 14px; font-weight: 600; line-height: 1.3; color: var(--forest-deep); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.gh-bar__btn { grid-column: 1 / -1; width: 100%; margin: 0; min-height: 48px; }
 html.gh-bar-on .book-fab { display: none; }
 @media (min-width: 960px) { .gh-bar { display: none; } }
 @media (prefers-reduced-motion: reduce) { .gh-bar { transition: none; } }

@@ -130,8 +130,9 @@ async function main() {
       const fab = document.querySelector('.book-fab');
       return {
         bar: bar ? { hidden: bar.hidden, away: bar.classList.contains('is-away'), display: cs.display, position: cs.position,
-          box: r('.gh-bar'), dates: (bar.querySelector('.gh-bar__dates') || {}).textContent, sum: (bar.querySelector('.gh-bar__sum') || {}).textContent,
-          btn: (bar.querySelector('.gh-bar__btn') || {}).textContent } : null,
+          box: r('.gh-bar'), dates: (bar.querySelector('.gh-bar__dates') || {}).textContent, total: r('.gh-bar__total'),
+          datesCut: (function (d) { return d ? d.scrollWidth > d.clientWidth + 1 : null; })(bar.querySelector('.gh-bar__dates')),
+          btnBox: r('.gh-bar__btn'), btn: (bar.querySelector('.gh-bar__btn') || {}).textContent } : null,
         cardDates: r('.gh-summary .gh-dates'), cardTotal: r('.gh-summary dd.gh-total'), cardCta: r('.gh-summary .gh-cta'),
         option: (document.querySelector('.gh-summary .gh-option.is-on strong') || {}).textContent || '',
         nights: (document.querySelector('.gh-summary .gh-times') || {}).textContent || '',
@@ -165,19 +166,20 @@ async function main() {
     await tap(page, day(SAT)); await waitTotal(page);
     s = await look(page);
     check(s.bar && !s.bar.hidden && !s.bar.away && s.bar.position === 'fixed', 'the moment the stay is priced the bar is on');
-    check(s.bar && s.bar.box.bottom <= s.inner && s.bar.box.top >= s.inner - 140, 'it stands inside the screen at its bottom (' + (s.bar ? s.bar.box.top + ' to ' + s.bar.box.bottom : '') + ' of ' + s.inner + ')');
+    check(s.bar && s.bar.box.bottom <= s.inner && s.bar.box.top >= s.inner - 120, 'it stands inside the screen at its bottom, under 120 px tall (' + (s.bar ? s.bar.box.top + ' to ' + s.bar.box.bottom : '') + ' of ' + s.inner + ')');
     check(s.cardCta && s.cardCta.top > s.inner, 'while the card\'s own button is still below the fold');
-    check(s.bar && s.bar.dates.indexOf(s.cardDates.text) === 0 && s.bar.dates.indexOf(s.nights.split(' · ')[0]) > 0, 'the dates and the nights are the card\'s own words: ' + (s.bar || {}).dates);
-    check(s.bar && s.bar.sum.indexOf('Total ' + s.cardTotal.text) === 0, 'the total is the card\'s: ' + (s.bar || {}).sum);
-    check(s.bar && s.option && s.bar.sum.indexOf(s.option) > 0 && /^Reserve with \$[\d,.]+ today$/.test(s.option), 'the chosen way to pay beside it, the card\'s own option title: ' + s.option);
-    check(s.bar && s.bar.btn === s.cardCta.text && /^Reserve for \$/.test(s.bar.btn), 'the button says what the card\'s says: ' + (s.bar || {}).btn);
+    check(s.bar && s.bar.dates === s.cardDates.text && s.bar.datesCut === false, 'the dates are the card\'s own words, whole: ' + (s.bar || {}).dates);
+    check(s.bar && s.bar.total && s.bar.total.text === 'Total ' + s.cardTotal.text, 'the total is the card\'s: ' + ((s.bar || {}).total || {}).text);
+    check(s.bar && s.bar.btn === s.cardCta.text && /^Reserve for \$/.test(s.bar.btn), 'the button says what the card\'s says, the retainer in its words: ' + (s.bar || {}).btn);
+    check(s.bar && s.option === 'Reserve with ' + s.bar.btn.replace('Reserve for ', '') + ' today', 'and that figure is the chosen way to pay on the card: ' + s.option);
+    check(s.bar && s.bar.btnBox.top - s.bar.total.bottom < 20 && s.bar.btnBox.top > s.bar.total.top, 'the button sits right under the total, not a swipe below it');
     check(s.fabShown === false && s.htmlOn, 'the fixed Book button is hidden while the bar is on');
     if (SHOTS) await page.screenshot({ path: path.join(SHOTS, 'stay-bar-priced.png') });
 
     // a second tap lengthens the stay and the bar follows the new price
     await tap(page, day(SAT + 3)); await waitTotal(page);
     s = await look(page);
-    check(s.bar && !s.bar.hidden && s.bar.sum.indexOf('Total ' + s.cardTotal.text) === 0 && /3 nights/.test(s.bar.dates), 'a later tap re-prices and the bar follows: ' + (s.bar || {}).sum);
+    check(s.bar && !s.bar.hidden && s.bar.total.text === 'Total ' + s.cardTotal.text && s.bar.dates === s.cardDates.text && /3 nights/.test(s.nights), 'a later tap re-prices and the bar follows: ' + ((s.bar || {}).total || {}).text);
 
     // scrolled to the card's pay choices: the bar steps aside; scrolled back: it returns
     await page.evaluate(() => document.querySelector('.gh-summary .gh-options').scrollIntoView({ block: 'center' }));
