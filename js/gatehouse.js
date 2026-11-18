@@ -326,6 +326,16 @@
     // The words. The minimum is the tapped night's; the price shows in the card below the calendar;
     // a later tap lengthens the stay (the offer holds the arrival, c.offered).
     var LONGER = ' Tap a later day to stay longer.';
+    // The silent tap (the Forge, 2026-11-18, the winter-rules route: a shopper tapped Sun Jan 17 to end
+    // an offered Sat Jan 16 stay on Sunday, and nothing moved or spoke, because the shortest stay from
+    // that arrival was the one already shown). Now the page says so, in the Forge's words with the
+    // calendar's own date shapes; and when a Friday or Saturday arrival was asked for one night, the
+    // Writer's weeknight line follows (2026-11-18, version B). New words, for Mick's yes by hash
+    // (scripts/site/check_silent_tap.js prints it).
+    function sameWords(ci, min, co) {
+      return 'A stay starting ' + short(ci) + ' is at least ' + nightsWord(min) + '. ' + span(ci, co) + ' is the shortest.';
+    }
+    var WEEKNIGHT = 'Just one night? Tap a Sunday through Thursday. Each night tells you what it needs.';
     function offered(day, s) {
       var min = (c.nights[day] && c.nights[day].min_stay) || daysBetween(s.ci, s.co);
       var head = 'Arriving ' + short(day) + ' takes ' + nightsWord(min) + '.';
@@ -373,13 +383,24 @@
         // Inside the engine's lead time, by request (loxley-rescue GATEHOUSE-SPEC 20): the quote card says how.
         c.note = 'Arriving ' + short(day) + (c.nights[day].request ? ', by request' : '') + '. Now choose your check-out day.';
       } else {
+        var prevCo = c.checkOut, wasOffered = c.offered, asked = daysBetween(c.checkIn, day);
         c.offered = false; c.checkOut = null;
         var why = c.stayOk(c.checkIn, day);
         if (why) {
           // Under the minimum: the shortest stay from that arrival, not a refusal.
           if (OFFER_STAY && /at least/.test(why)) {
-            var min = c.nights[c.checkIn].min_stay;
-            if (fits(c.checkIn, min)) { offer(c.checkIn, addDays(c.checkIn, min), offered(c.checkIn, { ci: c.checkIn, co: addDays(c.checkIn, min), shifted: false }), 'direct'); return; }
+            var min = c.nights[c.checkIn].min_stay, shortest = addDays(c.checkIn, min);
+            if (fits(c.checkIn, min)) {
+              if (wasOffered && prevCo === shortest) {
+                // The shortest stay is the one already shown: keep it and say so (the silent tap).
+                c.checkOut = shortest; c.offered = true;
+                var w = parse(c.checkIn).getDay();
+                c.note = sameWords(c.checkIn, min, shortest) + (asked === 1 && (w === 5 || w === 6) ? ' ' + WEEKNIGHT : '');
+                try { if (typeof step === 'function') step('gh_stay_offered', { gh_reason: 'same' }); } catch (e) {}
+                opts.onChange(c); return;
+              }
+              offer(c.checkIn, shortest, offered(c.checkIn, { ci: c.checkIn, co: shortest, shifted: false }), 'direct'); return;
+            }
           }
           c.note = why; if (opts.onRefuse) opts.onRefuse(why, c.checkIn); opts.onChange(c); return;
         }
@@ -610,7 +631,14 @@
     gh_handoff: 'handoff', gh_quote_refused: 'quote_refused',
     // An offered stay (OFFER_STAY), apart from a chosen one; its reason is direct, shifted or nearest.
     // The engine refuses it until the Forge adds the step, and the beacon never looks at the answer.
-    gh_stay_offered: 'stay_offered' };
+    gh_stay_offered: 'stay_offered',
+    // Three counters (the Chief's route of 2026-11-16, after the Oct 27 step in starts per pick):
+    // quote_shown, the card's button actually drawn after a price (a pick with no quote_shown is a
+    // card that failed to draw); script_error, an error in our own scripts with its words and the
+    // step it broke at, no visitor detail; pay_reopened, an arrival whose link carries step=pay (a
+    // return to a checkout already begun, counted as a pick and never as a start). The engine refuses
+    // all three until the Forge adds them; Tag Manager and Clarity carry them from the first day.
+    gh_quote_shown: 'quote_shown', gh_script_error: 'script_error', gh_pay_reopened: 'pay_reopened' };
 
   // Where this guest came from: a letter or trail marker (src, card), an ad (gclid and
   // friends), a campaign (utm_*). Kept for the visit, sent with the booking.
@@ -641,7 +669,18 @@
 
   // The check-in date rides on these three (the flywheel contract, 2026-10-20), so weekends and
   // weeknights can be told apart.
-  var WITH_CHECK_IN = { dates_chosen: 1, begin_checkout: 1, add_payment_info: 1, handoff: 1 };
+  var WITH_CHECK_IN = { dates_chosen: 1, begin_checkout: 1, add_payment_info: 1, handoff: 1, quote_shown: 1, pay_reopened: 1 };
+  // Microsoft Clarity, when the Tag Manager has loaded it: a custom event and its tags, so the two
+  // counters that matter this week (quote_shown, script_error) can be read there by browser before
+  // the engine's step list changes. Nothing when Clarity is not on the page.
+  var CLARITY_STEPS = { gh_quote_shown: 'quote_shown', gh_script_error: 'script_error' };
+  function clarityTell(name, tags) {
+    try {
+      if (typeof window.clarity !== 'function') return;
+      window.clarity('event', name);
+      Object.keys(tags || {}).forEach(function (k) { if (tags[k]) window.clarity('set', k, String(tags[k])); });
+    } catch (e) {}
+  }
 
   // Why dates were refused, as one of the engine's codes (gatehouse/counts.py REFUSE_REASONS), never
   // the sentence: taken, min_stay, no_arrival, too_far (past the last open night), other.
@@ -663,6 +702,7 @@
     var payload = { gh_unit: UNIT };
     Object.keys(data).forEach(function (k) { payload[k] = data[k]; });
     track(event, payload);
+    if (CLARITY_STEPS[event]) clarityTell(CLARITY_STEPS[event], { gh_phase: data.gh_mode || '', gh_error: event === 'gh_script_error' ? data.gh_reason : '' });
     if (STEP_FOR[event]) {
       beacon(STEP_FOR[event], { mode: data.gh_mode || '', nights: data.gh_nights || '',
         value_cents: data.value ? Math.round(data.value * 100) : '',
@@ -1162,8 +1202,21 @@
     if (!state.quote) return;
     state.step = 'pay';
     writeUrl(!fromUrl);
-    if (!fromUrl) step('begin_checkout', { value: state.quote.quote.total_cents / 100, currency: 'USD',
-      gh_mode: state.payMode, gh_check_in: cal.checkIn, gh_check_out: cal.checkOut });
+    var began = cal.checkIn + '/' + cal.checkOut;
+    if (!fromUrl) {
+      step('begin_checkout', { value: state.quote.quote.total_cents / 100, currency: 'USD',
+        gh_mode: state.payMode, gh_check_in: cal.checkIn, gh_check_out: cal.checkOut });
+      try { sessionStorage.setItem('gh_began', began); } catch (e) {}
+    }
+    // An arrival whose link carries step=pay (the address the site writes at checkout) in a visit
+    // that did not start that checkout itself: a checkout reopened, never a start; its own count
+    // (2026-11-16). A reload in the visit that started it sends nothing.
+    if (fromUrl) {
+      var mine = '';
+      try { mine = sessionStorage.getItem('gh_began') || ''; } catch (e) {}
+      if (mine !== began) step('gh_pay_reopened', { value: state.quote.quote.total_cents / 100, currency: 'USD',
+        gh_mode: state.payMode, gh_nights: state.quote.quote.nights, gh_check_in: cal.checkIn, gh_check_out: cal.checkOut });
+    }
     sendLead(state.form.email);
     render();
     if (!fromUrl) landOnPay();
@@ -1586,6 +1639,58 @@
     targets.forEach(function (t) { barWatch.observe(t); });
   }
 
+  // ----------------------------------------------------------- the counters
+
+  // quote_shown (2026-11-16): the card's button is in the page and laid out, once per stay a visit.
+  // dates_chosen fires when the quote arrives, before the card is drawn; a pick with no quote_shown
+  // after it is a card that failed to draw. The button is the card's own (.gh-cta: the Reserve or
+  // Book button on /book, the "Book these nights" link on a page that hands off).
+  var shownKeys = {};
+  function noteShown() {
+    if (state.step !== 'dates' || !state.quote || state.busy || !cal || !cal.checkIn || !cal.checkOut) return;
+    var key = cal.checkIn + '/' + cal.checkOut;
+    if (shownKeys[key]) return;
+    var btn = root.querySelector('.gh-summary .gh-cta');
+    if (!btn) return;
+    var b = btn.getBoundingClientRect();
+    if (!(b.width > 0 && b.height > 0)) return;
+    shownKeys[key] = 1;
+    step('gh_quote_shown', { gh_check_in: cal.checkIn, gh_check_out: cal.checkOut, gh_nights: state.quote.quote.nights,
+      value: state.quote.quote.total_cents / 100, currency: 'USD' });
+  }
+
+  // script_error (2026-11-16): an error in our own scripts, as plain words the funnel's scrub keeps
+  // (letters, digits, space . _ : / -; 120 at most), with the step it broke at in `mode` (boot, dates,
+  // quote, pay). Every address loses its query and fragment first, so no code, token or email rides
+  // along; a third party's error (another origin, or the bare "Script error.") is not ours and is not
+  // sent. One beacon per distinct error, five at most a page.
+  var errSeen = {}, errCount = 0;
+  function phase() { return !cal ? 'boot' : state.step === 'pay' ? 'pay' : state.busy ? 'quote' : 'dates'; }
+  function plainWords(s) {
+    return String(s || '').replace(/https?:\/\/[^\s)'"]+/g, function (u) { return u.split('?')[0].split('#')[0]; })
+      .replace(/[^A-Za-z0-9 ._:\/-]+/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+  function reportError(msg, where) {
+    var text = (plainWords(msg) + (where ? ' at ' + plainWords(where) : '')).slice(0, 120).trim();
+    if (!text || errSeen[text] || errCount >= 5) return;
+    errSeen[text] = 1; errCount++;
+    step('gh_script_error', { gh_reason: text, gh_mode: phase() });
+  }
+  function ownFile(src) {
+    if (!src) return false;
+    try { return new URL(src, location.href).origin === location.origin; } catch (e) { return false; }
+  }
+  function shortFile(src) { return String(src || '').replace(/^.*\/(js\/)/, '$1').replace(/^https?:\/\/[^\/]+/, '').split('?')[0]; }
+  window.addEventListener('error', function (e) {
+    if (!e || !ownFile(e.filename)) return;
+    reportError(e.message, shortFile(e.filename) + ':' + (e.lineno || 0));
+  });
+  window.addEventListener('unhandledrejection', function (e) {
+    var r = e && e.reason, msg = r && r.message ? r.message : (typeof r === 'string' ? r : 'rejection');
+    var m = r && r.stack ? /\/js\/[A-Za-z0-9_-]+\.js:\d+/.exec(String(r.stack)) : null;
+    reportError(msg, m ? m[0].slice(1) : '');
+  });
+
   function render() {
     var side = state.step === 'pay' && state.quote ? details() : summary();
     var wrap = el('div', { 'class': 'gh-wrap' + (state.step === 'pay' && state.quote ? ' is-checkout' : '') },
@@ -1593,6 +1698,7 @@
     root.replaceChildren(wrap);
     if (state.step === 'pay' && state.quote) watchPay(); else unwatchPay();
     renderBar();
+    noteShown();
   }
 
   // ------------------------------------------------------------------- boot
