@@ -158,6 +158,8 @@ WORDS = {
     'popup_close': 'Close',
     'popup_fold': 'A January weekend, on us. Free to enter.',
     'popup_fold_link': 'See the giveaway',
+    # /book's line is off that page since 2026-11-18 (D7 of the deep session); the two words stay
+    # here, unshown, so his yes by hash stands.
     'book_line': 'A January weekend, on us. Two nights in the trees, free to enter.',
     'book_link': 'See the giveaway',
     'entered_link': 'See the open nights',

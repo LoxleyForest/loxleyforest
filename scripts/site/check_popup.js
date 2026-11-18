@@ -42,8 +42,9 @@ const SCRIPT = fs.readFileSync(path.join(ROOT, 'js', 'giveaway-popup.js'), 'utf8
 const SWITCH_RE = /var LIVE = (true|false);/g;
 const SHIPPED_LIVE = /var LIVE = true;/.test(SCRIPT);
 const POPUP_PAGES = ['index.html', 'treehouses.html', 'experiences.html', 'gallery.html', 'our-story.html', 'local-guide.html', 'faq.html'];
-const SCRIPT_PAGES = POPUP_PAGES.concat(['book.html', 'giveaway-entered.html']);
-const NO_SCRIPT = ['elopements.html', 'giveaway.html', 'gift.html', 'gift-card.html', 'booked.html', 'manage.html', 'success.html',
+// /book left SCRIPT_PAGES on 2026-11-18 (D7 of the deep session): its quiet line is off the page.
+const SCRIPT_PAGES = POPUP_PAGES.concat(['giveaway-entered.html']);
+const NO_SCRIPT = ['book.html', 'elopements.html', 'giveaway.html', 'gift.html', 'gift-card.html', 'booked.html', 'manage.html', 'success.html',
   'success-elopement.html', 'booking-confirmed.html', 'eloping-from-atlanta.html', 'elope-in-dahlonega.html',
   'christmas-new-years-elopement.html', 'where-to-propose-north-georgia.html', 'romantic-getaways-near-atlanta.html'];
 
@@ -138,7 +139,7 @@ async function main() {
     const gw = fs.readFileSync(path.join(ROOT, 'giveaway.html'), 'utf8');
     const words = JSON.parse(fs.readFileSync(path.join(ROOT, 'experiences.html'), 'utf8').match(/<script type="application\/json" id="lf-gw-words">(.*?)<\/script>/)[1]);
     check(gw.includes('>' + words.h.replace(/&/g, '&amp;') + '<'), 'the card says what the rules page says: ' + JSON.stringify(words.h));
-    check(fs.readFileSync(path.join(ROOT, 'book.html'), 'utf8').includes('<p class="lf-gw-line" id="lf-gw-line" hidden>'), '/book carries its quiet line, hidden');
+    check(!fs.readFileSync(path.join(ROOT, 'book.html'), 'utf8').includes('lf-gw-line'), '/book carries no quiet line (off since 2026-11-18, D7)');
   }
 
   // ---- the switch off: LIVE false, served so whatever is shipped
@@ -148,7 +149,7 @@ async function main() {
     await go(page, '/experiences'); await runFor(page, 6000); await exit(page);
     check(!(await card(page)), 'desktop /experiences: no card after the pointer leaves');
     await go(page, '/book');
-    check(await page.evaluate(() => document.getElementById('lf-gw-line').hidden === true), '/book: the quiet line stays hidden');
+    check(await page.evaluate(() => !document.getElementById('lf-gw-line') && !document.getElementById('lf-gw-words')), '/book: no quiet line and no words block');
     check(steps(ctx).length === 0, 'no popup_ step reached the beacon');
     await ctx.close();
     const m = await visitor({ live: false, phone: true });
@@ -217,7 +218,7 @@ async function main() {
     await go(page, '/elopements'); await runFor(page, 6000); await exit(page);
     check(!(await card(page)), '/elopements (a talk.js page): no card');
     await go(page, '/book');
-    check(await page.evaluate(() => { const l = document.getElementById('lf-gw-line'); return l && !l.hidden && l.querySelector('a').getAttribute('href') === '/giveaway?src=giveaway-site'; }), '/book: the quiet line shows with its link');
+    check(await page.evaluate(() => !document.getElementById('lf-gw-line')), '/book: no quiet line, live or not (off since 2026-11-18, D7)');
     await runFor(page, 6000); await exit(page);
     check(!(await card(page)), '/book: no card');
     await go(page, '/giveaway'); await runFor(page, 6000); await exit(page);
@@ -269,7 +270,7 @@ async function main() {
     await go(page, '/experiences'); await runFor(page, 6000); await exit(page);
     check(!(await card(page)) && steps(ctx).length === 0, 'with the words block saying the form is not open: no card, no step');
     await go(page, '/book');
-    check(await page.evaluate(() => document.getElementById('lf-gw-line').hidden === true), 'and /book\'s line stays hidden');
+    check(await page.evaluate(() => !document.getElementById('lf-gw-line')), 'and /book has no line');
     await ctx.close();
     const late = await visitor({ live: true, time: new Date('2026-12-14T06:00:00Z') });
     await go(late.page, '/experiences'); await runFor(late.page, 6000); await exit(late.page);

@@ -14,12 +14,11 @@ import sys
 import build_v2 as B
 
 
-def _giveaway_line():
-    """The January giveaway's quiet line under the hero (pages/giveaway.py book_line_html): in the
-    page hidden, revealed by js/giveaway-popup.js while its LIVE switch is on. Never a card here
-    (the table of 2026-11-07). giveaway.py loads after this module; the words are read at build."""
-    mod = sys.modules.get('lfpage_giveaway')
-    return mod.book_line_html() if mod and hasattr(mod, 'book_line_html') else ''
+# The January giveaway's quiet line under the hero (pages/giveaway.py book_line_html, revealed by
+# js/giveaway-popup.js while LIVE) is OFF this page since the deep session of 2026-11-18 (D7, every
+# seat; the mystery guests: "the free-weekend giveaway sits at the top of the booking page, which
+# gives buyers a reason to wait"). Its words stay in giveaway.py WORDS, so the approved hash holds;
+# /book no longer carries the words block or the script (build_v2 POPUP_SCRIPT_PAGES).
 
 
 def _gift_words():
@@ -97,7 +96,6 @@ def page_book():
         <p class="lf-eyebrow">Dahlonega, Georgia</p>
         <h1 class="lf-h1" id="bk-h">Book your stay</h1>
         <p class="lf-lead">Book direct. No platform fees, no middleman. Just you, the forest, and the family who built it.</p>
-        {_giveaway_line()}
       </div>
     </section>
 

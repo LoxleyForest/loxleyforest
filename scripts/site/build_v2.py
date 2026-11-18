@@ -1015,12 +1015,13 @@ GIFT_PAGES = ('gift.html', 'gift-card.html', 'gift-thanks.html', 'gift-manage.ht
 OFFER_PAGES = ('elopement-offer.html',)
 
 # The January giveaway's invitation (js/giveaway-popup.js, the table of 2026-11-07): the pages the
-# card may show on, never a talk.js page, a form page or /giveaway itself; plus /book, where the
-# script only reveals the quiet line under the hero, and /giveaway-entered, where it only remembers
-# the entry. The script's words come from pages/giveaway.py WORDS, written into the page as JSON.
+# card may show on, never a talk.js page, a form page or /giveaway itself; plus /giveaway-entered,
+# where it only remembers the entry. /book carried the script for its quiet line under the hero
+# until the deep session of 2026-11-18 (D7): the line is off that page, so the script is too.
+# The script's words come from pages/giveaway.py WORDS, written into the page as JSON.
 POPUP_PAGES = ('index.html', 'treehouses.html', 'experiences.html', 'gallery.html', 'our-story.html',
                'local-guide.html', 'faq.html')
-POPUP_SCRIPT_PAGES = POPUP_PAGES + ('book.html', 'giveaway-entered.html')
+POPUP_SCRIPT_PAGES = POPUP_PAGES + ('giveaway-entered.html',)
 
 
 def popup_block(name):
