@@ -725,7 +725,7 @@
       },
       {
         "q": "Is there WiFi?",
-        "a": "Yes. But we encourage you not to use it.",
+        "a": "Yes. A hotspot on the deck, about the size of a phone, that you switch on when you want it. We built the place for the opposite, but it's there.",
         "sources": [
           "loxleyforest/scripts/site/pages/faq.py:47-48"
         ]
@@ -878,7 +878,7 @@
       },
       {
         "q": "Is there WiFi?",
-        "a": "There is: a hotspot on the deck that has to be switched on. We encourage you not to use it.",
+        "a": "Yes. A hotspot on the deck, about the size of a phone, that you switch on when you want it. We built the place for the opposite, but it's there.",
         "sources": [
           "loxley-rescue/canon/voice.md:119",
           "loxleyforest/scripts/site/pages/faq.py:48"

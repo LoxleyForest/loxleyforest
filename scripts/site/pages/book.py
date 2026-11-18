@@ -48,11 +48,12 @@ GATEHOUSE = f'''<div id="gatehouse"
            data-fallback="#gh-down">{B.GH_WAIT}</div>
       {B.quote_card()}
       <div id="gh-down" class="lf-book__alt" hidden>
-        <p>Our booking calendar isn't answering just now. Nothing is lost: <a href="#inquiry">send us your dates</a> and we'll write back within two hours, or call or text <a href="tel:+17065024823">706-502-4823</a>.</p>
+        <p>Our booking calendar isn't answering just now. Nothing is lost: <a href="#inquiry">send us your dates</a> and {B.d6('reply', "we'll write back within two hours")}, or call or text <a href="tel:+17065024823">706-502-4823</a>.</p>
       </div>'''
 
 DAY = [('3:00 PM', 'Turn off the paved road onto a gravel path through the forest. The world gets quieter with every turn.'),
-       ('3:30 PM', 'Park at the trailhead. Walk four hundred feet through mountain laurel and fern. Hear the creek before you see it.'),
+       # The walk, said three ways across the site, is the agreement's five to ten minutes (2026-11-18, D6).
+       ('3:30 PM', B.d6('walk_day')),
        ('3:45 PM', 'Cross the rope bridge for the first time. Your heart beats faster. Then the treehouse door opens.'),
        ('4:00 PM', "Unpack. Step onto the deck. Realize you're sixty feet in the air and there isn't a single sound except wind through leaves."),
        ('5:30 PM', 'Fire up the pizza oven on the sky deck. Open the bottle you brought. Burn the first pizza. Laugh about it. Nail the second one.'),
@@ -107,7 +108,8 @@ def page_book():
         <h2 class="lf-h3" id="bk-w">Choose your nights</h2>
         <p>Every open night shows its rate. Pick your dates and the whole price appears, taxes included. Then book right here.</p>
       </div>
-      {GATEHOUSE}
+{B.before_you_book_block()}      {GATEHOUSE}
+{B.ask_words_block()}
       {_gift_words()}
       <p class="lf-bk-contact">Questions? Call or text <a href="tel:+17065024823">706-502-4823</a>, or write to <a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a>.</p>
     </section>
@@ -315,6 +317,11 @@ CSS = '''
   .lf-bk-top::before { background: linear-gradient(180deg, rgba(20, 36, 24, 0.8), rgba(20, 36, 24, 0.84) 60%, var(--ink)); }
 }
 .lf-bk-book { scroll-margin-top: var(--hdr-h); padding-top: clamp(56px, 8vw, 96px); padding-bottom: clamp(56px, 8vw, 96px); }
+/* Before you book (2026-11-18, D6): the facts as short lines above the calendar, two columns on a desk */
+.lf-byb { max-width: 46rem; margin: -8px auto 28px; padding: 18px 20px; background: var(--linen); border: 1px solid rgba(61, 50, 40, 0.14); }
+.lf-byb .lf-eyebrow { margin: 0 0 8px; color: var(--forest-deep); }
+.lf-byb__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px 28px; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.12rem; line-height: 1.45; color: var(--bark); }
+@media (min-width: 720px) { .lf-byb__list { grid-template-columns: 1fr 1fr; } }
 .lf-bk-head { max-width: 36rem; margin: 0 auto 32px; text-align: center; }
 .lf-bk-head .lf-h3 { color: var(--forest-deep); font-size: clamp(1.75rem, 5vw, 2.3rem); }
 .lf-bk-head p { margin: 10px 0 0; font-size: 1.2rem; line-height: 1.5; color: var(--stone); }

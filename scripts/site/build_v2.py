@@ -15,6 +15,7 @@ The builder gathers every module's CSS into css/v2-pages.css (do not hand-edit i
 scripts/site/v2img.py makes images/v2/<name>-800.webp and -1600.webp for pic().
 """
 import glob
+import html
 import importlib.util
 import json
 import os
@@ -160,6 +161,124 @@ def head_from(page, preload=''):
     return head + '\n</head>\n', gtm
 
 
+# =============================================================================================
+# BEFORE YOU BOOK (the deep session of 2026-11-18, D6, five seats yes; the mystery guests: a
+# stranger meets a total, a rule and a contract before a fact or a person; the Writer's draft,
+# chief docs/drafts/2026-11-18-writer-before-you-book.md). Four pieces, all words a guest reads,
+# under ONE hash (d6_sha256) for Mick's yes by Nov 24, each line that rests on one of the Writer's
+# seven facts gated on his answer to that fact (D6_FACTS, None until he answers; the gate shows
+# the old words, or nothing in the block, until a yes):
+#   1. the facts block "Before you book" on /book, above the calendar and so above every price
+#      (version B, the Writer's warmer one, the Chief's pick; A kept in D6_PASSAGES);
+#   2. the call line under every total and under every refusal (js/gatehouse.js reads it from the
+#      page, lf-ask-words, written only with fact 7's yes, since it promises "by evening");
+#   3. the phone number in the header of every page (css: the handset on a phone, the number from
+#      1440 px; hidden between, where the row is full: check_header_fit.js);
+#   4. the places the site disagreed with itself, settled in the modules: the kitchen (the canon's
+#      forest kitchen: no stove or fridge), the wifi line, TreeMail's two descriptions, the walk
+#      said three ways, "within two hours" against "by evening" (fact 7), and sleeps (fact 3).
+# Not written anew: "heated" (the kind waits on fact 1; the Writer rewrites that line then) and
+# the bathroom (fact 6, the toilet and the cold nights). scripts/site/check_before_you_book.py.
+# =============================================================================================
+D6_PASSAGES = {
+    'A': {'block_heat': 'Heated through the cold months.',
+          'block_walk': 'A walk of five to ten minutes on a forest trail, then the hundred-foot bridge.',
+          'block_sleeps': 'One queen bed. Sleeps four with a quality air mattress; six at most, visitors included.',
+          'block_hot_tub': 'No hot tub. A fire table on the deck instead, the Fire Circle below, the bridge lit after dark.',
+          'block_pastries': 'Fresh pastries in the TreeMail box each morning, except over Christmas.'},
+    'B': {'block_heat': 'Heated in winter.',
+          'block_walk': 'Five to ten minutes on a forest trail, then the hundred-foot bridge. That bridge is the front door.',
+          'block_sleeps': 'One queen bed and a quality air mattress sleep four; six at most.',
+          'block_hot_tub': "Is there a hot tub? No. There's a fire table on the deck, wood chopped for the Fire Circle, the bridge lit after dark.",
+          'block_pastries': 'Fresh pastries in the TreeMail box every morning, except over Christmas.'},
+}
+D6_VERSION = 'B'
+D6_WORDS = {
+    'block_h': 'Before you book',
+    'block_bathroom': 'A full bathroom, with a waterfall shower.',
+    'block_lights': 'Christmas lights up since November 1.',
+    'block_taxes': 'Your total includes taxes.',
+    # the call line, version B; "Ask us" and "pick a time for a 30-minute call" are the links
+    'ask_price': 'Still deciding? Ask us anything about the treehouse or your dates, and we write back by evening. Or pick a time for a 30-minute call.',
+    'ask_refusal': "Not the dates you hoped for? Ask us. If there's a way to make them work, we'll tell you by evening, and if there isn't, we'll help you find ones that can.",
+    # the contradictions, settled; the two marked [seat] are this seat's drafts from the canon's
+    # facts (voice.md:125, :134), for the Writer to replace if she has better
+    'kitchen': ('The forest kitchen: a wood-fired pizza oven on the sky deck with a cast-iron pan, a grill over the '
+                'Fire Circle, and a big cooler on the deck, so bring ice. No stove or fridge.'),  # [seat]
+    'wifi': ("Yes. A hotspot on the deck, about the size of a phone, that you switch on when you want it. "
+             "We built the place for the opposite, but it's there."),  # [seat]
+    'included_treemail': 'TreeMail: fresh pastries in the box each morning',
+    'included_kitchen': 'A forest kitchen: a wood-fired pizza oven, a grill over the Fire Circle, a big cooler. No stove or fridge.',
+    'walk_day': 'Park at the trailhead. Walk five to ten minutes on a forest trail through mountain laurel and fern. Hear the creek before you see it.',
+    'reply': 'we write back by evening, every day',
+    'sleeps_faq': 'The treehouse sleeps four: a queen bed and a quality air mattress. Six at most in a party, visitors included. Children are welcome. No smoking.',
+}
+D6_WORDS.update(D6_PASSAGES[D6_VERSION])
+# The Writer's seven, one yes or no each from Mick; None until he answers.
+D6_FACTS = {
+    'heat': None,           # 1. the block says "heated" and names the kind he gives in one word
+    'hot_tub': None,        # 2. there is none, and the block says so
+    'sleeps': None,         # 3. four on the queen and one air mattress; six the most in a party
+    'outdoor_shower': None,  # 4. none; the block names only the waterfall shower inside
+    'lights': None,         # 5. the Christmas lights stay up through Dec 31
+    'cold_water': None,     # 6. the toilet, and the water shut at 6 PM on freezing nights: what "full bathroom" says
+    'reply': None,          # 7. "we write back by evening, every day" replaces "within two hours"
+}
+D6_WAITS = {'block_heat': 'heat', 'block_hot_tub': 'hot_tub', 'block_sleeps': 'sleeps', 'sleeps_faq': 'sleeps',
+            'block_lights': 'lights', 'block_bathroom': 'cold_water',
+            'ask_price': 'reply', 'ask_refusal': 'reply', 'reply': 'reply'}
+D6_BLOCK = ('block_bathroom', 'block_heat', 'block_walk', 'block_sleeps', 'block_hot_tub', 'block_pastries', 'block_lights', 'block_taxes')
+# What the block must never say (the Writer's list), for the check.
+D6_NEVER = ('kitchen', 'coffee', 'outdoor shower', 'hot water all night', 'we light the fire', 'lit all night', 'sleeps 6',
+            'sleeps six', 'rope bridge', 'Roccbox', "Livy's")
+
+
+def d6_sha256(words=None):
+    import hashlib
+    return hashlib.sha256(json.dumps(words or D6_WORDS, ensure_ascii=False, sort_keys=True).encode('utf-8')).hexdigest()
+
+
+def d6_ok(key):
+    """May this word show? Free words always; a word that rests on one of the seven, on his yes."""
+    fact = D6_WAITS.get(key)
+    return fact is None or D6_FACTS.get(fact) is True
+
+
+def d6(key, old=''):
+    """The new word, or the old one (or nothing) while its fact waits."""
+    return D6_WORDS[key] if d6_ok(key) else old
+
+
+def before_you_book_block():
+    """The facts block on /book: the lines whose facts are settled, as short lines, not bullets."""
+    lines = [html.escape(D6_WORDS[k], quote=False) for k in D6_BLOCK if d6_ok(k)]
+    if not lines:
+        return ''
+    items = ''.join(f'\n          <li>{l}</li>' for l in lines)
+    return f'''      <section class="lf-byb" aria-labelledby="byb-h">
+        <p class="lf-eyebrow" id="byb-h">{html.escape(D6_WORDS['block_h'], quote=False)}</p>
+        <ul class="lf-byb__list">{items}
+        </ul>
+      </section>
+'''
+
+
+def call_link():
+    """The /book booking page for a 30-minute call, read from js/talk.js, THE ONE PLACE it is set."""
+    m = re.search(r"'/book':\s*'(https://calendar\.google\.com/[^']+)'", open(os.path.join(ROOT, 'js', 'talk.js')).read())
+    return m.group(1) if m else ''
+
+
+def ask_words_block():
+    """The call line's words for js/gatehouse.js on /book, as JSON in the page; written only once
+    fact 7 is his yes (both lines promise a reply by evening). '</' is escaped."""
+    if not d6_ok('ask_price'):
+        return ''
+    data = {'price': D6_WORDS['ask_price'], 'refusal': D6_WORDS['ask_refusal'], 'ask': 'Ask us',
+            'callWords': 'pick a time for a 30-minute call', 'write': '/book#inquiry', 'call': call_link()}
+    return '  <script type="application/json" id="lf-ask-words">' + json.dumps(data, ensure_ascii=False, sort_keys=True).replace('</', '<\\/') + '</script>\n'
+
+
 def header(book):
     links = nav_links()
     menu = nav_links(menu=True)
@@ -168,6 +287,7 @@ def header(book):
   <header class="lf-hdr">
     <a href="/" class="lf-hdr__mark" aria-label="Loxley Forest, home"><img src="images/brand/logo/loxley-wordmark-on-dark.svg" alt="Loxley Forest" width="236" height="32"></a>
     <nav class="lf-hdr__nav" aria-label="Main">{links}</nav>
+    <a href="tel:+17065024823" class="lf-hdr__tel" aria-label="Call or text 706-502-4823"><svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .57 3.6 1 1 0 0 1-.25 1z"/></svg><span>706-502-4823</span></a>
     <a href="{book}" class="lf-btn lf-hdr__book">Book your dates</a>
     <button class="lf-menu-btn" type="button" aria-expanded="false" aria-controls="lf-menu" aria-label="Open menu"><span></span></button>
   </header>
@@ -297,7 +417,7 @@ BOOK = f'''    <section class="lf-sec lf-parch lf-book" id="book" aria-labelledb
            data-handoff="/book"
            data-fallback="#gh-fallback">{GH_WAIT}</div>
       <div id="gh-fallback" class="lf-book__alt" hidden>
-        <p>Our booking calendar isn't answering just now. <a href="/book#inquiry">Send us your dates</a> and we'll write back within two hours, or call or text <a href="tel:+17065024823">706-502-4823</a>.</p>
+        <p>Our booking calendar isn't answering just now. <a href="/book#inquiry">Send us your dates</a> and {d6('reply', "we'll write back within two hours")}, or call or text <a href="tel:+17065024823">706-502-4823</a>.</p>
       </div>
       <p class="lf-book__alt">Questions before you book? <a href="/faq">Read the answers</a> or write to stay@loxleyforest.com.</p>
     </section>
@@ -581,15 +701,16 @@ def treehouse_two(photo=('img_2546', 'A treehouse deck with chairs above the for
 '''
 
 
-INCLUDED = '''          <ul class="lf-acorns lf-rise">
+# TreeMail said two ways and "a kitchen" against the canon's no stove or fridge: settled 2026-11-18 (D6).
+INCLUDED = f'''          <ul class="lf-acorns lf-rise">
             <li>A queen bed framed by panoramic windows</li>
             <li>A private deck above the forest floor</li>
             <li><b>Fire &amp; Flour:</b> fresh dough and a wood-fired oven on your sky deck</li>
-            <li><b>TreeMail:</b> morning coffee and seasonal treats, delivered</li>
+            <li><b>{html.escape(d6('included_treemail').split(': ')[0], quote=False)}:</b> {html.escape(d6('included_treemail').split(': ', 1)[1], quote=False)}</li>
             <li>A pop-up projector for cinema night in the canopy</li>
             <li>A fire pit on the forest floor</li>
             <li>Heated for the cold seasons, with windows that open to the forest in summer</li>
-            <li>A kitchen for morning coffee and midnight snacks</li>
+            <li>{html.escape(d6('included_kitchen'), quote=False)}</li>
             <li>42 acres of cove forest to explore</li>
           </ul>
 '''
