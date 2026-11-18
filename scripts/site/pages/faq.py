@@ -23,9 +23,8 @@ QA = [
      'are chest-high, the planks are solid, and the sway is gentle. A thirty-foot rope bridge comes first, as a '
      'warm-up. Most guests who are nervous on the first crossing are running across it by the second. '
      "We've never had a guest who regretted coming."),
-    # The air mattress named where "sleeps 4" is said (2026-11-18, D6), once Mick answers fact 3.
     ('How many guests can stay?',
-     B.d6('sleeps_faq', 'The treehouse sleeps 4 comfortably, and up to 6 guests in all. Children are welcome. No smoking.')),
+     'The treehouse sleeps 4 comfortably, and up to 6 guests in all. Children are welcome. No smoking.'),
     # Dogs only, up to two well-behaved dogs, no fee (Mick, 2026-10-19).
     ('Can I bring my dog?',
      'Yes. Up to two well-behaved dogs are welcome, and there is no fee. Dogs only, please. '
@@ -34,9 +33,8 @@ QA = [
      '<a href="mailto:stay@loxleyforest.com">write to us</a> before you book and we\'ll talk it through. '
      'We want every guest, two-legged and four-legged, to be safe and comfortable at sixty feet.'),
     ("What's included in my stay?",
-     # "A fully equipped kitchen" against the canon's no stove or fridge: the forest kitchen (2026-11-18, D6).
-     'Luxury linens and towels. Heat for the cold seasons, and the canopy\'s own cooling in summer. '
-     + B.d6('kitchen') + ' A private deck. A fire pit on the forest floor. Trails across 42 acres. TreeMail: fresh '
+     'Luxury linens and towels. Heat for the cold seasons, and the canopy\'s own cooling in summer. A fully '
+     'equipped kitchen. A private deck. A fire pit on the forest floor. Trails across 42 acres. TreeMail: fresh '
      'morning pastries in the box where you enter the bridges, around 8:30 every morning, unless you\'ve booked '
      "the Dawn Table or Morning Moments. And silence. We don't include televisions. On purpose."),
     ('What should I bring?',
@@ -46,10 +44,8 @@ QA = [
      'Heated for the cold seasons. In summer the canopy itself is the climate system: the cove forest runs cooler '
      'than the valley floor, and the windows open to a cross-breeze sixty feet up. No compressor hum, no recycled '
      "air, just a forest that's been cooling itself for a few hundred years. You're suspended inside it."),
-    # "Yes. But we encourage you not to use it." sent two remote workers away (the mystery guests,
-    # 2026-11-18): the canon's fact instead (D6).
     ('Is there WiFi?',
-     B.d6('wifi')),
+     'Yes. But we encourage you not to use it.'),
     # Cut (the CEO, 2026-10-29, on the record): "We've hosted guests in every kind of weather, and the
     # reviews always say the same thing: worth it." "Always" was false: "worth it" is on only 6 lines of
     # loxley-rescue docs/reviews/all.md. The weather plan (heated, the canopy's cooling and cover) stays.

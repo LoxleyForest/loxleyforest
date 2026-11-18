@@ -1,0 +1,357 @@
+{
+ "_about": "Outside facts for the night-sky page (2026-11-18, D16). A row is written to the page only with its url, the source's own words (quote) and the day it was read (read), as scripts/site/pseo/facts.json requires. The Chief's build of 2026-11-17 named the agencies; the Scout fills the rows.",
+ "wildlife": [
+  {
+   "id": "great-horned-owl",
+   "name": "Great horned owl",
+   "months": [
+    10,
+    11,
+    12,
+    1,
+    2
+   ],
+   "peak": [
+    11,
+    12
+   ],
+   "when": "Around sunset ({ss}) and in the hours before sunrise ({sr}).",
+   "what": "Low, far-carrying hoots: hoo, hoo-hoo, hoo, hoo. Courtship calling peaks in November and December.",
+   "source": "NC Wildlife; Audubon; Smokies Life",
+   "url": null,
+   "quote": null,
+   "read": null
+  },
+  {
+   "id": "barred-owl",
+   "name": "Barred owl",
+   "months": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "peak": [
+    1,
+    2,
+    3
+   ],
+   "when": "Dusk ({be}) and dawn ({mb}); it also calls by day.",
+   "what": "\"Who cooks for you? Who cooks for you?\" Loudest in its late-winter courtship.",
+   "source": "Audubon; NC Wildlife",
+   "url": null,
+   "quote": null,
+   "read": null
+  },
+  {
+   "id": "eastern-screech-owl",
+   "name": "Eastern screech-owl",
+   "months": [
+    9,
+    10,
+    11,
+    3,
+    4,
+    5
+   ],
+   "peak": [],
+   "when": "After dusk, from about {be}.",
+   "what": "A descending whinny capped with a trill. Heard most in fall and spring.",
+   "source": "Outdoor Alabama; Audubon",
+   "url": null,
+   "quote": null,
+   "read": null
+  },
+  {
+   "id": "white-tailed-deer",
+   "name": "White-tailed deer",
+   "months": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "peak": [
+    11
+   ],
+   "when": "The hour around sunset ({ss}) first, then around sunrise ({sr}).",
+   "what": "Studies find no link between deer activity and the moon's phase; dusk and dawn are the hours, whatever the moon.",
+   "source": "the Chief's build named studies without a citation; the Scout names them",
+   "url": null,
+   "quote": null,
+   "read": null
+  },
+  {
+   "id": "coyotes",
+   "name": "Coyotes",
+   "months": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "peak": [
+    1,
+    2,
+    3
+   ],
+   "when": "Late evening, and around dusk ({be}) and dawn ({mb}).",
+   "what": "Yips and howls carry up the holler. Most vocal in the breeding season, late winter to early spring.",
+   "source": "the Chief's build cited one study on moonlight without naming it; the Scout names it",
+   "url": null,
+   "quote": null,
+   "read": null
+  },
+  {
+   "id": "spring-peepers",
+   "name": "Spring peepers and chorus frogs",
+   "months": [
+    2,
+    3,
+    4
+   ],
+   "peak": [
+    3
+   ],
+   "when": "After dark, from about {dk}, near the creek.",
+   "what": "A chorus that sounds like sleigh bells from a distance. It starts in February in the counties just north.",
+   "source": "National Park Service; UGA Extension",
+   "url": null,
+   "quote": null,
+   "read": null
+  },
+  {
+   "id": "wild-turkey",
+   "name": "Wild turkey",
+   "months": [
+    3,
+    4
+   ],
+   "peak": [
+    4
+   ],
+   "when": "Half an hour before sunrise to an hour after.",
+   "what": "Gobbling peaks in late March and early April in the Blue Ridge.",
+   "source": "Georgia DNR 2012; Wightman et al. 2019",
+   "url": null,
+   "quote": null,
+   "read": null
+  },
+  {
+   "id": "blue-ghost-fireflies",
+   "name": "Blue ghost fireflies",
+   "months": [
+    4,
+    5,
+    6
+   ],
+   "peak": [
+    5
+   ],
+   "when": "Between 9:00 and 9:30 PM in spring; 9:30 to 11:00 PM in mid-June.",
+   "what": "A steady blue-green glow low over the forest floor. One record in Lumpkin County so far, so a hope, not a promise.",
+   "source": "Discover Life in America; GBIF records",
+   "url": null,
+   "quote": null,
+   "read": null
+  },
+  {
+   "id": "fireflies",
+   "name": "Fireflies",
+   "months": [
+    6,
+    7
+   ],
+   "peak": [
+    6,
+    7
+   ],
+   "when": "From dusk to full dark: {be} to {dk}.",
+   "what": "They start low to the ground and rise into the trees as it darkens. Few flash on clear full-moon nights, and bright lights put them off.",
+   "source": "UGA Extension; Journey North",
+   "url": null,
+   "quote": null,
+   "read": null
+  },
+  {
+   "id": "whip-poor-will",
+   "name": "Whip-poor-will",
+   "months": [
+    5,
+    6,
+    7,
+    8
+   ],
+   "peak": [
+    5,
+    6
+   ],
+   "when": "All night, most at dusk and dawn.",
+   "what": "Its own name, over and over. It calls more when the moon is over half lit and above the horizon.",
+   "source": "Audubon; Mills 1986; Wilson and Watts 2006",
+   "url": null,
+   "quote": null,
+   "read": null
+  },
+  {
+   "id": "katydids",
+   "name": "Katydids",
+   "months": [
+    6,
+    7,
+    8,
+    9,
+    10
+   ],
+   "peak": [
+    7
+   ],
+   "when": "After dark, from about {dk}.",
+   "what": "The summer night chorus is katydids and crickets, from late June until frost.",
+   "source": "Clemson Extension; Mississippi State Extension",
+   "url": null,
+   "quote": null,
+   "read": null
+  },
+  {
+   "id": "bats",
+   "name": "Bats",
+   "months": [
+    4,
+    5,
+    6,
+    7,
+    8
+   ],
+   "peak": [],
+   "when": "Around dusk, about {be}, on nights above 50 degrees.",
+   "what": "They leave their day roosts at dusk to hunt moths and mosquitoes over the creek.",
+   "source": "Georgia DNR",
+   "url": null,
+   "quote": null,
+   "read": null
+  },
+  {
+   "id": "black-bear",
+   "name": "Black bear",
+   "months": [
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+   ],
+   "peak": [],
+   "when": "Dusk ({be}) and dawn ({mb}).",
+   "what": "Present in the North Georgia mountains. Most den between November and January and are out again by early April.",
+   "source": "Georgia DNR; NC Wildlife; PA Game Commission",
+   "url": null,
+   "quote": null,
+   "read": null
+  },
+  {
+   "id": "pileated-woodpecker",
+   "name": "Pileated woodpecker",
+   "months": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "peak": [],
+   "when": "Daylight, all year.",
+   "what": "Loud drumming and a ringing cuk-cuk-cuk that rises and falls.",
+   "source": "Audubon",
+   "url": null,
+   "quote": null,
+   "read": null
+  }
+ ],
+ "showers": [
+  {
+   "id": "leonids-2026",
+   "date": "2026-11-17",
+   "name": "The Leonids",
+   "line": "Fast meteors after midnight",
+   "source": "the American Meteor Society's calendar",
+   "url": null,
+   "quote": null,
+   "read": null
+  },
+  {
+   "id": "geminids-2026",
+   "date": "2026-12-13",
+   "name": "The Geminids",
+   "line": "The best shower of the year, all evening",
+   "source": "the American Meteor Society's calendar",
+   "url": null,
+   "quote": null,
+   "read": null
+  },
+  {
+   "id": "ursids-2026",
+   "date": "2026-12-21",
+   "name": "The Ursids",
+   "line": "A quiet shower on the longest night",
+   "source": "the American Meteor Society's calendar",
+   "url": null,
+   "quote": null,
+   "read": null
+  },
+  {
+   "id": "christmas-eve-2026",
+   "date": "2026-12-24",
+   "name": "Christmas Eve",
+   "line": "A near-full moon over the Christmas stay",
+   "source": "the sky table itself (no outside fact)",
+   "url": "computed",
+   "quote": "",
+   "read": "2026-11-17"
+  },
+  {
+   "id": "quadrantids-2027",
+   "date": "2027-01-03",
+   "name": "The Quadrantids",
+   "line": "A short, sharp shower before dawn",
+   "source": "the American Meteor Society's calendar",
+   "url": null,
+   "quote": null,
+   "read": null
+  }
+ ]
+}

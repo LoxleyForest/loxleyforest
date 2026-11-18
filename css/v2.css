@@ -95,15 +95,6 @@
 .lf-hdr__nav a { color: var(--on-dark); text-decoration: none; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 10px 0; }
 .lf-hdr__nav a:hover { color: var(--gold-light); }
 .lf-hdr__book { display: none; }
-/* The phone number in the header (2026-11-18, D6; the mystery guests found it at the foot of the
-   page, screen 14 of 14): the handset alone on a phone, a tap away; the number from 1440 px, where
-   the row has room; nothing between 768 and 1439, where six links and the Book button fill it. */
-.lf-hdr__tel { display: inline-flex; align-items: center; gap: 8px; min-width: 44px; min-height: 44px; margin-left: auto; margin-right: 6px; justify-content: center; color: var(--on-dark); text-decoration: none; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; letter-spacing: 0.12em; }
-.lf-hdr__tel span { display: none; }
-.lf-hdr__tel:hover { color: var(--gold-light); }
-.lf-hdr__tel:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-@media (min-width: 768px) and (max-width: 1439px) { .lf-hdr__tel { display: none; } }
-@media (min-width: 1440px) { .lf-hdr__tel { margin-left: 0; margin-right: 0; } .lf-hdr__tel span { display: inline; } }
 .lf-menu-btn {
   width: 48px; height: 48px; margin-right: -12px; background: none; border: 0; display: grid; place-items: center; color: var(--on-dark);
 }
