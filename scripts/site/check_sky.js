@@ -36,7 +36,7 @@ const TYPES = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascrip
 const PAGE = 'sky-over-loxley.html';
 const TABLE = JSON.parse(fs.readFileSync(path.join(ROOT, 'scripts', 'site', 'sky', 'sky.json'), 'utf8'));
 
-// A render with one sourced wildlife row and one sourced shower row, for the "appears" case.
+// A render with every source stripped from the rows, for the gate: the two sections must vanish.
 const RENDER = `
 import json, sys
 sys.path.insert(0, ${JSON.stringify(path.join(ROOT, 'scripts', 'site'))})
@@ -46,14 +46,13 @@ sky = sys.modules['lfpage_sky']
 real = sky.facts
 def fake():
     f = real()
-    f['wildlife'][1].update(url='https://example.org/barred-owl', quote='the source words', read='2026-11-18')
-    f['showers'][1].update(url='https://example.org/geminids', quote='the source words', read='2026-11-18')
+    for r in f['wildlife'] + f['showers']: r['sources'] = []
     return f
 sky.facts = fake
 _, html = B.render(sky.page_sky)
 print(json.dumps({'html': html, 'hash': sky.words_sha256(html)}))
 `;
-const WITH = JSON.parse(execFileSync('python3', ['-c', RENDER], { cwd: ROOT, maxBuffer: 64 * 1024 * 1024 }).toString().trim().split('\n').pop());
+const WITHOUT = JSON.parse(execFileSync('python3', ['-c', RENDER], { cwd: ROOT, maxBuffer: 64 * 1024 * 1024 }).toString().trim().split('\n').pop());
 const HASH = execFileSync('python3', ['-c', `
 import sys; sys.path.insert(0, ${JSON.stringify(path.join(ROOT, 'scripts', 'site'))}); import build_v2 as B; B.page_modules(); sky = sys.modules['lfpage_sky']
 _, h = B.render(sky.page_sky); print(sky.words_sha256(h))`], { cwd: ROOT }).toString().trim().split('\n').pop();
@@ -66,7 +65,7 @@ function serve() {
   const srv = http.createServer((req, res) => {
     let p = decodeURIComponent(req.url.split(/[?#]/)[0]);
     if (p === '/') p = '/index.html';
-    if (p === '/with-facts') { res.writeHead(200, { 'Content-Type': 'text/html' }); return res.end(WITH.html); }
+    if (p === '/without-facts') { res.writeHead(200, { 'Content-Type': 'text/html' }); return res.end(WITHOUT.html); }
     let f = path.join(ROOT, p);
     if (!f.startsWith(ROOT)) { res.writeHead(403); return res.end(); }
     if (!path.extname(f) && fs.existsSync(f + '.html')) f += '.html';
@@ -128,10 +127,17 @@ async function main() {
   const last = TABLE.days[TABLE.days.length - 1].d;
   check(last >= day(14), 'the table runs to ' + last + ', at least 14 days from today');
   const FACTS = JSON.parse(fs.readFileSync(path.join(ROOT, 'scripts', 'site', 'sky', 'facts.json'), 'utf8'));
-  const sourced = (rows) => rows.filter((r) => r.url && r.read && r.quote !== null && r.quote !== undefined);
+  const sourced = (rows) => rows.filter((r) => (r.sources || []).length > 0 && r.sources.every((x) => x.url && x.read && x.quote !== null && x.quote !== undefined));
   check(html.includes('id="wild"') === (sourced(FACTS.wildlife).length > 0), 'the wildlife section is written only with a sourced row (' + sourced(FACTS.wildlife).length + ' of ' + FACTS.wildlife.length + ')');
   check(html.includes('id="shows"') === (sourced(FACTS.showers).length > 0), 'the shower section is written only with a sourced row (' + sourced(FACTS.showers).length + ' of ' + FACTS.showers.length + ': ' + sourced(FACTS.showers).map((r) => r.name).join(', ') + ')');
-  console.log('  words sha256: ' + HASH + (WITH.hash !== HASH ? ' (a sourced row changes it: ' + WITH.hash.slice(0, 8) + ')' : ''));
+  check(sourced(FACTS.wildlife).length === FACTS.wildlife.length, 'every wildlife row carries a source for each claim (' + sourced(FACTS.wildlife).length + ' of ' + FACTS.wildlife.length + ')');
+  check(FACTS.wildlife.every((r) => r.sources.every((x) => /^https:\/\//.test(x.url) && x.read === '2026-11-18')), 'every wildlife source is an https address read on 2026-11-18');
+  check(!FACTS.wildlife.some((r) => /howl more|moonlight rises|daylight/i.test(r.what + ' ' + r.when)) && !FACTS.showers.some((r) => /leonids/i.test(r.id)), 'the cut lines are gone: the coyotes\' moonlight claims, the woodpecker\'s daylight, the Leonids');
+  const deer = FACTS.wildlife.find((r) => r.id === 'white-tailed-deer');
+  check(deer && deer.inside && deer.inside.from === '2026-11-24' && deer.inside.to === '2026-11-30' && /rut map/.test(deer.inside.text) && !/forecast/.test(deer.inside.text), 'the rut line names the DNR map and shows only inside November 24 to 30');
+  const quad = FACTS.showers.find((r) => r.id === 'quadrantids-2027');
+  check(quad && /10:30 PM Eastern/.test(quad.line) && quad.sources.some((x) => /3:30 UT on January 4/.test(x.quote)), 'the Quadrantids\' 10:30 PM Eastern rests on AMS\'s 3:30 UT on January 4');
+  console.log('  words sha256: ' + HASH + (WITHOUT.hash !== HASH ? ' (with every source stripped: ' + WITHOUT.hash.slice(0, 8) + ')' : ''));
 
   for (const width of [390, 1280]) {
     console.log('the engine answers, ' + width + ' px');
@@ -173,18 +179,33 @@ async function main() {
     await ctx.close();
   }
 
-  console.log('with a sourced row: the section appears, the source linked');
+  console.log('the sourced rows on the page, and the gate with every source stripped');
   {
-    const { ctx, page } = await visitor({ width: 390, path: '/with-facts' });
-    // pick a January night so the barred owl (in season all year, at its best in winter) is listed
+    const { ctx, page } = await visitor({ width: 390 });
     await page.evaluate(() => { const b = document.getElementById('date'); b.value = '2027-01-10'; b.dispatchEvent(new Event('change')); });
     await page.waitForTimeout(300);
-    const s = await read(page);
+    let s = await read(page);
     check(s.wild && s.shows, 'the wildlife and shower sections are written');
-    check(s.who.length >= 1 && s.who.every((h) => /^https:\/\/example\.org\//.test(h)), 'each wildlife line links its source: ' + s.who.join(', '));
+    const lines = await page.evaluate(() => [...document.querySelectorAll('#wild .row')].map((r) => ({ name: r.querySelector('.t').textContent, who: [...r.querySelectorAll('.who a')].map((a) => a.getAttribute('href')) })));
+    check(lines.length >= 3 && lines.every((l) => l.who.length >= 1 && l.who.every((h) => /^https:\/\//.test(h))), 'each wildlife line in season links every source it rests on (' + lines.map((l) => l.name + ' ' + l.who.length).join(', ') + ')');
+    check(!lines.some((l) => /Katydids|Fireflies|Black bear|Whip-poor-will/.test(l.name)) && lines.some((l) => /Coyotes/.test(l.name)), 'January lists only the lines in season then (coyotes in their breeding months, no katydids, fireflies, bears or whip-poor-wills)');
+    // the rut map's week: the deer line carries it on Nov 28 and not on Dec 7
+    await page.evaluate(() => { const b = document.getElementById('date'); b.value = '2026-11-28'; b.dispatchEvent(new Event('change')); });
+    await page.waitForTimeout(300);
+    const deerNov = await page.evaluate(() => ([...document.querySelectorAll('#wild .row')].find((r) => /deer/i.test(r.querySelector('.t').textContent)) || { querySelector: () => ({ textContent: '' }) }).querySelector('.m').textContent);
+    await page.evaluate(() => { const b = document.getElementById('date'); b.value = '2026-12-07'; b.dispatchEvent(new Event('change')); });
+    await page.waitForTimeout(300);
+    const deerDec = await page.evaluate(() => ([...document.querySelectorAll('#wild .row')].find((r) => /deer/i.test(r.querySelector('.t').textContent)) || { querySelector: () => ({ textContent: '' }) }).querySelector('.m').textContent);
+    check(/rut map/.test(deerNov) && /right now/.test(deerNov) && !/rut map/.test(deerDec), 'the rut line shows on Nov 28 and not on Dec 7' + (/rut map/.test(deerNov) && !/rut map/.test(deerDec) ? '' : ' (Nov 28: ' + deerNov.slice(0, 160) + ' / Dec 7: ' + deerDec.slice(0, 120) + ')'));
     const shows = await page.evaluate(() => [...document.querySelectorAll('#shows .row .t')].map((e) => e.textContent));
-    const wantShows = sourced(FACTS.showers).length + 1;   // the rows sourced in the data, plus the one this check sources
-    check(shows.length === wantShows && shows.some((t) => /Geminids/.test(t)), 'only the sourced showers are listed (' + shows.length + '): ' + shows.join('; '));
+    check(shows.length === sourced(FACTS.showers).filter((r) => r.date >= new Date().toISOString().slice(0, 10)).length && shows.some((t) => /Geminids/.test(t)) && !shows.some((t) => /Leonids/.test(t)), 'the showers listed are the sourced ones still to come (' + shows.length + '): ' + shows.join('; '));
+    check(page.errors.length === 0, 'no script error');
+    await ctx.close();
+  }
+  {
+    const { ctx, page } = await visitor({ width: 390, path: '/without-facts' });
+    const s = await read(page);
+    check(!s.wild && !s.shows, 'with every source stripped, neither section is written');
     check(page.errors.length === 0, 'no script error');
     await ctx.close();
   }

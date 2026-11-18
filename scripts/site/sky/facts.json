@@ -1,5 +1,5 @@
 {
- "_about": "Outside facts for the night-sky page (2026-11-18, D16). A row is written to the page only with its url, the source's own words (quote) and the day it was read (read), as scripts/site/pseo/facts.json requires. The Chief's build of 2026-11-17 named the agencies; the Scout fills the rows.",
+ "_about": "Outside facts for the night-sky page (2026-11-18, D16). A row is written to the page only when every claim it makes carries a source: url, the source's own words (quote) and the day it was read (read), as scripts/site/pseo/facts.json requires. Filled from the Scout's rows of 2026-11-18 (chief docs/briefs/2026-11-18-scout-sky-facts.json: 51 of 64 claims verified); the unverified claims are cut or reworded as the Scout's return gives. The Scout's caveat stands on every web-page quote: read through a fetch that passes the page through a model, so close but not a byte copy; the five PDFs were read from their own text. A row's \"held\" names a claim the line no longer makes until a source is read.",
  "wildlife": [
   {
    "id": "great-horned-owl",
@@ -16,11 +16,41 @@
     12
    ],
    "when": "Around sunset ({ss}) and in the hours before sunrise ({sr}).",
-   "what": "Low, far-carrying hoots: hoo, hoo-hoo, hoo, hoo. Courtship calling peaks in November and December.",
-   "source": "NC Wildlife; Audubon; Smokies Life",
-   "url": null,
-   "quote": null,
-   "read": null
+   "what": "Low, far-carrying hoots: hoo, hoo-hoo, hoo, hoo. Courtship calling begins in October and peaks in November and December.",
+   "sources": [
+    {
+     "claim": "Courtship calling October to February, peaking in November and December.",
+     "name": "NC Wildlife",
+     "url": "https://ncwildlife.gov/species/great-horned-owl",
+     "quote": "Most calling occurs when courtship begins in October, with peak calling in November and December,",
+     "read": "2026-11-18",
+     "note": "NC Wildlife Resources Commission (primary, NC). Supports October start and the Nov to Dec peak. No source read today names February as the end; the page also says calls slow once eggs are laid. Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "Heard around sunset.",
+     "name": "Atlanta Journal-Constitution",
+     "url": "https://ajc.com/life/wild-georgia-winter-brings-out-hoots-of-love-struck-owls/MN5UTFKYKFATFPEIXAMTJKTZC4",
+     "quote": "Around sunset now, you might hear the amorous great horned's haunting, muffled \"hoo-hoo-hooo hoo-hoo\"",
+     "read": "2026-11-18",
+     "note": "Secondary: AJC column by Charles Seabrook, Dec 4 2020, Georgia. NC Wildlife has the fragment \"often at dusk and after dark.\" Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "Heard in the hours before sunrise.",
+     "name": "Smokies Life",
+     "url": "https://smokieslife.org/?p=173188",
+     "quote": "A few hours before dawn is often the best time to hear owls",
+     "read": "2026-11-18",
+     "note": "Secondary: Smokies LIVE (Smokies Life), Frances Figart, Sep 26 2025. Said of owls in general, not this species alone. Sentence continues past the quote. Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "Low, far-carrying hoots: hoo, hoo-hoo, hoo, hoo.",
+     "name": "Audubon",
+     "url": "https://www.audubon.org/field-guide/bird/great-horned-owl",
+     "quote": "Series of low, sonorous, far-carrying hoots, hoo, hoo-hoo, hoo, hoo, with second and third notes shorter than the others.",
+     "read": "2026-11-18",
+     "note": "Audubon Guide to North American Birds, Songs and Calls. Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    }
+   ]
   },
   {
    "id": "barred-owl",
@@ -45,11 +75,41 @@
     3
    ],
    "when": "Dusk ({be}) and dawn ({mb}); it also calls by day.",
-   "what": "\"Who cooks for you? Who cooks for you?\" Loudest in its late-winter courtship.",
-   "source": "Audubon; NC Wildlife",
-   "url": null,
-   "quote": null,
-   "read": null
+   "what": "\"Who cooks for you? Who cooks for you?\" Loudest in the courtship before its late-winter breeding season.",
+   "sources": [
+    {
+     "claim": "Present and calling all year.",
+     "name": "Atlanta Journal-Constitution",
+     "url": "https://ajc.com/life/wild-georgia-winter-brings-out-hoots-of-love-struck-owls/MN5UTFKYKFATFPEIXAMTJKTZC4",
+     "quote": "Although they may hoot year-round, their calls become more vocal and vociferous in late autumn",
+     "read": "2026-11-18",
+     "note": "Secondary: AJC, Dec 4 2020; said of Georgia's big owls (great horned and barred). Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "Loudest in its late-winter courtship.",
+     "name": "NC Wildlife",
+     "url": "https://www.ncwildlife.gov/species/barred-owl",
+     "quote": "is preceded by a very vocal courtship period.",
+     "read": "2026-11-18",
+     "note": "NC Wildlife (primary, NC). Same sentence earlier says \"especially during the breeding season, which begins in late winter in North Carolina\". Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "Dusk and dawn; it also calls by day.",
+     "name": "Audubon",
+     "url": "https://www.audubon.org/field-guide/bird/barred-owl",
+     "quote": "Although the bird is mostly active at night, it will also call and even hunt in the daytime.",
+     "read": "2026-11-18",
+     "note": "Audubon. Same page: \"The Barred Owl hunts by night or day, perhaps most at dawn and dusk.\" Dawn and dusk is stated for hunting, not calling. Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "\"Who cooks for you? Who cooks for you?\"",
+     "name": "Audubon",
+     "url": "https://www.audubon.org/news/learn-identify-five-owls-their-calls",
+     "quote": "Who cooks for you? Who cooks for you?",
+     "read": "2026-11-18",
+     "note": "Audubon, Purbita Saha, Oct 16 2015. Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    }
+   ]
   },
   {
    "id": "eastern-screech-owl",
@@ -65,22 +125,37 @@
    "peak": [],
    "when": "After dusk, from about {be}.",
    "what": "A descending whinny capped with a trill. Heard most in fall and spring.",
-   "source": "Outdoor Alabama; Audubon",
-   "url": null,
-   "quote": null,
-   "read": null
+   "sources": [
+    {
+     "claim": "Heard most in fall and spring.",
+     "name": "Outdoor Alabama",
+     "url": "https://outdooralabama.com/owls/eastern-screech-owl",
+     "quote": "The call is not a screech but rather a soft, mournful whinny that can be heard most often in the fall and spring months",
+     "read": "2026-11-18",
+     "note": "Alabama DCNR, Outdoor Alabama (primary, AL). Sentence continues past the quote. Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "After dusk.",
+     "name": "Outdoor Alabama",
+     "url": "https://outdooralabama.com/owls/eastern-screech-owl",
+     "quote": "Hunting by Otis asio is usually done soon after dusk under the shelter of darkness.",
+     "read": "2026-11-18",
+     "note": "Stated for hunting, not calling. \"Otis\" is the page's own spelling. Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "A descending whinny capped with a trill.",
+     "name": "Audubon",
+     "url": "https://www.audubon.org/news/learn-identify-five-owls-their-calls",
+     "quote": "The little raptor lets out a descending whinny, capped off with a trill.",
+     "read": "2026-11-18",
+     "note": "Audubon, Oct 16 2015. Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    }
+   ]
   },
   {
    "id": "white-tailed-deer",
    "name": "White-tailed deer",
    "months": [
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
     8,
     9,
     10,
@@ -91,11 +166,47 @@
     11
    ],
    "when": "The hour around sunset ({ss}) first, then around sunrise ({sr}).",
-   "what": "Studies find no link between deer activity and the moon's phase; dusk and dawn are the hours, whatever the moon.",
-   "source": "the Chief's build named studies without a citation; the Scout names them",
-   "url": null,
-   "quote": null,
-   "read": null
+   "inside": {
+    "from": "2026-11-24",
+    "to": "2026-11-30",
+    "text": "Georgia DNR's rut map, drawn from deer and vehicle collisions, puts peak deer movement in Lumpkin County at November 24 to 30: right now."
+   },
+   "what": "In one South Carolina study, overall activity, and activity around sunrise and sunset, did not change with nearness to the new or full moon.",
+   "sources": [
+    {
+     "claim": "The hour around sunset first, then around sunrise.",
+     "name": "Sullivan and others, 2016",
+     "url": "https://bpb-us-e2.wpmucdn.com/wordpress.auburn.edu/dist/0/141/files/2017/01/2016-JSAFWA.pdf",
+     "quote": "the crepuscular hours surrounding sunset appear to be when deer are most likely to be active",
+     "read": "2026-11-18",
+     "note": "Sullivan, Ditchkoff, Collier, Ruth, Raglin, \"Movement with the Moon: White-tailed Deer Activity and Solunar Events\", J. Southeastern Assoc. Fish and Wildlife Agencies 3:225-232 (2016), South Carolina. Abstract: \"activity patterns are predominately crepuscular.\" Read by local text extraction of the PDF that WebFetch saved (byte-level, not a model); ligature glyphs restored (fi, ff, fl)."
+    },
+    {
+     "claim": "Overall deer activity, and activity around sunrise and sunset, did not change with nearness to the new or full moon.",
+     "name": "Sullivan and others, 2016",
+     "url": "https://bpb-us-e2.wpmucdn.com/wordpress.auburn.edu/dist/0/141/files/2017/01/2016-JSAFWA.pdf",
+     "quote": "throughout the entire 24-hour period did not seem to be affected by proximity to the new or full moon",
+     "read": "2026-11-18",
+     "note": "Full sentence opens \"Deer activity during day, night, around sunrise, around sunset, and\". Male deer, GPS collars, Aug to Dec 2010 to 2012. Read by local text extraction of the PDF that WebFetch saved (byte-level, not a model); ligature glyphs restored (fi, ff, fl)."
+    },
+    {
+     "claim": "Lumpkin County's rut peaks about November 24 to 30.",
+     "name": "Georgia DNR rut map",
+     "url": "https://georgiawildlife.com/sites/default/files/wrd/pdf/research/Georgia-Rut-Map.pdf",
+     "quote": "Lumpkin 11/24–11/30",
+     "read": "2026-11-18",
+     "note": "Georgia DNR rut map (primary). The map's table, under the heading \"County Peak Dates\" and the title \"Peak Deer Movement in Georgia\", reads Lumpkin then 11/24–11/30, with no asterisk (asterisk means fewer than 100 collisions). Read from the PDF's text layer; the digits use a custom font, decoded with the PDF's own ToUnicode map. PDF created 2014-09-18; dates come from deer-vehicle collisions, not a forecast for 2026. Neighbours: White, Habersham, Rabun 11/24–11/30; Dawson, Union 11/17–11/23; Hall 11/10–11/16. Supported wording: \"Georgia DNR's rut map puts peak deer movement in Lumpkin County at November 24 to 30.\" The page shows this line from Nov 20 to Dec 3, wider than the source. Read by local text extraction of the PDF that WebFetch saved (byte-level, not a model); ligature glyphs restored (fi, ff, fl)."
+    },
+    {
+     "claim": "The rut map is built from deer-vehicle collision data.",
+     "name": "Georgia DNR",
+     "url": "https://georgiawildlife.com/rut-map",
+     "quote": "was used to map the timing of peak deer movement in Georgia.",
+     "read": "2026-11-18",
+     "note": "Georgia DNR. Preceding words: \"deer-vehicle collision data provided by the Georgia Department of Transportation\". The page gives no county dates in text. Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    }
+   ],
+   "held": "Present all year: no row read today (the Scout); the line is listed in the study's months, August to December, until one is."
   },
   {
    "id": "coyotes",
@@ -103,16 +214,7 @@
    "months": [
     1,
     2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9,
-    10,
-    11,
-    12
+    3
    ],
    "peak": [
     1,
@@ -120,11 +222,34 @@
     3
    ],
    "when": "Late evening, and around dusk ({be}) and dawn ({mb}).",
-   "what": "Yips and howls carry up the holler. Most vocal in the breeding season, late winter to early spring.",
-   "source": "the Chief's build cited one study on moonlight without naming it; the Scout names it",
-   "url": null,
-   "quote": null,
-   "read": null
+   "what": "High-pitched cries, shrieks and yips late in the evening. Breeding is late winter to early spring.",
+   "sources": [
+    {
+     "claim": "Heard late in the evening.",
+     "name": "Georgia DNR",
+     "url": "https://georgiawildlife.com/sites/default/files/wrd/pdf/fact-sheets/Coyote%20Fact%20Sheet.pdf",
+     "quote": "High pitched cries, shrieks or yips can be heard late in the evening as these animals communicate.",
+     "read": "2026-11-18",
+     "note": "Georgia DNR Coyote Fact Sheet, \"Revised 07/09/2026\". Read by local text extraction of the PDF that WebFetch saved (byte-level, not a model); ligature glyphs restored (fi, ff, fl)."
+    },
+    {
+     "claim": "Around dusk and dawn.",
+     "name": "UGA Today",
+     "url": "https://news.uga.edu/coyotes-are-everywhere/",
+     "quote": "Coyotes are traditionally most active at dawn and dusk.",
+     "read": "2026-11-18",
+     "note": "UGA Today, Jul 31 2024. Same article: urban coyotes have become more active at night. Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "Breeding season is late winter to early spring.",
+     "name": "Georgia DNR",
+     "url": "https://georgiawildlife.com/sites/default/files/wrd/pdf/fact-sheets/Coyote%20Fact%20Sheet.pdf",
+     "quote": "Breeding usually occurs in late winter to early spring with five to seven pups born in excavated dens or brush piles.",
+     "read": "2026-11-18",
+     "note": "Georgia DNR. Read by local text extraction of the PDF that WebFetch saved (byte-level, not a model); ligature glyphs restored (fi, ff, fl)."
+    }
+   ],
+   "held": "Present all year and the howling peak (Gese and Ruff 1998, read only through an index) and the two moonlight claims: cut until read on the page (the Chief, 2026-11-18); listed in the breeding months until a row for the rest of the year."
   },
   {
    "id": "spring-peepers",
@@ -134,15 +259,59 @@
     3,
     4
    ],
-   "peak": [
-    3
-   ],
-   "when": "After dark, from about {dk}, near the creek.",
+   "peak": [],
+   "when": "After dark, from about {dk}, near water.",
    "what": "A chorus that sounds like sleigh bells from a distance. It starts in February in the counties just north.",
-   "source": "National Park Service; UGA Extension",
-   "url": null,
-   "quote": null,
-   "read": null
+   "sources": [
+    {
+     "claim": "Calling February to April, best in March.",
+     "name": "UGA Savannah River Ecology Lab",
+     "url": "https://srelherp.uga.edu/frogs-and-toads/spring-peeper",
+     "quote": "(winter and early spring in South Carolina and Georgia),",
+     "read": "2026-11-18",
+     "note": "UGA Savannah River Ecology Lab (primary). NPS Chattahoochee: \"Breeds November to March in southern areas, March to June in northern areas.\" No source names March as the peak. Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "It starts in February in the counties just north.",
+     "name": "UGA Extension",
+     "url": "https://site.extension.uga.edu/townsandunionag/2020/03/spring-peepers",
+     "quote": "These little guys start coming out in February to let us know that warmer temperatures are not too far away.",
+     "read": "2026-11-18",
+     "note": "UGA Extension, Towns and Union counties blog, Mar 4 2020. 20 words. Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "After dark.",
+     "name": "National Park Service",
+     "url": "https://www.nps.gov/chat/learn/nature/spring-peeper.htm",
+     "quote": "Nocturnal.",
+     "read": "2026-11-18",
+     "note": "NPS, Chattahoochee River NRA (Georgia), Activity Timing field. Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "Near the creek.",
+     "name": "UGA Extension",
+     "url": "https://site.extension.uga.edu/townsandunionag/2020/03/spring-peepers",
+     "quote": "At this time of year, they start coming down from the woodlands to find a mate near a water source.",
+     "read": "2026-11-18",
+     "note": "UGA Extension. Says water source, not creek. Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "A chorus that sounds like sleigh bells from a distance.",
+     "name": "National Park Service",
+     "url": "https://www.nps.gov/chat/learn/nature/spring-peeper.htm",
+     "quote": "Large choruses may sound like sleigh bells from a distance.",
+     "read": "2026-11-18",
+     "note": "NPS. Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "Chorus frogs call in winter and early spring.",
+     "name": "NC Wildlife",
+     "url": "https://www.ncwildlife.gov/species/upland-chorus-frog",
+     "quote": "Upland chorus frogs call in the winter and early spring.",
+     "read": "2026-11-18",
+     "note": "NC Wildlife (primary, NC). Same page: \"Most common in Piedmont; rarer in the mountains and Coastal Plain\". Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    }
+   ]
   },
   {
    "id": "wild-turkey",
@@ -154,12 +323,34 @@
    "peak": [
     4
    ],
-   "when": "Half an hour before sunrise to an hour after.",
-   "what": "Gobbling peaks in late March and early April in the Blue Ridge.",
-   "source": "Georgia DNR 2012; Wightman et al. 2019",
-   "url": null,
-   "quote": null,
-   "read": null
+   "when": "Half an hour before sunrise ({sr}) to an hour after.",
+   "what": "In Georgia DNR's 2012 survey, gobbling in the Blue Ridge peaked the weekend of March 31 to April 1.",
+   "sources": [
+    {
+     "claim": "Half an hour before sunrise to an hour after.",
+     "name": "Wightman and others, 2019",
+     "url": "https://repository.lsu.edu/agrnr_pubs/178",
+     "quote": "≥72% of gobbling activity occurred between 30 minutes before and 60 minutes after sunrise.",
+     "read": "2026-11-18",
+     "note": "Wightman et al. 2019, Journal of Wildlife Management, South Carolina. LSU repository abstract. Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "Gobbling peaks in late March and early April in the Blue Ridge.",
+     "name": "Georgia DNR 2012",
+     "url": "https://gadnrle.org/sites/default/files/wrd/pdf/harvest-summaries/turkey/LongRange_TKYReport_2012.pdf",
+     "quote": "the second weekend (1.6 gobblers heard/hour; March 31 - April 1 ) for the Blue Ridge Mountains",
+     "read": "2026-11-18",
+     "note": "Georgia DNR 2012 hunter survey (primary, one year). Statewide: \"Statewide peak gobbling activity, 2.5 gobblers heard per trip, occurred during the first (March 24-25) weekend\". Survey counts only hunting-season days. Supported wording: \"In 2012 Georgia DNR's hunters heard the most gobbling in the Blue Ridge on March 31 to April 1.\" Read by local text extraction of the PDF that WebFetch saved (byte-level, not a model); ligature glyphs restored (fi, ff, fl)."
+    },
+    {
+     "claim": "Gobbling in March and April.",
+     "name": "Wightman and others, 2019",
+     "url": "https://repository.lsu.edu/agrnr_pubs/178",
+     "quote": "with between 30% and 48% of gobbling activity occurring after legal hunting seasons.",
+     "read": "2026-11-18",
+     "note": "South Carolina study: much gobbling continues after the season closes, so March to April may be short. No Georgia source gives an end month. Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    }
+   ]
   },
   {
    "id": "blue-ghost-fireflies",
@@ -173,11 +364,41 @@
     5
    ],
    "when": "Between 9:00 and 9:30 PM in spring; 9:30 to 11:00 PM in mid-June.",
-   "what": "A steady blue-green glow low over the forest floor. One record in Lumpkin County so far, so a hope, not a promise.",
-   "source": "Discover Life in America; GBIF records",
-   "url": null,
-   "quote": null,
-   "read": null
+   "what": "A pale blue or green light that lasts 30 to 40 seconds. One record in Lumpkin County so far, so a hope, not a promise.",
+   "sources": [
+    {
+     "claim": "April to June, best in May.",
+     "name": "Discover Life in America",
+     "url": "https://dlia.org/?p=3313",
+     "quote": "The first begins in April and lasts until late May.",
+     "read": "2026-11-18",
+     "note": "Secondary: Discover Life in America, \"Blue ghosts: spirits of the forest\", Aug 22 2019, Southern Appalachians. Second peak: \"The second peak in mid-June is smaller\". Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "Between 9:00 and 9:30 PM in spring; 9:30 to 11:00 PM in mid-June.",
+     "name": "Discover Life in America",
+     "url": "https://dlia.org/?p=3313",
+     "quote": "Within this peak, these insects can be seen in the highest densities from 9:00-9:30 PM.",
+     "read": "2026-11-18",
+     "note": "Secondary. June window: \"with the best viewing from 9:30-11:00 PM\". NPS Smokies (primary): \"The blue ghost begins displaying at full dark, about 9:30 pm.\" Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "One record in Lumpkin County so far.",
+     "name": "GBIF records",
+     "url": "https://api.gbif.org/v1/occurrence/search?scientificName=Phausis%20reticulata&country=US&stateProvince=Georgia&limit=20",
+     "quote": "\"count\": 5; Lumpkin, \"eventDate\": \"2025-05-09T09:53:21\"",
+     "read": "2026-11-18",
+     "note": "GBIF API, Georgia records: Lumpkin 1, Cherokee 2, Pickens 1, Union 1. County from gadm.level2.name. The record's location is blurred to about 29 km at the observer's request (per the 2026-11-17 read). Quote is JSON values, not prose. Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "A pale blue or green light that lasts 30 to 40 seconds.",
+     "name": "National Park Service",
+     "url": "https://www.nps.gov/grsm/learn/nature/firefly-flash-patterns.htm",
+     "quote": "a pale blue or green light",
+     "read": "2026-11-18",
+     "note": "NPS Smokies: the colour and the 30 to 40 second display; the Scout's reworded line."
+    }
+   ]
   },
   {
    "id": "fireflies",
@@ -191,55 +412,45 @@
     7
    ],
    "when": "From dusk to full dark: {be} to {dk}.",
-   "what": "They start low to the ground and rise into the trees as it darkens. Few flash on clear full-moon nights, and bright lights put them off.",
-   "source": "UGA Extension; Journey North",
-   "url": null,
-   "quote": null,
-   "read": null
+   "what": "They start low to the ground and rise into the trees as it darkens. Few flash on clear full-moon nights, and bright lights are thought to disrupt their mating.",
+   "sources": [
+    {
+     "claim": "June and July.",
+     "name": "Atlanta Journal-Constitution",
+     "url": "https://www.ajc.com/news/2026/06/june-and-july-are-peak-times-for-lightning-bugs-in-georgia/",
+     "quote": "June and July are prime times for fireflies in Georgia",
+     "read": "2026-11-18",
+     "note": "Secondary: AJC, Charles Seabrook, Jun 6 2026. UGA Extension (primary) says \"midsummer\". Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "From dusk to full dark; they start low and rise into the trees.",
+     "name": "UGA Extension",
+     "url": "https://fieldreport.caes.uga.edu/publications/C1213/georgia-fireflies/",
+     "quote": "They start out flying low to the ground and fly higher in the trees as the evening becomes darker.",
+     "read": "2026-11-18",
+     "note": "UGA Extension Circular 1213, full review Jul 9 2026. Same page: \"Common eastern firefly males can be seen in midsummer at dusk showing a J-shaped flash.\" Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "Few flash on clear full-moon nights.",
+     "name": "Journey North",
+     "url": "https://archive.journeynorth.org/jnorth/tm/spring/FireflyDecoder.html",
+     "quote": "This is why you don't see many fireflies flashing on clear nights when the moon is full.",
+     "read": "2026-11-18",
+     "note": "Secondary: Journey North archive, an educational page; the sentence is part of a quote from Dr. Marc Branham. Peer-reviewed support is anecdotal only: Owens and Lewis 2022, Royal Society Open Science, \"anecdotally, under full moonlight\" (https://pmc.ncbi.nlm.nih.gov/articles/PMC9364009). Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "Bright lights put them off.",
+     "name": "UGA Extension",
+     "url": "https://fieldreport.caes.uga.edu/publications/C1213/georgia-fireflies/",
+     "quote": "Light pollution is thought to disrupt firefly mating and could be a major cause of the firefly population decline.",
+     "read": "2026-11-18",
+     "note": "UGA Extension. Says disrupts mating, \"thought to\". Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    }
+   ]
   },
   {
    "id": "whip-poor-will",
    "name": "Whip-poor-will",
-   "months": [
-    5,
-    6,
-    7,
-    8
-   ],
-   "peak": [
-    5,
-    6
-   ],
-   "when": "All night, most at dusk and dawn.",
-   "what": "Its own name, over and over. It calls more when the moon is over half lit and above the horizon.",
-   "source": "Audubon; Mills 1986; Wilson and Watts 2006",
-   "url": null,
-   "quote": null,
-   "read": null
-  },
-  {
-   "id": "katydids",
-   "name": "Katydids",
-   "months": [
-    6,
-    7,
-    8,
-    9,
-    10
-   ],
-   "peak": [
-    7
-   ],
-   "when": "After dark, from about {dk}.",
-   "what": "The summer night chorus is katydids and crickets, from late June until frost.",
-   "source": "Clemson Extension; Mississippi State Extension",
-   "url": null,
-   "quote": null,
-   "read": null
-  },
-  {
-   "id": "bats",
-   "name": "Bats",
    "months": [
     4,
     5,
@@ -248,12 +459,118 @@
     8
    ],
    "peak": [],
+   "when": "At night, most at dusk and dawn.",
+   "what": "Its own name, over and over. It calls more in twilight and bright moonlight; surveyors listen for it when the moon is more than half full",
+   "moon_tail": {
+    "yes": ", as it is tonight.",
+    "no": "."
+   },
+   "sources": [
+    {
+     "claim": "May to August, best in May and June.",
+     "name": "Birds Georgia",
+     "url": "https://www.birdsgeorgia.org/news-feed/bird-profile-the-eastern-whip-poor-will",
+     "quote": "The bird is a common summer breeding resident in the northern part of Georgia, although it can also be found farther south.",
+     "read": "2026-11-18",
+     "note": "Birds Georgia, May 10 2023. No months given there. Secondary AJC (Jul 5 2013): \"Their nesting seasons, which started in April, continues through this month.\" and \"Come September, Georgia's goatsuckers will head south\". No source names May and June as the peak. 22 words. Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "All night, most at dusk and dawn.",
+     "name": "Audubon",
+     "url": "https://www.audubon.org/field-guide/bird/eastern-whip-poor-will",
+     "quote": "A loud, iconic rhythmic whip-poor-will, repeated over and over, at night.",
+     "read": "2026-11-18",
+     "note": "Audubon. Dusk and dawn: Audubon states it for foraging (\"Forages at night, especially at dusk and dawn, and on moonlit nights.\"); Mills 1986 found more vocal activity in twilight (next row). Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "Surveyors listen only when the moon is more than half full.",
+     "name": "Center for Conservation Biology",
+     "url": "https://ccbbirds.org/2008/10/17/united-states-nightjar-survey-network-expands/",
+     "quote": "we instruct volunteers to survey routes only during periods when the moon is more than half-full.",
+     "read": "2026-11-18",
+     "note": "Center for Conservation Biology, Oct 17 2008. Preceding clause: \"Because nightjar calling and foraging activity is positively influenced by moonlight\". Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "More vocal activity in twilight and bright moonlight.",
+     "name": "Mills, 1986",
+     "url": "https://doi.org/10.1093/auk/103.2.370",
+     "quote": "showed significantly higher levels of locomotory, vocal, and nest activity during twilight and bright moonlight",
+     "read": "2026-11-18",
+     "note": "The Auk 103:370; abstract read through an index, not the page."
+    }
+   ]
+  },
+  {
+   "id": "katydids",
+   "name": "Katydids",
+   "months": [
+    6,
+    7,
+    8,
+    9
+   ],
+   "peak": [
+    7
+   ],
+   "when": "After dark, from about {dk}.",
+   "what": "The summer night chorus is katydids and crickets, from late June until frost.",
+   "sources": [
+    {
+     "claim": "Late June until frost, best in July.",
+     "name": "Clemson Extension",
+     "url": "https://blogs.clemson.edu/fnr/katy-did-what/",
+     "quote": "It typically starts later in June and peaks in July, although some hold on until frost.",
+     "read": "2026-11-18",
+     "note": "Clemson Extension, posted Aug 17 2026, updated Aug 25 2026. No source for the October end month. Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "After dark.",
+     "name": "Clemson Extension",
+     "url": "https://blogs.clemson.edu/fnr/katy-did-what/",
+     "quote": "Katydids are rarely seen and are most active at night.",
+     "read": "2026-11-18",
+     "note": "Clemson. Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "The summer night chorus is katydids and crickets.",
+     "name": "Mississippi State Extension",
+     "url": "https://extension.msstate.edu/newsletters/bugs-eye-view/2022/annual-cicadas-vol-8-no-20",
+     "quote": "those comforting summer nighttime sounds are made by katydids, false katydids, and crickets, not cicadas.",
+     "read": "2026-11-18",
+     "note": "Mississippi State Extension, 2022. Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    }
+   ]
+  },
+  {
+   "id": "bats",
+   "name": "Bats",
+   "months": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "peak": [],
    "when": "Around dusk, about {be}, on nights above 50 degrees.",
-   "what": "They leave their day roosts at dusk to hunt moths and mosquitoes over the creek.",
-   "source": "Georgia DNR",
-   "url": null,
-   "quote": null,
-   "read": null
+   "what": "They leave their day roosts at dusk to hunt moths and mosquitoes over water.",
+   "sources": [
+    {
+     "claim": "Around dusk, on nights above 50 degrees.",
+     "name": "Georgia DNR",
+     "url": "https://gadnrle.org/sites/default/files/wrd/pdf/bats/NWCO_BatGuidelines_Georgia.pdf",
+     "quote": "Bats emerge from their day roosts around dusk to forage for insects such as moths, beetles, midges, and mosquitoes.",
+     "read": "2026-11-18",
+     "note": "Georgia DNR and WNS working group, bat guidelines for Georgia (2015, DNR edition Nov 21 2017). Temperature: \"Bats are generally active at temperatures above 50 degrees Fahrenheit\". \"Over the creek\" is not in it; it says \"over water bodies\". Read by local text extraction of the PDF that WebFetch saved (byte-level, not a model); ligature glyphs restored (fi, ff, fl)."
+    }
+   ]
   },
   {
    "id": "black-bear",
@@ -271,10 +588,32 @@
    "peak": [],
    "when": "Dusk ({be}) and dawn ({mb}).",
    "what": "Present in the North Georgia mountains. Most den between November and January and are out again by early April.",
-   "source": "Georgia DNR; NC Wildlife; PA Game Commission",
-   "url": null,
-   "quote": null,
-   "read": null
+   "sources": [
+    {
+     "claim": "Present in the North Georgia mountains.",
+     "name": "Georgia DNR",
+     "url": "https://georgiawildlife.com/sites/default/files/wrd/pdf/management/Bear%20Press%20Folder%20June2013.pdf",
+     "quote": "In Georgia, there are three population centers for black bears. These include the North Georgia mountains,",
+     "read": "2026-11-18",
+     "note": "Georgia DNR bear press folder, June 2013. Correction: the 2026-11-17 file quoted \"They can be found in the North Georgia mountains\"; those words are not in the PDF. The folder holds a staff contact; left out. Read by local text extraction of the PDF that WebFetch saved (byte-level, not a model); ligature glyphs restored (fi, ff, fl)."
+    },
+    {
+     "claim": "Most den between November and January and are out again by early April.",
+     "name": "NC Wildlife",
+     "url": "https://www.ncwildlife.gov/species/black-bear",
+     "quote": "Most North Carolina bears emerge from their dens in March or early April,",
+     "read": "2026-11-18",
+     "note": "NC Wildlife (primary, NC). Den entry: \"In North Carolina, den entry can occur as early as November or as late as January,\". Georgia DNR: \"The breeding season is in July and cubs are born in the den in late January or February.\" Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "Dusk and dawn.",
+     "name": "Pennsylvania Game Commission",
+     "url": "https://www.pa.gov/en/agencies/pgc/wildlife/discover-pa-wildlife/black-bear.html",
+     "quote": "Bears are most active at dusk and dawn, with slightly lower activity levels during the day.",
+     "read": "2026-11-18",
+     "note": "Pennsylvania Game Commission (primary, out of region). Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    }
+   ]
   },
   {
    "id": "pileated-woodpecker",
@@ -294,64 +633,130 @@
     12
    ],
    "peak": [],
-   "when": "Daylight, all year.",
+   "when": "A year-round resident.",
    "what": "Loud drumming and a ringing cuk-cuk-cuk that rises and falls.",
-   "source": "Audubon",
-   "url": null,
-   "quote": null,
-   "read": null
+   "sources": [
+    {
+     "claim": "All year.",
+     "name": "Audubon",
+     "url": "https://www.audubon.org/field-guide/bird/pileated-woodpecker",
+     "quote": "Permanent resident, but individuals sometimes wander far from breeding areas.",
+     "read": "2026-11-18",
+     "note": "Audubon. Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "Loud drumming and a ringing cuk-cuk-cuk that rises and falls.",
+     "name": "Audubon",
+     "url": "https://www.audubon.org/field-guide/bird/pileated-woodpecker",
+     "quote": "A loud, flicker-like cuk-cuk-cuk-cuk-cuk, rising and then falling in pitch and volume.",
+     "read": "2026-11-18",
+     "note": "Audubon. Drumming: \"Territory is defended with loud drumming and ringing calls.\" Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    }
+   ]
   }
  ],
  "showers": [
   {
-   "id": "leonids-2026",
-   "date": "2026-11-17",
-   "name": "The Leonids",
-   "line": "Fast meteors after midnight",
-   "source": "the American Meteor Society's calendar",
-   "url": null,
-   "quote": null,
-   "read": null
-  },
-  {
    "id": "geminids-2026",
    "date": "2026-12-13",
    "name": "The Geminids",
-   "line": "The best shower of the year, all evening",
-   "source": "the American Meteor Society's calendar",
-   "url": null,
-   "quote": null,
-   "read": null
+   "line": "Usually the strongest shower of the year, and the one with good activity before midnight",
+   "sources": [
+    {
+     "claim": "Peak night December 13, 2026.",
+     "name": "American Meteor Society",
+     "url": "https://www.amsmeteors.org/calendar/",
+     "quote": "The Moon will be 15% illuminated · Waxing crescent on peak night (Dec 13–14, 2026).",
+     "read": "2026-11-18",
+     "note": "American Meteor Society, page headed \"Meteor Shower Calendar 2026/2027\". The old URL /meteor-showers/meteor-shower-calendar/ says \"This page has moved\". Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "Usually the strongest shower of the year; good activity before midnight.",
+     "name": "American Meteor Society",
+     "url": "https://www.amsmeteors.org/calendar/",
+     "quote": "The Geminids are usually the strongest meteor shower of the year.",
+     "read": "2026-11-18",
+     "note": "AMS: \"This is the one major shower that provides good activity before midnight.\""
+    }
+   ]
   },
   {
    "id": "ursids-2026",
    "date": "2026-12-21",
    "name": "The Ursids",
-   "line": "A quiet shower on the longest night",
-   "source": "the American Meteor Society's calendar",
-   "url": null,
-   "quote": null,
-   "read": null
+   "line": "Peak night of December 21 to 22, a quiet shower under a bright moon",
+   "sources": [
+    {
+     "claim": "Peak night December 21, 2026.",
+     "name": "American Meteor Society",
+     "url": "https://www.amsmeteors.org/calendar/",
+     "quote": "The Moon will be 89% illuminated · Waxing gibbous on peak night (Dec 21–22, 2026).",
+     "read": "2026-11-18",
+     "note": "American Meteor Society, page headed \"Meteor Shower Calendar 2026/2027\". The old URL /meteor-showers/meteor-shower-calendar/ says \"This page has moved\". An 89% moon on the peak night. Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "A quiet shower on the longest night.",
+     "name": "American Meteor Society",
+     "url": "https://www.amsmeteors.org/calendar/",
+     "quote": "Observers normally see 5–10 Ursids per hour during the late-morning hours on the date of maximum activity.",
+     "read": "2026-11-18",
+     "note": "Supports \"quiet\". \"Longest night\" (the solstice) is not an AMS fact and was not checked. \"late-morning\" is as returned; check it on the page before use. American Meteor Society, page headed \"Meteor Shower Calendar 2026/2027\". The old URL /meteor-showers/meteor-shower-calendar/ says \"This page has moved\". Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    }
+   ]
   },
   {
    "id": "christmas-eve-2026",
    "date": "2026-12-24",
    "name": "Christmas Eve",
    "line": "A near-full moon over the Christmas stay",
-   "source": "the sky table itself (no outside fact)",
-   "url": "computed",
-   "quote": "",
-   "read": "2026-11-17"
+   "sources": [
+    {
+     "claim": "The moon on Dec 24, 2026 from the sky table itself.",
+     "name": "the sky table",
+     "url": "computed",
+     "quote": "",
+     "read": "2026-11-17",
+     "note": "No outside fact: the page's own ephemeris."
+    }
+   ]
   },
   {
    "id": "quadrantids-2027",
    "date": "2027-01-03",
    "name": "The Quadrantids",
-   "line": "A short, sharp shower before dawn",
-   "source": "the American Meteor Society's calendar",
-   "url": null,
-   "quote": null,
-   "read": null
+   "line": "A short peak, about six hours, predicted near 10:30 PM Eastern",
+   "sources": [
+    {
+     "claim": "Peak night January 3, 2027.",
+     "name": "American Meteor Society",
+     "url": "https://www.amsmeteors.org/calendar/",
+     "quote": "The Moon will be 18% illuminated · Waning crescent on peak night (Jan 3–4, 2027).",
+     "read": "2026-11-18",
+     "note": "American Meteor Society, page headed \"Meteor Shower Calendar 2026/2027\". The old URL /meteor-showers/meteor-shower-calendar/ says \"This page has moved\". Read through WebFetch with a verbatim prompt; the tool passes the page through a model, so this is a read of the live page, not a byte copy."
+    },
+    {
+     "claim": "A short peak of about six hours, predicted near 3:30 UT on January 4 (10:30 PM Eastern on January 3; 3:30 UT minus five hours, checked with the zone library 2026-11-18).",
+     "name": "American Meteor Society",
+     "url": "https://www.amsmeteors.org/calendar/",
+     "quote": "Predictions for 2027 show a peak near 3:30 UT on January 4th.",
+     "read": "2026-11-18",
+     "note": "AMS: \"the short length of maximum activity (6 hours)\"."
+    }
+   ]
+  }
+ ],
+ "cut": [
+  {
+   "id": "leonids-2026",
+   "why": "the peak night (Nov 16 to 17) is past and its line could not be sourced (the Scout; the Chief, 2026-11-18)"
+  },
+  {
+   "id": "coyotes.moon",
+   "why": "the two moonlight claims rest on a study whose text could not be reached"
+  },
+  {
+   "id": "pileated-woodpecker.when",
+   "why": "\"daylight\" had no row; the line says year-round resident instead"
   }
  ]
 }

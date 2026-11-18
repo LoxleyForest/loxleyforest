@@ -54,8 +54,29 @@ def facts():
 
 
 def sourced(rows):
-    """The rows an outside fact may be written from: url, the source's words and a read date."""
-    return [r for r in rows if r.get('url') and r.get('read') and r.get('quote') is not None]
+    """The rows an outside fact may be written from: every claim the line makes carries a source
+    with its url, the source's own words and the day it was read (a quote may be empty only for
+    the sky table's own, url "computed")."""
+    def ok(s):
+        return bool(s.get('url')) and bool(s.get('read')) and s.get('quote') is not None
+    return [r for r in rows if r.get('sources') and all(ok(s) for s in r['sources'])]
+
+
+def for_page(rows):
+    """The rows as the page's script needs them: the words, the months, and each source's name and
+    url; the quotes and notes stay in the data."""
+    out = []
+    for r in rows:
+        row = {k: r[k] for k in r if k not in ('sources', 'held')}
+        seen, srcs = set(), []
+        for s in r['sources']:
+            key = (s['name'], s['url'])
+            if key in seen or s['url'] == 'computed':
+                continue
+            seen.add(key); srcs.append({'name': s['name'], 'url': s['url']})
+        row['sources'] = srcs
+        out.append(row)
+    return out
 
 
 # ---- the Chief's styles, scoped -----------------------------------------------------------
@@ -97,7 +118,9 @@ CSS_SRC = r'''
 .sky .photo dd{margin:0;font-size:21px;font-variant-numeric:tabular-nums;text-align:right}
 .sky .photo .tip{font-family:var(--util);font-size:12px;color:var(--faint);line-height:1.5;margin:10px 0 6px}
 .sky .sub{font:600 11px var(--util);letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin:14px 0 2px}
-.sky .who{font:600 10px var(--util);letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-top:5px}
+.sky .who{font:600 10px var(--util);letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-top:5px;display:block}
+.sky .who a{color:var(--faint);text-decoration:underline;text-underline-offset:2px;font:inherit;letter-spacing:inherit;text-transform:inherit;border:0;padding:0}
+.sky .who a:hover{color:var(--gold)}
 .sky .best{color:var(--good)} .sky .fair{color:var(--mid)}
 .sky .yearwrap{overflow-x:auto}
 .sky .year{display:grid;grid-template-columns:minmax(118px,1.5fr) repeat(12,minmax(18px,1fr));gap:3px 2px;align-items:center;min-width:420px;font-family:var(--util);font-size:11px;color:var(--soft)}
@@ -260,11 +283,20 @@ function moonAge(d){const i=days.indexOf(d); let f=null,nw=null;
   const say=(k,w)=>k===0?w+' tonight':k===1?w+' tomorrow':w+' in '+k+' nights';
   return [f!==null?say(f,'Full moon'):'',nw!==null?say(nw,'New moon'):''].filter(Boolean).join('; ')+'.'}
 const fill=(s,d)=>String(s).replace(/\{(\w+)\}/g,(m,k)=>d[k]!==undefined&&d[k]!==null?d[k]:m);
+const moonUpEve=d=>[4,5,6,7].filter(i=>d.h[i][0]>0).length;
+// A line's words for the night: an "inside" sentence only between its dates (the rut map's week), a
+// moon tail when the moon is over half lit and up for the evening (the whip-poor-will).
+function words(w,d){
+  const pre=w.inside&&d.d>=w.inside.from&&d.d<=w.inside.to?fill(w.inside.text,d)+' ':'';
+  const tail=w.moon_tail?(d.il>50&&moonUpEve(d)>=2?w.moon_tail.yes:w.moon_tail.no):'';
+  return pre+fill(w.what,d)+tail;
+}
+const who=w=>(w.sources||[]).map(s=>`<a href="${s.url}" target="_blank" rel="noopener">${s.name}</a>`).join('; ');
 function wild(){
   if(!WILD.length||!$('wild'))return;
   const d=byDate[cur], mo=+cur.slice(5,7);
   const on=WILD.filter(w=>w.months.includes(mo)).sort((a,b)=>(b.peak.includes(mo)?1:0)-(a.peak.includes(mo)?1:0));
-  $('wild').innerHTML=on.map(w=>`<div class="row"><div class="a"><div class="t">${w.name}</div><div class="m"><b>${fill(w.when,d)}</b> ${fill(w.what,d)}</div><div class="who"><a href="${w.url}" target="_blank" rel="noopener">${w.source}</a></div></div><div class="r"><span class="tag ${w.peak.includes(mo)?'best':'fair'}">${w.peak.includes(mo)?'At its best':'In season'}</span></div></div>`).join('');
+  $('wild').innerHTML=on.map(w=>`<div class="row"><div class="a"><div class="t">${w.name}</div><div class="m"><b>${fill(w.when,d)}</b> ${words(w,d)}</div><div class="who">${who(w)}</div></div><div class="r"><span class="tag ${w.peak.includes(mo)?'best':'fair'}">${w.peak.includes(mo)?'At its best':'In season'}</span></div></div>`).join('');
   const M='JFMAMJJASOND';
   $('year').innerHTML='<span></span>'+[...M].map(x=>`<span class="hd">${x}</span>`).join('')+WILD.map(w=>`<span>${w.name}</span>`+Array.from({length:12},(_,i)=>`<span class="c${w.months.includes(i+1)?' on':''}${w.peak.includes(i+1)?' pk':''}${i+1===mo?' now':''}" title="${w.name}"></span>`).join('')).join('');
 }
@@ -309,7 +341,7 @@ function lists(){
   top.sort((a,b)=>a.d.localeCompare(b.d));
   $('best').innerHTML=top.map(d=>rowHtml(d,fmtD(d.d,{weekday:'long',month:'long',day:'numeric'}))).join('');
   if($('shows')){const shows=SHOWS.filter(s=>byDate[s.date]&&s.date>=todayIso);
-    $('shows').innerHTML=shows.map(s=>rowHtml(byDate[s.date],s.name+', '+fmtD(s.date),s.line)).join('')}
+    $('shows').innerHTML=shows.map(s=>rowHtml(byDate[s.date],s.name+', '+fmtD(s.date),s.line+(who(s)?'<span class="who">'+who(s)+'</span>':''))).join('')}
   document.querySelectorAll('.sky button.pick').forEach(b=>b.onclick=()=>{setDate(b.dataset.d); $('sky').scrollIntoView({behavior:'smooth',block:'center'})});
 }
 function chips(){
@@ -364,8 +396,8 @@ def page_sky():
     head, gtm = sys.modules['lfpage_gift'].head_for(TITLE, DESC, URL, noindex=True)
     body = TEMPLATE.replace('{WILD_SECTION}', WILD_SECTION if wild_rows else '').replace('{SHOWS_SECTION}', SHOWS_SECTION if show_rows else '')
     js = (SCRIPT.replace('__DATA__', json.dumps(data, separators=(',', ':')).replace('</', '<\\/'))
-          .replace('__WILD__', json.dumps(wild_rows, ensure_ascii=False).replace('</', '<\\/'))
-          .replace('__SHOWS__', json.dumps(show_rows, ensure_ascii=False).replace('</', '<\\/'))
+          .replace('__WILD__', json.dumps(for_page(wild_rows), ensure_ascii=False).replace('</', '<\\/'))
+          .replace('__SHOWS__', json.dumps(for_page(show_rows), ensure_ascii=False).replace('</', '<\\/'))
           .replace('__WORDS__', json.dumps(WORDS, ensure_ascii=False))
           .replace('__API__', json.dumps(B.API)).replace('__UNIT__', json.dumps(B.UNIT)))
     body = f'    <style>{CSS_SRC.strip()}</style>\n' + body + js
