@@ -307,6 +307,15 @@
 .gh-release { margin: 0; padding: 14px 16px; border: 1px solid var(--parchment); border-bottom: 0; background: var(--linen); font-family: 'Montserrat', Arial, sans-serif; font-size: 13px; line-height: 1.6; color: var(--forest-deep); }
 .gh-release + .gh-agree { margin-top: -12px; }
 
+/* ---- the call line (js/gatehouse.js askLine, 2026-11-18, D6) -----------
+   Under every total and under every refusal: one sentence in the house's serif, its two links
+   underlined, never a button. */
+.gh-ask { margin: 0 0 18px; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 17px; line-height: 1.5; color: var(--stone); }
+.gh-ask a { color: var(--forest-deep); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.gh-ask a:focus-visible { outline: 2px solid var(--forest); outline-offset: 2px; }
+.gh-calendar .gh-ask--refusal { margin: 10px 0 0; }
+.gh-lines + .gh-ask { margin-top: -6px; }
+
 /* ---- the stay bar (js/gatehouse.js STAY_BAR, 2026-11-16) --------------
    On a narrow screen the card sits under the calendar and its button a swipe below the price;
    the bar holds the dates, the total, the chosen way to pay and the card's own button at the

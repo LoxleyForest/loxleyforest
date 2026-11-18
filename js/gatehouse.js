@@ -344,18 +344,19 @@
     // The offer, told to our own server apart from a chosen stay (stay_offered: direct, shifted or
     // nearest), so the Chief can read offers against choices and refusals.
     function offer(ci, co, note, kind) {
-      c.checkIn = ci; c.checkOut = co; c.offered = true; c.note = note;
+      c.checkIn = ci; c.checkOut = co; c.offered = true; c.note = note; c.refused = false;
       try { if (typeof step === 'function') step('gh_stay_offered', { gh_reason: kind }); } catch (e) {}
       opts.onChange(c);
     }
 
     c.pick = function (day) {
+      c.refused = false;   // a refusal (and its call line under the note) stands only until the next tap
       // An offered stay keeps its arrival: a later tap lengthens it instead of starting over.
       if (!c.checkIn || (c.checkOut && !c.offered) || day <= c.checkIn) {
         if (!c.nights[day]) return;
         // A night nobody may arrive on (the holidays): say so at the tap, not at the price.
         if (c.nights[day].no_arrival && (!c.checkIn || c.checkOut || day <= c.checkIn)) {
-          c.note = 'No check-in on ' + short(day) + '. Arrive an earlier day and stay through.';
+          c.note = 'No check-in on ' + short(day) + '. Arrive an earlier day and stay through.'; c.refused = true;
           if (opts.onRefuse) opts.onRefuse(c.note, day);
           opts.onChange(c); return;
         }
@@ -381,19 +382,19 @@
             var min = c.nights[c.checkIn].min_stay;
             if (fits(c.checkIn, min)) { offer(c.checkIn, addDays(c.checkIn, min), offered(c.checkIn, { ci: c.checkIn, co: addDays(c.checkIn, min), shifted: false }), 'direct'); return; }
           }
-          c.note = why; if (opts.onRefuse) opts.onRefuse(why, c.checkIn); opts.onChange(c); return;
+          c.note = why; c.refused = true; if (opts.onRefuse) opts.onRefuse(why, c.checkIn); opts.onChange(c); return;
         }
         c.checkOut = day; c.note = '';
       }
       opts.onChange(c);
     };
 
-    c.clear = function () { c.checkIn = null; c.checkOut = null; c.offered = false; c.note = ''; opts.onChange(c); };
+    c.clear = function () { c.checkIn = null; c.checkOut = null; c.offered = false; c.note = ''; c.refused = false; opts.onChange(c); };
 
     c.set = function (ci, co) {
       // The same dates set again (the quote's round trip, the link) keep an offer's open arrival.
       if (ci !== c.checkIn || co !== c.checkOut) c.offered = false;
-      c.checkIn = ci || null; c.checkOut = co || null; c.note = '';
+      c.checkIn = ci || null; c.checkOut = co || null; c.note = ''; c.refused = false;
       if (ci) c.month = parse(ci.slice(0, 8) + '01');
     };
 
@@ -441,7 +442,8 @@
       ]);
       return el('div', { 'class': 'gh-calendar', 'aria-label': opts.label || 'Choose your nights' }, [
         nav, el('div', { 'class': 'gh-months' }, [grid(c.month), grid(next)]),
-        el('p', { 'class': 'gh-note', 'aria-live': 'polite', text: c.note })
+        el('p', { 'class': 'gh-note', 'aria-live': 'polite', text: c.note }),
+        c.refused && c.note ? askLine('refusal') : null
       ]);
     };
     return c;
@@ -781,7 +783,7 @@
     if (!u.checkIn) { cal.set(null, null); state.quote = null; quoteFor = ''; applyMonth(u.month); return; }
     if (u.checkIn < t) {
       cal.set(null, null);
-      cal.note = short(u.checkIn) + ' has already passed. Choose your nights on the calendar.';
+      cal.note = short(u.checkIn) + ' has already passed. Choose your nights on the calendar.'; cal.refused = true;
       writeUrl(false); return;
     }
     if (!u.checkOut || u.checkOut <= u.checkIn) { cal.set(u.checkIn, null); if (!cal.nights[u.checkIn]) cal.set(null, null); return; }
@@ -790,7 +792,7 @@
       refused(why, u.checkIn);
       cal.set(null, null);
       cal.month = parse(u.checkIn.slice(0, 8) + '01');
-      cal.note = 'The dates in your link, ' + span(u.checkIn, u.checkOut) + ", can't be booked now. " + why + ' Choose other nights, or call or text ' + PHONE + '.';
+      cal.note = 'The dates in your link, ' + span(u.checkIn, u.checkOut) + ", can't be booked now. " + why + ' Choose other nights, or call or text ' + PHONE + '.'; cal.refused = true;
       writeUrl(false); return;
     }
     cal.set(u.checkIn, u.checkOut);
@@ -837,7 +839,7 @@
       quoteFor = '';
       if (e.status === 409) refused(e.message, ci);   // the engine refused the dates; not a lost connection
       cal.set(ci, null);
-      cal.note = e.message;
+      cal.note = e.message; cal.refused = true;
       writeUrl(false);
     }).then(function (r) {
       if (r === 'again') { quoteFor = ''; return getQuote(thenPay); }
@@ -989,6 +991,27 @@
     return 'Or pay over time with ' + list + ' at checkout.';
   }
 
+  // The call line (2026-11-18, D6): under every total and under every refusal, the words the page
+  // carries in lf-ask-words (written by the builder only once Mick has said yes to the reply
+  // promise they make); "Ask us" opens the page's own inquiry form, the call words his booking page.
+  // No block on the page, no line: the card and the calendar read as before.
+  var ASK = (function () {
+    try { var n = document.getElementById('lf-ask-words'); return n ? JSON.parse(n.textContent) : null; } catch (e) { return null; }
+  })();
+  function askLine(kind) {
+    if (!ASK || !ASK[kind]) return null;
+    var text = ASK[kind], parts = [], i = text.indexOf(ASK.ask), j = text.indexOf(ASK.callWords);
+    function link(href, words, cls) { return el('a', { href: href, 'class': cls, text: words }); }
+    var cuts = [];
+    if (i >= 0) cuts.push([i, i + ASK.ask.length, link(ASK.write, ASK.ask, 'gh-ask__write')]);
+    if (j >= 0 && ASK.call) cuts.push([j, j + ASK.callWords.length, link(ASK.call, ASK.callWords, 'gh-ask__call')]);
+    cuts.sort(function (a, b) { return a[0] - b[0]; });
+    var at = 0;
+    cuts.forEach(function (c) { if (c[0] > at) parts.push(text.slice(at, c[0])); parts.push(c[2]); at = c[1]; });
+    if (at < text.length) parts.push(text.slice(at));
+    return el('p', { 'class': 'gh-ask gh-ask--' + kind }, parts);
+  }
+
   function lines(q) {
     var dl = el('dl', { 'class': 'gh-lines' });
     (q.quote.lines || []).forEach(function (l) {
@@ -1094,6 +1117,7 @@
     });
     return el('div', { 'class': 'gh-summary', 'aria-live': 'polite' }, stayHead(q).concat([
       lines(q),
+      askLine('price'),
       giftNotice(q),
       extendOffer(q),
       creditNotice(q),
@@ -1675,6 +1699,9 @@
     var wrap = el('div', { 'class': 'gh-wrap' + (state.step === 'pay' && state.quote ? ' is-checkout' : '') },
       [state.step === 'pay' && state.quote ? null : cal.render(), side]);
     root.replaceChildren(wrap);
+    // The pay step is marked on the page, so the facts block above the calendar (/book, 2026-11-18,
+    // D6) steps out of the way of "Who is coming" once a guest has chosen to book.
+    document.documentElement.classList.toggle('gh-pay', !!(state.step === 'pay' && state.quote));
     if (state.step === 'pay' && state.quote) watchPay(); else unwatchPay();
     renderBar();
     noteShown();
