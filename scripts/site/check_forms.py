@@ -35,7 +35,8 @@ OWN = {"elopement-inquiry": {"/success-elopement", "/success-elopement.html"}}
 # Forms that are not inquiries, by name or the start of one: never on a path holding /success.
 # anniversary-letter (2026-11-10): a guest's letter to their future selves, on a private page, posted
 # in place and never to any path; named here for the record (this check reads the root pages only).
-NOT_INQUIRY = ("giveaway", "anniversary-letter")
+# first-to-know (2026-11-18, D13): the footer's sign-up on every page, landing on /first-to-know-thanks.
+NOT_INQUIRY = ("giveaway", "anniversary-letter", "first-to-know")
 # Forms that are not inquiries and have their own page by design: none today.
 EXEMPT = set()
 

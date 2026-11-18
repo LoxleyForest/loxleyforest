@@ -41,6 +41,24 @@
   }
 })();
 
+/* The "first to know" sign-up in the footer (2026-11-18, D13): the visit's link token into src (the
+   funnel's own rule: a plain word from ?src=, else the entry the visit kept, else direct) and the
+   page's path into page, so the engine's list knows the door each address came through. */
+(function () {
+  var forms = document.querySelectorAll('form[name="first-to-know"]');
+  if (!forms.length) return;
+  function clean(s) { s = String(s || '').toLowerCase().replace(/[^a-z0-9_-]+$/, ''); return /^[a-z0-9_-]{1,40}$/.test(s) ? s : ''; }
+  var src = '';
+  try { src = clean(new URLSearchParams(location.search).get('src')); } catch (e) {}
+  if (!src) { try { src = clean((JSON.parse(sessionStorage.getItem('gh_entry') || 'null') || {}).src); } catch (e) {} }
+  var page = (document.body && document.body.getAttribute('data-lf-path')) || location.pathname;
+  forms.forEach(function (form) {
+    var s = form.querySelector('input[data-lf-src]'), p = form.querySelector('input[data-lf-page]');
+    if (s) s.value = src || 'direct';
+    if (p) p.value = page;
+  });
+})();
+
 /* List sign-ups post in place (Netlify forms), so nobody leaves the page. */
 (function () {
   document.querySelectorAll('form[data-lf-ajax]').forEach(function (form) {

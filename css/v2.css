@@ -319,6 +319,10 @@ html:not(.js) .lf-rv__nav { visibility: hidden; }
 .lf-gallery .lf-chapter img { aspect-ratio: 4 / 3; }
 @media (min-width: 900px) { .lf-gallery { grid-template-columns: repeat(5, 1fr); } .lf-gallery .lf-chapter img { aspect-ratio: 3 / 4; } }
 .lf-signup__done { flex: 1 1 100%; margin: 4px 0 0; color: var(--on-dark); font-size: 1.15rem; }
+/* the "first to know" sign-up in the footer (2026-11-18, D13): the same form, across the grid */
+.lf-foot .lf-ftk { margin-top: 0; max-width: 34rem; }
+.lf-foot .lf-ftk label { color: var(--on-dark); font-size: 1.05rem; letter-spacing: 0; text-transform: none; font-family: 'Cormorant Garamond', Georgia, serif; }
+@media (min-width: 900px) { .lf-foot .lf-ftk { grid-column: 1 / -1; } }
 
 /* ---- the hero, phones: the picture above, the words below on the forest ----
    Nothing is printed over the glowing canvas, so every word reads. */

@@ -15,6 +15,7 @@ The builder gathers every module's CSS into css/v2-pages.css (do not hand-edit i
 scripts/site/v2img.py makes images/v2/<name>-800.webp and -1600.webp for pic().
 """
 import glob
+import html
 import importlib.util
 import json
 import os
@@ -179,6 +180,63 @@ def header(book):
 '''
 
 
+# =============================================================================================
+# "FIRST TO KNOW" (the deep session of 2026-11-18, D13; the Strategist: "the sign-up first"; the
+# Strategist's ballot: 109 of 134 stays came through Airbnb, which hands over no email). A sign-up
+# in the footer of every page: one email box, a Netlify form named first-to-know that posts in
+# place (js/v2.js data-lf-ajax) and, without script, lands on /first-to-know-thanks (never a path
+# holding /success: it is not an inquiry, check_forms.py NOT_INQUIRY). The engine's half (the
+# Forge, after the deploy stop) reads the form by these fields exactly: email (required), src (the
+# visit's link token, else direct, filled by js/v2.js), page (the site path it was signed on), and
+# the honeypot bot-field. THE WORDS are the Writer's, due Nov 23; the bracketed placeholders below
+# are never shown: FIRST_TO_KNOW stays False until the words are in and Mick has said yes by the
+# hash the builder prints (ftk_sha256). scripts/site/check_first_to_know.py holds all of this.
+# =============================================================================================
+FIRST_TO_KNOW = False
+FTK_WORDS = {
+    'label': '[the Writer: the invitation, one line, what they get and how often]',
+    'placeholder': 'you@example.com',
+    'button': '[the Writer: the button, two or three words]',
+    'done': '[the Writer: the thanks line shown in place]',
+    'thanks_title': 'On the list | Loxley Forest',
+    'thanks_eyebrow': '[the Writer: the eyebrow]',
+    'thanks_h': '[the Writer: the heading]',
+    'thanks_lead': '[the Writer: the lead]',
+    'thanks_1': '[the Writer: one paragraph, what comes and when, and how to stop it]',
+}
+FTK_FORM = 'first-to-know'
+FTK_THANKS = '/first-to-know-thanks'
+
+
+def ftk_sha256(words=None):
+    """The hash Mick's yes names for the sign-up's words: FTK_WORDS as canonical JSON."""
+    import hashlib
+    return hashlib.sha256(json.dumps(words or FTK_WORDS, ensure_ascii=False, sort_keys=True).encode('utf-8')).hexdigest()
+
+
+def ftk_placeholders():
+    """True while any word is still the Writer's placeholder (bracketed)."""
+    return any(v.startswith('[') for v in FTK_WORDS.values())
+
+
+def first_to_know_block():
+    """The footer's sign-up, or '' while the switch is off."""
+    if not FIRST_TO_KNOW:
+        return ''
+    e = lambda k: html.escape(FTK_WORDS[k], quote=False)
+    return f'''      <form class="lf-signup lf-ftk" name="{FTK_FORM}" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" data-lf-ajax action="{FTK_THANKS}" aria-label="{html.escape(FTK_WORDS['label'])}">
+        <input type="hidden" name="form-name" value="{FTK_FORM}">
+        <input type="hidden" name="src" value="direct" data-lf-src>
+        <input type="hidden" name="page" value="" data-lf-page>
+        <p hidden><label>Leave this empty <input name="bot-field"></label></p>
+        <label for="ftk-email">{e('label')}</label>
+        <input id="ftk-email" type="email" name="email" required autocomplete="email" placeholder="{html.escape(FTK_WORDS['placeholder'])}">
+        <button class="lf-btn lf-btn--ghost" type="submit">{e('button')}</button>
+        <p class="lf-signup__done" role="status" hidden>{e('done')}</p>
+      </form>
+'''
+
+
 def footer(book, gatehouse):
     """gatehouse: False, True (the booking calendar) or 'stay' (the calendar's helpers and the
     after-booking pages, /booked and /manage)."""
@@ -194,7 +252,7 @@ def footer(book, gatehouse):
       </div>
       <nav aria-label="Footer">{links}<a href="/faq">Questions</a>{GIFT_LINK}</nav>
       <nav aria-label="Contact"><a href="https://instagram.com/loxleyforest" target="_blank" rel="noopener">Instagram</a><a href="mailto:stay@loxleyforest.com">stay@loxleyforest.com</a><a href="tel:+17065024823">706-502-4823</a></nav>
-      <div class="lf-foot__small"><span>&copy; 2026 Loxley Forest</span><a href="/privacy">Privacy</a><a href="/terms">Terms</a></div>
+{first_to_know_block()}      <div class="lf-foot__small"><span>&copy; 2026 Loxley Forest</span><a href="/privacy">Privacy</a><a href="/terms">Terms</a></div>
     </div>
   </footer>
 
