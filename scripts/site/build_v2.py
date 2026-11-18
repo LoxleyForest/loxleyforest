@@ -193,17 +193,30 @@ def header(book):
 # hash the builder prints (ftk_sha256). scripts/site/check_first_to_know.py holds all of this.
 # =============================================================================================
 FIRST_TO_KNOW = False
+# The Writer's words, 2026-11-18 (chief docs/drafts/2026-11-18-writer-signup-kitchen-wifi-january-letter.md,
+# section 1, version A: the invitation is word for word the consent the checkout already collects,
+# js/gatehouse.js listOptIn, so the house makes one promise and the Forge keeps one list). Her catch,
+# the Forge's to clear before the switch turns: "first word when dates open up" is true only for
+# nights that come free when a stay is cancelled or moved, and the engine's release letter cannot
+# yet send to this list (loxley-rescue gatehouse/release.py). [MICK RATIFIES] what "a few a year"
+# means in a number the Forge enforces.
 FTK_WORDS = {
-    'label': '[the Writer: the invitation, one line, what they get and how often]',
+    'label': 'A few letters a year: first word when dates open up, and when Treehouse 2 does. Stop any time.',
     'placeholder': 'you@example.com',
-    'button': '[the Writer: the button, two or three words]',
-    'done': '[the Writer: the thanks line shown in place]',
+    'button': 'Write to me',
+    'done': 'You\'re on the list. Every letter carries a link that stops them at once.',
     'thanks_title': 'On the list | Loxley Forest',
-    'thanks_eyebrow': '[the Writer: the eyebrow]',
-    'thanks_h': '[the Writer: the heading]',
-    'thanks_lead': '[the Writer: the lead]',
-    'thanks_1': '[the Writer: one paragraph, what comes and when, and how to stop it]',
+    'thanks_eyebrow': 'First to know',
+    'thanks_h': 'You\'re on the list',
+    'thanks_lead': 'A few letters a year: first word when dates open up, and when Treehouse 2 does.',
+    'thanks_1': ('That is all they carry. A letter comes when booked nights come free again, and when Treehouse 2 has '
+                 'its first nights. There is no schedule to fill, so most months bring nothing. Your address stays '
+                 'with us; we never sell or share it. Every letter carries an unsubscribe link that stops them at '
+                 'once. Or write to stay@loxleyforest.com and we\'ll take you off.'),
 }
+# The Writer's must-nots for this form, held by check_first_to_know.py.
+FTK_NEVER = ('exclusive', 'VIP', 'insider', 'members', 'deals', 'offers', 'save', 'discount', 'early access',
+             'first to book', 'priority', 'almost here', 'yours alone', 'weekly', 'I read every one')
 FTK_FORM = 'first-to-know'
 FTK_THANKS = '/first-to-know-thanks'
 

@@ -99,6 +99,11 @@ def main():
     check(B.FTK_WORDS['thanks_h'] in thanks.replace('&#x27;', "'") or B.FTK_WORDS['thanks_h'].replace("'", '&#x27;') in thanks, 'and carries its heading')
     check(not re.search(r'<form\b', thanks, re.I) or len(forms_in(thanks)) == 1, 'the thanks page carries no other form')
     check(not re.search('[–—]', B.FTK_WORDS['label'] + B.FTK_WORDS['done'] + B.FTK_WORDS['thanks_1']), 'no dash in the words')
+    everything = ' '.join(B.FTK_WORDS.values()).lower()
+    for n in B.FTK_NEVER:
+        check(n.lower() not in everything, 'the words never say "%s"' % n)
+    check(B.FTK_WORDS['label'].startswith('A few letters a year: first word when dates open up, and when Treehouse 2 does.'),
+          'the invitation is the checkout\'s own promise (js/gatehouse.js listOptIn), one list and one promise')
 
     print('check_first_to_know: %d ok, %d wrong' % (len(ok), len(bad)))
     for b in bad:
