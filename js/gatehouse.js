@@ -326,6 +326,16 @@
     // The words. The minimum is the tapped night's; the price shows in the card below the calendar;
     // a later tap lengthens the stay (the offer holds the arrival, c.offered).
     var LONGER = ' Tap a later day to stay longer.';
+    // The silent tap (the Forge, 2026-11-18, the winter-rules route: a shopper tapped Sun Jan 17 to end
+    // an offered Sat Jan 16 stay on Sunday, and nothing moved or spoke, because the shortest stay from
+    // that arrival was the one already shown). Now the page says so, in the Forge's words with the
+    // calendar's own date shapes; and when a Friday or Saturday arrival was asked for one night, the
+    // Writer's weeknight line follows (2026-11-18, version B). New words, for Mick's yes by hash
+    // (scripts/site/check_silent_tap.js prints it).
+    function sameWords(ci, min, co) {
+      return 'A stay starting ' + short(ci) + ' is at least ' + nightsWord(min) + '. ' + span(ci, co) + ' is the shortest.';
+    }
+    var WEEKNIGHT = 'Just one night? Tap a Sunday through Thursday. Each night tells you what it needs.';
     function offered(day, s) {
       var min = (c.nights[day] && c.nights[day].min_stay) || daysBetween(s.ci, s.co);
       var head = 'Arriving ' + short(day) + ' takes ' + nightsWord(min) + '.';
@@ -373,13 +383,24 @@
         // Inside the engine's lead time, by request (loxley-rescue GATEHOUSE-SPEC 20): the quote card says how.
         c.note = 'Arriving ' + short(day) + (c.nights[day].request ? ', by request' : '') + '. Now choose your check-out day.';
       } else {
+        var prevCo = c.checkOut, wasOffered = c.offered, asked = daysBetween(c.checkIn, day);
         c.offered = false; c.checkOut = null;
         var why = c.stayOk(c.checkIn, day);
         if (why) {
           // Under the minimum: the shortest stay from that arrival, not a refusal.
           if (OFFER_STAY && /at least/.test(why)) {
-            var min = c.nights[c.checkIn].min_stay;
-            if (fits(c.checkIn, min)) { offer(c.checkIn, addDays(c.checkIn, min), offered(c.checkIn, { ci: c.checkIn, co: addDays(c.checkIn, min), shifted: false }), 'direct'); return; }
+            var min = c.nights[c.checkIn].min_stay, shortest = addDays(c.checkIn, min);
+            if (fits(c.checkIn, min)) {
+              if (wasOffered && prevCo === shortest) {
+                // The shortest stay is the one already shown: keep it and say so (the silent tap).
+                c.checkOut = shortest; c.offered = true;
+                var w = parse(c.checkIn).getDay();
+                c.note = sameWords(c.checkIn, min, shortest) + (asked === 1 && (w === 5 || w === 6) ? ' ' + WEEKNIGHT : '');
+                try { if (typeof step === 'function') step('gh_stay_offered', { gh_reason: 'same' }); } catch (e) {}
+                opts.onChange(c); return;
+              }
+              offer(c.checkIn, shortest, offered(c.checkIn, { ci: c.checkIn, co: shortest, shifted: false }), 'direct'); return;
+            }
           }
           c.note = why; if (opts.onRefuse) opts.onRefuse(why, c.checkIn); opts.onChange(c); return;
         }
