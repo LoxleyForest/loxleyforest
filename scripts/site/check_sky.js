@@ -98,7 +98,8 @@ async function main() {
         if (u.pathname === '/v1/availability') return route.fulfill({ status: 200, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify(nights()) });
         return route.fulfill({ status: 204, headers: { 'Access-Control-Allow-Origin': '*' }, body: '' });
       }
-      if (/fonts\.g(oogleapis|static)\.com$/.test(u.hostname)) return route.abort();   // refused, and allowed to have been asked
+      // refused, and allowed to have been asked: the fonts, and the Tag Manager every page of the site carries with its usual tags
+      if (/fonts\.g(oogleapis|static)\.com$|googletagmanager|google-analytics|clarity\.ms|facebook/.test(u.hostname)) return route.abort();
       ctx.outside.push(u.hostname);
       return route.abort();
     });

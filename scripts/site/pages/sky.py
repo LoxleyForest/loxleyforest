@@ -54,8 +54,29 @@ def facts():
 
 
 def sourced(rows):
-    """The rows an outside fact may be written from: url, the source's words and a read date."""
-    return [r for r in rows if r.get('url') and r.get('read') and r.get('quote') is not None]
+    """The rows an outside fact may be written from: every claim the line makes carries a source
+    with its url, the source's own words and the day it was read (a quote may be empty only for
+    the sky table's own, url "computed")."""
+    def ok(s):
+        return bool(s.get('url')) and bool(s.get('read')) and s.get('quote') is not None
+    return [r for r in rows if r.get('sources') and all(ok(s) for s in r['sources'])]
+
+
+def for_page(rows):
+    """The rows as the page's script needs them: the words, the months, and each source's name and
+    url; the quotes and notes stay in the data."""
+    out = []
+    for r in rows:
+        row = {k: r[k] for k in r if k not in ('sources', 'held')}
+        seen, srcs = set(), []
+        for s in r['sources']:
+            key = (s['name'], s['url'])
+            if key in seen or s['url'] == 'computed':
+                continue
+            seen.add(key); srcs.append({'name': s['name'], 'url': s['url']})
+        row['sources'] = srcs
+        out.append(row)
+    return out
 
 
 # ---- the Chief's styles, scoped -----------------------------------------------------------
@@ -260,11 +281,20 @@ function moonAge(d){const i=days.indexOf(d); let f=null,nw=null;
   const say=(k,w)=>k===0?w+' tonight':k===1?w+' tomorrow':w+' in '+k+' nights';
   return [f!==null?say(f,'Full moon'):'',nw!==null?say(nw,'New moon'):''].filter(Boolean).join('; ')+'.'}
 const fill=(s,d)=>String(s).replace(/\{(\w+)\}/g,(m,k)=>d[k]!==undefined&&d[k]!==null?d[k]:m);
+const moonUpEve=d=>[4,5,6,7].filter(i=>d.h[i][0]>0).length;
+// A line's words for the night: an "inside" sentence only between its dates (the rut map's week), a
+// moon tail when the moon is over half lit and up for the evening (the whip-poor-will).
+function words(w,d){
+  const pre=w.inside&&d.d>=w.inside.from&&d.d<=w.inside.to?fill(w.inside.text,d)+' ':'';
+  const tail=w.moon_tail?(d.il>50&&moonUpEve(d)>=2?w.moon_tail.yes:w.moon_tail.no):'';
+  return pre+fill(w.what,d)+tail;
+}
+const who=w=>(w.sources||[]).map(s=>`<a href="${s.url}" target="_blank" rel="noopener">${s.name}</a>`).join('; ');
 function wild(){
   if(!WILD.length||!$('wild'))return;
   const d=byDate[cur], mo=+cur.slice(5,7);
   const on=WILD.filter(w=>w.months.includes(mo)).sort((a,b)=>(b.peak.includes(mo)?1:0)-(a.peak.includes(mo)?1:0));
-  $('wild').innerHTML=on.map(w=>`<div class="row"><div class="a"><div class="t">${w.name}</div><div class="m"><b>${fill(w.when,d)}</b> ${fill(w.what,d)}</div><div class="who"><a href="${w.url}" target="_blank" rel="noopener">${w.source}</a></div></div><div class="r"><span class="tag ${w.peak.includes(mo)?'best':'fair'}">${w.peak.includes(mo)?'At its best':'In season'}</span></div></div>`).join('');
+  $('wild').innerHTML=on.map(w=>`<div class="row"><div class="a"><div class="t">${w.name}</div><div class="m"><b>${fill(w.when,d)}</b> ${words(w,d)}</div><div class="who">${who(w)}</div></div><div class="r"><span class="tag ${w.peak.includes(mo)?'best':'fair'}">${w.peak.includes(mo)?'At its best':'In season'}</span></div></div>`).join('');
   const M='JFMAMJJASOND';
   $('year').innerHTML='<span></span>'+[...M].map(x=>`<span class="hd">${x}</span>`).join('')+WILD.map(w=>`<span>${w.name}</span>`+Array.from({length:12},(_,i)=>`<span class="c${w.months.includes(i+1)?' on':''}${w.peak.includes(i+1)?' pk':''}${i+1===mo?' now':''}" title="${w.name}"></span>`).join('')).join('');
 }
