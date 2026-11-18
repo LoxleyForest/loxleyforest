@@ -107,6 +107,14 @@ def main():
     rga = all_html.get('romantic-getaways-near-atlanta.html', '')
     check(B.D6_WORDS['wifi'].replace("'", '&#x27;') in rga or B.D6_WORDS['wifi'] in rga, 'the live landing page says the wifi fact too')
     check(B.D6_WORDS['walk_day'] in book, '/book\'s day says the walk of five to ten minutes')
+    for n in ('index.html', 'treehouses.html'):
+        h = all_html[n]
+        check(B.D6_WORDS['included_kitchen'] in h and B.D6_WORDS['included_wifi'] in h and 'fresh pastries in the box each morning' in h,
+              'the included list on %s carries the forest kitchen, the wifi line and TreeMail\'s pastries' % n)
+    for n in ('wood-fired', 'fully equipped', 'kitchenette', 'microwave', 'coffee', 'running water'):
+        check(n not in B.D6_WORDS['kitchen'].lower() and n not in B.D6_WORDS['included_kitchen'].lower(), 'the kitchen lines never say "%s"' % n)
+    for n in ('encourage you not', 'built for the opposite', 'unplug', 'fast', 'reliable', 'strong signal', 'video calls', 'work-ready'):
+        check(n not in B.D6_WORDS['wifi'].lower() and n not in B.D6_WORDS['included_wifi'].lower(), 'the wifi lines never say "%s"' % n)
     two_hours = [n for n, h in all_html.items() if 'within two hours' in h]
     if B.d6_ok('reply'):
         check(not two_hours, 'with fact 7\'s yes no page says "within two hours"')

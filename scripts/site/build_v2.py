@@ -201,14 +201,20 @@ D6_WORDS = {
     # the call line, version B; "Ask us" and "pick a time for a 30-minute call" are the links
     'ask_price': 'Still deciding? Ask us anything about the treehouse or your dates, and we write back by evening. Or pick a time for a 30-minute call.',
     'ask_refusal': "Not the dates you hoped for? Ask us. If there's a way to make them work, we'll tell you by evening, and if there isn't, we'll help you find ones that can.",
-    # the contradictions, settled; the two marked [seat] are this seat's drafts from the canon's
-    # facts (voice.md:125, :134), for the Writer to replace if she has better
-    'kitchen': ('The forest kitchen: a wood-fired pizza oven on the sky deck with a cast-iron pan, a grill over the '
-                'Fire Circle, and a big cooler on the deck, so bring ice. No stove or fridge.'),  # [seat]
-    'wifi': ("Yes. A hotspot on the deck, about the size of a phone, that you switch on when you want it. "
-             "We built the place for the opposite, but it's there."),  # [seat]
+    # the contradictions, settled: the kitchen and the wifi in the Writer's words (2026-11-18, chief
+    # docs/drafts/2026-11-18-writer-signup-kitchen-wifi-january-letter.md, section 2; she dropped
+    # "wood-fired", which the canon does not say and one page contradicts: [MICK RATIFIES] wood-fired
+    # or gas; and [MICK RATIFIES] what the hotspot carries, which would replace the "Tell us" sentence)
+    'kitchen': ('The forest kitchen is outside. A pizza oven on the Sky Deck, and a cast-iron pan that goes in it and '
+                'cooks anything from eggs to steak. A stainless steel grill over the Fire Circle, with the wood chopped '
+                'for you. A big cooler on the deck: bring ice, and sauce and toppings for the pizza. There is no stove '
+                'and no fridge, in any season. Downtown Dahlonega is ten minutes away.'),
+    'wifi': ('Yes. A hotspot about the size of a phone, on the battery system on the deck. Switch it on when you need '
+             'it and off when you don\'t. Working from up here? Tell us what the work needs before you book, and '
+             'we\'ll tell you if it will carry it.'),
     'included_treemail': 'TreeMail: fresh pastries in the box each morning',
-    'included_kitchen': 'A forest kitchen: a wood-fired pizza oven, a grill over the Fire Circle, a big cooler. No stove or fridge.',
+    'included_kitchen': 'A forest kitchen, outside: pizza oven, cast-iron pan, grill over the Fire Circle, big cooler. No stove or fridge.',
+    'included_wifi': 'WiFi: a hotspot on the deck. Switch it on when you need it.',
     'walk_day': 'Park at the trailhead. Walk five to ten minutes on a forest trail through mountain laurel and fern. Hear the creek before you see it.',
     'reply': 'we write back by evening, every day',
     'sleeps_faq': 'The treehouse sleeps four: a queen bed and a quality air mattress. Six at most in a party, visitors included. Children are welcome. No smoking.',
@@ -711,6 +717,7 @@ INCLUDED = f'''          <ul class="lf-acorns lf-rise">
             <li>A fire pit on the forest floor</li>
             <li>Heated for the cold seasons, with windows that open to the forest in summer</li>
             <li>{html.escape(d6('included_kitchen'), quote=False)}</li>
+            <li>{html.escape(d6('included_wifi'), quote=False)}</li>
             <li>42 acres of cove forest to explore</li>
           </ul>
 '''
