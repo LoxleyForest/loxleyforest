@@ -200,6 +200,41 @@ async function main() {
     await ctx.close();
   }
 
+  console.log('where the Book tap came from (2026-11-19): card, bar or link, on begin_checkout and add_payment_info');
+  check(/step\('begin_checkout', \{[^}]*gh_origin: state\.origin, gh_reason: state\.origin/.test(SCRIPT) && /step\('add_payment_info', \{[^}]*gh_origin: state\.origin, gh_reason: state\.origin/.test(SCRIPT),
+    'both steps carry the origin as reason (the beacon) and gh_origin (the dataLayer)');
+  {
+    const { ctx, page } = await visitor();
+    await tap(page, day(SAT));
+    await page.evaluate(() => document.querySelector('.gh-summary .gh-cta').click());
+    await page.waitForTimeout(500);
+    let b = steps(ctx, 'begin_checkout');
+    check(b.length === 1 && b[0].reason === 'card', 'the card\'s own button: begin_checkout with reason card');
+    check((await layer(page, 'begin_checkout')).some((x) => x.gh_origin === 'card'), 'and gh_origin card in the dataLayer');
+    await ctx.close();
+  }
+  {
+    const { ctx, page } = await visitor();
+    await tap(page, day(SAT));
+    const bar = await page.$('.gh-bar__btn');
+    check(!!bar, 'the stay bar stands after the price (STAY_BAR as shipped)');
+    if (bar) {
+      await bar.click(); await page.waitForTimeout(500);
+      const b = steps(ctx, 'begin_checkout');
+      check(b.length === 1 && b[0].reason === 'bar', 'the bar\'s button: begin_checkout with reason bar');
+      check((await layer(page, 'begin_checkout')).some((x) => x.gh_origin === 'bar'), 'and gh_origin bar in the dataLayer');
+      // back to the dates and a new choice: the origin is forgotten until the next tap
+      await page.goBack(); await page.waitForTimeout(600);
+      await page.click('.gh-clear'); await page.waitForTimeout(300);
+      await tap(page, day(SAT + 7));
+      await page.evaluate(() => document.querySelector('.gh-summary .gh-cta').click());
+      await page.waitForTimeout(500);
+      const again = steps(ctx, 'begin_checkout');
+      check(again.length === 2 && again[1].reason === 'card', 'new dates, the card\'s button: reason card, not the bar\'s');
+    }
+    await ctx.close();
+  }
+
   console.log('an arrival with step=pay: pay_reopened, no start');
   {
     const { ctx, page } = await visitor({ path: '/book?checkIn=' + day(SAT) + '&checkOut=' + day(SAT + 2) + '&step=pay' });
