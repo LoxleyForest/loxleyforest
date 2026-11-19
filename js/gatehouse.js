@@ -591,7 +591,12 @@
     giftWhy: '',             // why it is not: 'missing', 'used' or 'void'
     giftSentence: '',        // the engine's own sentence for a code it cannot find
     giftRefused: null,       // {key, sentence}: dates the engine said this gift cannot cover
-    quoteGift: false         // whether the quote on screen was asked with the gift
+    quoteGift: false,        // whether the quote on screen was asked with the gift
+    // Where the Book tap came from (2026-11-19, the Chief's tap-origin route): 'card' (the priced
+    // card's own button), 'bar' (the stay bar's), or 'link' (a pay step reopened from a link); ''
+    // until a tap. Rides on begin_checkout and add_payment_info as `reason`, so starts and card
+    // forms can be read by origin; nothing a guest sees, nothing about a person.
+    origin: ''
   };
   var cal = null, quoteFor = '';
 
@@ -803,6 +808,7 @@
     if (navOnly) return render();
     state.step = 'dates';
     state.pending = null;
+    state.origin = '';       // a new choice of dates: the next tap says where it came from
     state.marker = { open: false, email: state.marker.email, done: false, error: '' };
     if (c.checkIn && c.checkOut) {
       writeUrl(false);
@@ -1100,7 +1106,7 @@
       allCovered ? null : isRequest(q) ? el('p', { 'class': 'gh-plans gh-request', role: 'note', text: requestWords(q) }) : plansLine(q),
       // The gift's own line above already says nothing is left; a credit says it here.
       allCovered ? (giftUsed(q) ? null : el('p', { 'class': 'gh-lead gh-covered', text: 'Your credit covers this stay. Nothing to pay, today or later.' })) : options,
-      el('button', { type: 'button', 'class': 'lf-btn gh-cta', onclick: function () { toCheckout(false); }, text: ctaText(q, state.payMode) }),
+      el('button', { type: 'button', 'class': 'lf-btn gh-cta', onclick: function () { state.origin = 'card'; toCheckout(false); }, text: ctaText(q, state.payMode) }),
       proof(),
       // Where js/talk.js sets its card on this step (2026-10-26): in the page's flow under the
       // Book button's row, so it never covers the total, the pay choice or the button.
@@ -1182,9 +1188,11 @@
     state.step = 'pay';
     writeUrl(!fromUrl);
     var began = cal.checkIn + '/' + cal.checkOut;
+    if (fromUrl) state.origin = 'link';
     if (!fromUrl) {
       step('begin_checkout', { value: state.quote.quote.total_cents / 100, currency: 'USD',
-        gh_mode: state.payMode, gh_check_in: cal.checkIn, gh_check_out: cal.checkOut });
+        gh_mode: state.payMode, gh_check_in: cal.checkIn, gh_check_out: cal.checkOut,
+        gh_origin: state.origin, gh_reason: state.origin });
       try { sessionStorage.setItem('gh_began', began); } catch (e) {}
     }
     // An arrival whose link carries step=pay (the address the site writes at checkout) in a visit
@@ -1499,7 +1507,8 @@
       return;
     }
     err.textContent = '';
-    step('add_payment_info', { gh_mode: state.payMode, gh_check_in: cal.checkIn, gh_check_out: cal.checkOut });
+    step('add_payment_info', { gh_mode: state.payMode, gh_check_in: cal.checkIn, gh_check_out: cal.checkOut,
+      gh_origin: state.origin, gh_reason: state.origin });
     var body = { unit: UNIT, check_in: cal.checkIn, check_out: cal.checkOut, mode: state.payMode,
       email: v.email, first_name: v.first_name, last_name: v.last_name, phone: v.phone, occasion: v.occasion,
       guests: +v.guests, dogs: +v.dogs, typed_name: v.typed_name,
@@ -1598,7 +1607,7 @@
       el('p', { 'class': 'gh-bar__dates', text: span(cal.checkIn, cal.checkOut) }),
       el('p', { 'class': 'gh-bar__total', text: 'Total ' + money(q.quote.total_cents) }),
       el('button', { type: 'button', 'class': 'lf-btn gh-cta gh-bar__btn', text: ctaText(q, state.payMode),
-        onclick: function () { track('gh_bar_reserve', { gh_unit: UNIT, gh_mode: state.payMode }); toCheckout(false); } })
+        onclick: function () { state.origin = 'bar'; track('gh_bar_reserve', { gh_unit: UNIT, gh_mode: state.payMode }); toCheckout(false); } })
     );
     bar.hidden = false;
     bar.classList.remove('is-away');
