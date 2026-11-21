@@ -253,9 +253,9 @@
     "eyebrow": "The packages",
     "heading": "Three tiers.",
     "heading_em": "One unforgettable beginning.",
-    "text": "The Vow holds a two-night treehouse stay, your choice of ceremony site, the Fire Circle or the treehouse deck, a vetted officiant, a seasonal bouquet and boutonniere, a champagne toast, and romantic room preparation.\n\nThe Crossing holds everything in The Vow, plus the rope bridge ceremony, the Builder's Tour with Mick, golden hour timing, photography coordination, a curated dinner, The Morning After, and a celebration cake.\n\nThe Elevation adds to The Crossing a floral ceremony arch, a premium welcome hamper, a celebration brunch, full day-of coordination, and photography timed to the day's best moments.\n\nEvery Loxley elopement is personally coordinated. No two ceremonies are the same.",
+    "text": "The Vow holds a two-night treehouse stay, your choice of ceremony site, the Fire Circle or the treehouse deck, a vetted officiant, a seasonal bouquet and boutonniere, a champagne toast, and romantic room preparation.\n\nThe Crossing holds everything in The Vow, plus the rope bridge ceremony, the Builder's Tour with Mick, golden hour timing, photography coordination, a curated dinner, The Morning After, and a celebration cake.\n\nFirelight holds one night in the treehouse, your vows at the Fire Circle with its fire lit for your ceremony, an officiant and photographs of your ceremony, and a bouquet, a boutonniere and a champagne toast, on Monday to Thursday nights through June 30, 2027.\n\nEvery Loxley elopement is personally coordinated. No two ceremonies are the same.",
     "sources": [
-      "loxleyforest/scripts/site/pages/elopements.py:26-50 (the packages as the live page lists them; The Elevation's \"Private chef dinner\" not repeated: a banned phrase)",
+      "loxleyforest/scripts/site/pages/elopements.py:26-50 (the packages as the live page lists them; The Elevation, off sale since 2026-10-30, left out 2026-11-21 and Firelight's card lines, Mick's yes of 2026-11-02, in its place)",
       "loxleyforest/scripts/site/pages/elopements.py:132-133"
     ]
   },
@@ -323,7 +323,7 @@
     "eyebrow": "Without the city",
     "heading": "No ballrooms.",
     "heading_em": "No receiving line.",
-    "text": "No ballrooms. No banquet chairs. No receiving line. Just two people, an ancient forest, and a ceremony as dramatic as the love that brought you here.\n\nLoxley Forest is a private home on forty-two private acres, and you are coming as our overnight guests. Your ceremony is an experience we host as part of your stay.\n\nSay your vows on the bridge, beside the Fire Circle on the forest floor, or on the private deck of your treehouse, sixty feet in the air. The Crossing and The Elevation include our signature rope bridge ceremony.",
+    "text": "No ballrooms. No banquet chairs. No receiving line. Just two people, an ancient forest, and a ceremony as dramatic as the love that brought you here.\n\nLoxley Forest is a private home on forty-two private acres, and you are coming as our overnight guests. Your ceremony is an experience we host as part of your stay.\n\nSay your vows on the bridge, beside the Fire Circle on the forest floor, or on the private deck of your treehouse, sixty feet in the air. The Crossing includes our signature rope bridge ceremony.",
     "sources": [
       "loxleyforest/scripts/site/pages/elopements.py:100",
       "loxley-rescue/canon/agreements/elopement-hosting.md:9",
