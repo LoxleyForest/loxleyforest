@@ -47,7 +47,7 @@
     "faq": [
       {
         "q": "Where can we say our vows?",
-        "a": "On the rope bridge, beside the Fire Circle on the forest floor, or on the private deck of your treehouse, sixty feet in the air. The Crossing and The Elevation include our signature rope bridge ceremony.",
+        "a": "On the rope bridge, beside the Fire Circle on the forest floor, or on the private deck of your treehouse, sixty feet in the air. The Crossing includes our signature rope bridge ceremony.",
         "sources": [
           "loxleyforest/scripts/site/pages/elopements.py:14-22",
           "loxleyforest/scripts/site/pages/elopements.py:33"
@@ -227,7 +227,7 @@
       },
       {
         "q": "Is the champagne toast in every package?",
-        "a": "Yes: The Vow holds a champagne toast, and The Crossing and The Elevation hold everything in The Vow.",
+        "a": "Yes: The Vow holds a champagne toast, and The Crossing holds everything in The Vow.",
         "sources": [
           "loxleyforest/scripts/site/pages/elopements.py:26-44"
         ]
