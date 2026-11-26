@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light only">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="theme-color" content="#121D16">
+<title>Pizza on the Sky Deck · Loxley Forest</title>
+<meta name="description" content="How to cook pizza in the Gozney Roccbox on the Loxley Forest sky deck, sauce first.">
+<meta property="og:title" content="Pizza on the Sky Deck">
+<meta property="og:description" content="A Gozney Roccbox, a sixty-foot view, and everything you need.">
+<meta property="og:site_name" content="Loxley Forest">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://loxleyforest.com/images/pizza/pizza-over-the-holler.webp">
+<meta property="og:image:alt" content="The pizza oven on the sky deck">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg">
+<link rel="preload" as="image" href="/images/pizza/pizza-over-the-holler.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300..700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#121D16; --forest:#1C2E22; --moss:#2F4A36; --sage:#6F8466;
+  --gold:#C9A24A; --gold-soft:#E7D3A0;
+  --paper:#F5F1E8; --card:#FFFDF8; --ink:#1E1E1B; --dim:#5D5B54; --faint:#8E8B82;
+  --slate:#3F4C57; --slate-soft:#E4E8EB; --line:rgba(30,30,27,.09);
+  --bark:#3B2F25;
+  color-scheme:light only;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+html,body{background-color:#F5F1E8 !important;color:#1E1E1B !important}
+body{font-family:"DM Sans",-apple-system,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--moss);text-decoration:none;border-bottom:1px solid rgba(47,74,54,.35)}
+img{display:block;max-width:100%}
+ul{list-style:none}
+
+/* HERO */
+.hero{position:relative;color:#F5F1E8;padding:64px 22px 48px;text-align:center;overflow:hidden;background-color:#121D16;min-height:min(88svh,720px);display:flex;flex-direction:column;justify-content:flex-end}
+.hero .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%;opacity:.78}
+.hero .veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,23,18,.25) 0%,rgba(14,23,18,.55) 45%,rgba(14,23,18,.94) 100%)}
+.hero .in{position:relative}
+.brand{font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
+.hero h1{font-family:"Instrument Serif",Georgia,serif;font-weight:400;font-size:clamp(44px,12vw,72px);line-height:.98;color:#FBF8F1;text-shadow:0 2px 24px rgba(0,0,0,.35)}
+.hero h1 em{color:var(--gold-soft)}
+.hero .for{font-family:"Instrument Serif",serif;font-style:italic;font-size:23px;color:rgba(251,248,241,.86);margin-top:14px}
+.hero .dates{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:rgba(251,248,241,.6);margin-top:16px}
+.hero .note{max-width:460px;margin:22px auto 0;font-size:15.5px;color:rgba(251,248,241,.8);line-height:1.6}
+.hero .down{display:block;margin:28px auto 0;width:26px;height:26px;opacity:.5;border:none}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:20;background-color:rgba(255,253,248,.94) !important;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line);display:flex;gap:6px;overflow-x:auto;padding:10px 14px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav a{flex-shrink:0;border:1px solid var(--line);border-radius:999px;padding:6px 13px;font-size:13px;font-weight:500;color:var(--dim) !important;background:transparent;transition:background .2s,color .2s}
+.nav a.on{background:var(--forest);border-color:var(--forest);color:#FBF8F1 !important}
+
+.wrap{max-width:680px;margin:0 auto;padding:0 18px}
+section{padding:40px 0 10px}
+.kicker{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--sage);font-weight:600;margin-bottom:6px}
+h2{font-family:"Instrument Serif",Georgia,serif;font-weight:400;font-size:36px;line-height:1.04;color:var(--forest);margin-bottom:10px}
+.lede{color:var(--dim);font-size:15.5px;margin-bottom:20px}
+
+/* PHOTO BANDS */
+.band{margin:0 -18px 22px;position:relative;overflow:hidden;border-radius:0}
+.band img{width:100%;height:220px;object-fit:cover}
+.band .cap{position:absolute;left:0;right:0;bottom:0;padding:34px 18px 12px;font-family:"Instrument Serif",serif;font-style:italic;font-size:17px;color:#FBF8F1;background:linear-gradient(180deg,transparent,rgba(14,23,18,.75))}
+@media(min-width:720px){.band{margin:0 0 22px;border-radius:16px}.band img{height:280px}}
+
+/* WEATHER */
+.wx{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.wxd{background-color:#FFFDF8 !important;border:1px solid var(--line);border-radius:14px;padding:14px}
+.wxd .d{font-family:"Instrument Serif",serif;font-size:22px;color:var(--forest);line-height:1}
+.wxd .dt{font-size:11.5px;color:var(--faint);margin:3px 0 10px;letter-spacing:.04em}
+.wxd .t{font-weight:600;font-size:17px}
+.wxd .s{font-size:13px;color:var(--dim);margin-top:4px;line-height:1.45}
+.wxd.storm{background-color:#3F4C57 !important;border-color:#3F4C57}
+.wxd.storm .d,.wxd.storm .t{color:#FBF8F1 !important}
+.wxd.storm .dt,.wxd.storm .s{color:rgba(251,248,241,.75) !important}
+.wxd.gold{border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}
+.tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;border-radius:999px;margin-top:8px;background:#EFE6CE;color:#6B5522}
+.wxd.storm .tag{background:rgba(255,255,255,.15);color:#FBF8F1}
+
+/* CALLOUTS */
+.call{border-left:3px solid var(--gold);background-color:#EFE9DB !important;border-radius:0 12px 12px 0;padding:14px 16px;margin:16px 0;font-size:15px;color:#2A2A25}
+.call b{color:var(--forest)}
+.call.slate{border-left-color:var(--slate);background-color:#E4E8EB !important}
+.book{background-color:#1C2E22 !important;color:#F5F1E8 !important;border-radius:16px;padding:22px 20px 18px;margin:26px 0 6px}
+.book .kicker{color:var(--gold)}
+.book h3{font-family:"Instrument Serif",serif;font-weight:400;font-size:28px;color:#FBF8F1;margin-bottom:6px}
+.book .sub{font-size:14px;color:rgba(251,248,241,.65);margin-bottom:10px}
+.book li{padding:12px 0;border-top:1px solid rgba(255,255,255,.1);font-size:15px;color:rgba(251,248,241,.88)}
+.book li b{color:#FBF8F1;display:block;font-family:"Instrument Serif",serif;font-weight:400;font-size:20px;margin-bottom:2px}
+.book .btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.btn{display:inline-block;border:1px solid rgba(231,211,160,.5);border-radius:999px;padding:7px 14px;font-size:13px;font-weight:600;color:var(--gold-soft) !important;background:rgba(255,255,255,.04)}
+.btn.solid{background:var(--gold);border-color:var(--gold);color:#1C2E22 !important}
+.lbtn{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:12.5px;font-weight:600;color:var(--moss) !important;background:#FFFDF8}
+.lbtn svg{width:11px;height:11px;vertical-align:-1px;margin-right:4px}
+
+/* DAY TIMELINE */
+.day-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:4px}
+.day-head .wxchip{font-size:12px;color:var(--faint);white-space:nowrap}
+.tl{position:relative;margin:18px 0 6px;padding-left:22px}
+.tl::before{content:"";position:absolute;left:5px;top:6px;bottom:6px;width:1px;background:var(--line)}
+.stop{position:relative;background-color:#FFFDF8 !important;border:1px solid var(--line);border-radius:14px;padding:15px 16px;margin-bottom:12px}
+.stop::before{content:"";position:absolute;left:-22px;top:20px;width:11px;height:11px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 4px #F5F1E8}
+.stop .when{font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--sage)}
+.stop h4{font-family:"Instrument Serif",serif;font-weight:400;font-size:24px;line-height:1.1;color:var(--bark);margin:3px 0 7px}
+.stop p{font-size:15px;color:var(--dim)}
+.stop p b{color:var(--ink);font-weight:600}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;align-items:center}
+.meta span{font-size:11.5px;background:#F1ECE0;color:#5A554B;border-radius:999px;padding:3px 9px}
+.meta span.hot{background:#F6E7C3;color:#6B5522;font-weight:600}
+.meta span.warn{background:#F3DCD5;color:#7A3A2A;font-weight:600}
+.alt{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-size:14px;color:var(--dim)}
+.alt b{color:var(--ink)}
+
+/* LISTS */
+.grid{display:grid;gap:10px}
+.item{background-color:#FFFDF8 !important;border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.item .top{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.item h5{font-family:"Instrument Serif",serif;font-weight:400;font-size:21px;color:var(--bark);line-height:1.15}
+.item .badge{flex-shrink:0;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6B5522;background:#F6E7C3;border-radius:999px;padding:3px 9px}
+.item p{font-size:14.5px;color:var(--dim);margin-top:5px}
+.item .hrs{font-size:12.5px;color:var(--faint);margin-top:7px}
+.item .meta{margin-top:9px}
+
+/* AT HOME */
+.home{background-color:#1C2E22 !important;color:#F5F1E8 !important;padding-bottom:30px}
+.home h2{color:#FBF8F1}
+.home .kicker{color:var(--gold)}
+.home .lede{color:rgba(251,248,241,.7)}
+.home .band .cap{color:#FBF8F1}
+.hm{border-top:1px solid rgba(255,255,255,.1);padding:14px 0}
+.hm b{display:block;font-family:"Instrument Serif",serif;font-weight:400;font-size:21px;color:var(--gold-soft);margin-bottom:3px}
+.hm p{font-size:15px;color:rgba(251,248,241,.82)}
+
+/* PACK */
+.pack{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:6px}
+.pack li{background-color:#FFFDF8 !important;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14px;color:var(--dim)}
+.pack li b{display:block;color:var(--ink);font-weight:600;font-size:14.5px}
+
+footer{background-color:#0E1712 !important;text-align:center;padding:48px 22px 56px;color:rgba(251,248,241,.6) !important}
+footer .sig{font-family:"Instrument Serif",serif;font-style:italic;font-size:28px;color:#FBF8F1;margin-bottom:10px}
+footer .btns{display:flex;justify-content:center;gap:10px;margin:16px 0 4px}
+footer .small{font-size:12px;letter-spacing:.06em;margin-top:18px;color:rgba(251,248,241,.4)}
+footer a{color:var(--gold-soft) !important;border:none}
+
+@media print{
+  .nav,.hero .down,footer .btns{display:none}
+  .hero{min-height:0;padding:40px 22px}
+  .hero .bg,.hero .veil{display:none}
+  .hero{background:#121D16 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .stop,.item,.wxd,.book,.call{break-inside:avoid}
+  .band{display:none}
+  a[href^="http"]::after{content:""}
+}
+
+/* the pizza guide: step lists, timer buttons and the timer bar */
+.steps{margin:.5em 0 0;padding-left:1.1em}
+.steps li{margin:.35em 0;line-height:1.5}
+.tbtn{margin-top:14px;width:100%;min-height:48px;border:0;border-radius:999px;background:var(--forest);color:#FBF8F1;font:600 15px/1.2 'DM Sans',system-ui,sans-serif;letter-spacing:.01em;cursor:pointer}
+.tbtn:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+body.timing{padding-bottom:150px}
+.timer{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:50;background:var(--night);color:#FBF8F1;border-radius:20px;padding:14px 18px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 12px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.timer[hidden]{display:none}
+.tl-label{font:600 12px/1 'DM Sans',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft)}
+.tl-time{grid-column:1;font:400 46px/1 'Instrument Serif',Georgia,serif;font-variant-numeric:tabular-nums}
+.tl-cue{grid-column:1;font:600 15px/1.2 'DM Sans',sans-serif;color:var(--gold);min-height:1.2em}
+.tl-btns{grid-column:2;grid-row:1 / span 3;display:flex;flex-direction:column;gap:8px}
+.tl-btns button{min-height:42px;min-width:84px;border-radius:999px;border:1px solid rgba(251,248,241,.4);background:transparent;color:#FBF8F1;font:600 14px 'DM Sans',sans-serif}
+.timer.flash{animation:flash .5s 4}
+@keyframes flash{50%{background:var(--gold);color:var(--night)}}
+@media (prefers-reduced-motion:reduce){.timer.flash{animation:none}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <img class="bg" src="/images/pizza/pizza-over-the-holler.webp" alt="" fetchpriority="high">
+  <div class="veil"></div>
+  <div class="in">
+    <div class="brand">Loxley Forest</div>
+    <h1>Pizza on<br><em>the Sky Deck</em></h1>
+    <div class="for">A Gozney Roccbox, a sixty-foot view, and everything you need</div>
+    <p class="note">Here's how to make it work, start to finish. The timers below do the counting for you.</p>
+    <a class="down" href="#kit" aria-label="Scroll to the guide"><svg viewBox="0 0 24 24" fill="none" stroke="#FBF8F1" stroke-width="1.5"><path d="M12 4v16m0 0l-6-6m6 6l6-6"/></svg></a>
+  </div>
+</header>
+
+<nav class="nav" id="nav">
+  <a href="#kit">Your kit</a>
+  <a href="#method">The method</a>
+  <a href="#remember">Remember</a>
+  <a href="#after">After</a>
+</nav>
+
+<div class="wrap">
+
+<section id="kit">
+  <div class="kicker">Before you start</div>
+  <h2>What's in your pizza kit</h2>
+  <ul class="pack">
+    <li><b>Your dough</b>Balled by hand and resting in the proofer, ready for you to roll out.</li>
+    <li><b>Parchment</b>To roll your dough out on.</li>
+    <li><b>One mini practice dough</b>Your warm-up round. More on that below.</li>
+  </ul>
+  <div class="call">You bring the sauce, the cheese and your favorite toppings. Have them out and ready before the oven gets hot, because once it's going, it goes fast.</div>
+</section>
+
+<section id="method">
+  <div class="kicker">This is the sauce-first approach</div>
+  <h2>The method</h2>
+  <p class="lede">It sounds weird. It works. Sauce goes in alone for a short first cook, then the cheese and toppings go on for the finish.</p>
+  <div class="band"><img src="/images/pizza/pizza-at-the-roccbox.webp" alt="A pepperoni pizza on the peel at the mouth of the Roccbox" loading="lazy"><div class="cap">Leopard spots and bubbling cheese. That's the one.</div></div>
+
+  <div class="tl">
+    <div class="stop">
+      <div class="when">Step 1</div>
+      <h4>Preheat</h4>
+      <p>Push in the dial and turn it to light the Roccbox, then turn it up to <b>HIGH</b>. Walk away for 15 minutes.</p>
+      <button class="tbtn" data-timer="900" data-label="Preheat">Start the 15-minute preheat</button>
+    </div>
+
+    <div class="stop">
+      <div class="when">Step 2</div>
+      <h4>Start with the mini dough</h4>
+      <p>While the oven heats, prep your small dough exactly like the steps below. This is your test run. If it comes out perfect, you just earned an appetizer. If it burns, you just learned exactly how fast this thing cooks, and you saved your real pizza. Either way, you win.</p>
+    </div>
+
+    <div class="stop">
+      <div class="when">Step 3</div>
+      <h4>Roll out your dough</h4>
+      <p>Lift a ball from the proofer onto your parchment. Press it flat from the middle out with your fingertips, then roll it out into a round. Keep it a size you can slide off the peel and turn easily. Bigger isn't better in a hot little oven.</p>
+    </div>
+
+    <div class="stop">
+      <div class="when">Step 4</div>
+      <h4>Sauce only, first cook</h4>
+      <ul class="steps">
+        <li>Spread a light coat of sauce on the dough. No cheese. No toppings. Just sauce.</li>
+        <li><b>Do the shimmy test:</b> slide the dough back and forth on the peel. If it sticks, lift the edge and work it loose before you launch. A dough that won't slide on the peel won't slide off it.</li>
+        <li>Launch it into the oven.</li>
+        <li>Cook for about 1 minute 30 seconds. Watch for the crust to rise and color at the back.</li>
+      </ul>
+      <button class="tbtn" data-timer="90" data-label="First cook">Start the 1:30 first cook</button>
+    </div>
+
+    <div class="stop">
+      <div class="when">Step 5</div>
+      <h4>Pull it out and dress it</h4>
+      <ul class="steps">
+        <li>Add cheese. Less than you think, about half what your instincts say.</li>
+        <li>Add your toppings.</li>
+        <li>Turn the flame down to <b>HALF</b>. This prevents burnt toppings and raw bottoms.</li>
+      </ul>
+    </div>
+
+    <div class="stop">
+      <div class="when">Step 6</div>
+      <h4>Back in, rotate as you go</h4>
+      <ul class="steps">
+        <li>Slide the dressed pizza back into the oven.</li>
+        <li>Wait for the crust to rise and color before your first turn.</li>
+        <li>Every 20 to 30 seconds, use the small turning peel to rotate it.</li>
+        <li>Total time: no more than 2 minutes.</li>
+        <li>You're watching for leopard spots on the crust and bubbly, golden cheese. When you see it, trust your eyes.</li>
+      </ul>
+      <button class="tbtn" data-timer="120" data-turn="25" data-label="Finish">Start the 2-minute finish, with a turn cue every 25 seconds</button>
+    </div>
+
+    <div class="stop">
+      <div class="when">Step 7</div>
+      <h4>Pull and repeat</h4>
+      <ul class="steps">
+        <li>Remove it with the large peel.</li>
+        <li>Turn the oven back to <b>HIGH</b> for the next pizza. That keeps the stone hot.</li>
+      </ul>
+    </div>
+
+    <div class="stop">
+      <div class="when">Step 8</div>
+      <h4>Slice. Eat. Enjoy the view.</h4>
+      <p>Sixty feet up, with the forest going quiet around you and the fire table glowing. This is the whole point.</p>
+    </div>
+  </div>
+</section>
+
+<section id="remember">
+  <div class="kicker">Worth remembering</div>
+  <h2>Things to remember</h2>
+  <ul class="pack">
+    <li><b>The mini dough is your tuition</b>Use it first.</li>
+    <li><b>Don't rotate too early</b>Wait for color and rise at the back.</li>
+    <li><b>Half the cheese you think</b>It's the most common way to sink a pizza.</li>
+    <li><b>About 3½ to 5 minutes</b>From launch to eating, with this method.</li>
+    <li><b>Any shape you like</b>Nobody said it has to be round. A heart works.</li>
+  </ul>
+  <div class="call slate"><b>The oven is hot all over.</b> The outside of the Roccbox and the stone stay hot long after the flame is out. Keep little hands back, use the peels, and never leave it burning unattended.</div>
+</section>
+
+<div class="band"><img src="/images/pizza/pizza-by-the-fire-table.webp" alt="A pizza on a plate beside the fire table on the sky deck in fall" loading="lazy"><div class="cap">Dinner at the fire table, sixty feet up.</div></div>
+
+<section id="after">
+  <div class="kicker">When you're done</div>
+  <h2>Shutting down</h2>
+  <p class="lede">Push in the dial and turn it back to off. Let the oven cool on its own with the peels set aside, and leave the stone where it is. A wipe of the counter, and you're back to the view.</p>
+</section>
+
+</div>
+
+<footer>
+  <div class="sig">Fire, flour, and sixty feet of air.</div>
+  <p>Questions while you're cooking? We're a text away.</p>
+  <div class="btns"><a class="btn solid" href="sms:7065024823">Text us</a><a class="btn" href="tel:7065024823">Call</a></div>
+  <div class="small">LOXLEY FOREST · DAHLONEGA, GEORGIA</div>
+</footer>
+
+<!-- the timer bar: one countdown at a time, a tone and a buzz at the end, and a turn cue for the finish -->
+<div class="timer" id="timer" hidden>
+  <div class="tl-label" id="tlabel">Preheat</div>
+  <div class="tl-time" id="ttime">15:00</div>
+  <div class="tl-cue" id="tcue"></div>
+  <div class="tl-btns"><button id="tpause">Pause</button><button id="tstop">Done</button></div>
+</div>
+
+<script>
+(function(){
+  // Timers that count for you. A tone and a buzz at the end; during the finish, a "Turn it" cue
+  // every 25 seconds. Sound needs a tap first, which the start button is.
+  var bar=document.getElementById('timer'), lab=document.getElementById('tlabel'), tm=document.getElementById('ttime'),
+      cue=document.getElementById('tcue'), pauseB=document.getElementById('tpause'), stopB=document.getElementById('tstop');
+  var end=0, left=0, every=0, nextTurn=0, tick=null, paused=false, ac=null, lock=null;
+  function fmt(s){s=Math.max(0,Math.ceil(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+  function beep(n){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();for(var i=0;i<n;i++){var o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime+i*.28;o.frequency.value=880;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.35,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+.22);o.connect(g).connect(ac.destination);o.start(t);o.stop(t+.24);}}catch(e){}
+    try{navigator.vibrate&&navigator.vibrate(n>1?[200,100,200,100,400]:150);}catch(e){}}
+  function flash(){bar.classList.remove('flash');void bar.offsetWidth;bar.classList.add('flash');}
+  function step(){
+    var now=Date.now(), rem=(end-now)/1000;
+    tm.textContent=fmt(rem);
+    if(every&&now>=nextTurn&&rem>1){cue.textContent='Turn it now';beep(1);flash();nextTurn+=every*1000;setTimeout(function(){if(cue.textContent==='Turn it now')cue.textContent='';},4000);}
+    if(rem<=0){clearInterval(tick);tick=null;tm.textContent='0:00';cue.textContent=lab.dataset.done||'Time';beep(3);flash();release();}
+  }
+  function release(){try{lock&&lock.release();}catch(e){}lock=null;}
+  function start(secs,label,turn){
+    clearInterval(tick);paused=false;pauseB.textContent='Pause';
+    end=Date.now()+secs*1000;every=turn||0;nextTurn=Date.now()+every*1000;
+    lab.textContent=label;lab.dataset.done=label==='Preheat'?'Hot and ready':label==='First cook'?'Pull it out and dress it':'Check it and pull it';
+    cue.textContent=every?'Wait for color at the back before the first turn':'';
+    bar.hidden=false;document.body.classList.add('timing');beep(0);step();tick=setInterval(step,250);
+    try{navigator.wakeLock&&navigator.wakeLock.request('screen').then(function(l){lock=l;}).catch(function(){});}catch(e){}
+  }
+  document.querySelectorAll('.tbtn').forEach(function(b){b.addEventListener('click',function(){start(+b.dataset.timer,b.dataset.label,+(b.dataset.turn||0));});});
+  pauseB.addEventListener('click',function(){
+    if(!tick&&!paused)return;
+    if(!paused){left=(end-Date.now())/1000;clearInterval(tick);tick=null;paused=true;pauseB.textContent='Resume';}
+    else{end=Date.now()+left*1000;nextTurn=Date.now()+every*1000;paused=false;pauseB.textContent='Pause';tick=setInterval(step,250);}
+  });
+  stopB.addEventListener('click',function(){clearInterval(tick);tick=null;bar.hidden=true;document.body.classList.remove('timing');release();});
+  // light up the nav pill for the section in view
+  var links=[].slice.call(document.querySelectorAll('#nav a'));
+  if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){links.forEach(function(a){a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id);});}});},{rootMargin:'-45% 0px -50% 0px'});
+    links.forEach(function(a){var s=document.querySelector(a.getAttribute('href'));if(s)io.observe(s);});}
+})();
+</script>
+</body>
+</html>
