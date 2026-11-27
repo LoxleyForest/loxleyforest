@@ -652,8 +652,9 @@
   }
 
   // The check-in date rides on these three (the flywheel contract, 2026-10-20), so weekends and
-  // weeknights can be told apart.
-  var WITH_CHECK_IN = { dates_chosen: 1, begin_checkout: 1, add_payment_info: 1, handoff: 1, quote_shown: 1, pay_reopened: 1 };
+  // weeknights can be told apart; and on a refusal (the Chief, 2026-11-26), so the nights asked for
+  // and refused can be read against the nights open. A date only, never who asked.
+  var WITH_CHECK_IN = { dates_chosen: 1, begin_checkout: 1, add_payment_info: 1, handoff: 1, quote_shown: 1, pay_reopened: 1, quote_refused: 1 };
   // Microsoft Clarity, when the Tag Manager has loaded it: a custom event and its tags, so the two
   // counters that matter this week (quote_shown, script_error) can be read there by browser before
   // the engine's step list changes. Nothing when Clarity is not on the page.
@@ -679,7 +680,7 @@
     }
     return 'other';
   }
-  function refused(why, ci) { step('gh_quote_refused', { gh_reason: refusedCode(why, ci) }); }
+  function refused(why, ci) { step('gh_quote_refused', { gh_reason: refusedCode(why, ci), gh_check_in: ci || '' }); }
 
   function step(event, data) {
     data = data || {};
