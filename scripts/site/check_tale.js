@@ -14,15 +14,19 @@
    embedded); a Content-Security-Policy with connect-src 'none' and form-action 'none'; no form
    element; no fetch, XHR, sendBeacon, WebSocket, localStorage, sessionStorage, indexedDB or cookie
    in the script; the file input reads images only; the words block holds twelve pages with the four
-   blanks only, its mark says whose the words are and the ribbon stands until they are approved; the
-   invented couple alone is in the file; none of the words the rules forbid. And in the browser, at
-   390 px and 1280 px: no sideways scroll; twelve pages in reading order with the couple, the date and
-   the minute in words; the stone's words and a tap on the map reach page 8; eight drawn photographs
-   fill their slots and a ninth is refused; the Sky Deck switch swaps pages 4 to 11 and drops the map;
-   the tag unticked drops page 10 and keeps twelve pages with a blank inside back cover; the book
-   prints as six landscape letter sheets in the folded order in every state; a fetch is refused by the
-   policy; no storage is written and no request leaves for any host but the page's own; Start over
-   clears it all; no script errors. */
+   blanks only, its mark says whose the words are and the ribbon stands until they are approved;
+   every input ships empty with autocomplete off and no name at all is in the file (the check types
+   the invented couple); netlify.toml sends the policy as a header for the private path, with
+   frame-ancestors 'none' and X-Robots-Tag noindex; none of the words the rules forbid. And in the
+   browser, at 390 px and 1280 px: the page opens empty; twelve pages in reading order with the typed
+   couple, the date and the minute in words; the stone's words and a tap on the map reach page 8;
+   eight drawn photographs fill their slots and a ninth is refused; the Sky Deck switch swaps pages
+   4 to 11 and drops the map; no stone set puts the walk home on page 8 and the door on page 9; the
+   tag unticked drops page 10 and keeps twelve pages with a blank inside back cover; the book prints
+   as six landscape letter sheets in the folded order in every state; a fetch is refused by the
+   policy; no storage is written and, after load, no request leaves for any host, the page's own
+   included; Start over clears it all; a reload keeps nothing and leaves the inputs and the book
+   agreeing; no script errors. */
 'use strict';
 const http = require('http');
 const fs = require('fs');
@@ -91,7 +95,7 @@ async function main() {
   check(/connect-src 'none'/.test(csp) && /form-action 'none'/.test(csp) && /default-src 'none'/.test(csp), 'a Content-Security-Policy with connect-src none and form-action none');
   check(!/<form\b/i.test(NO_COMMENTS), 'no form element');
   check(!/\bfetch\s*\(|XMLHttpRequest|sendBeacon|WebSocket|EventSource|localStorage|sessionStorage|indexedDB|document\.cookie|navigator\.share|\.submit\(/.test(SCRIPT), 'the script never fetches, posts, beacons or stores');
-  check(/<input id="files" type="file" accept="image\/\*" multiple>/.test(HTML) && /createObjectURL/.test(SCRIPT) && /revokeObjectURL/.test(SCRIPT), 'photographs are read in the page as object URLs and freed');
+  check(/<input id="files" type="file" accept="image\/\*" autocomplete="off" multiple>/.test(HTML) && /createObjectURL/.test(SCRIPT) && /revokeObjectURL/.test(SCRIPT), 'photographs are read in the page as object URLs and freed');
   let words = null;
   try { words = JSON.parse(WORDS_TEXT); } catch (e) {}
   check(!!words && Array.isArray(words.fire) && words.fire.length === 12, 'the words block holds twelve pages');
@@ -102,7 +106,14 @@ async function main() {
   check(words && words.mark !== 'approved' ? /id="ribbon"/.test(HTML) && new RegExp('<body data-words="' + words.mark + '">').test(HTML) : !/id="ribbon"/.test(HTML), 'the mark says whose the words are (' + (words && words.mark) + ') and the ribbon stands until they are approved');
   const hash = crypto.createHash('sha256').update(canon(words), 'utf8').digest('hex');
   console.log('  words sha256: ' + hash);
-  check(/value="Ada"/.test(HTML) && /value="Hollis"/.test(HTML) && /name1: 'Ada', name2: 'Hollis'/.test(SCRIPT), 'the invented couple alone is in the file');
+  const inputs = HTML.match(/<input\b[^>]*>/g) || [];
+  check(inputs.length >= 10 && inputs.every((t) => /autocomplete="off"/.test(t)) && inputs.filter((t) => /type="(text|date|time)"/.test(t)).every((t) => !/\svalue=/.test(t)) && /name1: '', name2: '', date: '', minute: ''/.test(SCRIPT),
+    'every input ships empty, with autocomplete off (' + inputs.length + ' inputs); the check types the invented couple');
+  check(!/Ada|Hollis|Juniper|Teodor/.test(NO_COMMENTS), 'no name at all is in the file, invented or otherwise');
+  const TOML = fs.readFileSync(path.join(ROOT, 'netlify.toml'), 'utf8');
+  const hdr = TOML.split('[[headers]]').find((b) => b.includes('for = "/private/' + DIR + '/*"')) || '';
+  check(/frame-ancestors 'none'/.test(hdr) && /connect-src 'none'/.test(hdr) && /form-action 'none'/.test(hdr) && /default-src 'none'/.test(hdr) && /X-Robots-Tag = "noindex/.test(hdr),
+    'netlify.toml sends the policy as a header for the private path, with frame-ancestors none, and X-Robots-Tag noindex');
   const text = NO_COMMENTS.replace(/<script>[\s\S]*?<\/script>/, '').replace(/<style>[\s\S]*?<\/style>/, '').replace(/<[^>]+>/g, ' ');
   check(!/\bhorn\b|\bmead\b|\banvil\b|\bbound\b|plant(ed)? a tree|\byour tree\b|\bOdin\b|\bThor\b|\bLoki\b/i.test(text + ' ' + allText), 'none of the words the rules forbid (cast names, horn, mead, anvil, bound, a tree)');
   check(!/[–—]/.test(text + allText), 'no em dash in the words');
@@ -114,9 +125,11 @@ async function main() {
   for (const width of [390, 1280]) {
     console.log('in the browser, ' + width + ' px');
     const ctx = await browser.newContext(width < 768 ? { viewport: { width, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 } : { viewport: { width, height: 900 } });
-    const outside = [], errors = [];
+    const outside = [], after = [], errors = [];
+    let loaded = false;
     await ctx.route('**/*', (route) => {
       const u = new URL(route.request().url());
+      if (loaded) after.push(u.host + u.pathname);   // after load nothing may be asked of any host, the page's own included
       if (u.origin === base) return route.continue();
       outside.push(u.hostname + u.pathname);
       return route.abort();
@@ -125,13 +138,16 @@ async function main() {
     page.on('pageerror', (e) => errors.push(String(e.message)));
     await page.goto(base + PAGE, { waitUntil: 'load' });
     await page.waitForTimeout(400);
+    loaded = true;
     const read = () => page.evaluate(() => {
       const pg = (n) => document.querySelector('#pages .pg[data-page="' + n + '"]');
       const t = (n) => (pg(n) || { textContent: '' }).textContent.replace(/\s+/g, ' ').trim();
       return {
         sw: document.documentElement.scrollWidth, w: innerWidth,
         pages: [...document.querySelectorAll('#pages .pg')].map((p) => p.getAttribute('data-page')),
-        cover: t(1), p4: t(4), p6: t(6), p8: t(8), p10: t(10), p11: t(11), p12: t(12),
+        cover: t(1), p4: t(4), p6: t(6), p8: t(8), p9: t(9), p10: t(10), p11: t(11), p12: t(12),
+        bigName: ((pg(1) && pg(1).querySelector('.big')) || { textContent: '' }).textContent.trim(),
+        inputs: ['name1', 'name2', 'date', 'minute', 'stone'].map((id) => document.getElementById(id).value).join(''),
         eyebrows: [...document.querySelectorAll('#pages .pg .ey')].map((e) => e.textContent),
         stoneMarks: document.querySelectorAll('#pages .pg[data-page="8"] .mapwrap svg g').length,
         mapOn8: !!(pg(8) && pg(8).querySelector('.mapwrap')),
@@ -145,6 +161,12 @@ async function main() {
       };
     });
     let s = await read();
+    check(s.inputs === '' && s.bigName === '' && s.thumbs === 0, 'the page opens empty: no name, date, minute or photograph ships in it');
+    // the invented couple is typed here, never written in the file
+    await page.fill('#name1', 'Ada'); await page.fill('#name2', 'Hollis');
+    await page.fill('#date', '2026-12-12'); await page.fill('#minute', '17:17');
+    await page.waitForTimeout(200);
+    s = await read();
     check(s.sw <= s.w, 'no sideways scroll (' + s.sw + ' of ' + s.w + ')');
     check(s.pages.join(',') === '1,2,3,4,5,6,7,8,9,10,11,12', 'twelve pages in reading order on screen');
     check(/Ada & Hollis/.test(s.cover) && /Saturday, December 12, 2026/.test(s.cover) && /by the family who built the place/.test(s.cover), 'the cover carries the invented couple, the date in words and the Writer\'s line');
@@ -204,10 +226,13 @@ async function main() {
     check(pdfPages(pdfSky) === 6, 'and the Sky Deck book prints as six sheets');
     await page.check('#site-fire'); await page.waitForTimeout(250);
 
-    // no stone set (the Writer's note): page 8 takes the door page, the map goes, the fire pages stand
+    // no stone set (the Writer's note, the Critic's order): the walk home moves up to page 8 and the
+    // door page is page 9, so they walk home and then go in; the map goes; the fire pages stand
     await page.uncheck('#stoneset'); await page.waitForTimeout(250);
     s = await read();
-    check(/The door/.test(s.p8) && /oak handle there is burnished/.test(s.p8) && !s.mapOn8 && /It caught at 4:58 in the afternoon/.test(s.p6), 'no stone set: page 8 is the door, no map, and the fire pages stand');
+    check(/^The walk home/.test(s.p8) && /walked back to the treehouse, married/.test(s.p8) && !s.mapOn8 && /^The door/.test(s.p9) && /oak handle there is burnished/.test(s.p9) && /It caught at 4:58 in the afternoon/.test(s.p6),
+      'no stone set: page 8 is the walk home and page 9 the door, in that order, no map, the fire pages stand');
+    check(s.photosOnPages === 8, 'and the eight photographs keep their places');
     check(await page.evaluate(() => document.getElementById('stonefields').hidden), 'the stone fields step aside');
     check(pdfPages(await page.pdf({ format: 'Letter', landscape: true, printBackground: true, preferCSSPageSize: true })) === 6, 'and it prints as six sheets');
     await page.check('#stoneset'); await page.waitForTimeout(250);
@@ -239,6 +264,17 @@ async function main() {
     await page.waitForTimeout(200);
     s = await read();
     check(s.thumbs === 0 && s.photosOnPages === 0 && s.stoneMarks === 0 && !/Juniper/.test(s.cover), 'Start over clears the couple, the stone and the photographs');
+
+    // a reload in the middle of a night: nothing kept, and the inputs and the book agree (both empty)
+    await page.fill('#name1', 'Juniper'); await page.fill('#date', '2026-12-17'); await page.uncheck('#tag');
+    await page.setInputFiles('#files', PHOTOS.slice(0, 2)); await page.waitForTimeout(300);
+    const askedBeforeReload = after.length;
+    loaded = false;
+    await page.reload({ waitUntil: 'load' }); await page.waitForTimeout(400);
+    loaded = true;
+    s = await read();
+    check(s.inputs === '' && s.bigName === '' && s.thumbs === 0 && s.photosOnPages === 0 && /The tag/.test(s.p10) && (await page.isChecked('#tag')), 'after a reload nothing is kept, and the inputs and the book agree');
+    check(askedBeforeReload === 0 && after.length === 0, 'after load no request left for any host, the page\'s own included' + (after.length ? ' (' + after.slice(0, 3).join(', ') + ')' : ''));
     check(errors.filter((e) => !/Content Security Policy|Refused to connect/.test(e)).length === 0, 'no script errors' + (errors.length ? ' (' + errors.join('; ') + ')' : ''));
     await ctx.close();
   }

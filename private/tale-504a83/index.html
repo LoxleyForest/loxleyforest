@@ -23,8 +23,11 @@
   kept. No form element, no fetch, no XHR, no sendBeacon, no storage, no analytics, no Tag Manager;
   the Content-Security-Policy above refuses every connection and every form post; photographs are
   read only in the page (object URLs) and freed when removed. No outside address: the fonts are
-  embedded. Unlisted: noindex, a random folder name, robots.txt keeps /private/ out of search. The
-  repo and this file hold only an invented couple; no real name goes in the file or the address.
+  embedded; netlify.toml sends the same policy as a header for this folder, with frame-ancestors
+  'none' and X-Robots-Tag noindex (the Critic's round, 2026-11-27). Unlisted: noindex, a random
+  folder name, robots.txt keeps /private/ out of search. Every input ships empty, with autocomplete
+  off, and is set from the page's own state on load; no name at all is in the file or the address
+  (the check types an invented couple).
 
   THE WORDS are the Writer's of 2026-11-26 (chief docs/drafts/2026-11-26-writer-tale-on-the-pillow.md),
   in the words block below, not yet Mick's by hash nor read by the Critic: the block's "mark" says so
@@ -131,37 +134,37 @@
         <p class="quiet">Fill it in by the fire or on the walk back. Everything below stays on this phone.</p>
 
         <div class="two">
-          <label class="f"><b>First name</b><input id="name1" type="text" autocomplete="off" autocapitalize="words" spellcheck="false" value="Ada"></label>
-          <label class="f"><b>First name</b><input id="name2" type="text" autocomplete="off" autocapitalize="words" spellcheck="false" value="Hollis"></label>
+          <label class="f"><b>First name</b><input id="name1" type="text" autocomplete="off" autocapitalize="words" spellcheck="false"></label>
+          <label class="f"><b>First name</b><input id="name2" type="text" autocomplete="off" autocapitalize="words" spellcheck="false"></label>
         </div>
         <div class="two">
-          <label class="f"><b>The date</b><input id="date" type="date" value="2026-12-12"></label>
-          <label class="f"><b>The minute</b><input id="minute" type="time" value="17:17"><small>When the fire caught; on the Sky Deck, when they were married.</small></label>
+          <label class="f"><b>The date</b><input id="date" type="date" autocomplete="off"></label>
+          <label class="f"><b>The minute</b><input id="minute" type="time" autocomplete="off"><small>When the fire caught; on the Sky Deck, when they were married.</small></label>
         </div>
 
         <label class="f"><b>Where they said their vows</b></label>
         <div class="choice" role="radiogroup" aria-label="Where they said their vows">
-          <label><input type="radio" name="site" id="site-fire" value="fire" checked> The Fire Circle</label>
-          <label><input type="radio" name="site" id="site-sky" value="sky"> The Sky Deck</label>
+          <label><input type="radio" name="site" id="site-fire" value="fire" autocomplete="off" checked> The Fire Circle</label>
+          <label><input type="radio" name="site" id="site-sky" value="sky" autocomplete="off"> The Sky Deck</label>
         </div>
 
         <div class="choice">
-          <label><input type="checkbox" id="stoneset" checked> A stone was set</label>
+          <label><input type="checkbox" id="stoneset" autocomplete="off" checked> A stone was set</label>
         </div>
         <div id="stonefields">
-          <label class="f"><b>The last stone</b><input id="stone" type="text" autocomplete="off" spellcheck="false" placeholder="where they set it, in a few words" value="">
+          <label class="f"><b>The last stone</b><input id="stone" type="text" autocomplete="off" spellcheck="false" placeholder="where they set it, in a few words">
             <small>A few words for the book, then tap the map where they set it, between the bridge and the Fire Circle. Tap again to move it.</small>
           </label>
           <div id="mapfill"></div>
         </div>
 
         <div class="choice" style="margin-top:18px">
-          <label><input type="checkbox" id="tag" checked> The tag was given</label>
+          <label><input type="checkbox" id="tag" autocomplete="off" checked> The tag was given</label>
         </div>
 
         <label class="f"><b>The photographs</b><small>Up to eight from this phone. They are read here and never sent anywhere. The book stands with none.</small></label>
         <div class="photos" id="thumbs"></div>
-        <label class="pick">Pick photographs<input id="files" type="file" accept="image/*" multiple></label><span class="count" id="count">0 of 8</span>
+        <label class="pick">Pick photographs<input id="files" type="file" accept="image/*" autocomplete="off" multiple></label><span class="count" id="count">0 of 8</span>
 
         <button class="btn" type="button" id="print">Print the book</button>
         <button class="btn ghost" type="button" id="reset">Start over</button>
@@ -214,8 +217,9 @@
   'use strict';
   var MAX = 8;
   var WORDS = JSON.parse(document.getElementById('tale-words').textContent);
-  // The invented couple ships in the file; a real one is typed on the night and never written anywhere.
-  var state = { name1: 'Ada', name2: 'Hollis', date: '2026-12-12', minute: '17:17', stoneWords: '', stone: null, stoneSet: true, site: 'fire', tag: true, photos: [] };
+  // The inputs ship empty (no couple, no date, not even an invented one); the night's are typed here
+  // and never written anywhere.
+  var state = { name1: '', name2: '', date: '', minute: '', stoneWords: '', stone: null, stoneSet: true, site: 'fire', tag: true, photos: [] };
   var $ = function (id) { return document.getElementById(id); };
   var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
 
@@ -260,12 +264,16 @@
     return p ? '<div class="photo' + (cls ? ' ' + cls : '') + '"><img src="' + p.url + '" alt=""></div>' : '';
   }
 
-  // The twelve pages for the night's site; no stone set, page 8 takes the Sky Deck's door page (the
-  // Writer's note); the tag page dropped on the switch, a blank inside back cover keeping the fold
-  // at twelve.
+  // The twelve pages for the night's site. No stone set on a Fire Circle night (the Writer's note):
+  // the stone page goes, the walk home moves up to page 8 and the Sky Deck's door page is page 9,
+  // so they walk home and then go in (the Critic, 2026-11-27); the photographs keep their places.
+  // The tag page dropped on its switch, a blank inside back cover keeping the fold at twelve.
   function pageSet() {
     var set = WORDS.fire.map(function (pg) { return state.site === 'sky' && WORDS.sky[String(pg.n)] ? WORDS.sky[String(pg.n)] : pg; });
-    if (state.site === 'fire' && !state.stoneSet) set = set.map(function (pg) { return pg.n === 8 ? WORDS.sky['8'] : pg; });
+    if (state.site === 'fire' && !state.stoneSet) {
+      var walk = Object.assign({}, WORDS.fire[8], { slot: 7 }), door = Object.assign({}, WORDS.sky['8'], { slot: 8 });
+      set = set.map(function (pg) { return pg.n === 8 ? walk : pg.n === 9 ? door : pg; });
+    }
     if (!state.tag) {
       set = set.filter(function (pg) { return !pg.tag; });
       set.splice(set.length - 1, 0, WORDS.blank);
@@ -341,14 +349,20 @@
     render();
   });
   $('print').addEventListener('click', function () { window.print(); });
+  // The inputs are set from the page's own state, on load and on Start over, so a browser bringing
+  // fields back after a reload cannot split what they show from the book.
+  function sync() {
+    ['name1', 'name2', 'date', 'minute'].forEach(function (id) { $(id).value = state[id]; });
+    $('stone').value = state.stoneWords;
+    $('site-fire').checked = state.site === 'fire'; $('site-sky').checked = state.site === 'sky';
+    $('stoneset').checked = state.stoneSet; $('tag').checked = state.tag;
+  }
   $('reset').addEventListener('click', function () {
     state.photos.forEach(function (p) { try { URL.revokeObjectURL(p.url); } catch (err) {} });
     state = { name1: '', name2: '', date: '', minute: '', stoneWords: '', stone: null, stoneSet: true, site: 'fire', tag: true, photos: [] };
-    ['name1', 'name2', 'date', 'minute', 'stone'].forEach(function (id) { $(id).value = ''; });
-    $('site-fire').checked = true; $('stoneset').checked = true; $('tag').checked = true;
-    render();
+    sync(); render();
   });
-  render();
+  sync(); render();
 })();
 </script>
 </body>

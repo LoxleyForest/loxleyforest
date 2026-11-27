@@ -48,6 +48,17 @@
   to = "/book"
   status = 301
 
+# The Tale on the pillow (private/tale-504a83/, the Critic's round of 2026-11-27): the page's own
+# security policy sent as a header too, with frame-ancestors 'none' (no meta tag can set it, so no
+# other site may frame the page), and X-Robots-Tag noindex beside the page's meta. Nothing but the
+# page lives in that folder. scripts/site/check_tale.js reads this block.
+[[headers]]
+  for = "/private/tale-504a83/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'none'; img-src 'self' blob: data:; style-src 'unsafe-inline'; script-src 'unsafe-inline'; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-ancestors 'none'"
+    X-Robots-Tag = "noindex, nofollow, noarchive"
+    Referrer-Policy = "no-referrer"
+
 # The Golden Arrow's card (2026-10-25): /gift/card#code=... is gift-card.html, kept at the root
 # so ensure_gtm.py and the root checks see it. A rewrite (200), so the address stays /gift/card.
 [[redirects]]
