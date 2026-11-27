@@ -204,6 +204,15 @@ async function main() {
     check(pdfPages(pdfSky) === 6, 'and the Sky Deck book prints as six sheets');
     await page.check('#site-fire'); await page.waitForTimeout(250);
 
+    // no stone set (the Writer's note): page 8 takes the door page, the map goes, the fire pages stand
+    await page.uncheck('#stoneset'); await page.waitForTimeout(250);
+    s = await read();
+    check(/The door/.test(s.p8) && /oak handle there is burnished/.test(s.p8) && !s.mapOn8 && /It caught at 4:58 in the afternoon/.test(s.p6), 'no stone set: page 8 is the door, no map, and the fire pages stand');
+    check(await page.evaluate(() => document.getElementById('stonefields').hidden), 'the stone fields step aside');
+    check(pdfPages(await page.pdf({ format: 'Letter', landscape: true, printBackground: true, preferCSSPageSize: true })) === 6, 'and it prints as six sheets');
+    await page.check('#stoneset'); await page.waitForTimeout(250);
+    check(/the wall the oak broke: beside the lantern, under the gap\./.test((await read()).p8), 'ticked again, the stone and its words are back');
+
     // the tag unticked: page 10 goes, a blank inside back cover keeps the fold
     await page.uncheck('#tag'); await page.waitForTimeout(250);
     s = await read();

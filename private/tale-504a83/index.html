@@ -15,8 +15,8 @@
   table of 2026-11-25; the Wonderwright's scene of 2026-11-21). On a wedding night Mick or Livy opens
   this on their own phone, types the couple's first names, the date, the minute their fire caught and
   where they set the last stone, marks the stone on a drawn map from the bridge to the Fire Circle,
-  picks up to eight photographs from the phone, chooses the site (the Fire Circle or the Sky Deck) and
-  whether the tag was given. The page lays out a 12-page booklet that prints on three sheets of letter
+  picks up to eight photographs from the phone, chooses the site (the Fire Circle or the Sky Deck),
+  whether a stone was set and whether the tag was given. The page lays out a 12-page booklet that prints on three sheets of letter
   paper, both sides, folded in half. It stands with no photographs too.
 
   The hard rules, held by scripts/site/check_tale.js: nothing typed or picked leaves the phone or is
@@ -145,6 +145,9 @@
           <label><input type="radio" name="site" id="site-sky" value="sky"> The Sky Deck</label>
         </div>
 
+        <div class="choice">
+          <label><input type="checkbox" id="stoneset" checked> A stone was set</label>
+        </div>
         <div id="stonefields">
           <label class="f"><b>The last stone</b><input id="stone" type="text" autocomplete="off" spellcheck="false" placeholder="where they set it, in a few words" value="">
             <small>A few words for the book, then tap the map where they set it, between the bridge and the Fire Circle. Tap again to move it.</small>
@@ -212,7 +215,7 @@
   var MAX = 8;
   var WORDS = JSON.parse(document.getElementById('tale-words').textContent);
   // The invented couple ships in the file; a real one is typed on the night and never written anywhere.
-  var state = { name1: 'Ada', name2: 'Hollis', date: '2026-12-12', minute: '17:17', stoneWords: '', stone: null, site: 'fire', tag: true, photos: [] };
+  var state = { name1: 'Ada', name2: 'Hollis', date: '2026-12-12', minute: '17:17', stoneWords: '', stone: null, stoneSet: true, site: 'fire', tag: true, photos: [] };
   var $ = function (id) { return document.getElementById(id); };
   var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
 
@@ -257,10 +260,12 @@
     return p ? '<div class="photo' + (cls ? ' ' + cls : '') + '"><img src="' + p.url + '" alt=""></div>' : '';
   }
 
-  // The twelve pages for the night's site; the tag page dropped on the switch, a blank inside back
-  // cover keeping the fold at twelve.
+  // The twelve pages for the night's site; no stone set, page 8 takes the Sky Deck's door page (the
+  // Writer's note); the tag page dropped on the switch, a blank inside back cover keeping the fold
+  // at twelve.
   function pageSet() {
     var set = WORDS.fire.map(function (pg) { return state.site === 'sky' && WORDS.sky[String(pg.n)] ? WORDS.sky[String(pg.n)] : pg; });
+    if (state.site === 'fire' && !state.stoneSet) set = set.map(function (pg) { return pg.n === 8 ? WORDS.sky['8'] : pg; });
     if (!state.tag) {
       set = set.filter(function (pg) { return !pg.tag; });
       set.splice(set.length - 1, 0, WORDS.blank);
@@ -291,7 +296,8 @@
     var press = '';
     FOLD.forEach(function (pair) { press += '<div class="sh">' + pageHtml(set, pair[0]) + pageHtml(set, pair[1]) + '</div>'; });
     $('press').innerHTML = press;
-    $('stonefields').hidden = state.site !== 'fire';
+    $('stonefields').hidden = state.site !== 'fire' || !state.stoneSet;
+    $('stoneset').parentNode.parentNode.hidden = state.site !== 'fire';
     $('mapfill').innerHTML = mapSvg(state.stone, true);
     $('map').addEventListener('click', onMap);
     $('map').addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); state.stone = state.stone || { x: 160, y: 110 }; render(); } });
@@ -314,6 +320,7 @@
   ['site-fire', 'site-sky'].forEach(function (id) {
     $(id).addEventListener('change', function () { state.site = $('site-sky').checked ? 'sky' : 'fire'; render(); });
   });
+  $('stoneset').addEventListener('change', function (e) { state.stoneSet = !!e.target.checked; render(); });
   $('tag').addEventListener('change', function (e) { state.tag = !!e.target.checked; render(); });
   $('files').addEventListener('change', function (e) {
     var files = Array.prototype.slice.call(e.target.files || []);
@@ -336,9 +343,9 @@
   $('print').addEventListener('click', function () { window.print(); });
   $('reset').addEventListener('click', function () {
     state.photos.forEach(function (p) { try { URL.revokeObjectURL(p.url); } catch (err) {} });
-    state = { name1: '', name2: '', date: '', minute: '', stoneWords: '', stone: null, site: 'fire', tag: true, photos: [] };
+    state = { name1: '', name2: '', date: '', minute: '', stoneWords: '', stone: null, stoneSet: true, site: 'fire', tag: true, photos: [] };
     ['name1', 'name2', 'date', 'minute', 'stone'].forEach(function (id) { $(id).value = ''; });
-    $('site-fire').checked = true; $('tag').checked = true;
+    $('site-fire').checked = true; $('stoneset').checked = true; $('tag').checked = true;
     render();
   });
   render();
