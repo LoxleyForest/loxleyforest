@@ -26,7 +26,10 @@
    Clarity; the same error a second time sends nothing; a third party's error sends nothing; a sixth
    distinct error sends nothing. An arrival with step=pay sends dates_chosen and pay_reopened once, no
    begin_checkout, and lands on the pay step; an arrival with dates alone sends quote_shown and no
-   pay_reopened. The file names the three in STEP_FOR and the two dated ones in WITH_CHECK_IN. */
+   pay_reopened. The file names the three in STEP_FOR and the two dated ones in WITH_CHECK_IN.
+   Added 2026-11-26 (the Chief): a refusal carries the check-in asked, as check_in on the beacon and
+   gh_check_in in the dataLayer: a tap on a night nobody may arrive on (no_arrival, that day) and a
+   link asking one night of a two-night Saturday (min_stay, the Saturday). */
 'use strict';
 const http = require('http');
 const fs = require('fs');
@@ -68,9 +71,14 @@ function day(n) { const d = new Date(); d.setHours(12, 0, 0, 0); d.setDate(d.get
 function dow(s) { return new Date(s + 'T12:00:00').getDay(); }
 function firstSaturdayFrom(n) { for (let i = n; i < n + 8; i++) if (dow(day(i)) === 6) return i; }
 const SAT = firstSaturdayFrom(14);
+const EVE = SAT + 21;   // a made-up night nobody may arrive on, as the engine marks a holiday's eve
 function nights() {
   const out = [];
-  for (let i = 1; i <= 120; i++) { const n = day(i), w = dow(n); out.push({ night: n, rate_cents: 39900, min_stay: (w === 5 || w === 6) ? 2 : 1 }); }
+  for (let i = 1; i <= 120; i++) {
+    const n = day(i), w = dow(n), night = { night: n, rate_cents: 39900, min_stay: (w === 5 || w === 6) ? 2 : 1 };
+    if (i === EVE) night.no_arrival = true;
+    out.push(night);
+  }
   return { nights: out };
 }
 function quote(ci, co) {
@@ -200,6 +208,41 @@ async function main() {
     await ctx.close();
   }
 
+  console.log('where the Book tap came from (2026-11-19): card, bar or link, on begin_checkout and add_payment_info');
+  check(/step\('begin_checkout', \{[^}]*gh_origin: state\.origin, gh_reason: state\.origin/.test(SCRIPT) && /step\('add_payment_info', \{[^}]*gh_origin: state\.origin, gh_reason: state\.origin/.test(SCRIPT),
+    'both steps carry the origin as reason (the beacon) and gh_origin (the dataLayer)');
+  {
+    const { ctx, page } = await visitor();
+    await tap(page, day(SAT));
+    await page.evaluate(() => document.querySelector('.gh-summary .gh-cta').click());
+    await page.waitForTimeout(500);
+    let b = steps(ctx, 'begin_checkout');
+    check(b.length === 1 && b[0].reason === 'card', 'the card\'s own button: begin_checkout with reason card');
+    check((await layer(page, 'begin_checkout')).some((x) => x.gh_origin === 'card'), 'and gh_origin card in the dataLayer');
+    await ctx.close();
+  }
+  {
+    const { ctx, page } = await visitor();
+    await tap(page, day(SAT));
+    const bar = await page.$('.gh-bar__btn');
+    check(!!bar, 'the stay bar stands after the price (STAY_BAR as shipped)');
+    if (bar) {
+      await bar.click(); await page.waitForTimeout(500);
+      const b = steps(ctx, 'begin_checkout');
+      check(b.length === 1 && b[0].reason === 'bar', 'the bar\'s button: begin_checkout with reason bar');
+      check((await layer(page, 'begin_checkout')).some((x) => x.gh_origin === 'bar'), 'and gh_origin bar in the dataLayer');
+      // back to the dates and a new choice: the origin is forgotten until the next tap
+      await page.goBack(); await page.waitForTimeout(600);
+      await page.click('.gh-clear'); await page.waitForTimeout(300);
+      await tap(page, day(SAT + 7));
+      await page.evaluate(() => document.querySelector('.gh-summary .gh-cta').click());
+      await page.waitForTimeout(500);
+      const again = steps(ctx, 'begin_checkout');
+      check(again.length === 2 && again[1].reason === 'card', 'new dates, the card\'s button: reason card, not the bar\'s');
+    }
+    await ctx.close();
+  }
+
   console.log('an arrival with step=pay: pay_reopened, no start');
   {
     const { ctx, page } = await visitor({ path: '/book?checkIn=' + day(SAT) + '&checkOut=' + day(SAT + 2) + '&step=pay' });
@@ -215,6 +258,27 @@ async function main() {
     const { ctx, page } = await visitor({ path: '/book?checkIn=' + day(SAT) + '&checkOut=' + day(SAT + 2) });
     await page.waitForTimeout(800);
     check(steps(ctx, 'dates_chosen').length === 1 && steps(ctx, 'quote_shown').length === 1 && steps(ctx, 'pay_reopened').length === 0, 'dates alone in the link: a pick, the card drawn, no pay_reopened');
+    await ctx.close();
+  }
+
+  console.log('dates refused (2026-11-26): quote_refused carries the check-in asked');
+  check(/function refused\(why, ci\) \{ step\('gh_quote_refused', \{ gh_reason: refusedCode\(why, ci\), gh_check_in: ci \|\| '' \}\); \}/.test(SCRIPT) && /WITH_CHECK_IN = \{[^}]*quote_refused: 1/.test(SCRIPT),
+    'refused() sends gh_check_in and WITH_CHECK_IN names quote_refused');
+  {
+    const { ctx, page } = await visitor();
+    await tap(page, day(EVE));
+    const r = steps(ctx, 'quote_refused');
+    check(r.length === 1 && r[0].reason === 'no_arrival' && r[0].check_in === day(EVE), 'a tap on a night nobody may arrive on: quote_refused no_arrival, that day as the check-in');
+    check((await layer(page, 'gh_quote_refused')).some((x) => x.gh_reason === 'no_arrival' && x.gh_check_in === day(EVE)), 'and gh_check_in in the dataLayer');
+    check(steps(ctx, 'dates_chosen').length === 0 && steps(ctx, 'quote_shown').length === 0, 'no pick and no card');
+    check(Object.keys(r[0] || {}).every((k) => ['visit', 'step', 'unit', 'src', 'mode', 'nights', 'value_cents', 'check_in', 'reason'].includes(k)), 'the beacon carries the known fields only, nothing about a person');
+    await ctx.close();
+  }
+  {
+    const { ctx, page } = await visitor({ path: '/book?checkIn=' + day(SAT) + '&checkOut=' + day(SAT + 1) });
+    await page.waitForTimeout(800);
+    const r = steps(ctx, 'quote_refused');
+    check(r.length === 1 && r[0].reason === 'min_stay' && r[0].check_in === day(SAT), 'a link asking one night of a two-night Saturday: quote_refused min_stay, the Saturday as the check-in');
     await ctx.close();
   }
 
