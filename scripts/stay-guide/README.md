@@ -7,12 +7,16 @@ written out stop by stop. The first one, for October 9 to 12, 2026, lives at
 ## Make one
 
 ```
-python3 scripts/stay-guide/new.py 2026-11-14 "November 14 to 16, 2026"
+python3 scripts/stay-guide/new.py 2026-11-14 2026-11-16 "November 14 to 16, 2026"
 ```
 
 That makes `private/stay-guide-2026-11-14-<random>/index.html` with the dates
-stamped. Then write every `{{...}}` block and follow each `<!-- EDIT -->`
-comment. Delete the comments when done. Before the push:
+stamped, in words and in two metas the engine reads (`loxley-check-in` and
+`loxley-check-out`, ISO dates), and adds the guide's row (check-in, check-out,
+path; never a name) to `scripts/stay-guide/guides.json`, the registry the
+Forge's guide check is handed; `scripts/` is never published. Then write every
+`{{...}}` block and follow each `<!-- EDIT -->` comment. Delete the comments
+when done. Before the push:
 
 ```
 python3 scripts/stay-guide/check.py private/stay-guide-2026-11-14-<random>

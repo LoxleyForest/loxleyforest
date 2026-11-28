@@ -13,10 +13,14 @@ Fails (exit 1) on anything a guest must never see or the house's rules forbid:
   - a stylesheet, script, image or font from any host but Google Fonts
   - a late checkout promised, or an em dash (the house writes none)
   - the names hook missing: the #for reader, and a generic "Prepared for" line in the file
+  - the stay's dates not machine-readable (2026-11-28, for the engine's guide check): the
+    loxley-check-in meta must be the folder's arrival date, the loxley-check-out meta a later
+    date, and scripts/stay-guide/guides.json must name this guide's path with the same dates
 Warns (exit 0) on a dollar sign, so every price on the page is a deliberate one.
 Standard library only. Prints one line per check; the last line is the verdict.
 """
 import html as htmllib
+import json
 import pathlib
 import re
 import sys
@@ -96,6 +100,27 @@ def main(argv):
         ok(f'the file greets no one by name ("{m.group(1).strip()}")')
     else:
         fail(f'the "for" line is not a generic one: {m.group(1).strip() if m else "(missing)"}')
+
+    # The stay's dates, machine-readable: the check-in meta is the folder's arrival date, the
+    # check-out meta a later date, and the registry names this guide with the same dates and path.
+    arrival = folder.name[len("stay-guide-"):][:10] if folder.name.startswith("stay-guide-") else None
+    ci = re.search(r'<meta name="loxley-check-in" content="(\d{4}-\d{2}-\d{2})">', html)
+    co = re.search(r'<meta name="loxley-check-out" content="(\d{4}-\d{2}-\d{2})">', html)
+    if ci and (arrival is None or ci.group(1) == arrival):
+        ok(f"loxley-check-in {ci.group(1)}" + (", the folder's arrival date" if arrival else ""))
+    else:
+        fail("the loxley-check-in meta is missing or is not the folder's arrival date")
+    if ci and co and co.group(1) > ci.group(1):
+        ok(f"loxley-check-out {co.group(1)}")
+    else:
+        fail("the loxley-check-out meta is missing or is not after the check-in")
+    registry = ROOT / "scripts" / "stay-guide" / "guides.json"
+    rows = json.loads(registry.read_text()) if registry.exists() else []
+    mine = [r for r in rows if r.get("path") == f"/private/{folder.name}/"]
+    if ci and co and mine and mine[0].get("check_in") == ci.group(1) and mine[0].get("check_out") == co.group(1):
+        ok("scripts/stay-guide/guides.json names this guide with the same dates")
+    else:
+        fail("scripts/stay-guide/guides.json does not name this guide with these dates (new.py writes the row)")
 
     # Nav pills and sections agree.
     pills = re.findall(r'<nav class="nav" id="nav">(.*?)</nav>', html, flags=re.S)
